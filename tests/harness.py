@@ -3,7 +3,7 @@ Runs the addon outside the game: each simulated player gets their own Lua 5.1
 (the version WoW uses) with a stand-in for the WoW API (tests/wow.lua), loads
 the addon's files in TOC order, and exchanges addon messages with the others.
 
-    guild = Guild(members=[("Alice", 1), ("Bob", 3)])   # name, guild rank (0 = GM)
+    guild = Guild(members=[("Alice", 1), ("Bob", 3, "PRIEST")])  # name, rank (0 = GM)[, class[, level]]
     alice = guild["Alice"]
     alice.ns.AwardDKP(alice.table(["Bob"]), 10, "Bonus")
     guild.run(5)                                          # let 5 seconds pass
@@ -60,8 +60,8 @@ class Client:
 
     # --- helpers -----------------------------------------------------------
     def set_roster(self):
-        rows = ",".join('{"%s", %d, %s, "%s"}' % (n, r, "true" if on else "false", cls)
-                        for n, r, on, cls in self.guild.roster())
+        rows = ",".join('{"%s", %d, %s, "%s", %d}' % (n, r, "true" if on else "false", cls, lvl)
+                        for n, r, on, cls, lvl in self.guild.roster())
         self.lua.execute("guildRoster = { %s }" % rows)
 
     def set_raid(self, names):
@@ -84,7 +84,7 @@ class Client:
             self.lua.execute("printed = {}")
         if contains:
             lines = [x for x in lines if contains in x]
-        return [re.sub(r"\|c[0-9a-fA-F]{8}|\|r|\|T.-\|t", "", x) for x in lines]
+        return [re.sub(r"\|c[0-9a-fA-F]{8}|\|r|\|T.*?\|t ?", "", x) for x in lines]
 
     def errors(self):
         errs = self.ns.loadErrors
@@ -101,7 +101,9 @@ class Guild:
 
     def __init__(self, members, raid=(), start=START, throttle=False):
         self.clock = float(start)
-        self.members = [(m[0], m[1], True, m[2] if len(m) > 2 else "WARRIOR") for m in members]
+        # (name, guild rank[, class[, level]])
+        self.members = [(m[0], m[1], True, m[2] if len(m) > 2 else "WARRIOR", m[3] if len(m) > 3 else 60)
+                        for m in members]
         self.raid = list(raid)
         self.throttle = throttle
         self.outbox = []
@@ -117,7 +119,8 @@ class Guild:
         return self.clients[name]
 
     def roster(self):
-        return [(n, r, self.clients[n].online if n in self.clients else on, cls) for n, r, on, cls in self.members]
+        return [(n, r, self.clients[n].online if n in self.clients else on, cls, lvl)
+                for n, r, on, cls, lvl in self.members]
 
     def set_raid(self, names):
         self.raid = list(names)
