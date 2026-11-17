@@ -117,8 +117,8 @@ end
 -- While you're in combat, remember which enemy is attacking you.
 -- Enemy players win over creatures when both are on you.
 local function scanAttackers()
-  local ok, inCombat = pcall(UnitAffectingCombat, "player")
-  if not (ok and ns.Usable(inCombat)) then return end
+  local ok, fighting = pcall(UnitAffectingCombat, "player")
+  if not (ok and ns.Usable(fighting)) then return end
   local units = { "target", "focus" }
   for _, u in ipairs(nameplateUnits()) do units[#units + 1] = u end
   local found, foundPlayer

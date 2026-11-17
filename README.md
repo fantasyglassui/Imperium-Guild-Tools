@@ -1,5 +1,7 @@
 # The Imperium
 
+[![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
+
 The official addon of **<The Imperium>** for World of Warcraft: Forever.
 
 ## Features
@@ -164,7 +166,11 @@ Healers who only healed don't get credit, since healing isn't an attack.
 
 ## More help
 
-The [wiki](https://github.com/fantasyglassui/Imperium-Guild-Tools/wiki) has step-by-step guides for members and officers.
+The [wiki](https://github.com/fantasyglassui/Imperium-Guild-Tools/wiki) has step-by-step guides for members and officers. Found a bug or have an idea? [Open an issue](https://github.com/fantasyglassui/Imperium-Guild-Tools/issues/new/choose).
+
+## Contributing
+
+Pull requests are checked automatically by luacheck and a test suite that runs the addon outside the game. See [DISTRIBUTION.md](DISTRIBUTION.md#3-tests-and-the-code-checker) for how to run them yourself and how releases work.
 
 ## License
 

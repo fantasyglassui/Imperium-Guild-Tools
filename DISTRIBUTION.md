@@ -6,35 +6,39 @@ The addon's files sit at the top level of the repository, with `TheImperium.toc`
 
 ## 1. Release a version
 
-1. Update `## Version:` in `TheImperium.toc` and add an entry to `CHANGELOG.md`.
-2. Commit, then create and push a matching tag:
+1. Update `## Version:` in `TheImperium.toc`, add an entry to `CHANGELOG.md`, and add the notes to `UI/Updates.lua` so players see them in the in-game Updates panel.
+2. Merge it to `main`, then create a tag for the version. Either:
+   - on GitHub: **Releases > Draft a new release > Choose a tag**, type `v2.10.0`, pick "Create new tag on publish", and press **Publish release**; or
+   - from a terminal: `git tag v2.10.0` then `git push origin v2.10.0`.
+3. Within a few minutes the "Package and release" workflow attaches `TheImperium-v2.10.0.zip` to the release, and uploads it to CurseForge.
 
-   ```
-   git tag v2.10.0
-   git push origin v2.10.0
-   ```
+## 2. CurseForge uploads
 
-3. Within a few minutes the release, with `TheImperium-v2.10.0.zip`, appears on the repository's **Releases** page. Guildies can download it from there.
+`TheImperium.toc` carries the project ID (`## X-Curse-Project-ID: 1803056`), so the packager knows where to upload. It needs one thing from you, once:
 
-Also add the release's notes to `UI/Updates.lua`, so players see them in the in-game Updates panel.
+1. Create an API token at [CurseForge: API tokens](https://authors.curseforge.com/account/api-tokens).
+2. In this repository, go to **Settings > Secrets and variables > Actions > New repository secret**, name it `CF_API_KEY`, and paste the token.
 
-## 2. Upload to CurseForge automatically
+Until the secret exists, tags still make the GitHub release; they just skip CurseForge.
 
-The addon is already on CurseForge. To have every tag upload there too:
+Check that CurseForge lists WoW Forever as the game version of each upload. The packager picks it from the `## Interface:` number, and if CurseForge doesn't recognize 16001 you may need to set it by hand on the file's page.
 
-1. Find the **Project ID** on the CurseForge project page (in the "About Project" box).
-2. Add this line to `TheImperium.toc`, with your real ID:
+## 3. Tests and the code checker
 
-   ```
-   ## X-Curse-Project-ID: 123456
-   ```
+Every pull request, and every push to `main`, runs the "Tests" workflow:
 
-3. Create an API token in your CurseForge account settings.
-4. In the GitHub repository, go to **Settings > Secrets and variables > Actions** and add a secret named `CF_API_KEY` containing the token.
+- **luacheck** reads all the Lua files for mistakes such as typos in variable names, accidental globals, and unused code. Its settings, including the list of WoW functions the addon uses, are in `.luacheckrc`. If you start using a new WoW function, add it to `read_globals` there.
+- **The tests** in `tests/` run the addon outside the game. `tests/wow.lua` stands in for the WoW API, and `tests/harness.py` runs several simulated guildmates, each with their own copy of the addon, passing addon messages between them on a simulated clock. The tests cover kill sharing and removal, Top Head Hunters months, the Wanted list, the send queue, raid nights, invites, DKP, auctions, alts and seasons, and that every tab of the panel builds without errors.
 
-From then on, every tag you push uploads to CurseForge as well.
+A red X on a pull request means one of them failed; open **Details** to see which. To run them yourself (Python 3 and Lua's luacheck needed):
 
-Check that CurseForge lists WoW Forever as a game version for your upload. The packager picks the game version from the `## Interface:` number, and if CurseForge doesn't recognize 16001 yet you may need to set the game version by hand on the CurseForge file page.
+```
+pip install lupa pytest
+pytest tests
+luacheck .
+```
+
+To test a new feature, copy the pattern of an existing test: make a `Guild`, call the addon's functions on one member, `guild.run(seconds)`, and check what the others see.
 
 ## Editing the wiki
 
@@ -42,4 +46,4 @@ The wiki's pages live in the `wiki/` folder. When changes to them reach `main`, 
 
 ## What's in the release zip
 
-The packager leaves out `DISTRIBUTION.md`, `.gitignore`, the `wiki` folder and the `.github` folder, so players only get the addon itself.
+The packager leaves out `DISTRIBUTION.md`, `.gitignore`, `.luacheckrc`, and the `wiki`, `tests` and `.github` folders, so players only get the addon itself.
