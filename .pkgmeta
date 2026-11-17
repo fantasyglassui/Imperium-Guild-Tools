@@ -4,3 +4,4 @@ ignore:
   - DISTRIBUTION.md
   - .github
   - .gitignore
+  - wiki
