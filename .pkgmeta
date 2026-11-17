@@ -1,0 +1,6 @@
+package-as: TheImperium
+
+ignore:
+  - DISTRIBUTION.md
+  - .github
+  - .gitignore

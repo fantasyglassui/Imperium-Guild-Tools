@@ -1,0 +1,178 @@
+--[[
+  The Imperium
+  Updates panel: after the addon is updated, shows what changed since the
+  version you last used. Reopen it any time with /imperium updates.
+
+  To add a release: put a new entry at the TOP of CHANGES.
+]]
+
+local _, ns = ...
+local UI = ns.UI
+
+-- Newest first. Players see every entry newer than the version they last used.
+local CHANGES = {
+  { version = "2.10.0", date = "Nov 16, 2026", items = {
+    "Top Head Hunters now starts fresh on the 1st of each month. Switch to Last month or All time on the Kills tab to see earlier standings.",
+    "On reset day (the 1st), the guild hears last month's top three head hunters. Last month's champion is also shown under the board.",
+    "Fixed: Top Head Hunters could credit a different killing blow on different guildmates' screens for some older kills.",
+  } },
+  { version = "2.9.0", date = "Nov 15, 2026", items = {
+    "DKP seasons: officers can start a new season from the DKP tab. Everyone keeps their DKP, and older history is archived so the addon stays fast.",
+    "DKP, raids and attendance are worked out much faster, especially with a lot of history.",
+  } },
+  { version = "2.8.0", date = "Nov 15, 2026", items = {
+    "Alts: link your alts to your main on the DKP tab (Alts). They share your DKP and attendance. Linking needs both characters, so only you can link your own alts.",
+    "Boss DKP: officers can set DKP per boss kill when starting a raid. It's awarded automatically each time the raid kills a boss.",
+    "Free rolls: if nobody bids on an item, the raid gets a free roll for it instead.",
+    "Class check: you're warned before bidding on gear your class can't use.",
+    "Officers can undo any DKP change, refund loot or give it to someone else, and import starting balances.",
+  } },
+  { version = "2.7.0", date = "Nov 15, 2026", items = {
+    "Attendance: the DKP tab shows each member's raid attendance over the last 30 days. Hover a name for details.",
+    "Standby: officers can put members on standby during a raid. They earn the same DKP as the raid and count as attending.",
+    "No-shows: after a raid night, anyone who accepted but didn't come is marked on the Raids tab and in their attendance.",
+    "Raid invites: officers can invite everyone who signed up with one click. If a raid starts without you, you get a reminder.",
+    "DKP decay: officers can take a percentage off everyone's DKP, now or automatically each week.",
+    "Hidden bids: officers can switch auctions to hidden bids, where the winner pays the second-highest bid + 1.",
+  } },
+  { version = "2.6.0", date = "Nov 15, 2026", items = {
+    "Loot history: on the DKP tab, switch to Loot history to see every item won in an auction, who won it, for how much, and on which raid night. Hover an item for its tooltip.",
+    "Officers can export DKP as a text backup of standings, loot and every DKP change.",
+    "More reliable on busy nights: messages are now paced to stay within the game's limits, so kills and loot bids are no longer lost when lots is happening at once.",
+  } },
+  { version = "2.5.0", date = "Nov 15, 2026", items = {
+    "Killing blows and assists: the guild member who hit an enemy last gets the killing blow, everyone else who helped gets an assist. Top Head Hunters now ranks by killing blows, with assists shown alongside.",
+    "Honor kills only: grey kills (much lower level, no honor) no longer count, on by default for the guild. Officers can change it in Settings.",
+    "Officers can right-click a kill on the Kills tab to remove it for the whole guild.",
+  } },
+  { version = "2.4.1", date = "Nov 15, 2026", items = {
+    "Fixed: guildmates' Kills tabs and Top Head Hunters could show different kills. Kill logs now compare with each other every 15 minutes and fill in anything missing, both ways, so everyone ends up with the same kills.",
+    "Fixed: killing the same player again within 2 minutes (camping) only counted once. Kills are now only combined when they're within 30 seconds of each other.",
+  } },
+  { version = "2.4.0", date = "Nov 15, 2026", items = {
+    "New Addon tab: see which guild members have The Imperium installed, which version, and when their addon was last seen. Filter by who has it, who doesn't, or who needs to update.",
+    "Click Check now to ask everyone online. Open it with /imperium addon.",
+  } },
+  { version = "2.3.0", date = "Nov 15, 2026", items = {
+    "New: when a guild member kills a wanted player, the bounty is claimed and they drop off the Wanted list. Their count starts over, so they come back if they keep ganking.",
+    "Kill alerts say \"Wanted bounty claimed!\" when the victim was on the Wanted list.",
+    "You can turn this off with the new checkbox at the bottom of the Wanted tab.",
+  } },
+  { version = "2.2.0", date = "Nov 14, 2026", items = {
+    "New: this Updates panel. It appears after each update with what changed. Reopen it with /imperium updates.",
+  } },
+  { version = "2.1.1", date = "Nov 14, 2026", items = {
+    "Fixed: deaths to damage over time were announced as falling to death. A death now only counts as a fall if you dropped for at least a second, died as you landed, and weren't in combat.",
+  } },
+  { version = "2.1.0", date = "Nov 13, 2026", items = {
+    "Release! Test data from before launch was cleared so the guild starts fresh. Your settings were kept.",
+    "PvP kill alerts with the Top Head Hunters board, a Wanted list of gankers, raid sign-ups, and DKP with live loot auctions.",
+  } },
+}
+
+local MAX_SHOWN = 6
+local win
+
+-- Entries newer than `since` (all of them if since is nil), newest first.
+local function changesSince(since)
+  local out = {}
+  for _, c in ipairs(CHANGES) do
+    if since and ns.CompareVersions(c.version, since) <= 0 then break end
+    out[#out + 1] = c
+    if #out >= MAX_SHOWN then break end
+  end
+  return out
+end
+
+local function buildText(entries)
+  local lines = {}
+  for _, c in ipairs(entries) do
+    lines[#lines + 1] = ("%sVersion %s|r  |cff888888%s|r"):format(ns.COLOR, c.version, c.date)
+    for _, item in ipairs(c.items) do lines[#lines + 1] = "  |cffd4af37•|r  " .. item end
+    lines[#lines + 1] = " "
+  end
+  return table.concat(lines, "\n")
+end
+
+local function create()
+  local ok, f = pcall(CreateFrame, "Frame", "TheImperiumUpdates", UIParent, "BasicFrameTemplateWithInset")
+  if not ok then f = CreateFrame("Frame", "TheImperiumUpdates", UIParent) end
+  win = f
+  f:SetSize(460, 380)
+  f:SetPoint("CENTER", 0, 40)
+  f:SetFrameStrata("DIALOG")
+  f:SetMovable(true)
+  f:EnableMouse(true)
+  f:SetClampedToScreen(true)
+  f:RegisterForDrag("LeftButton")
+  f:SetScript("OnDragStart", f.StartMoving)
+  f:SetScript("OnDragStop", f.StopMovingOrSizing)
+  tinsert(UISpecialFrames, "TheImperiumUpdates") -- Escape closes it
+  if f.TitleText then f.TitleText:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. "The Imperium|r  -  What's new") end
+
+  local icon = f:CreateTexture(nil, "ARTWORK")
+  icon:SetSize(48, 48)
+  icon:SetPoint("TOPLEFT", 16, -32)
+  icon:SetTexture(ns.PORTRAIT)
+
+  f.heading = UI.Label(f, "", "GameFontNormalLarge")
+  f.heading:SetPoint("TOPLEFT", icon, "TOPRIGHT", 12, -4)
+  f.sub = UI.Label(f, "", "GameFontHighlightSmall")
+  f.sub:SetPoint("TOPLEFT", f.heading, "BOTTOMLEFT", 0, -6)
+
+  local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+  sf:SetPoint("TOPLEFT", 16, -92)
+  sf:SetPoint("BOTTOMRIGHT", -34, 50)
+  local content = CreateFrame("Frame", nil, sf)
+  content:SetSize(400, 10)
+  sf:SetScrollChild(content)
+  f.body = UI.Label(content, "", "GameFontHighlight")
+  f.body:SetPoint("TOPLEFT", 0, 0)
+  f.body:SetWidth(400)
+  f.body:SetSpacing(3)
+  f.content = content
+
+  local close = UI.Button(f, "Got it", 110)
+  close:SetPoint("BOTTOM", 0, 14)
+  close:SetScript("OnClick", function() f:Hide() end)
+end
+
+-- since: the version you last used, or nil to show recent changes.
+function ns.ShowUpdates(since)
+  if InCombatLockdown() then
+    ns.Say("The Updates panel will open after combat.")
+    ns.pendingUpdates = since or false
+    return
+  end
+  local entries = changesSince(since)
+  if #entries == 0 then entries = changesSince(nil) end
+  if not win then create() end
+  win.heading:SetText(since and ("Updated to version " .. ns.version) or ("Version " .. ns.version))
+  win.sub:SetText(since and ("Here's what changed since version " .. since .. ".") or "Recent changes to The Imperium.")
+  win.body:SetText(buildText(entries))
+  win.content:SetHeight(math.max(10, win.body:GetStringHeight() + 10))
+  win:Show()
+end
+
+ns.OnEvent("PLAYER_REGEN_ENABLED", function()
+  if ns.pendingUpdates ~= nil then
+    local since = ns.pendingUpdates or nil
+    ns.pendingUpdates = nil
+    C_Timer.After(1, function() ns.ShowUpdates(since) end)
+  end
+end)
+
+-- After login, show the panel once if the addon was updated since last time.
+ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
+  if not (isLogin or isReload) then return end
+  local last = ns.db.lastSeenVersion
+  ns.db.lastSeenVersion = ns.version
+  if last == nil then
+    -- Brand-new installs see nothing. Players who had the addon before this
+    -- panel existed were on 2.1.1 or earlier.
+    if ns.isNewInstall then return end
+    last = "2.1.1"
+  end
+  if ns.CompareVersions(ns.version, last) <= 0 then return end
+  C_Timer.After(6, function() ns.ShowUpdates(last) end)
+end)
