@@ -1,0 +1,54 @@
+name: Bug report
+description: Something in the addon isn't working right.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Check [Troubleshooting](https://github.com/fantasyglassui/Imperium-Guild-Tools/wiki/Troubleshooting) first, since many problems have a quick fix there.
+  - type: input
+    id: version
+    attributes:
+      label: Addon version
+      description: Type `/imperium version` in game, or look at the top of the guild panel.
+      placeholder: "2.10.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the addon?
+      options:
+        - PvP kill alerts or Top Head Hunters
+        - Wanted list
+        - Raids and sign-ups
+        - DKP or loot auctions
+        - Roster or officer tools
+        - Map, minimap button or settings
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, and what the addon did. Screenshots help.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: others
+    attributes:
+      label: Does it happen to guildmates too?
+      description: For shared things (kills, DKP, sign-ups), say whether others see the same thing, and their addon versions if you know them (the Addon tab lists everyone's).
+  - type: textarea
+    id: errors
+    attributes:
+      label: Error messages
+      description: Any Lua errors from BugSack or the game's error popup, and the output of `/imperium debug`.
+      render: text

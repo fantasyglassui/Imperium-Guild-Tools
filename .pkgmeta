@@ -4,4 +4,6 @@ ignore:
   - DISTRIBUTION.md
   - .github
   - .gitignore
+  - .luacheckrc
+  - tests
   - wiki

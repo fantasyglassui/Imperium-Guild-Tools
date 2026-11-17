@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest something new for the addon.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like?
+      description: Describe the feature and how you'd use it.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What problem does it solve?
+      description: For example, something officers do by hand on raid night today.
+  - type: dropdown
+    id: who
+    attributes:
+      label: Who is it for?
+      options:
+        - Everyone in the guild
+        - Raiders
+        - Officers
+        - The guild leader
