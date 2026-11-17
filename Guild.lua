@@ -128,6 +128,7 @@ local function fillConfig(c)
   for _, t in ipairs(ns.TYPES) do
     if c.types[t.key] == nil then c.types[t.key] = true end
   end
+  c.types.kill_honor = true -- grey kills never count
 end
 
 local function syncGuildConfig()
@@ -191,6 +192,7 @@ function ns.PushConfig(new)
   local c = ns.cfg
   c.enabled, c.officerRank = new.enabled, new.officerRank
   for _, t in ipairs(ns.TYPES) do c.types[t.key] = new.types[t.key] and true or false end
+  c.types.kill_honor = true -- grey kills never count, whatever an older version sends
   c.stamp, c.by = GetServerTime(), UnitName("player")
   sendConfig()
   if ns.LogAction then ns.LogAction("settings") end

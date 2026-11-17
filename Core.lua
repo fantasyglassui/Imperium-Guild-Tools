@@ -24,7 +24,8 @@ ns.TYPES = {
   { key = "environment",  group = "death", label = "Falling, drowning & fatigue" },
   { key = "kill_world",   group = "kill",  label = "World PvP kills" },
   { key = "kill_bg",      group = "kill",  label = "Battleground & arena kills" },
-  { key = "kill_honor",   group = "kill",  label = "Honor kills only (no grey kills)", filter = true },
+  -- Always on since 2.11.1 (grey kills are never logged). Kept so older versions still get it from officers.
+  { key = "kill_honor",   group = "kill",  label = "Honor kills only (no grey kills)", filter = true, hidden = true },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },

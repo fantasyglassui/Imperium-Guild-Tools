@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.11.1
+- Fixed: kills of grey-level players (far below the killer's level) were still logged and announced, for two reasons: when the game gave an honor message the kill counted whatever the victim's level, and officers could switch "Honor kills only" off. Now the victim's level decides (the honor message only counts when the level couldn't be seen), and grey kills are never reported, announced or logged.
+- Guildmates' reports are checked against the killers' levels from the guild roster, so grey kills sent by older versions, live or through kill-log sync, are dropped too. Grey kills already in your log are cleared out shortly after you log in, so the Kills tab, Top Head Hunters and the weekly recap no longer count them.
+- The "Honor kills only" option is gone from Settings: it's always on.
+
 ## 2.11.0
 - New: raid makeup check. The Raids tab lists who has accepted by class (in class colors, with names colored too) and warns about gaps: too few tanks (2 wanted from 10 players, otherwise 1), too few healers (about one per five players), with tentative sign-ups for that role noted. Once 10 have accepted, it also names any class that has max-level members in the guild but nobody signed up. Hover the warning for the details. Raids with gaps get an orange "!" in the Upcoming raids list.
 - New: an hour before a scheduled raid, officers get one chat line about any gaps in its makeup.
