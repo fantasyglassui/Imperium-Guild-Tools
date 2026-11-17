@@ -1,0 +1,319 @@
+--[[
+  The Imperium
+  Ledger: the guild's shared record of raids, sign-ups and DKP.
+
+  Every change is an entry that is never edited or deleted (a mistake is
+  fixed with a new entry). Entries are sent to the guild when they're made,
+  and guildmates fill in each other's gaps when they log in, day by day.
+
+  Who may write what:
+    - Raids, raid cancellations, DKP changes and raid sessions: officers only.
+    - Sign-ups: any guild member, for themselves.
+  Officer entries are only accepted straight from the officer who made them,
+  or passed along by another officer, so nobody can slip in fake DKP. For the
+  same reason only officers answer catch-up requests; members ask again every
+  15 minutes so they catch up whenever an officer is online.
+]]
+
+local _, ns = ...
+
+local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
+  AT = true, SB = true, DS = true, UN = true, SN = true, SS = true }
+-- Member entries that must come straight from the player who made them (or
+-- be passed along by an officer), so nobody can make one in someone else's name.
+local DIRECT_ONLY = { AL = true }
+-- Fields of each kind, in message order.
+local FIELDS = {
+  EV = { "title", "start", "notes" },          -- a scheduled raid
+  EX = { "ref" },                              -- a raid cancelled
+  SU = { "ref", "status", "role" },            -- a sign-up
+  DK = { "amount", "names", "reason" },        -- DKP added (or removed, if negative)
+  RS = { "ref", "onTime", "hourly", "title", "boss" }, -- a raid session started
+  RE = { "ref" },                              -- a raid session ended
+  KD = { "ref" },                              -- a kill removed by an officer
+  AT = { "ref", "names", "how" },              -- who attended a raid session ("raid" or "standby")
+  SB = { "ref", "names", "state" },            -- standby added to ("on") or removed from ("off") a session
+  DS = { "decay", "auto", "hidden" },          -- DKP rules: decay %, weekly decay, hidden bids
+  UN = { "ref", "reason" },                    -- a DKP change undone by an officer
+  AL = { "alt", "main", "state" },             -- alt link: "req" (from the alt), "ok" (from the main),
+                                               -- "set" (officer) or "off" (unlink)
+  SN = { "name", "parts" },                    -- a new DKP season starts; history before it is archived
+  SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
+}
+local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
+  parts = true }
+local CLAIM_WINDOW = 30
+
+local counter = 0
+local listeners = {}
+local changePending = false
+
+
+
+function ns.OnLedgerChanged(fn) listeners[#listeners + 1] = fn end
+
+local function changed()
+  if changePending then return end
+  changePending = true
+  C_Timer.After(0.5, function()
+    changePending = false
+    for _, fn in ipairs(listeners) do pcall(fn) end
+    if ns.RefreshPanel then ns.RefreshPanel() end
+  end)
+end
+
+------------------------------------------------------------------------
+-- Entries
+------------------------------------------------------------------------
+local function encode(e)
+  local parts = { "X", e.id, e.t, e.a, e.k }
+  for _, f in ipairs(FIELDS[e.k]) do parts[#parts + 1] = e[f] ~= nil and tostring(e[f]) or "" end
+  return parts
+end
+
+local function decode(p)
+  local kind = p[5]
+  local fields = FIELDS[kind]
+  if not fields then return end
+  local e = { id = p[2], t = tonumber(p[3]), a = p[4], k = kind }
+  if not e.id or e.id == "" or not e.t or not e.a or e.a == "" then return end
+  for i, f in ipairs(fields) do
+    local v = p[5 + i] or ""
+    if NUMERIC[f] then v = tonumber(v) or 0 end
+    e[f] = v
+  end
+  return e
+end
+
+function ns.IsOfficerName(name)
+  local rank = ns.RankOf(name)
+  return rank ~= nil and rank <= ns.cfg.officerRank
+end
+
+local function authorAllowed(e)
+  if OFFICER_KINDS[e.k] then return ns.IsOfficerName(e.a) end
+  return ns.RankOf(e.a) ~= nil
+end
+
+------------------------------------------------------------------------
+-- Seasons: archiving old history so the record stays small and fast
+------------------------------------------------------------------------
+-- When a season starts, everyone's DKP is saved as the season's starting
+-- balances. Once all of those have arrived, older history is removed:
+-- DKP changes from before the season, and raids, sign-ups and attendance
+-- more than 30 days before it. Alt links, DKP rules and kill removals are kept.
+local KEEP_RAIDS = 30 * 86400
+local BEFORE_SEASON = { DK = true, UN = true }                  -- folded into the starting balances
+local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX = true, SU = true }
+local byKind     -- kind -> sorted list of entries, rebuilt after any change
+local season     -- the current season, once all its starting balances are here
+
+local function index()
+  byKind = {}
+  for _, e in pairs(ns.db.ledger) do
+    byKind[e.k] = byKind[e.k] or {}
+    table.insert(byKind[e.k], e)
+  end
+  for _, list in pairs(byKind) do
+    table.sort(list, function(a, b)
+      if a.t ~= b.t then return a.t < b.t end
+      return a.id < b.id
+    end)
+  end
+  -- The newest season whose starting balances have all arrived.
+  season = nil
+  local seasons = byKind.SN or {}
+  for i = #seasons, 1, -1 do
+    local sn, parts = seasons[i], 0
+    for _, ss in ipairs(byKind.SS or {}) do
+      if ss.ref == sn.id then parts = parts + 1 end
+    end
+    if parts >= sn.parts then season = sn break end
+  end
+end
+
+-- The current DKP season (complete), if any.
+function ns.CurrentSeason()
+  if not byKind then index() end
+  return season
+end
+
+-- Would this entry be archived under the current season?
+local function archived(e)
+  local s = ns.CurrentSeason()
+  if not s or e.k == "SN" then return false end
+  if BEFORE_SEASON[e.k] then return e.t < s.t end
+  if RAID_HISTORY[e.k] then return e.t < s.t - KEEP_RAIDS end
+  if e.k == "SS" then return e.ref ~= s.id end -- an older season's starting balances
+  return false
+end
+
+local function prune()
+  local removed = 0
+  for id, e in pairs(ns.db.ledger) do
+    if archived(e) then ns.db.ledger[id] = nil; removed = removed + 1 end
+  end
+  if removed > 0 then byKind = nil end
+  return removed
+end
+
+local function store(e)
+  if ns.db.ledger[e.id] then return false end
+  if archived(e) then return false end -- history from before the season stays archived
+  ns.db.ledger[e.id] = e
+  byKind = nil
+  if e.k == "SN" or e.k == "SS" then
+    index()
+    if season and prune() > 0 then index() end
+  end
+  return true
+end
+
+-- Make a new entry as yourself, keep it and send it to the guild.
+function ns.LedgerAdd(kind, fields)
+  if OFFICER_KINDS[kind] and not ns.IsAddonOfficer() then
+    ns.Say("Only officers can do that.")
+    return
+  end
+  counter = counter + 1
+  local me = UnitName("player")
+  local t = GetServerTime()
+  local e = { id = me .. ":" .. t .. ":" .. counter, t = t, a = me, k = kind }
+  for k, v in pairs(fields) do e[k] = v end
+  for _, f in ipairs(FIELDS[kind]) do
+    if NUMERIC[f] then e[f] = tonumber(e[f]) or 0 else e[f] = ns.Clean(e[f] or "") end
+  end
+  store(e)
+  ns.Send(unpack(encode(e)))
+  changed()
+  return e
+end
+
+ns.OnLoad(function()
+  ns.db.ledger = ns.db.ledger or {}
+  index()
+  if season and prune() > 0 then index() end
+end)
+
+-- All entries of one kind, oldest first. The list is shared: read it, don't change it.
+local EMPTY = {}
+function ns.LedgerEntries(kind)
+  if not byKind then index() end
+  return byKind[kind] or EMPTY
+end
+
+local function receive(p, sender, retried)
+  local e = decode(p)
+  if not e or ns.BeforeRelease(e.t) then return end
+  -- The roster isn't loaded yet: try again shortly.
+  if (GetNumGuildMembers() or 0) == 0 and not retried then
+    C_Timer.After(5, function() receive(p, sender, true) end)
+    return
+  end
+  if ns.Key(sender) ~= ns.Key(e.a) then
+    -- Passed along by someone other than its author: officer entries only from officers.
+    if (OFFICER_KINDS[e.k] or DIRECT_ONLY[e.k]) and not ns.IsOfficerName(sender) then return end
+  end
+  if not authorAllowed(e) then return end
+  if store(e) then changed() end
+end
+
+ns.OnMessage("X", function(p, sender) receive(p, sender) end)
+
+------------------------------------------------------------------------
+-- Filling gaps from guildmates, day by day
+------------------------------------------------------------------------
+local function dayOf(t) return math.floor(t / 86400) end
+
+local function digest()
+  local d = {}
+  for _, e in pairs(ns.db.ledger) do
+    local day = dayOf(e.t)
+    d[day] = (d[day] or 0) + 1
+  end
+  return d
+end
+
+local function stats()
+  local n, newest = 0, 0
+  for _, e in pairs(ns.db.ledger) do
+    n = n + 1
+    if e.t > newest then newest = e.t end
+  end
+  return n, newest
+end
+
+function ns.RequestLedger()
+  local n, newest = stats()
+  ns.Send("LQ", n, newest)
+end
+
+table.insert(ns.OnGuildReady, function()
+  C_Timer.After(20, ns.RequestLedger)
+  C_Timer.NewTicker(15 * 60, ns.RequestLedger)
+end)
+
+local claimed = {}
+
+-- Someone asked: if we have more, send them a summary of entries per day.
+-- Only officers answer (see the note at the top).
+ns.OnMessage("LQ", function(p, sender)
+  if ns.IsMe(sender) or not ns.IsAddonOfficer() then return end
+  local theirCount, theirNewest = tonumber(p[2]) or 0, tonumber(p[3]) or 0
+  local n, newest = stats()
+  if n <= theirCount and newest <= theirNewest then return end
+  local who = ns.fullName(sender)
+  local delay = 0.5 + math.random() * 2
+  C_Timer.After(delay, function()
+    local c = claimed[who]
+    if c and GetTime() - c < CLAIM_WINDOW then return end
+    ns.Send("LS", who)
+    local chunk, len = {}, 0
+    for day, count in pairs(digest()) do
+      local item = day .. ":" .. count
+      if len + #item > 200 then
+        ns.QueueTo(sender, "LG", table.concat(chunk, ","))
+        chunk, len = {}, 0
+      end
+      chunk[#chunk + 1] = item
+      len = len + #item + 1
+    end
+    if #chunk > 0 then ns.QueueTo(sender, "LG", table.concat(chunk, ",")) end
+    ns.QueueTo(sender, "LGE")
+  end)
+end)
+
+ns.OnMessage("LS", function(p)
+  if p[2] then claimed[ns.fullName(p[2])] = GetTime() end
+end)
+
+local incoming = {}
+
+ns.OnMessage("LG", function(p, sender)
+  local d = incoming[sender] or {}
+  incoming[sender] = d
+  for day, count in (p[2] or ""):gmatch("(%d+):(%d+)") do d[tonumber(day)] = tonumber(count) end
+end)
+
+-- Summary complete: ask for the days where they have more than us.
+ns.OnMessage("LGE", function(_, sender)
+  local theirs = incoming[sender]
+  incoming[sender] = nil
+  if not theirs then return end
+  local mine, want = digest(), {}
+  for day, count in pairs(theirs) do
+    if count > (mine[day] or 0) then want[#want + 1] = day end
+  end
+  for i = 1, #want, 25 do
+    ns.QueueTo(sender, "LR", table.concat(want, ",", i, math.min(i + 24, #want)))
+  end
+end)
+
+-- Send every entry from the days asked for.
+ns.OnMessage("LR", function(p, sender)
+  local days = {}
+  for d in (p[2] or ""):gmatch("%d+") do days[tonumber(d)] = true end
+  for _, e in pairs(ns.db.ledger) do
+    if days[dayOf(e.t)] then ns.QueueTo(sender, unpack(encode(e))) end
+  end
+end)
