@@ -43,6 +43,8 @@ local function RefreshEvent(event)
     d.when:SetText(#ns.RaidEvents() == 0 and "No raids are scheduled yet." or "Pick a raid on the left.")
     d.notes:SetText("")
     d.counts:SetText("")
+    d.classes:SetText("")
+    d.gaps:SetText("")
     P.signups:SetItems({})
     for _, b in ipairs(d.statusButtons) do UI.SetEnabled(b, false) end
     UI.SetEnabled(d.role, false)
@@ -56,11 +58,27 @@ local function RefreshEvent(event)
   local c = ns.SignupCounts(event.id)
   d.counts:SetText(("|cff40ff40%d accepted|r  (%d tank, %d healer, %d DPS)   |cffffd200%d tentative|r   |cffff6060%d declined|r")
     :format(c.accept, c.tank, c.healer, c.dps, c.tentative, c.decline))
+  -- Who's coming by class, and what the raid is short of.
+  local mk = ns.RaidMakeup(event.id)
+  local parts = {}
+  for _, cl in ipairs(mk.classes) do
+    local r, g, b = UI.ClassColor(cl.classFile)
+    parts[#parts + 1] = ("|cff%02x%02x%02x%s %d|r"):format(math.floor(r * 255), math.floor(g * 255),
+      math.floor(b * 255), cl.name, cl.count)
+  end
+  d.classes:SetText(table.concat(parts, "  "))
+  if mk.accept == 0 then
+    d.gaps:SetText("")
+  elseif #mk.warnings > 0 then
+    d.gaps:SetText("|cffff9900! " .. table.concat(mk.warnings, ".  ") .. ".|r")
+  else
+    d.gaps:SetText("|cff40ff40Tanks and healers covered.|r")
+  end
   -- After the raid night, mark accepted sign-ups who never came.
   local noShows, attended = ns.NoShows(event.id)
   local rows = {}
   for _, su in ipairs((ns.Signups(event.id))) do
-    rows[#rows + 1] = { name = su.name, role = su.role, status = su.status,
+    rows[#rows + 1] = { name = su.name, role = su.role, status = su.status, classFile = mk.classOf[ns.Key(su.name)],
       noShow = attended ~= nil and su.status == "accept" and not attended[ns.Key(su.name)] }
   end
   P.signups:SetItems(rows)
@@ -196,10 +214,37 @@ local function BuildEventView(parent)
   d.notes:SetWidth(410)
   d.counts = UI.Label(d, "", "GameFontHighlightSmall")
   d.counts:SetPoint("TOPLEFT", 0, -100)
+  d.classes = UI.Label(d, "", "GameFontHighlightSmall")
+  d.classes:SetPoint("TOPLEFT", 0, -114)
+  d.classes:SetWidth(410)
+  d.classes:SetWordWrap(false)
+  d.gaps = UI.Label(d, "", "GameFontHighlightSmall")
+  d.gaps:SetPoint("TOPLEFT", 0, -128)
+  d.gaps:SetWidth(410)
+  d.gaps:SetWordWrap(false)
+  local hover = CreateFrame("Frame", nil, d) -- text can't take the mouse, so a frame over it does
+  hover:SetPoint("TOPLEFT", d.gaps, "TOPLEFT")
+  hover:SetSize(410, 14)
+  hover:SetScript("OnEnter", function(self)
+    if not selectedId then return end
+    local mk = ns.RaidMakeup(selectedId)
+    if mk.accept == 0 then return end
+    local tanks, healers = ns.RolesWanted(mk.accept)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:SetText("Raid makeup")
+    GameTooltip:AddLine(("For %d players: about %d tank%s and %d healer%s (one healer per five players)."):format(
+      mk.accept, tanks, tanks == 1 and "" or "s", healers, healers == 1 and "" or "s"), 1, 1, 1, true)
+    GameTooltip:AddLine(("Signed up: %d tank, %d healer, %d DPS. Tentative: %d tank, %d healer, %d DPS."):format(
+      mk.roles.tank, mk.roles.healer, mk.roles.dps, mk.maybe.tank, mk.maybe.healer, mk.maybe.dps), 1, 1, 1, true)
+    GameTooltip:AddLine("Once 10 have accepted, classes in the guild that nobody has signed up with are listed too.",
+      0.7, 0.7, 0.7, true)
+    GameTooltip:Show()
+  end)
+  hover:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
   -- Your sign-up
   d.role = UI.Button(d, "Role: DPS", 100)
-  d.role:SetPoint("TOPLEFT", 0, -118)
+  d.role:SetPoint("TOPLEFT", 0, -146)
   d.role:SetScript("OnClick", function()
     myRole = (myRole == "tank" and "healer") or (myRole == "healer" and "dps") or "tank"
     local mine = selectedId and ns.MySignup(selectedId)
@@ -217,7 +262,7 @@ local function BuildEventView(parent)
     prev = b
   end
 
-  P.signups = UI.List(d, 410, 150, 18,
+  P.signups = UI.List(d, 410, 126, 18,
     function(row)
       row.name = UI.Label(row, "", "GameFontHighlightSmall")
       row.name:SetPoint("LEFT", 4, 0)
@@ -229,10 +274,11 @@ local function BuildEventView(parent)
     end,
     function(row, s)
       row.name:SetText(Ambiguate(s.name, "short"))
+      row.name:SetTextColor(UI.ClassColor(s.classFile))
       row.role:SetText(ROLE_TEXT[s.role])
       row.status:SetText(s.noShow and "|cffff6060No-show|r" or STATUS_TEXT[s.status])
     end)
-  P.signups.frame:SetPoint("TOPLEFT", 0, -148)
+  P.signups.frame:SetPoint("TOPLEFT", 0, -174)
 
   d.invite = UI.Button(d, "Invite sign-ups", 130)
   d.invite:SetPoint("TOPLEFT", 0, -306)
@@ -381,7 +427,9 @@ local function Build(page)
       row.title:SetText(e.title)
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
-      row.count:SetText(("|cff40ff40%d|r%s"):format(c.accept, mine and (" " .. STATUS_TEXT[mine.status]) or ""))
+      local short = c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0
+      row.count:SetText(("%s|cff40ff40%d|r%s"):format(short and "|cffff9900!|r " or "", c.accept,
+        mine and (" " .. STATUS_TEXT[mine.status]) or ""))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -28)
 

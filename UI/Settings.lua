@@ -63,6 +63,7 @@ local function Refresh()
   P.warn:SetChecked(db.warning)
   P.quietInstances:SetChecked(db.quietInstances)
   P.quietCombat:SetChecked(db.quietCombat)
+  P.recap:SetChecked(db.weeklyRecap)
   P.pins:SetChecked(db.mapPins)
   P.pinSlider:SetQuietly(db.pinHours)
   P.pinValue:SetText(formatHours(db.pinHours))
@@ -208,6 +209,18 @@ local function Build(page)
     GameTooltip:Show()
   end)
   P.pinSlider:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  y = y - 34
+
+  y = Section(content, "Weekly recap", x + 4, y)
+  P.recap = UI.Check(content, "Show last week's recap after the Tuesday reset", x, y)
+  P.recap:SetScript("OnClick", function(self) ns.db.weeklyRecap = self:GetChecked() and true or false end)
+  y = y - ROW
+  local recapNow = UI.Button(content, "Show last week", 120)
+  recapNow:SetPoint("TOPLEFT", x + 30, y - 2)
+  recapNow:SetScript("OnClick", function() ns.ShowRecap(-1) end)
+  local recapWeek = UI.Button(content, "This week so far", 130)
+  recapWeek:SetPoint("LEFT", recapNow, "RIGHT", 6, 0)
+  recapWeek:SetScript("OnClick", function() ns.ShowRecap(0) end)
   y = y - 34
 
   local test = UI.Button(content, "Show test alert", 130)

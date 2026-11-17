@@ -27,6 +27,10 @@ Install **The Imperium** from CurseForge, and everything else is shared with the
 | Officers | A log of guild changes (officers only). |
 | Addon | Who in the guild has the addon, and which version. |
 
+## The weekly recap
+
+After the Tuesday reset, you get a short summary of the guild's last week in chat: enemy players killed and the top three head hunters, guild members killed by enemy players, raid nights and bosses, and loot handed out. If you're offline at the reset, it shows at your next login. Turn it off in **Settings** (Weekly recap), where you can also show it again.
+
 ## Choose your alerts
 
 Open **Settings**. The **Just for you** column is yours to change; the **Guild-wide** column is set by officers, and anything turned off there is greyed out for everyone.

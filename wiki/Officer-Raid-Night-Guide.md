@@ -5,7 +5,7 @@ Schedule the raid a day ahead, invite with one click, start the raid, auction th
 ## Before raid night
 
 1. **Schedule the raid.** On the **Raids** tab, click **New raid** and fill in the name, day, start time and any notes. Times are entered in your own time zone; everyone sees them in theirs.
-2. **Check sign-ups** the day before. Pick the raid on the left to see who accepted, by role.
+2. **Check sign-ups** the day before. Pick the raid on the left to see who accepted, by role and class. The orange warning under the counts shows any gaps (too few tanks or healers, or a class nobody signed up with), and an orange **!** in the list marks raids that have them. An hour before the start, officers also get a chat line about any gaps that are left.
 3. **Check versions.** On the **Addon** tab, filter to **Out of date** and remind those people to update.
 4. **Set the DKP rules once** on the DKP tab (see [Officer DKP Management](Officer-DKP-Management)).
 

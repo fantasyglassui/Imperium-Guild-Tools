@@ -17,6 +17,8 @@ All commands start with `/imperium` (or the short `/imp`).
 | `/imperium quiet` | Hold alerts during combat, on or off |
 | `/imperium minimap` | Show or hide the minimap button |
 | `/imperium sync` | Catch up on guild history now |
+| `/imperium recap` | Last week's guild recap |
+| `/imperium recap now` | This week's recap so far |
 | `/imperium updates` | What changed in recent versions |
 | `/imperium versions` | Ask guildmates which version they have |
 | `/imperium version` | Your version, plus any problems the addon has hit |

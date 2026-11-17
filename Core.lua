@@ -472,6 +472,8 @@ SlashCmdList.THEIMPERIUM = function(input)
     if ns.CheckVersions then ns.CheckVersions() end
   elseif msg == "updates" or msg == "news" or msg == "changes" then
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
+  elseif msg == "recap" or msg == "recap now" or msg == "recap week" then
+    if ns.ShowRecap then ns.ShowRecap(msg == "recap" and -1 or 0) end
   elseif msg == "version" then
     ns.Say("Version " .. ns.version .. (ns.QueueSize() > 0 and (" (" .. ns.QueueSize() .. " messages waiting to send)") or ""))
     if #ns.loadErrors > 0 then
@@ -496,6 +498,7 @@ SlashCmdList.THEIMPERIUM = function(input)
     print("  /imperium addon - see who has the addon installed")
     print("  /imperium versions - check which version guildmates have")
     print("  /imperium debug - show error details in chat (troubleshooting)")
+    print("  /imperium recap - last week's guild recap (/imperium recap now: this week so far)")
     print("  /imperium updates - show what changed in recent versions")
     print("  /imperium version - show your installed version")
   end
