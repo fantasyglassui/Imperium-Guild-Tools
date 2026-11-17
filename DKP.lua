@@ -495,6 +495,14 @@ local WEEK_START = 486000 -- weeks start Tuesday 15:00 UTC (the US weekly reset)
 
 local function weekOf(t) return math.floor((t - WEEK_START) / WEEK) end
 
+-- A raid week (Tuesday reset to Tuesday reset) as a time range.
+-- offset 0 = this week, -1 = last week. Returns its start, its end and its number.
+function ns.WeekRange(offset)
+  local w = weekOf(GetServerTime()) + (offset or 0)
+  local fromT = WEEK_START + w * WEEK
+  return fromT, fromT + WEEK, w
+end
+
 -- { decay = percent, auto = weekly decay on, hidden = hidden bids on, t = when set }
 function ns.DKPRules()
   local list = ns.LedgerEntries("DS")

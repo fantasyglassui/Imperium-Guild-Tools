@@ -6,7 +6,8 @@ The official addon of The Imperium for World of Warcraft: Forever.
 
 ## Features
 
-- **Raid sign-ups.** Officers schedule raids; members sign up by role and get a reminder before the raid.
+- **Raid sign-ups.** Officers schedule raids; members sign up by role and get a reminder before the raid. The Raids tab shows who's coming by class and warns when a raid is short of tanks, healers or a class.
+- **Weekly recap.** After the Tuesday reset, a summary of the guild's week: kills and top head hunters, raids, bosses and loot.
 - **DKP.** Earned on time and every hour of a raid, or awarded by officers. Spent by bidding on loot in live auctions.
 - **Death alerts.** When a guild member dies, everyone in the guild running the addon gets an alert in chat and in the middle of the screen, with a sound. Two kinds of death are covered: world PvP, and falling, drowning or fatigue. Deaths to monsters, and deaths in battlegrounds and arenas, are not announced.
 - **PvP kill alerts.** When a guild member kills an enemy player, the guild hears about it. Guildmates who take down the same player together share one alert.

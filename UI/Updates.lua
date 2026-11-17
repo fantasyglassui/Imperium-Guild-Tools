@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "2.11.0", date = "Nov 17, 2026", items = {
+    "Raid makeup: the Raids tab shows who's coming by class and warns when a raid is short of tanks or healers, or has a class nobody signed up with. Raids with gaps get an orange ! in the list.",
+    "Officers get a heads-up an hour before a raid if its makeup has gaps.",
+    "Weekly recap: after the Tuesday reset you get a summary of the guild's week in chat: kills, top head hunters, raids, bosses and loot. Turn it off in Settings, or type /imperium recap to see it again.",
+  } },
   { version = "2.10.0", date = "Nov 16, 2026", items = {
     "Top Head Hunters now starts fresh on the 1st of each month. Switch to Last month or All time on the Kills tab to see earlier standings.",
     "On reset day (the 1st), the guild hears last month's top three head hunters. Last month's champion is also shown under the board.",

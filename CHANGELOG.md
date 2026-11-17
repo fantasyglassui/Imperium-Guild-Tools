@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.11.0
+- New: raid makeup check. The Raids tab lists who has accepted by class (in class colors, with names colored too) and warns about gaps: too few tanks (2 wanted from 10 players, otherwise 1), too few healers (about one per five players), with tentative sign-ups for that role noted. Once 10 have accepted, it also names any class that has max-level members in the guild but nobody signed up. Hover the warning for the details. Raids with gaps get an orange "!" in the Upcoming raids list.
+- New: an hour before a scheduled raid, officers get one chat line about any gaps in its makeup.
+- New: weekly recap. After the Tuesday reset, everyone gets a short summary of the guild's last week in chat: enemy players killed and the top three head hunters, guild members killed by enemy players and who killed us most, raid nights and bosses killed, and loot handed out with the biggest buy. Anyone offline at the reset sees it at their next login. It's skipped for quiet weeks and for a fresh install. Turn it off, or show it again, in Settings (Weekly recap), or type /imperium recap (or /imperium recap now for this week so far).
+
 ## 2.10.0
 - Top Head Hunters resets monthly. The Kills tab shows this month by default (the board's title names the month); switch to Last month, Last 7 days or All time to see earlier standings. Months follow the realm's clock, so everyone resets at the same moment.
 - Reset-day announcement: on the 1st, everyone online hears last month's top three head hunters, with the champion in the middle of the screen. Anyone who wasn't on that day hears it at their first login that week. Last month's champion is also shown under the board.

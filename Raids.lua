@@ -71,6 +71,83 @@ function ns.SignupCounts(eventId)
   return counts
 end
 
+------------------------------------------------------------------------
+-- Raid makeup: who's coming by role and class, and what's missing
+------------------------------------------------------------------------
+local ROLE_WORDS = { tank = { "tank", "tanks" }, healer = { "healer", "healers" } }
+local CLASS_CHECK_FROM = 10 -- only point out missing classes once this many have accepted
+
+local function plural(n, role) return ROLE_WORDS[role][n == 1 and 1 or 2] end
+
+local function joinOr(list)
+  if #list <= 1 then return list[1] or "" end
+  return table.concat(list, ", ", 1, #list - 1) .. " or " .. list[#list]
+end
+
+-- How many tanks and healers a raid of this size wants.
+function ns.RolesWanted(players)
+  return players >= 10 and 2 or 1, math.max(1, math.ceil(players / 5))
+end
+
+-- Accepted and tentative sign-ups by role and class, plus the gaps:
+-- { accept, tentative, roles = {tank, healer, dps}, maybe = {...},
+--   classes = { {classFile, name, count}, ... }, classOf = {key -> classFile}, warnings = { text, ... } }
+function ns.RaidMakeup(eventId)
+  local classOf, classNames, inGuild = {}, {}, {}
+  local maxLevel = (GetMaxPlayerLevel and GetMaxPlayerLevel()) or 0
+  for _, m in ipairs(ns.GetRoster()) do
+    if m.classFile then
+      classOf[ns.Key(m.name)] = m.classFile
+      classNames[m.classFile] = (m.className ~= "" and m.className) or m.classFile
+      if m.level >= maxLevel then inGuild[m.classFile] = true end
+    end
+  end
+
+  local mk = { accept = 0, tentative = 0, roles = { tank = 0, healer = 0, dps = 0 },
+    maybe = { tank = 0, healer = 0, dps = 0 }, classes = {}, classOf = classOf, warnings = {} }
+  local byClass = {}
+  for _, su in ipairs((ns.Signups(eventId))) do
+    if su.status == "accept" then
+      mk.accept = mk.accept + 1
+      mk.roles[su.role] = mk.roles[su.role] + 1
+      local cls = classOf[ns.Key(su.name)]
+      if cls then byClass[cls] = (byClass[cls] or 0) + 1 end
+    elseif su.status == "tentative" then
+      mk.tentative = mk.tentative + 1
+      mk.maybe[su.role] = mk.maybe[su.role] + 1
+    end
+  end
+  for cls, n in pairs(byClass) do
+    mk.classes[#mk.classes + 1] = { classFile = cls, name = classNames[cls] or cls, count = n }
+  end
+  table.sort(mk.classes, function(a, b)
+    if a.count ~= b.count then return a.count > b.count end
+    return a.name < b.name
+  end)
+
+  if mk.accept == 0 then return mk end
+  local wantTanks, wantHealers = ns.RolesWanted(mk.accept)
+  for _, need in ipairs({ { "tank", wantTanks }, { "healer", wantHealers } }) do
+    local role, want = need[1], need[2]
+    local have = mk.roles[role]
+    if have < want then
+      local text = have == 0 and ("No " .. plural(2, role)) or ("Only " .. have .. " " .. plural(have, role))
+      text = text .. (" (%d wanted for %d players)"):format(want, mk.accept)
+      if mk.maybe[role] > 0 then text = text .. (", %d tentative"):format(mk.maybe[role]) end
+      mk.warnings[#mk.warnings + 1] = text
+    end
+  end
+  if mk.accept >= CLASS_CHECK_FROM then
+    local missing = {}
+    for cls in pairs(inGuild) do
+      if not byClass[cls] then missing[#missing + 1] = classNames[cls] end
+    end
+    table.sort(missing)
+    if #missing > 0 then mk.warnings[#mk.warnings + 1] = "No " .. joinOr(missing) .. " signed up" end
+  end
+  return mk
+end
+
 function ns.MySignup(eventId)
   local _, byKey = ns.Signups(eventId)
   return byKey[ns.Key(UnitName("player"))]
@@ -432,9 +509,21 @@ end
 ------------------------------------------------------------------------
 -- Reminders
 ------------------------------------------------------------------------
+local MAKEUP_WARN_BEFORE = 60 * 60
+
 local function remind()
   local now = time()
   for _, e in ipairs(ns.RaidEvents()) do
+    -- An hour before, officers hear about any gaps in the raid's makeup.
+    if e.start > now and e.start - now <= MAKEUP_WARN_BEFORE and not ns.db.reminded[e.id .. "#makeup"]
+        and ns.IsAddonOfficer() then
+      ns.db.reminded[e.id .. "#makeup"] = true
+      local mk = ns.RaidMakeup(e.id)
+      if #mk.warnings > 0 then
+        ns.Say(("|cffff9900%s in %d min, %d signed up:|r %s."):format(e.title,
+          math.max(1, math.floor((e.start - now) / 60)), mk.accept, table.concat(mk.warnings, "; ")))
+      end
+    end
     local mine = ns.MySignup(e.id)
     if e.start > now and e.start - now <= REMIND_BEFORE and not ns.db.reminded[e.id]
         and mine and mine.status ~= "decline" then

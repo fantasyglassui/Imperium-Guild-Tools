@@ -179,7 +179,9 @@ function GetNumGuildMembers() return #guildRoster end
 function GetGuildRosterInfo(i)
   local r = guildRoster[i]
   if not r then return end
-  return r[1] .. "-Realm", "Rank " .. r[2], r[2], 60, "Class", "Zone", "", "", r[3] ~= false, 0, r[4] or "WARRIOR",
+  local classFile = r[4] or "WARRIOR"
+  local className = classFile:sub(1, 1) .. classFile:sub(2):lower() -- "PRIEST" -> "Priest"
+  return r[1] .. "-Realm", "Rank " .. r[2], r[2], r[5] or 60, className, "Zone", "", "", r[3] ~= false, 0, classFile,
     0, 0, false, false, 0, "Player-" .. i
 end
 function GuildControlGetNumRanks() return 10 end
