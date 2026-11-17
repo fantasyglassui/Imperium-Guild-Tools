@@ -145,7 +145,7 @@ The addon can't see killing blows, so a kill counts for you only if you actually
 
 **Killing blows and assists.** Each guild member who took part reports how long before the death they last hit the victim. Whoever hit last gets the killing blow; everyone else gets an assist. It's a best guess, since the exact blow can't be seen, but it's close. Top Head Hunters ranks by killing blows, with assists shown next to them.
 
-**Honor kills only.** Kills the game gives no honor for (victims at a grey level, far below yours) don't count, so farming low-level players doesn't climb the leaderboard. This is on for the guild by default; officers can turn it off in Settings, and members can turn it on just for themselves.
+**No grey kills.** Kills of players at a grey level (far below the killer's) are never announced or logged, so farming low-level players doesn't climb the leaderboard.
 
 **Removing bad kills.** Officers can right-click a kill on the Kills tab to remove it for the whole guild. It stays removed for everyone, including guildmates who were offline at the time.
 

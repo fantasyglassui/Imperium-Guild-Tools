@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "2.11.1", date = "Nov 17, 2026", items = {
+    "Fixed: kills of grey-level players were still being logged. Grey kills are now never announced or logged, and any already in your Kills tab are cleared out.",
+  } },
   { version = "2.11.0", date = "Nov 17, 2026", items = {
     "Raid makeup: the Raids tab shows who's coming by class and warns when a raid is short of tanks or healers, or has a class nobody signed up with. Raids with gaps get an orange ! in the list.",
     "Officers get a heads-up an hour before a raid if its makeup has gaps.",
