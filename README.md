@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
 
-The official addon of **<The Imperium>** for World of Warcraft: Forever.
+The official addon of The Imperium for World of Warcraft: Forever.
 
 ## Features
 
