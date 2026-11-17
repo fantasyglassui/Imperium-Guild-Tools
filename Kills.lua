@@ -405,9 +405,9 @@ local ANNOUNCE_DAYS = 7
 
 local function announceChampion()
   if not ns.db then return end
-  local fromT, toT, name, key = ns.MonthRange(-1)
-  if ns.db.championMonth == key then return end
-  ns.db.championMonth = key
+  local fromT, toT, name, monthKey = ns.MonthRange(-1)
+  if ns.db.championMonth == monthKey then return end
+  ns.db.championMonth = monthKey
   if GetServerTime() - toT > ANNOUNCE_DAYS * 86400 then return end -- old news
   local top = ns.KillStats(ns.QueryKills("all", fromT, toT), 3)
   if not top[1] or top[1].count == 0 then return end
@@ -465,10 +465,10 @@ ns.OnMessage("K", function(parts, sender)
   if parts[8] == "1" then honor = true elseif parts[8] == "0" then honor = false end
   local k = key(victim)
   local who = Ambiguate(sender, "short")
-  local report = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor }
+  local thisReport = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor }
   local p = pending[k]
   if p then
-    combine(p, report)
+    combine(p, thisReport)
     return
   end
   pending[k] = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor,

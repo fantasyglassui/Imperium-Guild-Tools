@@ -10,6 +10,7 @@
 ## AddonCompartmentFuncOnLeave: TheImperium_OnAddonCompartmentLeave
 ## OptionalDeps: TomTom, OpenMap
 ## SavedVariables: TheImperiumDB
+## X-Curse-Project-ID: 1803056
 
 Core.lua
 Release.lua
