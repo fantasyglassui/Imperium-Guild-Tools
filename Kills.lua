@@ -16,9 +16,12 @@
   the victim. The one who hit closest to the death gets the killing blow, the
   rest get assists. It's a best guess, since the exact blow can't be seen.
 
-  Honor: a kill is honorable if the game gave honor for it, or failing that,
-  if the victim wasn't a grey (much lower) level. Guilds can count honor kills
-  only. Officers can remove a bad kill for the whole guild.
+  Grey kills: a victim whose level is grey (far below the killer's, giving no
+  honor) isn't reported, alerted or logged at all, whatever the game says about
+  honor. When the victim's level couldn't be seen, the game's honor message
+  decides. Guildmates' reports are checked against the killers' levels too,
+  so grey kills from older versions are dropped, and any already in the log
+  are cleared out. Officers can remove other bad kills for the whole guild.
 ]]
 
 local _, ns = ...
@@ -74,13 +77,17 @@ local function report(e)
   local gap = math.max(0, diedAt - e.time) -- how long before the death you last hit them
   -- Wait a moment for the game's honor message, then report.
   C_Timer.After(REPORT_DELAY, function()
-    local honor = honorSeen[k] and math.abs(honorSeen[k] - diedAt) <= 5
-    if not honor and e.level then
-      local mine = ns.Usable(UnitLevel("player"))
-      -- No honor message: judge by level (a level of -1 means "??", far higher).
-      honor = e.level < 0 or not mine or e.level > greyLevel(mine)
+    local honor
+    local mine = tonumber(ns.Usable(UnitLevel("player")))
+    if e.level and e.level < 0 then
+      honor = true -- "??": far above your level
+    elseif e.level and mine then
+      honor = e.level > greyLevel(mine) -- the level decides, even if the game gave honor
+    else
+      honor = honorSeen[k] and math.abs(honorSeen[k] - diedAt) <= 5 -- level unknown: go by the game
     end
-    ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", honor and "1" or "0")
+    if not honor then return end -- grey kills aren't reported at all
+    ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", "1")
   end)
 end
 
@@ -230,16 +237,42 @@ function ns.Assists(k)
   return out
 end
 
--- Honor kills only, for the guild or just for you.
-function ns.HonorOnly()
-  return (ns.cfg and ns.cfg.types.kill_honor) or (ns.db and ns.db.show.kill_honor) or false
+-- Guild members' levels, to check guildmates' reports for grey kills.
+local levels, levelsAt = {}, nil
+local function memberLevel(name)
+  local now = GetTime()
+  if not levelsAt or now - levelsAt > 30 or (next(levels) == nil and now - levelsAt > 2) then
+    levels, levelsAt = {}, now
+    for _, m in ipairs(ns.GetRoster()) do
+      local lv = tonumber(ns.Usable(m.level))
+      if lv and lv > 0 then levels[key(m.name)] = lv end
+    end
+  end
+  return levels[key(name)]
 end
 
--- Hidden while honor kills only is on. (Kills from older versions, with no
--- honor information, still count.)
-function ns.KillHidden(k)
-  return k.honor == false and ns.HonorOnly()
+-- A grey kill: the victim's level is grey to every killer whose level is
+-- known, or, without levels to go on, the report said there was no honor.
+-- (Kills from older versions with no honor information still count.)
+function ns.IsGreyKill(k)
+  local victim = tonumber(k.level)
+  if victim and victim >= 0 then
+    local judged = false
+    for _, name in ipairs(k.killers or {}) do
+      local lv = memberLevel(name)
+      if lv then
+        judged = true
+        if victim > greyLevel(lv) then return false end
+      end
+    end
+    if judged then return true end
+  end
+  return k.honor == false
 end
+
+-- Grey kills always are left out now. (Kept for anything that still asks.)
+function ns.HonorOnly() return true end
+function ns.KillHidden(k) return ns.IsGreyKill(k) end
 
 function ns.DescribeKill(k)
   local line = ("%s killed %s in %s"):format(ns.KillingBlow(k), k.victim, k.zone)
@@ -306,6 +339,23 @@ ns.OnLoad(function()
   end)
 end)
 
+-- Clear grey kills out of the log (from older versions, which logged them).
+-- Waits for the guild roster, since killers' levels decide.
+function ns.PurgeGreyKills()
+  local log, dropped = ns.db.killLog, 0
+  for i = #log, 1, -1 do
+    if ns.IsGreyKill(log[i]) then
+      table.remove(log, i)
+      dropped = dropped + 1
+    end
+  end
+  if dropped > 0 and ns.OnHistoryChanged then ns.OnHistoryChanged() end
+  return dropped
+end
+table.insert(ns.OnGuildReady, function()
+  C_Timer.After(20, ns.PurgeGreyKills)
+end)
+
 -- Combine another report of the same kill into an entry: every killer,
 -- the closest hit timing for each, the highest level seen, and honor if any
 -- report had it.
@@ -332,6 +382,7 @@ end
 function ns.MergeKill(k)
   if ns.IsWiped and ns.IsWiped("kills", k.t) then return false end
   if ns.KillRemoved(k) then return false end
+  if ns.IsGreyKill(k) then return false end
   local victim = key(k.victim)
   for _, old in ipairs(ns.db.killLog) do
     if key(old.victim) == victim and math.abs(old.t - k.t) <= SAME_KILL_LOGGED then
@@ -552,6 +603,7 @@ end
 local function mergeSynced(k)
   if ns.IsWiped and ns.IsWiped("kills", k.t) then return end
   if ns.KillRemoved(k) then return end
+  if ns.IsGreyKill(k) then return end
   local victim = key(k.victim)
   local match
   for _, old in ipairs(ns.db.killLog) do

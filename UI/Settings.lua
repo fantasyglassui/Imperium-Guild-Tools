@@ -76,13 +76,15 @@ end
 local function TypeList(page, x, y, makeCheck)
   local group
   for _, t in ipairs(ns.TYPES) do
-    if t.group ~= group then
-      group = t.group
-      UI.Label(page, ns.GROUP_LABELS[group], "GameFontNormalSmall"):SetPoint("TOPLEFT", x + 4, y - 4)
-      y = y - 18
+    if not t.hidden then -- hidden: no longer a choice
+      if t.group ~= group then
+        group = t.group
+        UI.Label(page, ns.GROUP_LABELS[group], "GameFontNormalSmall"):SetPoint("TOPLEFT", x + 4, y - 4)
+        y = y - 18
+      end
+      makeCheck(t, x, y)
+      y = y - ROW
     end
-    makeCheck(t, x, y)
-    y = y - ROW
   end
   return y
 end
