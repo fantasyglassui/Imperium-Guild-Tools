@@ -161,3 +161,11 @@ Healers who only healed don't get credit, since healing isn't an attack.
 - Alert settings can be changed by the Guild Master and the rank directly below by default. The Guild Master can change which ranks are allowed in the Alert Settings tab.
 - Settings reach everyone who is online when you save. Members who log in later get the current settings from any online officer.
 - The **Addon** tab shows who has the addon and who needs to update. Click **Check now** to ask everyone online.
+
+## More help
+
+The [wiki](https://github.com/fantasyglassui/Imperium-Guild-Tools/wiki) has step-by-step guides for members and officers.
+
+## License
+
+The Imperium is released under the [MIT License](LICENSE).
