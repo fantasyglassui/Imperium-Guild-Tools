@@ -36,6 +36,10 @@ From then on, every tag you push uploads to CurseForge as well.
 
 Check that CurseForge lists WoW Forever as a game version for your upload. The packager picks the game version from the `## Interface:` number, and if CurseForge doesn't recognize 16001 yet you may need to set the game version by hand on the CurseForge file page.
 
+## Editing the wiki
+
+The wiki's pages live in the `wiki/` folder. When changes to them reach `main`, the "Publish wiki" workflow copies them to the repository's Wiki tab. Edit the pages here rather than on the Wiki tab, since the next run overwrites edits made there. To publish by hand, open **Actions > Publish wiki > Run workflow**.
+
 ## What's in the release zip
 
-The packager leaves out `DISTRIBUTION.md`, `.gitignore` and the `.github` folder, so players only get the addon itself.
+The packager leaves out `DISTRIBUTION.md`, `.gitignore`, the `wiki` folder and the `.github` folder, so players only get the addon itself.
