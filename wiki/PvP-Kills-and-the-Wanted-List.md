@@ -6,7 +6,7 @@ When a guild member kills an enemy player, the whole guild hears about it, and t
 
 - **You have to attack.** A kill counts only if you hit the enemy (a damaging spell, melee, shooting, or your pet) in the 10 seconds before they died. Being in the party or just targeting them isn't enough.
 - **Killing blows and assists.** Whoever hit last gets the killing blow; everyone else who helped gets an assist.
-- **Honor kills only.** Kills of grey, much lower-level players don't count, so farming lowbies doesn't climb the board. (Officers can change this.)
+- **No grey kills.** Kills of grey, much lower-level players are never announced or logged, so farming lowbies doesn't climb the board.
 
 The game doesn't tell addons who landed the killing blow, so the addon works it out from what it can see. Turn on **enemy nameplates** (V) so it can see the fight.
 
