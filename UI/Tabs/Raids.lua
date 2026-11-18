@@ -298,6 +298,10 @@ local function BuildEventView(parent)
   d.noShows = UI.Label(d, "", "GameFontHighlightSmall")
   d.noShows:SetPoint("TOPLEFT", 0, -336)
   d.noShows:SetWidth(410)
+
+  local page = parent:GetParent()
+  UI.Grow(page, P.signups, 1, 1)
+  UI.FollowAll(page, { d.invite, d.noShows }, 0, 1)
 end
 
 local function BuildGroupView(parent)
@@ -332,13 +336,18 @@ local function BuildGroupView(parent)
     end)
   P.group.frame:SetPoint("TOPLEFT", 0, -88)
   P.group.frame:SetHeight(200)
+  P.group.height = 200
 
-  UI.Label(g, "Standby", "GameFontNormal"):SetPoint("TOPLEFT", 0, -296)
+  local standbyLabel = UI.Label(g, "Standby", "GameFontNormal")
+  standbyLabel:SetPoint("TOPLEFT", 0, -296)
   P.standbyText = UI.Label(g, "", "GameFontHighlightSmall")
   P.standbyText:SetPoint("TOPLEFT", 0, -314)
   P.standbyText:SetWidth(410)
   P.standbyName = UI.EditBox(g, 140, 40)
   P.standbyName:SetPoint("TOPLEFT", 6, -346)
+  local page = parent:GetParent()
+  UI.Grow(page, P.group, 1, 1)
+  UI.FollowAll(page, { standbyLabel, P.standbyText, P.standbyName }, 0, 1)
   P.standbyAdd = UI.Button(g, "Add to standby", 120)
   P.standbyAdd:SetPoint("LEFT", P.standbyName, "RIGHT", 8, 0)
   UI.Tooltip(P.standbyAdd, "Add to standby", "Puts the guild member named in the box on standby for tonight's raid night. They earn the same DKP as the raid, and count as attending.")
@@ -454,7 +463,8 @@ local function Build(page)
   end)
 
   -- Raid session (attendance DKP)
-  UI.Label(page, "Raid night", "GameFontNormalLarge"):SetPoint("TOPLEFT", 8, -268)
+  local nightLabel = UI.Label(page, "Raid night", "GameFontNormalLarge")
+  nightLabel:SetPoint("TOPLEFT", 8, -268)
   P.sessionText = UI.Label(page, "", "GameFontHighlightSmall")
   P.sessionText:SetPoint("TOPLEFT", 8, -292)
   P.sessionText:SetWidth(300)
@@ -507,6 +517,11 @@ local function Build(page)
   BuildEventView(right)
   BuildGroupView(right)
   BuildNewView(right)
+
+  -- A bigger window: more upcoming raids show, and the raid night controls move down.
+  UI.Grow(page, P.list, 0, 1)
+  UI.FollowAll(page, { P.newButton, nightLabel, P.sessionText, P.onTimeLabel, P.onTime, P.hourlyLabel, P.hourly,
+    P.bossLabel, P.boss, P.sessionButton }, 0, 1)
 end
 
 UI.AddTab({ id = "raids", title = "Raids", build = Build, refresh = Refresh })

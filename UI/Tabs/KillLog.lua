@@ -133,6 +133,7 @@ end
 
 local function BuildTable(page)
   local card = CreateFrame("Frame", nil, page)
+  P.card = card
   card:SetPoint("TOPLEFT", 1, -1)
   card:SetSize(TABLE_W - 2, 420)
   UI.Card(card, 1)
@@ -210,12 +211,13 @@ local function BuildTable(page)
 
   -- Under the table: how kills are credited, and the Guild Master's Clear log.
   local note = UI.Label(page, "Killer: whoever hit closest to the death (a best guess).", "MutedSmall")
+  P.note = note
   note:SetPoint("TOPLEFT", 4, -431)
   note:SetWidth(TABLE_W - 100)
   note:SetWordWrap(false)
   P.clear = UI.Button(page, "Clear log", 80)
   P.clear:SetHeight(20)
-  P.clear:SetPoint("TOPRIGHT", page, "TOPLEFT", TABLE_W, -426)
+  P.clear:SetPoint("TOPLEFT", page, "TOPLEFT", TABLE_W - 80, -426)
   P.clear:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_CLEAR_KILLS") end)
   UI.Tooltip(P.clear, "Clear the kill log", "Clears the kill log and the leaderboard for the whole guild. Only the Guild Master can do this, and you'll be asked to confirm.")
 end
@@ -223,6 +225,7 @@ end
 local function BuildSide(page)
   -- Who's leading.
   local lead = CreateFrame("Frame", nil, page)
+  P.lead = lead
   lead:SetPoint("TOPLEFT", SIDE_X + 1, -1)
   lead:SetSize(SIDE_W - 2, 82)
   UI.Card(lead, 1)
@@ -241,6 +244,7 @@ local function BuildSide(page)
 
   -- Top Head Hunters.
   local board = CreateFrame("Frame", nil, page)
+  P.boardCard = board
   board:SetPoint("TOPLEFT", SIDE_X + 1, -95)
   board:SetSize(SIDE_W - 2, 354)
   UI.Card(board, 1)
@@ -321,6 +325,14 @@ local function Build(page)
   BuildHeader(page.headerBar)
   BuildTable(page)
   BuildSide(page)
+
+  -- A bigger window: the table gets the extra room; the cards on the right move over.
+  UI.Grow(page, P.card, 1, 1)
+  UI.Grow(page, P.list, 1, 1)
+  UI.Follow(page, P.note, 0, 1)
+  UI.Follow(page, P.clear, 1, 1)
+  UI.FollowAll(page, { P.lead, P.boardCard }, 1, 0)
+  UI.Grow(page, P.boardCard, 0, 1)
 end
 
 UI.AddTab({ id = "kills", title = "Kills", build = Build, refresh = Refresh, subtitle = Subtitle })

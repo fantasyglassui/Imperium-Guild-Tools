@@ -53,6 +53,7 @@ local function Build(page)
       row.text:SetText(ns.DescribeAction(e))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -56)
+  UI.Grow(page, P.list, 1, 1)
   P.list:SetEmptyText("Nothing recorded yet. Promotions, demotions, joins, leaves and kicks show here once they happen while you're online.")
 end
 

@@ -261,7 +261,8 @@ local function Build(page)
   d.cancel:SetScript("OnClick", hideRemoveConfirm)
 
   -- Invite
-  UI.Label(page, "Invite player", "GameFontNormalSmall"):SetPoint("TOPLEFT", 8, -304)
+  local inviteLabel = UI.Label(page, "Invite player", "GameFontNormalSmall")
+  inviteLabel:SetPoint("TOPLEFT", 8, -304)
   P.inviteBox = UI.EditBox(page, 180, 60)
   P.inviteBox:SetPoint("TOPLEFT", 14, -318)
   P.inviteBtn = UI.SecureButton(page, "Invite", 80)
@@ -277,7 +278,8 @@ local function Build(page)
   end)
 
   -- Message of the day
-  UI.Label(page, "Message of the day", "GameFontNormalSmall"):SetPoint("TOPLEFT", 8, -348)
+  local motdLabel = UI.Label(page, "Message of the day", "GameFontNormalSmall")
+  motdLabel:SetPoint("TOPLEFT", 8, -348)
   P.motdBox = UI.EditBox(page, 540, 128)
   P.motdBox:SetPoint("TOPLEFT", 14, -362)
   P.motdBtn = UI.SecureButton(page, "Save", 80)
@@ -292,6 +294,11 @@ local function Build(page)
     if ns.LogAction then ns.LogAction("motd") end
     C_Timer.After(1, ns.RequestRoster)
   end)
+
+  -- A bigger window: a longer roster, and the invite and message boxes move down.
+  UI.Grow(page, P.list, 0, 1)
+  UI.FollowAll(page, { P.count, inviteLabel, P.inviteBox, motdLabel, P.motdBox }, 0, 1)
+  UI.Grow(page, P.motdBox, 1, 0)
 end
 
 UI.AddTab({ id = "roster", title = "Roster", build = Build, refresh = Refresh })

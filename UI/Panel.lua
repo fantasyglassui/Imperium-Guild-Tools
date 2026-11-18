@@ -10,9 +10,11 @@ local ICON = ns.PORTRAIT
 local panel
 local current = 1
 
-local WIDTH, HEIGHT = 910, 520
+local WIDTH, HEIGHT = 910, 520           -- the smallest the window can be
+local MAX_WIDTH, MAX_HEIGHT = 1600, 1000
 local SIDEBAR = 150   -- width of the side menu
 local HEADER = 52     -- height of the header above each tab
+local MIN_SCALE, MAX_SCALE = 0.7, 1.5
 
 -- Icon and one-line description for each tab, by its id.
 local TAB_INFO = {
@@ -110,6 +112,17 @@ local function CreatePanel()
   panel:RegisterForDrag("LeftButton")
   panel:SetScript("OnDragStart", panel.StartMoving)
   panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
+  -- Resizable from the corner, back to the size it was left at.
+  panel:SetResizable(true)
+  if panel.SetResizeBounds then
+    panel:SetResizeBounds(WIDTH, HEIGHT, MAX_WIDTH, MAX_HEIGHT)
+  elseif panel.SetMinResize then
+    panel:SetMinResize(WIDTH, HEIGHT)
+    panel:SetMaxResize(MAX_WIDTH, MAX_HEIGHT)
+  end
+  panel:SetSize(math.max(WIDTH, math.min(MAX_WIDTH, ns.db.panelWidth or WIDTH)),
+    math.max(HEIGHT, math.min(MAX_HEIGHT, ns.db.panelHeight or HEIGHT)))
+  panel:SetScale(ns.db.panelScale or 1)
   panel:Hide()
   tinsert(UISpecialFrames, "TheImperiumPanel") -- Escape closes it
   UI.Fill(panel, C.window)
@@ -158,6 +171,21 @@ local function CreatePanel()
   close:SetSize(26, 26)
   close:SetPoint("TOPRIGHT", -12, -13)
 
+  -- The corner handle for resizing.
+  local grip = CreateFrame("Button", nil, panel)
+  grip:SetSize(16, 16)
+  grip:SetPoint("BOTTOMRIGHT", -3, 3)
+  grip:SetFrameLevel(panel:GetFrameLevel() + 20)
+  local gripIcon = UI.Icon(grip, "grip", 16, C.faint)
+  gripIcon:SetAllPoints()
+  grip:SetScript("OnEnter", function() gripIcon:SetVertexColor(C.accent[1], C.accent[2], C.accent[3]) end)
+  grip:SetScript("OnLeave", function() gripIcon:SetVertexColor(C.faint[1], C.faint[2], C.faint[3]) end)
+  grip:SetScript("OnMouseDown", function() panel:StartSizing("BOTTOMRIGHT") end)
+  grip:SetScript("OnMouseUp", function()
+    panel:StopMovingOrSizing()
+    ns.db.panelWidth, ns.db.panelHeight = math.floor(panel:GetWidth() + 0.5), math.floor(panel:GetHeight() + 0.5)
+  end)
+
   -- One page per tab, all the same size.
   for _, t in ipairs(UI.tabs) do
     local page = CreateFrame("Frame", nil, panel)
@@ -171,6 +199,9 @@ local function CreatePanel()
     page.headerBar:SetSize(520, 26)
     t.page = page
     t.build(page)
+    -- A bigger window: the tab's lists stretch and what's below them moves down.
+    page:SetScript("OnSizeChanged", function(self, w, h) UI.ApplyGrowth(self, w, h) end)
+    UI.ApplyGrowth(page, panel:GetWidth() - SIDEBAR - 20, panel:GetHeight() - HEADER - 18)
   end
 
   panel:SetScript("OnShow", function()
@@ -188,6 +219,25 @@ local function CreatePanel()
   end
   UpdateTabVisibility()
   ShowTab(start)
+end
+
+-- Window size setting: scales the guild window and its pop-ups (text and all).
+function ns.SetPanelScale(scale)
+  scale = math.max(MIN_SCALE, math.min(MAX_SCALE, scale or 1))
+  ns.db.panelScale = scale
+  if panel then panel:SetScale(scale) end
+  for _, w in ipairs(UI.windows) do w:SetScale(scale) end
+end
+
+-- Back to the normal size, in the middle of the screen.
+function ns.ResetPanelSize()
+  ns.db.panelWidth, ns.db.panelHeight = nil, nil
+  ns.SetPanelScale(1)
+  if panel then
+    panel:SetSize(WIDTH, HEIGHT)
+    panel:ClearAllPoints()
+    panel:SetPoint("CENTER")
+  end
 end
 
 function ns.RefreshPanel()

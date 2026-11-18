@@ -64,6 +64,9 @@ local function Refresh()
   P.quietInstances:SetChecked(db.quietInstances)
   P.quietCombat:SetChecked(db.quietCombat)
   P.recap:SetChecked(db.weeklyRecap)
+  local pct = math.floor((db.panelScale or 1) * 100 + 0.5)
+  P.scaleSlider:SetQuietly(pct)
+  P.scaleValue:SetText(pct .. "%")
   P.pins:SetChecked(db.mapPins)
   P.pinSlider:SetQuietly(db.pinHours)
   P.pinValue:SetText(formatHours(db.pinHours))
@@ -224,6 +227,31 @@ local function Build(page)
   local recapWeek = UI.Button(content, "This week so far", 130)
   recapWeek:SetPoint("LEFT", recapNow, "RIGHT", 6, 0)
   recapWeek:SetScript("OnClick", function() ns.ShowRecap(0) end)
+  y = y - 34
+
+  y = Section(content, "Guild window", x + 4, y)
+  local sizeLabel = UI.Label(content, "Size", "GameFontHighlightSmall")
+  sizeLabel:SetPoint("TOPLEFT", x + 30, y - 4)
+  -- The new size applies when you let go, so the window doesn't shift under the mouse while dragging.
+  local pending
+  local function apply()
+    if pending then ns.SetPanelScale(pending / 100); pending = nil end
+  end
+  P.scaleSlider = UI.Slider(content, 120, 70, 150, 5, function(v)
+    pending = v
+    P.scaleValue:SetText(v .. "%")
+  end)
+  P.scaleSlider:SetPoint("LEFT", sizeLabel, "RIGHT", 10, 0)
+  P.scaleSlider:HookScript("OnMouseUp", apply)
+  P.scaleSlider:HookScript("OnMouseWheel", apply)
+  P.scaleValue = UI.Label(content, "", "GameFontHighlightSmall")
+  P.scaleValue:SetPoint("LEFT", P.scaleSlider, "RIGHT", 8, 0)
+  UI.Tooltip(P.scaleSlider, "Window size", "Makes this window and its pop-ups bigger or smaller, text and all. Drag, or use the mouse wheel. To show more rows instead, drag the window's bottom-right corner.")
+  y = y - ROW
+  local reset = UI.Button(content, "Reset size and position", 170)
+  reset:SetPoint("TOPLEFT", x + 30, y - 2)
+  reset:SetScript("OnClick", function() ns.ResetPanelSize(); ns.RefreshPanel() end)
+  UI.Tooltip(reset, "Reset size and position", "Puts the window back to its normal size, in the middle of the screen.")
   y = y - 34
 
   local test = UI.Button(content, "Show test alert", 130)

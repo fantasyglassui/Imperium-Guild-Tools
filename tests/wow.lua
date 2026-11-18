@@ -80,7 +80,7 @@ frames = {}
 local VALUES = {
   GetWidth = 140, GetHeight = 140, GetEffectiveScale = 1, GetStringHeight = 12, GetStringWidth = 60, GetText = "",
   GetChecked = false, IsShown = false, HasFocus = false, IsEnabled = true, IsProtected = false,
-  GetObjectType = "Frame", GetValue = 0, GetNumPoints = 0, GetID = 1, GetMapID = 0,
+  GetObjectType = "Frame", GetValue = 0, GetNumPoints = 0, GetID = 1, GetMapID = 0, GetFrameLevel = 1,
 }
 -- Where things are placed, so tests/render.py can draw the interface.
 local function layout(w)
@@ -114,6 +114,11 @@ local METHODS = {
     }
   end,
   ClearAllPoints = function(w) layout(w).points = {} end,
+  GetNumPoints = function(w) return #layout(w).points end,
+  GetPoint = function(w, i)
+    local p = layout(w).points[i or 1]
+    if p then return p.point, p.rel or rawget(w, "_parent"), p.relPoint, p.x, p.y end
+  end,
   SetSize = function(w, width, height)
     layout(w).w, layout(w).h = width, height
     rawset(w, "_GetWidth", width); rawset(w, "_GetHeight", height)

@@ -128,6 +128,8 @@ local function Build(page)
     .. "Click Check now while they're online to ask.", "GameFontDisableSmall")
   note:SetPoint("TOPLEFT", 8, -378)
   note:SetWidth(700)
+  UI.Grow(page, P.list, 1, 1)
+  UI.Follow(page, note, 0, 1)
 end
 
 UI.AddTab({ id = "addon", title = "Addon", build = Build, refresh = Refresh })

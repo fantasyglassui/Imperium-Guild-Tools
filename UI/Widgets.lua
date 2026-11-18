@@ -333,8 +333,16 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   empty:SetJustifyH("LEFT")
   empty:Hide()
 
-  local list = { frame = sf, rows = {}, empty = empty }
+  local list = { frame = sf, rows = {}, empty = empty, width = width, height = height }
   function list:SetEmptyText(text) self.emptyText = text end
+  -- A new size, rows and all (used when the window is resized).
+  function list:Resize(w, h)
+    width = w
+    sf:SetSize(w, h)
+    content:SetWidth(w - 4)
+    empty:SetWidth(w - 24)
+    for _, row in ipairs(self.rows) do row:SetWidth(w - 4) end
+  end
   function list:SetItems(items)
     for i, item in ipairs(items) do
       local row = self.rows[i]
@@ -366,8 +374,58 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
 end
 
 ------------------------------------------------------------------------
+-- Resizing: each tab says what stretches and what moves when the window is
+-- made bigger. Pages are laid out for UI.PAGE_W x UI.PAGE_H; dw and dh are
+-- how much bigger the page is than that.
+------------------------------------------------------------------------
+UI.PAGE_W, UI.PAGE_H = 740, 450
+
+local function growth(page)
+  page.growth = page.growth or {}
+  return page.growth
+end
+
+-- w (a frame, or a UI.List) gets fw x the extra width and fh x the extra height.
+function UI.Grow(page, w, fw, fh)
+  local bw = w.width or w:GetWidth()
+  local bh = w.height or w:GetHeight()
+  table.insert(growth(page), function(dw, dh)
+    local nw, nh = bw + (fw or 0) * dw, bh + (fh or 0) * dh
+    if w.frame then w:Resize(nw, nh) else w:SetSize(nw, nh) end -- a UI.List, or a frame
+  end)
+end
+
+-- w moves right by fx x the extra width and down by fy x the extra height.
+-- (Only its first anchor point moves; any others stay put.)
+function UI.Follow(page, w, fx, fy)
+  local points = {}
+  for i = 1, w:GetNumPoints() do points[i] = { w:GetPoint(i) } end
+  table.insert(growth(page), function(dw, dh)
+    w:ClearAllPoints()
+    for i, p in ipairs(points) do
+      if i == 1 then
+        w:SetPoint(p[1], p[2], p[3], p[4] + (fx or 0) * dw, p[5] - (fy or 0) * dh)
+      else
+        w:SetPoint(p[1], p[2], p[3], p[4], p[5])
+      end
+    end
+  end)
+end
+
+-- Several widgets that move together.
+function UI.FollowAll(page, list, fx, fy)
+  for _, w in ipairs(list) do UI.Follow(page, w, fx, fy) end
+end
+
+function UI.ApplyGrowth(page, width, height)
+  local dw, dh = math.max(0, width - UI.PAGE_W), math.max(0, height - UI.PAGE_H)
+  for _, apply in ipairs(page.growth or {}) do apply(dw, dh) end
+end
+
+------------------------------------------------------------------------
 -- Windows
 ------------------------------------------------------------------------
+UI.windows = {} -- every UI.Window, so the size setting can scale them
 -- A themed pop-up window with a title bar and a close button. Escape closes it
 -- unless keepOnEscape. Returns the frame, hidden; content goes below the title
 -- bar (from 32 pixels down).
@@ -407,6 +465,8 @@ function UI.Window(name, width, height, title, keepOnEscape)
   f.close:SetSize(20, 20)
   f.close:SetPoint("TOPRIGHT", -4, -4)
   if name and not keepOnEscape then tinsert(UISpecialFrames, name) end
+  f:SetScale(ns.db and ns.db.panelScale or 1)
+  UI.windows[#UI.windows + 1] = f
   f:Hide()
   return f
 end

@@ -18,6 +18,8 @@ Install **The Imperium** from CurseForge, and everything else is shared with the
 
 The menu down the left side of the window switches between tabs, and the window opens on whichever tab you used last.
 
+To make the window bigger, drag its **bottom-right corner**: the lists stretch to show more rows. To make everything bigger or smaller, text included, use **Settings > Guild window > Size**. **Reset size and position** puts it back to normal.
+
 | Tab | What's there |
 | --- | --- |
 | Roster | The guild roster. Officers manage notes, ranks, invites and the Message of the Day. |

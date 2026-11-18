@@ -531,6 +531,10 @@ local function Build(page)
   BuildOfficer(right)
   BuildMember(right)
 
+  -- A bigger window: longer, wider lists, with the officer tools moving right.
+  for _, list in ipairs({ P.list, P.lootList, P.changeList }) do UI.Grow(page, list, 1, 1) end
+  UI.Follow(page, right, 1, 0)
+
   -- Shift-clicking an item puts its link in the auction box while it has focus.
   local function insert(link)
     if P.item and P.item:HasFocus() and link then P.item:SetText(link) end

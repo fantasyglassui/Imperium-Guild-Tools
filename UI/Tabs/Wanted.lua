@@ -115,6 +115,9 @@ local function Build(page)
   local note = UI.Label(page, "Built from the guild's shared death history. Hiding someone only affects your own list.",
     "GameFontDisableSmall")
   note:SetPoint("TOPLEFT", 8, -382)
+
+  UI.Grow(page, P.list, 1, 1)
+  UI.FollowAll(page, { P.removeOnKill, note }, 0, 1)
 end
 
 UI.AddTab({ id = "wanted", title = "Wanted", build = Build, refresh = Refresh })

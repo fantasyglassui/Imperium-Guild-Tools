@@ -6,6 +6,7 @@
 - The Kills tab is redesigned: kills are a table (killer, victim, where with assists or battleground underneath, and when), with a "Leading this month" card showing the leader, their count and how far ahead they are, and Top Head Hunters with a bar for each place. Pick the period (this month, last month, 7 days, all time) and kill type at the top; the header shows how many kills that is. Hover a hunter for their assists.
 - Lists have a dark card background, and every other row is shaded, so it's easier to follow a row across.
 - Every list says something when it's empty or nothing matches your search, including ones that used to be blank: the roster, DKP standings and changes, raid sign-ups, your raid group and the Addon tab.
+- Resizable: drag the bottom-right corner of the guild window to make it bigger, and the lists stretch to show more rows (the kill table, roster, DKP standings, loot and changes, raids and sign-ups, the Wanted list, the officer log and the Addon tab). Settings > Guild window has a Size slider (70% to 150%) that scales the window and its pop-ups, text and all, and a button to reset the size and position. Both are remembered.
 - The guild panel opens on the tab you used last.
 - Tooltips on 30 buttons that didn't explain themselves, such as Promote, Start raid, Add DKP, Decay now, Import balances and the kill log filters. They show even when a button is greyed out, so you can see what it does.
 - Fixed: on the Raids tab, the raid night details could run into the On time / Per hour / Per boss boxes below them.
