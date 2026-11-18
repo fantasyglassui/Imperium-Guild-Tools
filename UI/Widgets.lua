@@ -338,6 +338,7 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   -- A new size, rows and all (used when the window is resized).
   function list:Resize(w, h)
     width = w
+    self.width, self.height = w, h
     sf:SetSize(w, h)
     content:SetWidth(w - 4)
     empty:SetWidth(w - 24)

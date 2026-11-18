@@ -13,7 +13,7 @@ local UI = ns.UI
 local CHANGES = {
   { version = "2.12.0", date = "Nov 18, 2026", items = {
     "A new look: the guild panel and its windows are redesigned, dark and flat with Imperium gold, a new font, and a side menu with icons.",
-    "The Kills tab is redesigned: a kill table, this month's leader, and Top Head Hunters with bars. Pick the period at the top.",
+    "The Kills tab is redesigned: a kill table, this month's leader, and Top Head Hunters with bars. Pick the period at the top, and drag the borders between column headings to see long names in full.",
     "Resize the window: drag its bottom-right corner to show more rows, or set its size in Settings > Guild window.",
     "Every list says something when it's empty, and the panel opens on the tab you used last.",
     "Tooltips on buttons that didn't explain themselves. They show even when a button is greyed out.",

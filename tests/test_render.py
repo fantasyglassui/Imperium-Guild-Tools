@@ -9,6 +9,17 @@ from render import Renderer, demo_guild  # noqa: E402
 TABS = ("roster", "raids", "dkp", "kills", "wanted", "settings", "officers", "addon")
 
 
+def walk_text(rd, node):
+    """Every visible piece of text under node."""
+    for k in rd.kids(node):
+        if not rd.visible(k):
+            continue
+        if k["kind"] == "FontString":
+            yield k
+        elif k["kind"] != "Texture":
+            yield from walk_text(rd, k)
+
+
 def sticking_out(rd, node, bounds, found, in_scroll=False):
     """Text and textures drawn outside bounds. Content in a scrolling area is
     clipped to that area, so it's allowed to run past."""
@@ -87,3 +98,25 @@ def test_window_size_setting_scales_panel_and_windows():
     assert me.ns.db.panelScale == 1.5
     me.ns.ResetPanelSize()
     assert me.ns.db.panelScale == 1 and me.ns.db.panelWidth is None
+
+
+def test_kill_columns_can_be_resized():
+    guild, me = demo_guild()
+    me.ns.OpenPanel("kills")
+    rd = Renderer(me)
+    me.ns.SetKillColumnWidth("victim", 130)
+    assert me.ns.db.killColumns.victim == 130
+    me.ns.SetKillColumnWidth("killer", 10)           # can't be squeezed to nothing
+    assert me.ns.db.killColumns.killer == 50
+    me.ns.SetKillColumnWidth("killer", 900)          # nor push Where (90 at least) off the table
+    assert me.ns.db.killColumns.killer == 452 - 12 - 130 - 16 - 92 - 90
+    me.ns.SetKillColumnWidth("killer", 100)
+    # Rows follow: the victim starts right after the killer column.
+    panel = me.lua.eval("TheImperiumPanel")
+    victim = [fs for fs in walk_text(rd, panel) if fs["_GetText"] == "Ganker"][0]
+    # sidebar 150 + 10 margin + 1 card edge + 12 + killer 100 + gap 8
+    assert round(rd.rect(victim)[0] - rd.rect(panel)[0]) == 150 + 10 + 1 + 12 + 100 + 8
+    found = []
+    sticking_out(rd, panel, rd.rect(panel), found)
+    assert found == [], found
+    assert me.errors() == []

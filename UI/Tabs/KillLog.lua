@@ -131,6 +131,133 @@ local function Column(parent, text, x, right)
   return fs
 end
 
+------------------------------------------------------------------------
+-- Column widths: drag the borders between the column headings, or
+-- double-click one to fit the column to its longest name. Where takes
+-- whatever room is left.
+------------------------------------------------------------------------
+local COLUMNS = { "killer", "victim" }          -- the columns with a border you can drag
+local DEFAULT_WIDTH = { killer = 86, victim = 96 }
+local MIN_WIDTH, MIN_WHERE = 50, 90
+local GAP, WHEN_W = 8, 92                       -- space between columns; room for the time
+
+local function colWidth(col)
+  local saved = ns.db.killColumns and ns.db.killColumns[col]
+  return saved or DEFAULT_WIDTH[col]
+end
+
+-- Where each column starts and how wide it is, for a row this wide.
+local function columnLayout(rowWidth)
+  local killerX = 12
+  local victimX = killerX + colWidth("killer") + GAP
+  local whereX = victimX + colWidth("victim") + GAP
+  return {
+    killer = { killerX, colWidth("killer") },
+    victim = { victimX, colWidth("victim") },
+    where = { whereX, math.max(MIN_WHERE, rowWidth - whereX - WHEN_W) },
+  }
+end
+
+local function rowWidth() return (P.list and P.list.width or (TABLE_W - 24)) - 4 end
+
+local function layoutRow(row, L)
+  row.killer:ClearAllPoints()
+  row.killer:SetPoint("LEFT", L.killer[1], 0)
+  row.killer:SetWidth(L.killer[2])
+  row.victim:ClearAllPoints()
+  row.victim:SetPoint("LEFT", L.victim[1], 0)
+  row.victim:SetWidth(L.victim[2])
+  row.zone:ClearAllPoints()
+  row.zone:SetPoint("TOPLEFT", L.where[1], -5)
+  row.zone:SetWidth(L.where[2])
+  row.detail:ClearAllPoints()
+  row.detail:SetPoint("TOPLEFT", L.where[1], -19)
+  row.detail:SetWidth(L.where[2])
+end
+
+-- Put the headings, borders and every row's text where the widths say.
+local function relayout()
+  if not P.heads then return end
+  local L = columnLayout(rowWidth())
+  for col, fs in pairs(P.heads) do
+    fs:ClearAllPoints()
+    fs:SetPoint("LEFT", L[col][1], 0)
+  end
+  for i, col in ipairs(COLUMNS) do
+    local h = P.handles[i]
+    h:ClearAllPoints()
+    h:SetPoint("CENTER", P.head, "LEFT", L[col][1] + L[col][2] + GAP / 2, 0)
+  end
+  for _, row in ipairs(P.list.rows) do layoutRow(row, L) end
+end
+
+-- Most a column can widen before Where gets too narrow.
+local function maxWidth(col)
+  local others = 0
+  for _, c in ipairs(COLUMNS) do if c ~= col then others = others + colWidth(c) end end
+  return rowWidth() - 12 - others - 2 * GAP - WHEN_W - MIN_WHERE
+end
+
+function ns.SetKillColumnWidth(col, width)
+  ns.db.killColumns = ns.db.killColumns or {}
+  ns.db.killColumns[col] = math.floor(math.max(MIN_WIDTH, math.min(maxWidth(col), width)))
+  relayout()
+end
+
+-- The width of a column's longest name among the kills shown.
+local function longest(col)
+  local most = 0
+  for _, row in ipairs(P.list.rows) do
+    if row:IsShown() then
+      local fs = row[col]
+      local w = (fs.GetUnboundedStringWidth and fs:GetUnboundedStringWidth()) or fs:GetStringWidth()
+      most = math.max(most, w)
+    end
+  end
+  return most + 4
+end
+
+local function makeHandle(head, i)
+  local col = COLUMNS[i]
+  local h = CreateFrame("Button", nil, head)
+  h:SetSize(10, 28)
+  local line = h:CreateTexture(nil, "ARTWORK")
+  line:SetPoint("TOP", 0, -7)
+  line:SetPoint("BOTTOM", 0, 7)
+  line:SetWidth(1)
+  line:SetColorTexture(C.edge[1], C.edge[2], C.edge[3], 1)
+  local function paint(on)
+    local c = on and C.accent or C.edge
+    line:SetColorTexture(c[1], c[2], c[3], 1)
+  end
+  h:SetScript("OnEnter", function(self)
+    paint(true)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:SetText("Column width")
+    GameTooltip:AddLine("Drag to resize. Double-click to fit the longest name.", 1, 1, 1, true)
+    GameTooltip:Show()
+  end)
+  h:SetScript("OnLeave", function(self)
+    if not self.dragging then paint(false) end
+    GameTooltip:Hide()
+  end)
+  h:SetScript("OnMouseDown", function(self)
+    local x = GetCursorPosition()
+    self.dragging = { x = x / self:GetEffectiveScale(), width = colWidth(col) }
+    self:SetScript("OnUpdate", function(me)
+      local now = GetCursorPosition() / me:GetEffectiveScale()
+      ns.SetKillColumnWidth(col, me.dragging.width + now - me.dragging.x)
+    end)
+  end)
+  h:SetScript("OnMouseUp", function(self)
+    self.dragging = nil
+    self:SetScript("OnUpdate", nil)
+    if not self:IsMouseOver() then paint(false) end
+  end)
+  h:SetScript("OnDoubleClick", function() ns.SetKillColumnWidth(col, longest(col)) end)
+  return h
+end
+
 local function BuildTable(page)
   local card = CreateFrame("Frame", nil, page)
   P.card = card
@@ -142,9 +269,8 @@ local function BuildTable(page)
   head:SetPoint("TOPLEFT")
   head:SetPoint("TOPRIGHT")
   head:SetHeight(28)
-  Column(head, "KILLER", 12)
-  Column(head, "VICTIM", 104)
-  Column(head, "WHERE", 208)
+  P.head = head
+  P.heads = { killer = Column(head, "KILLER", 12), victim = Column(head, "VICTIM", 104), where = Column(head, "WHERE", 208) }
   Column(head, "WHEN", -32, true) -- lines up with the times, left of the scroll bar
   local rule = head:CreateTexture(nil, "BORDER")
   rule:SetPoint("BOTTOMLEFT")
@@ -175,6 +301,7 @@ local function BuildTable(page)
       row.when = UI.Label(row, "", "MutedSmall")
       row.when:SetPoint("RIGHT", -6, 0)
       row.when:SetJustifyH("RIGHT")
+      layoutRow(row, columnLayout(rowWidth()))
       local line = row:CreateTexture(nil, "BORDER")
       line:SetPoint("BOTTOMLEFT")
       line:SetPoint("BOTTOMRIGHT")
@@ -208,6 +335,10 @@ local function BuildTable(page)
       row.when:SetText(date("%b %d · %H:%M", k.t))
     end, true)
   P.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, -29)
+
+  P.handles = {}
+  for i = 1, #COLUMNS do P.handles[i] = makeHandle(head, i) end
+  relayout()
 
   -- Under the table: how kills are credited, and the Guild Master's Clear log.
   local note = UI.Label(page, "Killer: whoever hit closest to the death (a best guess).", "MutedSmall")
@@ -331,6 +462,7 @@ local function Build(page)
   UI.Grow(page, P.list, 1, 1)
   UI.Follow(page, P.note, 0, 1)
   UI.Follow(page, P.clear, 1, 1)
+  table.insert(page.growth, relayout) -- a wider table gives Where more room
   UI.FollowAll(page, { P.lead, P.boardCard }, 1, 0)
   UI.Grow(page, P.boardCard, 0, 1)
 end
