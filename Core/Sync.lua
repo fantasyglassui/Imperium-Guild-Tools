@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Sync: shares recent history between guildmates so everyone's Death, Kill
   logs (and the leaderboards built on them) match.
 

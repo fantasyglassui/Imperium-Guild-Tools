@@ -45,7 +45,7 @@ def test_tab_fits_in_panel(tab, tmp_path):
     guild, me = demo_guild()
     me.ns.OpenPanel(tab)
     rd = Renderer(me)
-    panel = me.lua.eval("TheImperiumPanel")
+    panel = me.lua.eval("WarcrestPanel")
     rd.render(panel, os.path.join(tmp_path, tab + ".png"))
     found = []
     sticking_out(rd, panel, rd.rect(panel), found)
@@ -59,7 +59,7 @@ def test_tab_fits_in_a_bigger_window(tab, tmp_path):
     me.ns.db.panelWidth, me.ns.db.panelHeight = 1300, 760   # dragged bigger from the corner
     me.ns.OpenPanel(tab)
     rd = Renderer(me)
-    panel = me.lua.eval("TheImperiumPanel")
+    panel = me.lua.eval("WarcrestPanel")
     rd.render(panel, os.path.join(tmp_path, tab + "-big.png"))
     l, t, r, b = rd.rect(panel)
     assert (r - l, b - t) == (1300, 760)
@@ -74,8 +74,9 @@ def test_lists_grow_with_the_window():
     me.ns.db.panelWidth, me.ns.db.panelHeight = 1300, 760
     me.ns.OpenPanel("officers")
     rd = Renderer(me)
-    lists = [k for k in rd.kids(me.lua.eval("TheImperiumPanel")) if k["kind"] == "Frame"]
-    # The officer log's list fills the extra room: 390 wider and 240 taller than normal.
+    lists = [k for k in rd.kids(me.lua.eval("WarcrestPanel")) if k["kind"] == "Frame"]
+    # The officer log's list fills the extra room: 390 wider and 240 taller than normal
+    # (its table card is 500 x 412; the scroll area inside is 446 x 383 without the scroll bar).
     page_lists = []
     def walk(node):
         for k in rd.kids(node):
@@ -85,7 +86,7 @@ def test_lists_grow_with_the_window():
     for f in lists:
         walk(f)
     sizes = {(round(rd.rect(f)[2] - rd.rect(f)[0]), round(rd.rect(f)[3] - rd.rect(f)[1])) for f in page_lists}
-    assert (640 + 390, 330 + 240) in sizes, sizes
+    assert (446 + 390, 383 + 240) in sizes, sizes
 
 
 def test_window_size_setting_scales_panel_and_windows():
@@ -112,7 +113,7 @@ def test_kill_columns_can_be_resized():
     assert me.ns.db.killColumns.killer == 452 - 12 - 130 - 16 - 92 - 90
     me.ns.SetKillColumnWidth("killer", 100)
     # Rows follow: the victim starts right after the killer column.
-    panel = me.lua.eval("TheImperiumPanel")
+    panel = me.lua.eval("WarcrestPanel")
     victim = [fs for fs in walk_text(rd, panel) if fs["_GetText"] == "Ganker"][0]
     # sidebar 150 + 10 margin + 1 card edge + 12 + killer 100 + gap 8
     assert round(rd.rect(victim)[0] - rd.rect(panel)[0]) == 150 + 10 + 1 + 12 + 100 + 8

@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Player profiles: everything the guild's shared history says about one
   member, for their player card. PvP (kills, assists, deaths, streaks,
   nemesis), DKP, attendance and loot.
@@ -80,6 +80,14 @@ function ns.PlayerProfile(name)
     if ns.Key(l.winner) == key then
       p.itemsWon = p.itemsWon + 1
       if #p.loot < 4 then p.loot[#p.loot + 1] = l end
+    end
+  end
+  -- Wishlist: what they still want.
+  p.wishes, p.wishNeed = {}, 0
+  for _, w in ipairs(ns.Wishes and ns.Wishes(name) or {}) do
+    if not w.won then
+      p.wishes[#p.wishes + 1] = w
+      if w.prio == "need" then p.wishNeed = p.wishNeed + 1 end
     end
   end
   return p

@@ -236,7 +236,10 @@ C_ChatInfo = {
   RegisterAddonMessagePrefix = function() return true end,
   SendAddonMessage = function(prefix, text, channel, target) return send_py(prefix, text, channel, target) end,
 }
-C_AddOns = { GetAddOnMetadata = function(_, field) if field == "Version" then return ADDON_VERSION end end }
+C_AddOns = { GetAddOnMetadata = function(addon, field)
+  if addon == "TheImperium" then return OLD_ADDON_META and OLD_ADDON_META[field] end
+  if field == "Version" then return ADDON_VERSION end
+end }
 
 ------------------------------------------------------------------------
 -- The player, the guild and the group (the harness fills these in)
@@ -259,7 +262,7 @@ function UnitName(unit)
 end
 function GetGuildInfo()
   for _, r in ipairs(guildRoster) do
-    if r[1] == PLAYER then return "The Imperium", "Rank", r[2] end
+    if r[1] == PLAYER then return GUILD_NAME or "The Imperium", "Rank", r[2] end
   end
 end
 function GetNumGuildMembers() return #guildRoster end

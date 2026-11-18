@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Kills: tells the guild when a member kills an enemy player in PvP.
 
   Without the combat log the addon can't see killing blows, so a kill only

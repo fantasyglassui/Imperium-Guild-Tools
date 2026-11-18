@@ -29,9 +29,11 @@ Only officers can schedule raids, change DKP or run auctions. The Guild Master c
 
 ## Running loot auctions
 
-1. On the **DKP** tab, click in the **Item** box and Shift-click the item from the loot window or your bags. (Or type `/imperium auction`, Shift-click the item onto the end, add a minimum bid, and press Enter.)
+1. On the **DKP** tab, click in the **Item** box and Shift-click the item from the loot window or your bags. (Or type `/warcrest auction`, Shift-click the item onto the end, add a minimum bid, and press Enter.)
 2. Set the **Minimum bid** and the time (20 to 60 seconds), then click **Start auction**.
 3. When time runs out, the winner is announced and charged. **Cancel auction** stops it with nobody charged.
+
+When you start an auction, chat lists everyone who has the item on their **wishlist**, Need first, with their DKP. The auction window shows bidders the same names. Before loot is handed out, the **Wishlist** tab's **In my raid** view shows what the people in your raid are after.
 
 If nobody bids, the raid gets a 20-second **free roll** instead. Open or hidden bids are set in the DKP rules.
 

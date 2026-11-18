@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Kill streaks and revenge.
 
   A streak is a guild member's killing blows in a row without dying to an
@@ -69,6 +69,19 @@ function ns.CurrentStreak(name, at)
     if going and at - last <= STREAK_GAP then current = count end
   end)
   return current
+end
+
+-- When a guild member first had a streak of n: the time of that kill, or nil.
+function ns.FirstStreakOf(name, n)
+  local count, last = 0, nil
+  for _, e in ipairs(events(name)) do
+    if e.death or (last and e.t - last > STREAK_GAP) then count, last = 0, nil end
+    if e.kill then
+      count = count + 1
+      last = e.t
+      if count >= n then return e.t end
+    end
+  end
 end
 
 -- The longest streaks in a period: { { name, count }, ... }, longest first.

@@ -1,15 +1,15 @@
 --[[
-  The Imperium
+  Warcrest
   Player card: one guild member at a glance. PvP this month and overall,
   streaks, nemesis, DKP, attendance and recent loot. Opened by clicking a
-  name on the Roster, Kills, DKP or Raids tabs, or with /imperium card Name.
+  name on the Roster, Kills, DKP or Raids tabs, or with /warcrest card Name.
 ]]
 
 local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 
-local WIDTH, HEIGHT = 420, 450
+local WIDTH, HEIGHT = 420, 470
 local card -- the window
 local shownName
 
@@ -35,20 +35,20 @@ local function Section(parent, text, y)
 end
 
 local function Build()
-  local f = UI.Window("TheImperiumPlayerCard", WIDTH, HEIGHT, "Player card")
+  local f = UI.Window("WarcrestPlayerCard", WIDTH, HEIGHT, "Player card")
   card = f
   local inner = WIDTH - 32
   local tileW = (inner - 3 * 8) / 4
 
   f.name = UI.Label(f, "", "Title")
   f.name:SetPoint("TOPLEFT", 16, -42)
-  f.name:SetWidth(inner - 110)
+  f.name:SetWidth(inner - 130)
   f.name:SetWordWrap(false)
   f.info = UI.Label(f, "", "Small")
   f.info:SetPoint("TOPLEFT", 16, -64)
   f.status = UI.Label(f, "", "MutedSmall")
   f.status:SetPoint("TOPLEFT", 16, -80)
-  f.status:SetWidth(inner)
+  f.status:SetWidth(inner - 130)
   f.status:SetWordWrap(false)
 
   -- PvP
@@ -74,7 +74,7 @@ local function Build()
   f.lootLines:SetWidth(inner)
   f.lootLines:SetSpacing(4)
 
-  f.whisper = UI.Button(f, "Whisper", 100)
+  f.whisper = UI.Button(f, "Whisper", 120)
   f.whisper:SetHeight(26)
   f.whisper:SetPoint("TOPRIGHT", -16, -46)
   f.whisper:SetScript("OnClick", function()
@@ -86,12 +86,23 @@ local function Build()
     end
   end)
   UI.Tooltip(f.whisper, "Whisper", "Starts a whisper to them in chat.")
+
+  f.achievements = UI.Button(f, "", 120)
+  f.achievements:SetHeight(22)
+  f.achievements:SetPoint("TOPRIGHT", -16, -78)
+  f.achievements:SetScript("OnClick", function() if shownName then ns.ShowAchievements(shownName) end end)
+  UI.Tooltip(f.achievements, "Achievements", "Opens their achievements in the guild window.")
 end
 
 local function fill(p)
   local f = card
   local m = p.member
-  f.name:SetText(Ambiguate(p.name, "short"))
+  local title = ns.TitleOf and ns.TitleOf(p.name)
+  f.name:SetText(Ambiguate(p.name, "short") .. (title and (" " .. UI.Code("accent") .. title .. "|r") or ""))
+  if ns.AchievementCount then
+    local n = ns.AchievementCount(p.name)
+    f.achievements:SetText(n == 1 and "1 achievement" or (n .. " achievements"))
+  end
   f.name:SetTextColor(UI.ClassColor(m and m.classFile))
   if m then
     f.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
@@ -127,12 +138,19 @@ local function fill(p)
   f.noShows.number:SetTextColor(noShowColor[1], noShowColor[2], noShowColor[3])
   f.items.number:SetText(p.itemsWon)
   local loot = {}
+  if #p.wishes > 0 then
+    local names = {}
+    for i = 1, math.min(2, #p.wishes) do names[i] = p.wishes[i].name end
+    loot[#loot + 1] = ("Wishlist: %s%d|r item%s%s: %s%s"):format(UI.Code("text"), #p.wishes, #p.wishes == 1 and "" or "s",
+      p.wishNeed > 0 and (" (" .. p.wishNeed .. " Need)") or "", table.concat(names, ", "), #p.wishes > 2 and "..." or "")
+  end
+  if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
   for _, l in ipairs(p.loot) do
     loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), date("%b %d", l.t), l.item,
       l.roll and (UI.Code("muted") .. "free roll|r") or (UI.Code("text") .. l.amount .. " DKP|r"))
   end
-  f.lootLines:SetText(#loot > 0 and ("Recent loot:\n" .. table.concat(loot, "\n"))
-    or (UI.Code("muted") .. "No loot won yet.|r"))
+  if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
+  f.lootLines:SetText(table.concat(loot, "\n"))
 end
 
 -- Open a guild member's card.

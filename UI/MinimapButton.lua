@@ -1,11 +1,11 @@
 --[[
-  The Imperium
+  Warcrest
   Minimap button: the guild emblem on the edge of the minimap.
     Left-click   open or close guild tools
     Right-click  open Settings
     Shift-click  open Kills
     Drag         move it around the minimap
-  Hide it with /imperium minimap or on the Options page.
+  Hide it with /warcrest minimap or on the Options page.
 ]]
 
 local _, ns = ...
@@ -50,7 +50,7 @@ end
 
 local function showTooltip(self)
   GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-  GameTooltip:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. "The Imperium|r")
+  GameTooltip:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. ns.BRAND .. "|r")
   GameTooltip:AddLine("Left-click: guild tools", 1, 1, 1)
   GameTooltip:AddLine("Right-click: alert settings", 1, 1, 1)
   GameTooltip:AddLine("Shift-click: kills", 1, 1, 1)
@@ -60,7 +60,7 @@ end
 
 local function create()
   if button or not Minimap then return end
-  button = CreateFrame("Button", "TheImperiumMinimapButton", Minimap)
+  button = CreateFrame("Button", "WarcrestMinimapButton", Minimap)
   button:SetSize(31, 31)
   button:SetFrameStrata("MEDIUM")
   button:SetFrameLevel(8)
@@ -76,7 +76,7 @@ local function create()
 
   local icon = button:CreateTexture(nil, "ARTWORK")
   icon:SetSize(19, 19)
-  icon:SetTexture(ns.ICON)
+  ns.Emblem(icon, "ICON")
   icon:SetPoint("TOPLEFT", 6, -5)
   button.icon = icon
 

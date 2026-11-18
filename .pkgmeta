@@ -1,4 +1,9 @@
-package-as: TheImperium
+package-as: Warcrest
+
+# The small TheImperium folder hands over saved data from The Imperium (2.x),
+# the addon's old name. It ships next to Warcrest in the same zip.
+move-folders:
+  Warcrest/Compat/TheImperium: TheImperium
 
 # Release notes on GitHub and CurseForge come from the changelog, not commit messages.
 manual-changelog:

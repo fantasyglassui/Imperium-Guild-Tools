@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Auction window: pops up for raid members when an officer auctions loot.
 ]]
 
@@ -18,7 +18,7 @@ end
 
 local function create()
   -- Escape doesn't close it: bidding shouldn't vanish by accident mid-raid.
-  local f = UI.Window("TheImperiumAuction", 340, 256, "Loot auction", true)
+  local f = UI.Window("WarcrestAuction", 340, 256, "Loot auction", true)
   win = f
   f:ClearAllPoints()
   f:SetPoint("TOP", 0, -140)
@@ -50,6 +50,10 @@ local function create()
   f.high:SetWidth(308)
   f.time = UI.Label(f, "", "GameFontHighlight")
   f.time:SetPoint("TOPRIGHT", -16, -66)
+  f.wish = UI.Label(f, "", "MutedSmall")
+  f.wish:SetPoint("TOPLEFT", 16, -101)
+  f.wish:SetWidth(308)
+  f.wish:SetWordWrap(false)
   f.mine = UI.Label(f, "", "GameFontHighlightSmall")
   f.mine:SetPoint("TOPLEFT", 16, -118)
 
@@ -120,7 +124,7 @@ local function create()
       self.time:SetText(("Time left: %ds"):format(math.max(0, math.ceil(a.ends - GetTime()))))
     end
   end)
-  tinsert(UISpecialFrames, "TheImperiumAuction")
+  tinsert(UISpecialFrames, "WarcrestAuction")
 end
 
 StaticPopupDialogs["IMPERIUM_BID_UNUSABLE"] = {
@@ -169,6 +173,17 @@ function ns.RefreshAuctionWindow()
   if a.rolling then
     win.high:SetText("|cffe0b94cNobody bid. Free roll!|r Roll if you'd like it; the highest roll wins it for free.")
     UI.SetEnabled(win.rollButton, not win.rollButton.rolled)
+  end
+  -- Who has it on their wishlist.
+  local wishers, names = ns.WishersFor and ns.WishersFor(a.link) or {}, {}
+  for _, w in ipairs(wishers) do
+    names[#names + 1] = w.prio == "need" and (UI.Code("accent") .. w.name .. "|r") or w.name
+  end
+  local mineWish = ns.WishFor and ns.WishFor(UnitName("player"), a.link)
+  if #names > 0 then
+    win.wish:SetText((mineWish and (UI.Code("accent") .. "On your wishlist.|r  ") or "") .. "Wished for by " .. table.concat(names, ", "))
+  else
+    win.wish:SetText("")
   end
   win.result:SetText(a.result or "")
   if a.done then win.time:SetText("Finished") end

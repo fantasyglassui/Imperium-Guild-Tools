@@ -70,7 +70,7 @@ def test_grey_kills_already_logged_are_cleared():
         ("TwinkKill", 40, "Twink", "true"),    # not grey to a level 45
     ]):
         bob.run('table.insert(ns_log, 1, { t = %d, kind = "kill_world", victim = "%s", zone = "STV", killers = { "%s" }, level = %s, honor = %s })'
-                .replace("ns_log", "TheImperiumDB.killLog") % (t - i * 60, victim, killer, level or "nil", honor))
+                .replace("ns_log", "WarcrestDB.killLog") % (t - i * 60, victim, killer, level or "nil", honor))
     bob.login()
     guild.run(40)
     assert victims(bob) == ["Fine", "TwinkKill", "Unknown"]

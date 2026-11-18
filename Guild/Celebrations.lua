@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Celebrations: tells the guild when a member levels up.
   Members choose between every level, or only every 10 levels and max level.
 ]]
@@ -33,7 +33,7 @@ end)
 
 function ns.DescribeLevel(who, level)
   if level == maxLevel() then
-    return ("%s has reached level %d! The Imperium salutes you!"):format(who, level)
+    return ("%s has reached level %d! %s salutes you!"):format(who, level, ns.GuildName() or "The guild")
   end
   return ("%s reached level %d!"):format(who, level)
 end

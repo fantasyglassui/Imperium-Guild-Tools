@@ -7,12 +7,12 @@ exclude_files = { "tests/**", ".luarocks/**", ".lua/**" }
 
 -- Globals the addon creates on purpose.
 globals = {
-  "TheImperiumDB",                       -- saved variables
-  "SlashCmdList", "SLASH_THEIMPERIUM1", "SLASH_THEIMPERIUM2",
+  "WarcrestDB", "TheImperiumDB",      -- saved variables (TheImperiumDB: the old name, handed over once)
+  "SlashCmdList", "SLASH_WARCREST1", "SLASH_WARCREST2", "SLASH_WARCREST3", "SLASH_WARCREST4",
   "StaticPopupDialogs",
-  "TheImperium_OnAddonCompartmentClick", "TheImperium_OnAddonCompartmentEnter",
-  "TheImperium_OnAddonCompartmentLeave",
-  "TheImperiumDeathPinMixin",            -- named by UI/MapPins.xml
+  "Warcrest_OnAddonCompartmentClick", "Warcrest_OnAddonCompartmentEnter",
+  "Warcrest_OnAddonCompartmentLeave",
+  "WarcrestDeathPinMixin",            -- named by UI/MapPins.xml
 }
 
 -- The game's own functions and tables the addon uses. A name missing here

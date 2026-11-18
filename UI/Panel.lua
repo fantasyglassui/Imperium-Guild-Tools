@@ -1,12 +1,11 @@
 --[[
-  The Imperium
+  Warcrest
   Panel: the guild tools window and its Options entry.
 ]]
 
 local _, ns = ...
 local UI = ns.UI
 local C = UI.C
-local ICON = ns.PORTRAIT
 local panel
 local current = 1
 
@@ -21,11 +20,13 @@ local TAB_INFO = {
   roster = { icon = "roster", text = "Members, notes and ranks" },
   raids = { icon = "raids", text = "Sign-ups, raid nights and invites" },
   dkp = { icon = "dkp", text = "Standings, loot and auctions" },
+  wishlist = { icon = "wishlist", text = "The loot the guild wants" },
   kills = { icon = "kills", text = "PvP kills by guild members" },
+  achievements = { icon = "trophy", text = "Achievements and titles" },
   wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
   settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },
   officers = { icon = "officers", text = "Guild changes seen while you're online" },
-  addon = { icon = "addon", text = "Who has The Imperium installed" },
+  addon = { icon = "addon", text = "Who has Warcrest installed" },
 }
 
 local function tabVisible(i)
@@ -101,7 +102,7 @@ local function MakeNavButton(parent, id, tab)
 end
 
 local function CreatePanel()
-  panel = CreateFrame("Frame", "TheImperiumPanel", UIParent)
+  panel = CreateFrame("Frame", "WarcrestPanel", UIParent)
   panel:SetSize(WIDTH, HEIGHT)
   panel:SetPoint("CENTER")
   panel:SetFrameStrata("HIGH")
@@ -124,7 +125,7 @@ local function CreatePanel()
     math.max(HEIGHT, math.min(MAX_HEIGHT, ns.db.panelHeight or HEIGHT)))
   panel:SetScale(ns.db.panelScale or 1)
   panel:Hide()
-  tinsert(UISpecialFrames, "TheImperiumPanel") -- Escape closes it
+  tinsert(UISpecialFrames, "WarcrestPanel") -- Escape closes it
   UI.Fill(panel, C.window)
   UI.Border(panel, C.edge[1], C.edge[2], C.edge[3], 1)
 
@@ -141,13 +142,23 @@ local function CreatePanel()
   divider:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
   local emblem = side:CreateTexture(nil, "ARTWORK")
-  emblem:SetTexture(ICON)
+  ns.Emblem(emblem, "PORTRAIT")
   emblem:SetSize(30, 30)
   emblem:SetPoint("TOPLEFT", 14, -16)
-  local brand = UI.Label(side, "The Imperium", "Brand")
+  local brand = UI.Label(side, "", "Brand")
   brand:SetPoint("TOPLEFT", emblem, "TOPRIGHT", 9, -1)
-  local sub = UI.Label(side, "Guild Tools", "MutedSmall")
+  brand:SetWidth(100)
+  brand:SetWordWrap(false)
+  local sub = UI.Label(side, "", "MutedSmall")
   sub:SetPoint("TOPLEFT", brand, "BOTTOMLEFT", 0, -3)
+  sub:SetWidth(100)
+  sub:SetWordWrap(false)
+  panel.brand, panel.brandSub = brand, sub
+  -- The Imperium: its own name, as before. Other guilds: Warcrest, with the guild's name under it.
+  ns.OnLook(function()
+    brand:SetText(ns.BRAND)
+    sub:SetText(ns.look == "imperium" and "Guild Tools" or (ns.GuildName() or "Guild tools"))
+  end)
 
   panel.navButtons = {}
   for i, t in ipairs(UI.tabs) do
@@ -267,7 +278,9 @@ function ns.TogglePanel()
 end
 
 -- tab: a tab's position, or its id ("kills", "settings", ...).
-function ns.OpenPanel(tab)
+-- tab: a tab's id or number. view: for tabs with views switched at the top
+-- (a UI.Segmented saved as tab.view once built), which one to show.
+function ns.OpenPanel(tab, view)
   if blockedByCombat() then return end
   if not panel then CreatePanel() end
   local index = tonumber(tab) or 1
@@ -278,6 +291,11 @@ function ns.OpenPanel(tab)
   end
   panel:Show()
   ShowTab(index)
+  local t = UI.tabs[index]
+  if view and t and t.view then
+    t.view:SetValue(view)
+    ns.RefreshPanel()
+  end
 end
 
 ns.OnEvent("PLAYER_REGEN_DISABLED", function()
@@ -306,11 +324,12 @@ ns.OnLoad(function()
   local icon = canvas:CreateTexture(nil, "ARTWORK")
   icon:SetSize(56, 56)
   icon:SetPoint("TOPLEFT", 16, -16)
-  icon:SetTexture(ICON)
+  ns.Emblem(icon, "PORTRAIT")
 
-  local title = UI.Label(canvas, ns.COLOR .. "The Imperium|r", "GameFontNormalHuge")
+  local title = UI.Label(canvas, "", "GameFontNormalHuge")
+  ns.OnLook(function() title:SetText(ns.COLOR .. ns.BRAND .. "|r") end)
   title:SetPoint("TOPLEFT", icon, "TOPRIGHT", 12, -2)
-  local sub = UI.Label(canvas, "Official guild addon  -  version " .. (ns.version or "?"), "GameFontHighlightSmall")
+  local sub = UI.Label(canvas, "Guild tools  -  version " .. (ns.version or "?"), "GameFontHighlightSmall")
   sub:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
 
   local desc = UI.Label(canvas, "PvP kill and level-up alerts, raid sign-ups and DKP for the whole guild, plus roster tools "
@@ -325,7 +344,7 @@ ns.OnLoad(function()
     ns.OpenPanel("roster")
   end)
 
-  local hint = UI.Label(canvas, "You can also type /imperium or click The Imperium in the addons menu by the minimap.",
+  local hint = UI.Label(canvas, "You can also type /warcrest (or /wc) or click Warcrest in the addons menu by the minimap.",
     "GameFontDisableSmall")
   hint:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 0, -10)
 
@@ -343,7 +362,7 @@ ns.OnLoad(function()
     minimapCheck:SetChecked(ns.IsMinimapButtonShown and ns.IsMinimapButtonShown())
   end
 
-  -- The guild artwork, with a thin gold frame.
+  -- The artwork, with a thin gold frame.
   local frame = canvas:CreateTexture(nil, "BACKGROUND")
   frame:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 2, -10)
   frame:SetSize(324, 324)
@@ -351,9 +370,9 @@ ns.OnLoad(function()
   local art = canvas:CreateTexture(nil, "ARTWORK")
   art:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, -2)
   art:SetSize(320, 320)
-  art:SetTexture(ns.ARTWORK)
+  ns.Emblem(art, "ARTWORK")
 
-  local category = Settings.RegisterCanvasLayoutCategory(canvas, "The Imperium")
+  local category = Settings.RegisterCanvasLayoutCategory(canvas, "Warcrest")
   Settings.RegisterAddOnCategory(category)
   ns.optionsCategory = category
 end)

@@ -1,15 +1,16 @@
 ## Interface: 16001
-## Title: |cffd4af37The Imperium|r
-## Notes: Official addon of <The Imperium>. Guild kill and level-up alerts, shared logs and leaderboards, a wanted list of gankers, raid sign-ups and DKP with loot auctions, and officer guild tools.
-## Author: The Imperium
-## Version: 2.13.0
+## Title: |cffd4af37Warcrest|r
+## Notes: Guild tools for WoW Forever: raid sign-ups, DKP with loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements and titles, player cards and officer tools. Formerly The Imperium.
+## Author: Fantasy Glass UI
+## X-Copyright: Copyright (c) 2026 Fantasy Glass UI
+## Version: 3.0.0
 ## Category: Guild
-## IconTexture: Interface\AddOns\TheImperium\Media\Icon
-## AddonCompartmentFunc: TheImperium_OnAddonCompartmentClick
-## AddonCompartmentFuncOnEnter: TheImperium_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: TheImperium_OnAddonCompartmentLeave
-## OptionalDeps: TomTom, OpenMap
-## SavedVariables: TheImperiumDB
+## IconTexture: Interface\AddOns\Warcrest\Media\Icon
+## AddonCompartmentFunc: Warcrest_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Warcrest_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Warcrest_OnAddonCompartmentLeave
+## OptionalDeps: TomTom, OpenMap, TheImperium
+## SavedVariables: WarcrestDB
 ## X-Curse-Project-ID: 1803056
 
 # Files load in this order, and each one may use what loaded before it.
@@ -35,11 +36,13 @@ Core\Ledger.lua
 # 4. Raids and DKP (kept in the ledger)
 Raids\Raids.lua
 Raids\DKP.lua
+Raids\Wishlist.lua
 
-# 5. Officer log and the weekly recap
+# 5. Officer log, the weekly recap, player profiles and achievements
 Guild\OfficerLog.lua
 Guild\Recap.lua
 Guild\Profile.lua
+Guild\Achievements.lua
 
 # 6. Interface: the theme, shared widgets and the guild panel
 UI\Theme.lua
@@ -51,8 +54,10 @@ UI\Tabs\Roster.lua
 UI\Tabs\Raids.lua
 UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
+UI\Tabs\Wishlist.lua
 UI\Tabs\KillLog.lua
 UI\Tabs\Wanted.lua
+UI\Tabs\Achievements.lua
 UI\Tabs\Settings.lua
 UI\Tabs\OfficerLog.lua
 UI\Tabs\AddonUsers.lua

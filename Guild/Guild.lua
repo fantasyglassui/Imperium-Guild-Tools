@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Guild: roster, permissions, management actions, guild-wide settings
   and addon version checks.
 ]]
@@ -142,11 +142,15 @@ local function syncGuildConfig()
   ns.cfg = db.cfg
 end
 ns.OnLoad(syncGuildConfig)
+ns.OnLoad(ns.ApplyGuildLook)
+table.insert(ns.OnGuildReady, ns.ApplyGuildLook)
 ns.OnEvent("PLAYER_GUILD_UPDATE", function()
+  ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
 ns.OnEvent("GUILD_ROSTER_UPDATE", function()
+  ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
@@ -157,7 +161,8 @@ end)
 -- Which alert groups each settings message knows about. Older versions only
 -- understand the older messages, so officers send all of them.
 local CONFIG_GROUPS = {
-  C6 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true }, -- 2.13.0 and later
+  C7 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true, achievement = true }, -- 2.14.0 and later
+  C6 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true }, -- 2.13.x
   C5 = { death = true, kill = true, duel = true, wanted = true, celebrate = true }, -- 1.8.0 and later
   C4 = { death = true, kill = true, duel = true }, -- 1.5.x to 1.7.x
   C3 = { death = true, kill = true },              -- 1.4.x
@@ -175,7 +180,7 @@ end
 local function sendConfig()
   local c = ns.cfg
   local on = c.enabled and "1" or "0"
-  for _, msg in ipairs({ "C6", "C5", "C4", "C3", "C2" }) do
+  for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
   end
 end
@@ -280,7 +285,7 @@ local function noteVersion(sender, v)
   ns.NoteAddonUser(sender, v)
   if not warnedNewer and ns.CompareVersions(v, ns.version) > 0 then
     warnedNewer = true
-    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update The Imperium.|r")
+    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update Warcrest.|r")
       :format(v, ns.version))
   end
   if ns.RefreshPanel then ns.RefreshPanel() end

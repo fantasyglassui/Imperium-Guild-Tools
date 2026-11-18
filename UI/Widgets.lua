@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   UI widgets: shared helpers for building the guild tools window, drawn in
   the Nightwatch theme (UI/Theme.lua).
 ]]
@@ -93,10 +93,12 @@ function UI.Cycle(parent, width, options, onChange)
   chevron:SetPoint("RIGHT", -7, 0)
   b.index = 1
   b.value = options[1][1]
+  b.options = options -- may be replaced later to change the choices
   b:SetScript("OnClick", function(self)
-    self.index = self.index % #options + 1
-    self.value = options[self.index][1]
-    self:SetText(options[self.index][2])
+    local opts = self.options
+    self.index = self.index % #opts + 1
+    self.value = opts[self.index][1]
+    self:SetText(opts[self.index][2])
     if onChange then onChange(self.value) end
   end)
   return b
@@ -483,7 +485,7 @@ function UI.Window(name, width, height, title, keepOnEscape)
   rule:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
   local emblem = f:CreateTexture(nil, "ARTWORK")
-  emblem:SetTexture(ns.PORTRAIT)
+  ns.Emblem(emblem, "PORTRAIT")
   emblem:SetSize(18, 18)
   emblem:SetPoint("TOPLEFT", 8, -5)
   f.title = UI.Label(f, title or "", "Subheading")
@@ -505,4 +507,106 @@ function UI.CloseButton(parent)
   x:SetPoint("CENTER")
   b:SetScript("OnClick", function() parent:Hide() end)
   return b
+end
+
+------------------------------------------------------------------------
+-- Layout pieces shared by the tabs
+------------------------------------------------------------------------
+-- A card at x, y on a page, w x h, with an optional heading.
+function UI.Box(parent, x, y, w, h, title)
+  local f = CreateFrame("Frame", nil, parent)
+  f:SetPoint("TOPLEFT", x + 1, y - 1)
+  f:SetSize(w - 2, h)
+  UI.Card(f, 1)
+  if title then
+    f.heading = UI.Label(f, title, "Heading")
+    f.heading:SetPoint("TOPLEFT", 14, -12)
+  end
+  return f
+end
+
+-- A small capitals label over a field.
+function UI.FieldLabel(parent, text, x, y)
+  local fs = UI.Label(parent, text:upper(), "Label")
+  fs:SetPoint("TOPLEFT", x, y)
+  return fs
+end
+
+-- Column headings across the top of a table card, with a rule under them.
+-- heads: { { "NAME", x }, ... }. Returns the y below the rule.
+function UI.TableHeads(card, heads)
+  for _, h in ipairs(heads) do
+    local fs = UI.Label(card, h[1], "Label")
+    if h.right then
+      fs:SetPoint("TOPRIGHT", card, "TOPLEFT", h[2], -9)
+      fs:SetJustifyH("RIGHT")
+    else
+      fs:SetPoint("TOPLEFT", h[2], -9)
+    end
+  end
+  local rule = card:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", 0, -26)
+  rule:SetPoint("TOPRIGHT", 0, -26)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  return -27
+end
+
+-- A thin line under a table row.
+function UI.RowLine(row)
+  local line = row:CreateTexture(nil, "BORDER")
+  line:SetPoint("BOTTOMLEFT")
+  line:SetPoint("BOTTOMRIGHT")
+  line:SetHeight(1)
+  line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+  return line
+end
+
+-- Selection marks for a table row: a gold tint and a gold bar on the left.
+-- Show them with UI.SetRowSelected(row, on).
+function UI.RowSelection(row)
+  row.sel = row:CreateTexture(nil, "BACKGROUND")
+  row.sel:SetAllPoints()
+  row.sel:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.10)
+  row.bar = row:CreateTexture(nil, "BORDER")
+  row.bar:SetPoint("TOPLEFT")
+  row.bar:SetPoint("BOTTOMLEFT")
+  row.bar:SetWidth(2)
+  row.bar:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
+end
+
+function UI.SetRowSelected(row, on)
+  row.sel:SetShown(on and true or false)
+  row.bar:SetShown(on and true or false)
+end
+
+-- A search box with a magnifying glass and a hint. onChange(text).
+function UI.SearchBox(parent, width, hint, onChange)
+  local box = UI.EditBox(parent, width, 40)
+  box:SetHeight(26)
+  box:SetTextInsets(28, 8, 0, 0)
+  local glass = UI.Icon(box, "search", 13, C.faint)
+  glass:SetPoint("LEFT", 9, 0)
+  box.hint = UI.Label(box, hint, "MutedSmall")
+  box.hint:SetPoint("LEFT", 28, 0)
+  box:SetScript("OnTextChanged", function(self)
+    local text = self:GetText() or ""
+    self.hint:SetShown(text == "")
+    onChange(text)
+  end)
+  return box
+end
+
+-- A stat tile: a big number with a small label under it.
+function UI.StatTile(parent, x, y, w, h, label)
+  local t = UI.Box(parent, x, y, w, h)
+  t.number = UI.Label(t, "", "Display")
+  t.number:SetPoint("TOPLEFT", 14, -12)
+  t.number:SetWidth(w - 28)
+  t.number:SetWordWrap(false)
+  t.label = UI.Label(t, label:upper(), "Label")
+  t.label:SetPoint("BOTTOMLEFT", 14, 11)
+  t.label:SetWidth(w - 28)
+  t.label:SetWordWrap(false)
+  return t
 end

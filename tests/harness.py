@@ -23,7 +23,7 @@ START = 1800000000
 def addon_files():
     """The addon's Lua files and version, in the order the TOC loads them."""
     files, version = [], None
-    for line in open(os.path.join(ROOT, "TheImperium.toc")):
+    for line in open(os.path.join(ROOT, "Warcrest.toc")):
         line = line.strip()
         m = re.match(r"## Version:\s*(\S+)", line)
         if m:
@@ -40,7 +40,7 @@ SOURCES = {f: open(os.path.join(ROOT, f)).read() for f in FILES}
 class Client:
     """One player running the addon."""
 
-    def __init__(self, guild, name):
+    def __init__(self, guild, name, setup=None):
         self.guild, self.name, self.online = guild, name, True
         self.in_raid = False
         L = self.lua = LuaRuntime(unpack_returned_tuples=True)
@@ -51,12 +51,14 @@ class Client:
         g.ADDON_VERSION = VERSION
         L.execute(STUB)
         self.set_roster()
+        if setup:
+            setup(self)          # e.g. saved data from before, as the game would load it
         self.ns = L.eval("{}")
         load = L.eval("function(src, name) return assert(loadstring(src, '@' .. name)) end")
         for f in FILES:
             # The same as the game: each file gets the addon's name and its shared table.
-            load(SOURCES[f], f)("TheImperium", self.ns)
-        self.fire("ADDON_LOADED", "TheImperium")
+            load(SOURCES[f], f)("Warcrest", self.ns)
+        self.fire("ADDON_LOADED", "Warcrest")
 
     # --- helpers -----------------------------------------------------------
     def set_roster(self):
@@ -99,7 +101,7 @@ class Client:
 class Guild:
     """Several players, the messages between them, and a shared clock."""
 
-    def __init__(self, members, raid=(), start=START, throttle=False):
+    def __init__(self, members, raid=(), start=START, throttle=False, setup=None):
         self.clock = float(start)
         # (name, guild rank[, class[, level]])
         self.members = [(m[0], m[1], True, m[2] if len(m) > 2 else "WARRIOR", m[3] if len(m) > 3 else 60)
@@ -112,7 +114,7 @@ class Guild:
         self._allowance = {}
         self.clients = {}
         for m in members:
-            self.clients[m[0]] = Client(self, m[0])
+            self.clients[m[0]] = Client(self, m[0], setup)
         self.set_raid(self.raid)
 
     def __getitem__(self, name):

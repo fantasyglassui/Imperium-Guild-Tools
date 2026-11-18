@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   DKP: balances, officer awards, and loot auctions.
 
   Balances add up every DKP entry in the ledger. Officers award or deduct
@@ -342,7 +342,7 @@ end
 function ns.ExportDKP()
   local lines = {}
   local function add(s) lines[#lines + 1] = s end
-  add("The Imperium - DKP export, " .. date("%Y-%m-%d %H:%M"))
+  add((ns.GuildName() or "Guild") .. " - Warcrest DKP export, " .. date("%Y-%m-%d %H:%M"))
   add("")
   add("STANDINGS")
   add("Name,DKP")
@@ -719,6 +719,7 @@ ns.OnMessage("B1", function(p, sender)
     ends = GetTime() + duration, by = Ambiguate(sender, "short"), hidden = p[6] == "hidden" }
   if ns.ShowAuctionWindow then ns.ShowAuctionWindow() end
   ns.Notify(("|cffffd200Loot auction: %s - minimum bid %d DKP.|r"):format(link, ns.auction.min), nil, nil, true)
+  if ns.OnAuctionStarted then ns.OnAuctionStarted(ns.auction) end
 end)
 
 ns.OnMessage("B3", function(p)

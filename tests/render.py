@@ -31,9 +31,9 @@ def split_point(p):
 
 def media_path(path):
     """A game texture path inside our addon, as a file here."""
-    if not isinstance(path, str) or "TheImperium" not in path:
+    if not isinstance(path, str) or "Warcrest" not in path:
         return None
-    rel = path.split("TheImperium\\", 1)[1].replace("\\", "/")
+    rel = path.split("Warcrest\\", 1)[1].replace("\\", "/")
     for ext in ("", ".tga", ".png"):
         f = os.path.join(ROOT, rel + ext)
         if os.path.isfile(f):
@@ -320,27 +320,56 @@ class Renderer:
         return path
 
 
-def demo_guild():
-    """A small guild with some history, so every tab has something to show."""
+def demo_guild(guild_name=None):
+    """A small guild with some history, so every tab has something to show.
+    guild_name: another guild than The Imperium (to show Warcrest's own look)."""
     from harness import Guild
     members = [("Thorne", 1, "WARRIOR"), ("Lyra", 3, "MAGE"), ("Mira", 3, "PRIEST"), ("Brakk", 3, "ROGUE"),
                ("Aldric", 3, "PALADIN"), ("Seren", 3, "DRUID", 58)]
-    guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"])
+    setup = (lambda c: c.run('GUILD_NAME = "%s"' % guild_name)) if guild_name else None
+    guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"], setup=setup)
     me = guild["Thorne"]
+    me.fire("GUILD_ROSTER_UPDATE")
     t = int(guild.clock)
     kills = [("Ganker", ["Thorne", "Lyra"]), ("Shadowstep", ["Lyra"]), ("Grimtusk", ["Brakk", "Thorne", "Mira"]),
              ("Venomfang", ["Mira"]), ("Bonecrusher", ["Thorne"]), ("Nightreaver", ["Lyra"])]
     for i, (victim, killers) in enumerate(kills):
         me.ns.MergeKill(me.lua.eval('{ t = %d, kind = "kill_world", victim = "%s", zone = "Stranglethorn Vale", killers = { %s } }'
                                     % (t - i * 3000, victim, ",".join('"%s"' % k for k in killers))))
-    for i in range(2):
-        me.ns.MergeDeath(me.lua.eval('{ t = %d, who = "Lyra", kind = "pvp", sub = "world", zone = "Stranglethorn Vale", killer = "Ganker-Stormrage" }'
-                                     % (t - 20000 - i * 4000)))
+    deaths = [("Lyra", "Ganker-Stormrage"), ("Lyra", "Ganker-Stormrage"), ("Mira", "Ganker-Stormrage"),
+              ("Brakk", "Shadowfang-Stormrage"), ("Seren", "Shadowfang-Stormrage"), ("Brakk", "Shadowfang-Stormrage")]
+    for i, (who, killer) in enumerate(deaths):
+        me.ns.MergeDeath(me.lua.eval('{ t = %d, who = "%s", kind = "pvp", sub = "world", zone = "Stranglethorn Vale", killer = "%s" }'
+                                     % (t - 20000 - i * 4000, who, killer)))
+    me.lua.eval('function(ns, t) table.insert(ns.db.spotted, 1, { name = "Shadowfang", zone = "Booty Bay", by = "Thorne", t = t, mapID = 1434, x = 0.3, y = 0.7 }); ns.OnHistoryChanged() end')(me.ns, t - 600)
+    me.lua.eval("""function(ns, t)
+      local log = ns.db.audit
+      local function add(dt, actor, action, target, detail)
+        table.insert(log, 1, { t = t - dt, actor = actor, action = action, target = target, detail = detail or "" })
+      end
+      add(400000, "Seren", "join", "Seren")
+      add(300000, "Thorne", "promote", "Lyra", "Officer")
+      add(200000, "Thorne", "onote", "Brakk")
+      add(90000, "Aldric", "join", "Aldric")
+      add(40000, "Thorne", "motd")
+      add(5000, "Thorne", "promote", "Mira", "Veteran")
+    end""")(me.ns, t)
+    items = [(19019, "Thunderfury, Blessed Blade of the Windseeker"), (16901, "Stormrage Legguards"),
+             (17076, "Bonereaver's Edge"), (18814, "Choker of the Fire Lord"), (16922, "Leggings of Transcendence")]
+    def link(i):
+        return "|cffa335ee|Hitem:%d::::::::60:::::::|h[%s]|h|r" % items[i]
+    for who, wishes in [("Lyra", [(0, "need"), (3, "want")]), ("Brakk", [(0, "need"), (2, "need")]),
+                        ("Mira", [(4, "need"), (3, "need")]), ("Thorne", [(1, "want"), (2, "want"), (0, "want")])]:
+        for i, prio in wishes:
+            guild[who].ns.WishlistAdd(link(i), prio)
+    guild.run(2)
     ev = me.ns.CreateRaid("Molten Core", t + 3 * 86400, "")
     guild.run(2)
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
         guild[n].ns.SignUp(ev.id, "accept", role)
         guild.run(0.5)
+    guild["Lyra"].ns.SetTitle("bounty")
+    guild.run(1)
     me.ns.StartRaidSession(ev.id, "Molten Core", 10, 10, 15)
     guild.run(3)
     me.ns.AwardDKP(me.lua.table_from(["Lyra", "Mira"]), 25, "Ragnaros bonus")
@@ -354,12 +383,16 @@ if __name__ == "__main__":
     guild, me = demo_guild()
     rd = Renderer(me)
     panel = None
-    for tab in ("roster", "raids", "dkp", "kills", "wanted", "settings", "officers", "addon"):
+    for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
-        panel = me.lua.eval("TheImperiumPanel")
+        panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
+    for tab, view in (("settings", "general"), ("achievements", "raid"), ("achievements", "guild")):
+        me.ns.OpenPanel(tab, view)
+        print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
+    me.ns.OpenPanel("settings", "alerts")
     me.ns.ShowAltsWindow()
-    print(rd.render(me.lua.eval("TheImperiumAlts"), os.path.join(out, "window-alts.png")))
+    print(rd.render(me.lua.eval("WarcrestAlts"), os.path.join(out, "window-alts.png")))
     me.ns.ShowPlayerCard("Lyra")
-    print(rd.render(me.lua.eval("TheImperiumPlayerCard"), os.path.join(out, "window-player-card.png")))
+    print(rd.render(me.lua.eval("WarcrestPlayerCard"), os.path.join(out, "window-player-card.png")))

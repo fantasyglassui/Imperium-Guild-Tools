@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   Roster tab: member list, notes, rank changes, invites, MOTD, addon versions.
 ]]
 
@@ -70,7 +70,8 @@ local function UpdateDetail()
   UI.SetCommand(d.demote, CMD.demote .. " " .. cmdName(m))
   UI.SetCommand(d.confirm, CMD.remove .. " " .. cmdName(m))
 
-  d.name:SetText(Ambiguate(m.name, "guild"))
+  local title = ns.TitleOf and ns.TitleOf(m.name)
+  d.name:SetText(Ambiguate(m.name, "guild") .. (title and (" " .. UI.Code("accent") .. title .. "|r") or ""))
   d.name:SetTextColor(UI.ClassColor(m.classFile))
   d.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
   if m.online then
@@ -383,7 +384,7 @@ local function Build(page)
   check:SetHeight(26)
   check:SetPoint("RIGHT")
   check:SetScript("OnClick", ns.CheckVersions)
-  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of The Imperium they have. The list and the Addon tab update as they answer.")
+  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of Warcrest they have. The list and the Addon tab update as they answer.")
 
   BuildTable(page)
   local side = CreateFrame("Frame", nil, page)

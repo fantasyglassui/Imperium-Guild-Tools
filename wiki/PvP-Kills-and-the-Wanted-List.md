@@ -33,7 +33,7 @@ Turn these off for yourself in **Settings** (Streaks and revenge). Officers can 
 
 ## Player cards
 
-Click a killer on the Kills tab, or a name on Top Head Hunters, to open their **player card**: kills this month and all time, assists, deaths, current and best streak, their **nemesis** (the enemy player who has killed them most) and who they've killed most, plus their DKP, attendance and loot. You can open cards from the Roster, DKP and Raids tabs too, or type `/imperium card Name`.
+Click a killer on the Kills tab, or a name on Top Head Hunters, to open their **player card**: kills this month and all time, assists, deaths, current and best streak, their **nemesis** (the enemy player who has killed them most) and who they've killed most, plus their DKP, attendance and loot. You can open cards from the Roster, DKP and Raids tabs too, or type `/warcrest card Name`.
 
 ## The Wanted list
 

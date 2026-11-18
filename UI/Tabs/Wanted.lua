@@ -1,12 +1,22 @@
 --[[
-  The Imperium
-  Wanted tab: enemy players who keep killing guild members.
+  Warcrest
+  Wanted tab: enemy players who keep killing guild members. A table of the
+  wanted on the left; on the right, the one you picked (or the most wanted)
+  and how the list works.
 ]]
 
 local _, ns = ...
 local UI = ns.UI
+local C = UI.C
 
 local P = {}
+local selectedKey
+
+local TABLE_W = 470
+local SIDE_X = TABLE_W + 14
+local SIDE_W = 740 - SIDE_X
+local INNER = SIDE_W - 30
+local WANTED = "|cffff66ff"
 
 local function ago(t)
   local s = time() - t
@@ -15,11 +25,46 @@ local function ago(t)
   return math.floor(s / 86400) .. " d ago"
 end
 
+local function selectedEntry(list)
+  for _, w in ipairs(list) do
+    if w.key == selectedKey then return w end
+  end
+  return list[1]
+end
+
+local function RefreshDetail(w, list)
+  local d = P.detail
+  UI.SetEnabled(d.show, w ~= nil and w.seen ~= nil and w.seen.mapID ~= nil)
+  UI.SetEnabled(d.hide, w ~= nil)
+  if not w then
+    d.label:SetText("MOST WANTED")
+    d.name:SetText(UI.Code("muted") .. "Nobody|r")
+    d.count:SetText("")
+    d.lines:SetText(UI.Code("muted") .. "Enemy players show up here once they've killed guild members "
+      .. (ns.db.wantedThreshold or 3) .. " times in world PvP in 30 days.|r")
+    return
+  end
+  d.label:SetText(w == list[1] and "MOST WANTED" or "SELECTED")
+  d.name:SetText(WANTED .. w.name .. "|r")
+  d.count:SetText(w.count)
+  local lines = {
+    ("Killed %s%d|r guild member%s, %d time%s in all."):format(UI.Code("text"), w.victimCount,
+      w.victimCount == 1 and "" or "s", w.count, w.count == 1 and "" or "s"),
+    ("Last kill: %s%s|r in %s, %s."):format(UI.Code("text"), Ambiguate(w.lastVictim, "short"), w.lastZone or "?", ago(w.last)),
+    w.seen and ("Last seen: %s by %s, %s."):format(w.seen.zone, Ambiguate(w.seen.by, "short"), ago(w.seen.t))
+      or (UI.Code("muted") .. "Not seen lately.|r"),
+  }
+  d.lines:SetText(table.concat(lines, "\n"))
+end
+
 local function Refresh()
   local list = ns.WantedList()
   P.list:SetEmptyText(("Nobody has killed guild members %d or more times in world PvP in the last 30 days."):format(
     ns.db.wantedThreshold or 3))
+  local current = selectedEntry(list)
+  P.current = current
   P.list:SetItems(list)
+  RefreshDetail(current, list)
 
   for i, opt in ipairs(P.threshold.options) do
     if opt[1] == ns.db.wantedThreshold then
@@ -27,97 +72,153 @@ local function Refresh()
       P.threshold:SetText(opt[2])
     end
   end
-
   P.removeOnKill:SetChecked(ns.db.wantedRemoveOnKill)
+  P.how:SetText(("Enemy players who have killed guild members %d or more times in world PvP in the last 30 days. "
+    .. "When a guildmate spots one, everyone is alerted and the spot is marked on the map for 30 minutes."):format(
+    ns.db.wantedThreshold or 3))
 
   local hidden = ns.HiddenWantedCount()
   P.unhide:SetShown(hidden > 0)
   P.unhide:SetText(("Show hidden (%d)"):format(hidden))
 end
 
-local function Build(page)
-  local desc = UI.Label(page, "Enemy players who keep killing guild members in world PvP (last 30 days). "
-    .. "When a guildmate sees one, the guild is alerted and the sighting is marked on the map.",
-    "GameFontHighlightSmall")
-  desc:SetPoint("TOPLEFT", 8, -8)
-  desc:SetWidth(470)
+local function BuildTable(page)
+  local card = UI.Box(page, 0, 0, TABLE_W, 412)
+  P.card = card
+  local heads = { { "PLAYER", 12 }, { "KILLS", 214 }, { "MEMBERS", 270 }, { "LAST KILL", 350 } }
+  local y = UI.TableHeads(card, heads)
 
-  local options = { { 2, "Wanted after 2 kills" }, { 3, "Wanted after 3 kills" },
-    { 5, "Wanted after 5 kills" }, { 10, "Wanted after 10 kills" } }
-  P.threshold = UI.Cycle(page, 160, options, function(v) ns.SetWantedThreshold(v) end)
-  P.threshold.options = options
-  P.threshold:SetPoint("TOPRIGHT", -4, -2)
-
-  P.unhide = UI.Button(page, "Show hidden", 160)
-  P.unhide:SetPoint("TOPRIGHT", -4, -28)
-  P.unhide:SetScript("OnClick", ns.UnhideAllWanted)
-
-  -- column headings
-  local headings = { { "Player", 8 }, { "Guild kills", 200 }, { "Members killed", 290 },
-    { "Last kill", 400 }, { "Last seen", 500 } }
-  for _, h in ipairs(headings) do
-    UI.Label(page, h[1], "GameFontNormalSmall"):SetPoint("TOPLEFT", h[2], -64)
-  end
-
-  P.list = UI.List(page, 660, 270, 20,
+  P.list = UI.List(card, TABLE_W - 24, 412 + y - 2, 26,
     function(row)
-      row.cols = {}
-      for i, h in ipairs(headings) do
-        local fs = UI.Label(row, "", "GameFontHighlightSmall")
-        fs:SetPoint("LEFT", h[2] - 4, 0)
-        fs:SetWidth(i == 1 and 185 or (i == 5 and 150 or 100))
-        fs:SetWordWrap(false)
-        row.cols[i] = fs
-      end
+      UI.RowSelection(row)
+      row.name = UI.Label(row, "", "Subheading")
+      row.name:SetPoint("LEFT", 12, 0)
+      row.name:SetWidth(190)
+      row.name:SetWordWrap(false)
+      row.count = UI.Label(row, "", "Number")
+      row.count:SetPoint("LEFT", 214, 0)
+      row.victims = UI.Label(row, "", "Small")
+      row.victims:SetPoint("LEFT", 270, 0)
+      row.last = UI.Label(row, "", "MutedSmall")
+      row.last:SetPoint("LEFT", 350, 0)
+      row.last:SetPoint("RIGHT", -8, 0)
+      row.last:SetWordWrap(false)
+      UI.RowLine(row)
       row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
       row:SetScript("OnClick", function(self, button)
-        local w = self.item
         if button == "RightButton" then
-          ns.HideWanted(w.name)
-        elseif w.seen and w.seen.mapID and ns.ShowDeathOnMap then
-          ns.ShowDeathOnMap(w.seen)
+          ns.HideWanted(self.item.name)
+        else
+          selectedKey = self.item.key
+          ns.RefreshPanel()
         end
       end)
-      row:SetScript("OnEnter", function(self)
+      row:SetScript("OnDoubleClick", function(self)
         local w = self.item
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText("|cffff66ff" .. w.name .. "|r")
-        GameTooltip:AddLine(("Killed guild members %d times (%d different members)."):format(w.count, w.victimCount), 1, 1, 1, true)
-        GameTooltip:AddLine(("Last killed %s in %s, %s."):format(w.lastVictim, w.lastZone, ago(w.last)), 0.8, 0.8, 0.8, true)
-        if w.seen then
-          GameTooltip:AddLine(("Last seen in %s by %s, %s."):format(w.seen.zone, w.seen.by, ago(w.seen.t)), 0.8, 0.8, 0.8, true)
-          if w.seen.mapID then GameTooltip:AddLine("Click to see where on the map.", 0.5, 0.8, 1) end
-        end
-        GameTooltip:AddLine("Right-click to hide from your list.", 0.6, 0.6, 0.6)
-        GameTooltip:Show()
+        if w.seen and w.seen.mapID and ns.ShowDeathOnMap then ns.ShowDeathOnMap(w.seen) end
       end)
-      row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      UI.Tooltip(row, function() return WANTED .. row.item.name .. "|r" end,
+        "Click to see details. Double-click to see where they were last seen. Right-click to hide them from your list.")
     end,
     function(row, w)
-      row.cols[1]:SetText("|cffff66ff" .. w.name .. "|r")
-      row.cols[2]:SetText(w.count)
-      row.cols[3]:SetText(w.victimCount)
-      row.cols[4]:SetText(ago(w.last))
-      row.cols[5]:SetText(w.seen and (ago(w.seen.t) .. " in " .. w.seen.zone) or "|cff8b95a7-|r")
-    end)
-  P.list.frame:SetPoint("TOPLEFT", 4, -80)
+      row.name:SetText(WANTED .. w.name .. "|r")
+      row.count:SetText(w.count)
+      row.victims:SetText(w.victimCount)
+      row.last:SetText(ago(w.last))
+      UI.SetRowSelected(row, P.current ~= nil and P.current.key == w.key)
+    end, true)
+  P.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, y - 1)
 
-  P.removeOnKill = UI.Check(page, "Remove from the list when a guild member kills them", 4, -350)
-  P.removeOnKill:SetScript("OnClick", function(self) ns.SetWantedRemoveOnKill(self:GetChecked()) end)
-  P.removeOnKill:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Bounty claimed")
-    GameTooltip:AddLine("When a guild member kills a wanted player, their count starts over. They come back if they keep killing guild members.", 1, 1, 1, true)
-    GameTooltip:Show()
+  P.note = UI.Label(page, "Built from the guild's shared death history. Hiding someone only changes your own list.", "MutedSmall")
+  P.note:SetPoint("TOPLEFT", 4, -428)
+  P.note:SetWidth(TABLE_W)
+  P.note:SetWordWrap(false)
+end
+
+local function BuildSide(page)
+  local side = CreateFrame("Frame", nil, page)
+  P.side = side
+  side:SetPoint("TOPLEFT", SIDE_X, 0)
+  side:SetSize(SIDE_W, 450)
+
+  local d = UI.Box(side, 0, 0, SIDE_W, 200)
+  P.detail = d
+  d.label = UI.Label(d, "MOST WANTED", "Label")
+  d.label:SetPoint("TOPLEFT", 14, -13)
+  d.name = UI.Label(d, "", "Display")
+  d.name:SetPoint("TOPLEFT", 14, -30)
+  d.name:SetWidth(INNER - 50)
+  d.name:SetWordWrap(false)
+  d.count = UI.Label(d, "", "Display")
+  d.count:SetPoint("TOPRIGHT", -14, -30)
+  d.count:SetJustifyH("RIGHT")
+  d.count:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
+  d.lines = UI.Label(d, "", "Small")
+  d.lines:SetPoint("TOPLEFT", 14, -66)
+  d.lines:SetWidth(INNER)
+  d.lines:SetSpacing(5)
+
+  local half = (INNER - 6) / 2
+  d.show = UI.Button(d, "Show on map", half)
+  d.show:SetHeight(26)
+  d.show:SetPoint("BOTTOMLEFT", 14, 14)
+  d.show:SetScript("OnClick", function()
+    local w = P.current
+    if w and w.seen and w.seen.mapID and ns.ShowDeathOnMap then ns.ShowDeathOnMap(w.seen) end
   end)
-  P.removeOnKill:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  UI.Tooltip(d.show, "Show on map", "Opens the world map where they were last seen.")
+  d.hide = UI.Button(d, "Hide", half)
+  d.hide:SetHeight(26)
+  d.hide:SetPoint("LEFT", d.show, "RIGHT", 6, 0)
+  d.hide:SetScript("OnClick", function()
+    if P.current then ns.HideWanted(P.current.name) end
+  end)
+  UI.Tooltip(d.hide, "Hide", "Takes them off your own list. Nobody else's list changes. Show hidden at the top brings them back.")
 
-  local note = UI.Label(page, "Built from the guild's shared death history. Hiding someone only affects your own list.",
-    "GameFontDisableSmall")
-  note:SetPoint("TOPLEFT", 8, -382)
+  local rules = CreateFrame("Frame", nil, side)
+  P.rules = rules
+  rules:SetPoint("BOTTOMLEFT", 1, 1)
+  rules:SetSize(SIDE_W - 2, 236)
+  UI.Card(rules, 1)
+  UI.Label(rules, "How it works", "Heading"):SetPoint("TOPLEFT", 14, -12)
+  P.how = UI.Label(rules, "", "Small")
+  P.how:SetPoint("TOPLEFT", 14, -38)
+  P.how:SetWidth(INNER)
+  P.how:SetSpacing(3)
 
+  P.removeOnKill = UI.Check(rules, "Clear when we kill them", 10, -158)
+  P.removeOnKill:SetScript("OnClick", function(self) ns.SetWantedRemoveOnKill(self:GetChecked()) end)
+  UI.Tooltip(P.removeOnKill, "Bounty claimed",
+    "When a guild member kills a wanted player, their count starts over. They come back if they keep killing guild members.")
+  local claimed = UI.Label(rules, "Their count starts over, so they come back only if they keep at it.", "MutedSmall")
+  claimed:SetPoint("TOPLEFT", 42, -186)
+  claimed:SetWidth(INNER - 28)
+end
+
+local function BuildHeader(bar)
+  local options = { { 2, "Wanted after 2 kills" }, { 3, "Wanted after 3 kills" },
+    { 5, "Wanted after 5 kills" }, { 10, "Wanted after 10 kills" } }
+  P.threshold = UI.Cycle(bar, 170, options, function(v) ns.SetWantedThreshold(v) end)
+  P.threshold.options = options
+  P.threshold:SetHeight(26)
+  P.threshold:SetPoint("RIGHT")
+  UI.Tooltip(P.threshold, "When someone is wanted", "How many guild members an enemy player has to kill in 30 days to go on your list. Click to change it. This is your own choice.")
+
+  P.unhide = UI.Button(bar, "Show hidden", 130)
+  P.unhide:SetHeight(26)
+  P.unhide:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0)
+  P.unhide:SetScript("OnClick", ns.UnhideAllWanted)
+end
+
+local function Build(page)
+  BuildHeader(page.headerBar)
+  BuildTable(page)
+  BuildSide(page)
+  UI.Grow(page, P.card, 1, 1)
   UI.Grow(page, P.list, 1, 1)
-  UI.FollowAll(page, { P.removeOnKill, note }, 0, 1)
+  UI.Follow(page, P.note, 0, 1)
+  UI.Follow(page, P.side, 1, 0)
+  UI.Grow(page, P.side, 0, 1)
 end
 
 -- The header's subtitle: how many are on the list.

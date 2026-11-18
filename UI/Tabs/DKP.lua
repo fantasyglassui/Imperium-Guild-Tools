@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Warcrest
   DKP tab: everyone's DKP, each member's history, and (for officers)
   awarding DKP and running loot auctions.
 ]]
@@ -666,7 +666,7 @@ local exportWin
 
 function ns.ShowExport(text)
   if not exportWin then
-    local f = UI.Window("TheImperiumExport", 560, 420, "DKP export")
+    local f = UI.Window("WarcrestExport", 560, 420, "DKP export")
     exportWin = f
     local hint = UI.Label(f, "Press Ctrl+C to copy, then paste it into a text file or spreadsheet.", "GameFontHighlightSmall")
     hint:SetPoint("TOPLEFT", 16, -32)

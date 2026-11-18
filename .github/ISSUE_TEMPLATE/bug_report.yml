@@ -10,7 +10,7 @@ body:
     id: version
     attributes:
       label: Addon version
-      description: Type `/imperium version` in game, or look at the top of the guild panel.
+      description: Type `/warcrest version` in game, or look at the top of the guild panel.
       placeholder: "2.10.0"
     validations:
       required: true
@@ -50,5 +50,5 @@ body:
     id: errors
     attributes:
       label: Error messages
-      description: Any Lua errors from BugSack or the game's error popup, and the output of `/imperium debug`.
+      description: Any Lua errors from BugSack or the game's error popup, and the output of `/warcrest debug`.
       render: text

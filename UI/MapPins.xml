@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
   <!-- World map pin for a guild death. Behaviour lives in UI\MapPins.lua. -->
-  <Frame name="TheImperiumDeathPinTemplate" mixin="TheImperiumDeathPinMixin" enableMouse="true" virtual="true">
+  <Frame name="WarcrestDeathPinTemplate" mixin="WarcrestDeathPinMixin" enableMouse="true" virtual="true">
     <Size x="18" y="18"/>
     <Layers>
       <Layer level="OVERLAY">
