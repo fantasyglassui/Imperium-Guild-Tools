@@ -90,7 +90,7 @@ class Renderer:
 
     def text_lines(self, w):
         text = w["_GetText"]
-        if not text:
+        if text is None or text == "":
             return None
         font, size, color = self.font_of(w)
         segs = self.segments(str(text), color)
