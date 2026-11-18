@@ -17,6 +17,7 @@ end
 local function ShowTab(id)
   if not tabVisible(id) then id = 1 end
   current = id
+  ns.db.lastTab = UI.tabs[id].id -- reopen here next time
   for i, t in ipairs(UI.tabs) do t.page:SetShown(i == id) end
   if panel.realTabs and PanelTemplates_SetTab then
     PanelTemplates_SetTab(panel, id)
@@ -116,7 +117,13 @@ local function CreatePanel()
     ns.RefreshPanel()
   end)
   panel:SetScript("OnHide", function() PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE) end)
-  ShowTab(1)
+
+  -- Open on the tab used last time.
+  local start = 1
+  for i, t in ipairs(UI.tabs) do
+    if t.id == ns.db.lastTab then start = i end
+  end
+  ShowTab(start)
 end
 
 function ns.RefreshPanel()

@@ -59,6 +59,7 @@ local function Refresh()
     if ORDER[a.status] ~= ORDER[b.status] then return ORDER[a.status] < ORDER[b.status] end
     return a.m.name < b.m.name
   end)
+  P.list:SetEmptyText(#all == 0 and "The guild roster is still loading." or "Nobody matches this filter.")
   P.list:SetItems(shown)
 
   local total = #all
@@ -78,6 +79,7 @@ local function Build(page)
 
   local check = UI.Button(page, "Check now", 110)
   check:SetPoint("TOPRIGHT", -4, -2)
+  UI.Tooltip(check, "Check now", "Asks every online guildmate which version of The Imperium they have.")
   check:SetScript("OnClick", function()
     ns.CheckVersions()
     C_Timer.After(8, ns.RefreshPanel)
@@ -86,6 +88,7 @@ local function Build(page)
     { "all", "All members" }, { "with", "Has the addon" }, { "without", "Doesn't have it" },
     { "old", "Out of date" },
   }, function(v) filter = v; ns.RefreshPanel() end)
+  UI.Tooltip(f, "Show", "Click to switch between everyone, members with the addon, members without it, and members on an old version.")
   f:SetPoint("TOPRIGHT", check, "TOPLEFT", -6, 0)
 
   local heads = { { "Member", 8 }, { "Rank", 200 }, { "Status", 330 }, { "Addon", 430 }, { "Last seen with addon", 560 } }

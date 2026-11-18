@@ -81,6 +81,7 @@ local function RefreshEvent(event)
     rows[#rows + 1] = { name = su.name, role = su.role, status = su.status, classFile = mk.classOf[ns.Key(su.name)],
       noShow = attended ~= nil and su.status == "accept" and not attended[ns.Key(su.name)] }
   end
+  P.signups:SetEmptyText("Nobody has signed up yet.")
   P.signups:SetItems(rows)
   if noShows then
     d.noShows:SetText(#noShows > 0 and ("|cffff6060No-shows:|r " .. table.concat(noShows, ", "))
@@ -111,6 +112,7 @@ local function RefreshGroup(event)
     m.signup = byKey[ns.Key(m.name)]
     m.dkp = ns.Balance(m.name)
   end
+  P.group:SetEmptyText("You're not in a raid group. When you are, everyone in it shows here with their sign-up and DKP.")
   P.group:SetItems(members)
   local inGuild = 0
   for _, m in ipairs(members) do if m.inGuild then inGuild = inGuild + 1 end end
@@ -165,7 +167,6 @@ local function Refresh()
   if selectedId and not ns.RaidEvent(selectedId) then selectedId = nil end
   if not selectedId and events[1] then selectedId = events[1].id end
   P.list:SetItems(events)
-  P.empty:SetShown(#events == 0)
   local event = ns.RaidEvent(selectedId)
 
   local officer = ns.IsAddonOfficer()
@@ -245,6 +246,7 @@ local function BuildEventView(parent)
   -- Your sign-up
   d.role = UI.Button(d, "Role: DPS", 100)
   d.role:SetPoint("TOPLEFT", 0, -146)
+  UI.Tooltip(d.role, "Your role", "Click to switch between Tank, Healer and DPS. If you've already signed up, your sign-up changes too.")
   d.role:SetScript("OnClick", function()
     myRole = (myRole == "tank" and "healer") or (myRole == "healer" and "dps") or "tank"
     local mine = selectedId and ns.MySignup(selectedId)
@@ -336,6 +338,7 @@ local function BuildGroupView(parent)
   P.standbyName:SetPoint("TOPLEFT", 6, -346)
   P.standbyAdd = UI.Button(g, "Add to standby", 120)
   P.standbyAdd:SetPoint("LEFT", P.standbyName, "RIGHT", 8, 0)
+  UI.Tooltip(P.standbyAdd, "Add to standby", "Puts the guild member named in the box on standby for tonight's raid night. They earn the same DKP as the raid, and count as attending.")
   P.standbyAdd:SetScript("OnClick", function()
     ns.AddStandby(P.standbyName:GetText())
     P.standbyName:SetText("")
@@ -343,6 +346,7 @@ local function BuildGroupView(parent)
   end)
   P.standbyRemove = UI.Button(g, "Remove", 80)
   P.standbyRemove:SetPoint("LEFT", P.standbyAdd, "RIGHT", 4, 0)
+  UI.Tooltip(P.standbyRemove, "Remove from standby", "Takes the guild member named in the box off standby.")
   P.standbyRemove:SetScript("OnClick", function()
     ns.RemoveStandby(P.standbyName:GetText())
     P.standbyName:SetText("")
@@ -432,15 +436,15 @@ local function Build(page)
         mine and (" " .. STATUS_TEXT[mine.status]) or ""))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -28)
-
-  P.empty = UI.Label(page, "No raids scheduled.", "GameFontDisable")
-  P.empty:SetPoint("TOPLEFT", 12, -40)
+  P.list:SetEmptyText("No raids scheduled.")
 
   P.newButton = UI.Button(page, "New raid", 100)
   P.newButton:SetPoint("TOPLEFT", 4, -234)
+  UI.Tooltip(P.newButton, "Schedule a raid", "Adds a raid to the calendar for guild members to sign up to. They get a reminder before it starts.")
   P.newButton:SetScript("OnClick", function() view = "new"; ns.RefreshPanel() end)
   P.cancelButton = UI.Button(page, "Cancel raid", 100)
   P.cancelButton:SetPoint("LEFT", P.newButton, "RIGHT", 6, 0)
+  UI.Tooltip(P.cancelButton, "Cancel raid", "Cancels the selected raid for everyone. You'll be asked to confirm first.")
   P.cancelButton:SetScript("OnClick", function()
     local e = ns.RaidEvent(selectedId)
     if e then StaticPopup_Show("IMPERIUM_CANCEL_RAID", e.title, nil, e.id) end
@@ -471,6 +475,10 @@ local function Build(page)
   P.boss:SetText("0")
   P.sessionButton = UI.Button(page, "Start raid", 100)
   P.sessionButton:SetPoint("TOPLEFT", 204, -342)
+  UI.Tooltip(P.sessionButton, function() return ns.ActiveSession() and "End raid" or "Start raid" end, function()
+    if ns.ActiveSession() then return "Stops awarding DKP for tonight's raid night." end
+    return "Starts tonight's raid night. Everyone in your raid gets the On time DKP now, Per hour DKP every hour, and Per boss DKP for each boss killed. Attendance is recorded."
+  end)
   P.sessionButton:SetScript("OnClick", function()
     if ns.ActiveSession() then
       ns.EndRaidSession()
@@ -488,6 +496,7 @@ local function Build(page)
   right:SetPoint("BOTTOMRIGHT", -4, 0)
   P.viewButton = UI.Button(right, "Show current raid group", 190)
   P.viewButton:SetPoint("TOPRIGHT", 0, -2)
+  UI.Tooltip(P.viewButton, "Switch view", "Switches between the selected raid's sign-ups and everyone in your raid group right now.")
   P.viewButton:SetScript("OnClick", function()
     view = (view == "group") and "event" or "group"
     ns.RefreshPanel()

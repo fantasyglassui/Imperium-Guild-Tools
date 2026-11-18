@@ -17,10 +17,9 @@ end
 
 local function Refresh()
   local list = ns.WantedList()
-  P.list:SetItems(list)
-  P.empty:SetShown(#list == 0)
-  P.empty:SetText(("Nobody has killed guild members %d or more times in world PvP in the last 30 days."):format(
+  P.list:SetEmptyText(("Nobody has killed guild members %d or more times in world PvP in the last 30 days."):format(
     ns.db.wantedThreshold or 3))
+  P.list:SetItems(list)
 
   for i, opt in ipairs(P.threshold.options) do
     if opt[1] == ns.db.wantedThreshold then
@@ -103,10 +102,6 @@ local function Build(page)
       row.cols[5]:SetText(w.seen and (ago(w.seen.t) .. " in " .. w.seen.zone) or "|cff888888-|r")
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -80)
-
-  P.empty = UI.Label(page, "", "GameFontDisable")
-  P.empty:SetPoint("TOPLEFT", 12, -92)
-  P.empty:SetWidth(600)
 
   P.removeOnKill = UI.Check(page, "Remove from the list when a guild member kills them", 4, -350)
   P.removeOnKill:SetScript("OnClick", function(self) ns.SetWantedRemoveOnKill(self:GetChecked()) end)

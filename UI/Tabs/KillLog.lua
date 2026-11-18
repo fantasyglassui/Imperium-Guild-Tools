@@ -48,8 +48,8 @@ local function Refresh()
   local lastFrom, lastTo, lastName = ns.MonthRange(-1)
   local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
   P.champion:SetText(champ and ("|cffd4af37%s champion:|r %s (%d)"):format(lastName, champ.name, champ.count) or "")
+  P.list:SetEmptyText(fromT and "No kills yet this month." or "No kills recorded yet.")
   P.list:SetItems(kills)
-  P.empty:SetShown(#kills == 0)
   P.total:SetText(("%d kills shown"):format(#kills))
 
   local top = ns.KillStats(kills, TOP_N)
@@ -84,16 +84,19 @@ local function Build(page)
     { "all", "All kills" }, { "kill_world", "World PvP" }, { "kill_bg", "Battlegrounds & arenas" },
   }, ns.RefreshPanel)
   P.filter:SetPoint("TOPLEFT", 6, -2)
+  UI.Tooltip(P.filter, "Which kills", "Click to switch between all kills, world PvP only, and battlegrounds and arenas only.")
 
   P.period = UI.Cycle(page, 130, {
     { "month", "This month" }, { "lastmonth", "Last month" }, { "week", "Last 7 days" }, { "all", "All time" },
   }, ns.RefreshPanel)
   P.period:SetPoint("LEFT", P.filter, "RIGHT", 6, 0)
+  UI.Tooltip(P.period, "Time period", "Click to switch between this month, last month, the last 7 days and all time. Top Head Hunters follows the same period.")
 
   local clear = UI.Button(page, "Clear log", 90)
   P.clear = clear
   clear:SetPoint("TOPRIGHT", -4, -2)
   clear:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_CLEAR_KILLS") end)
+  UI.Tooltip(clear, "Clear the kill log", "Clears the kill log and the leaderboard for the whole guild. Only the Guild Master can do this, and you'll be asked to confirm.")
 
   P.list = UI.List(page, 400, 320, 18,
     function(row)
@@ -125,8 +128,6 @@ local function Build(page)
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -32)
 
-  P.empty = UI.Label(page, "No kills recorded yet.", "GameFontDisable")
-  P.empty:SetPoint("TOPLEFT", 12, -44)
   P.total = UI.Label(page, "", "GameFontDisableSmall")
   P.total:SetPoint("TOPLEFT", 8, -360)
 

@@ -80,6 +80,7 @@ local function RefreshChanges()
     local e = c.entry
     if q == "" or e.names:lower():find(q, 1, true) or e.reason:lower():find(q, 1, true) then shown[#shown + 1] = c end
   end
+  P.changeList:SetEmptyText(q == "" and "No DKP changes yet." or "No changes match your search.")
   P.changeList:SetItems(shown)
 end
 
@@ -89,8 +90,8 @@ local function RefreshLoot()
     local itemText = l.item:gsub("|H.-|h(.-)|h", "%1"):lower()
     if q == "" or l.winner:lower():find(q, 1, true) or itemText:find(q, 1, true) then shown[#shown + 1] = l end
   end
+  P.lootList:SetEmptyText(q == "" and "No loot has been won in an auction yet." or "No loot matches your search.")
   P.lootList:SetItems(shown)
-  P.lootEmpty:SetShown(#shown == 0)
 end
 
 local function Refresh()
@@ -103,7 +104,7 @@ local function Refresh()
   P.lootHeads:SetShown(loot)
   P.changeHeads:SetShown(changes)
   P.raidOnly:SetShown(standings)
-  if loot then P.lootEmpty:Show() RefreshLoot() else P.lootEmpty:Hide() end
+  if loot then RefreshLoot() end
   if changes then RefreshChanges() end
   P.export:SetShown(officer)
   P.import:SetShown(officer)
@@ -126,6 +127,11 @@ local function Refresh()
     if a.dkp ~= b.dkp then return a.dkp > b.dkp end
     return a.name < b.name
   end)
+  if q ~= "" or raidOnly then
+    P.list:SetEmptyText(raidOnly and "Nobody in your raid matches." or "Nobody matches your search.")
+  else
+    P.list:SetEmptyText("Nobody has any DKP yet. Officers award it on the DKP tab, or it builds up from raid nights.")
+  end
   P.list:SetItems(shown)
 
   local count = 0
@@ -188,6 +194,7 @@ local function BuildOfficer(parent)
 
   local raidBtn = UI.Button(o, "Select current raid", 150)
   raidBtn:SetPoint("TOPLEFT", 0, -44)
+  UI.Tooltip(raidBtn, "Select current raid", "Selects everyone in your raid group in the list, ready for an award.")
   raidBtn:SetScript("OnClick", function()
     for _, n in ipairs(ns.RaidAttendees()) do selected[ns.Key(n)] = true end
     ns.RefreshPanel()
@@ -207,9 +214,11 @@ local function BuildOfficer(parent)
   local add = UI.Button(o, "Add DKP", 110)
   add:SetPoint("TOPLEFT", 0, -114)
   add:SetScript("OnClick", function() award(1) end)
+  UI.Tooltip(add, "Add DKP", "Gives the amount to everyone selected, with the reason typed. Every guildmate's addon records it, and it can be undone from the All changes view.")
   local remove = UI.Button(o, "Remove DKP", 110)
   remove:SetPoint("LEFT", add, "RIGHT", 6, 0)
   remove:SetScript("OnClick", function() award(-1) end)
+  UI.Tooltip(remove, "Remove DKP", "Takes the amount off everyone selected, with the reason typed. It can be undone from the All changes view.")
 
   -- Loot auction
   UI.Label(o, "Loot auction", "GameFontNormalLarge"):SetPoint("TOPLEFT", 0, -156)
@@ -247,6 +256,7 @@ local function BuildOfficer(parent)
   P.auctionCancel = UI.Button(o, "Cancel auction", 120)
   P.auctionCancel:SetPoint("LEFT", P.auctionStart, "RIGHT", 6, 0)
   P.auctionCancel:SetScript("OnClick", function() ns.CancelAuction(); ns.RefreshPanel() end)
+  UI.Tooltip(P.auctionStart, "Start auction", "Opens bidding on the item for everyone in your raid, for the time chosen. If nobody bids, raiders can /roll for it free.")
 
   local hint = UI.Label(o, "Raid members with the addon get a bid window. The highest bid wins, and DKP is "
     .. "deducted automatically.", "GameFontDisableSmall")
@@ -256,9 +266,11 @@ local function BuildOfficer(parent)
   P.export = UI.Button(o, "Export DKP", 90)
   P.export:SetPoint("TOPLEFT", 0, -330)
   P.export:SetScript("OnClick", function() ns.ShowExport(ns.ExportDKP()) end)
+  UI.Tooltip(P.export, "Export DKP", "Shows everyone's DKP as text you can copy, for example into a spreadsheet.")
   P.import = UI.Button(o, "Import balances", 112)
   P.import:SetPoint("LEFT", P.export, "RIGHT", 6, 0)
   P.import:SetScript("OnClick", function() ns.ShowImportWindow() end)
+  UI.Tooltip(P.import, "Import balances", "Sets members' DKP from a list you paste in, such as one copied from a spreadsheet.")
   P.season = UI.Button(o, "New season", 100)
   P.season:SetPoint("LEFT", P.import, "RIGHT", 6, 0)
   P.season:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_NEW_SEASON") end)
@@ -282,6 +294,7 @@ local function BuildOfficer(parent)
   local apply = UI.Button(o, "Decay now", 84)
   apply:SetPoint("TOPLEFT", 92, -358)
   apply:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_DECAY", P.decay:GetText()) end)
+  UI.Tooltip(apply, "Decay now", "Takes the percentage off everyone's DKP right away. It can only be done once per week.")
   P.weekly = UI.Check(o, "Every week", 180, -356)
   P.weekly:SetScript("OnClick", saveRules)
   P.weekly:SetScript("OnEnter", function(self)
@@ -389,8 +402,6 @@ local function Build(page)
       row.dkp:SetText(l.roll and "|cff888888roll|r" or l.amount)
     end)
   P.lootList.frame:SetPoint("TOPLEFT", 4, -48)
-  P.lootEmpty = UI.Label(page, "No loot has been won in an auction yet.", "GameFontDisable")
-  P.lootEmpty:SetPoint("TOPLEFT", 12, -60)
 
   -- All changes view
   P.changeHeads = CreateFrame("Frame", nil, page)
@@ -451,6 +462,7 @@ local function Build(page)
   P.alts = UI.Button(page, "Alts", 80)
   P.alts:SetPoint("TOPRIGHT", -4, -2)
   P.alts:SetScript("OnClick", function() ns.ShowAltsWindow() end)
+  UI.Tooltip(P.alts, "Alts", "Link your alts to your main so they share its DKP. A number in red means alts are waiting for you to confirm them.")
 
   P.list = UI.List(page, 360, 330, 20,
     function(row)

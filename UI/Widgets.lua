@@ -63,6 +63,22 @@ function UI.SetCommand(b, text)
   return true
 end
 
+-- A tooltip for a button or other control. title and text can be functions,
+-- for controls whose meaning changes. Also shows while the control is greyed
+-- out, so people can see what it does and why they can't use it.
+function UI.Tooltip(w, title, text)
+  if w.SetMotionScriptsWhileDisabled then w:SetMotionScriptsWhileDisabled(true) end
+  w.hasTooltip = true
+  w:HookScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:SetText(type(title) == "function" and title() or title)
+    local body = type(text) == "function" and text() or text
+    if body then GameTooltip:AddLine(body, 1, 1, 1, true) end
+    GameTooltip:Show()
+  end)
+  w:HookScript("OnLeave", function() GameTooltip:Hide() end)
+end
+
 function UI.SetEnabled(w, on)
   -- Secure buttons can't be changed during combat.
   if InCombatLockdown() and w.IsProtected and w:IsProtected() then return end
@@ -101,7 +117,28 @@ function UI.NumRanks()
   return (GuildControlGetNumRanks and GuildControlGetNumRanks()) or 10
 end
 
+-- The Imperium's colors, for frames and highlights.
+UI.GOLD = { 0.83, 0.69, 0.22 }
+
+-- A thin border around a frame, just outside its edges.
+function UI.Border(frame, r, g, b, a, pad)
+  pad = pad or 0
+  local edges = {
+    { "TOPLEFT", -pad - 1, pad + 1, "TOPRIGHT", pad + 1, pad },             -- top
+    { "BOTTOMLEFT", -pad - 1, -pad, "BOTTOMRIGHT", pad + 1, -pad - 1 },     -- bottom
+    { "TOPLEFT", -pad - 1, pad, "BOTTOMLEFT", -pad, -pad },                 -- left
+    { "TOPRIGHT", pad, pad, "BOTTOMRIGHT", pad + 1, -pad },                 -- right
+  }
+  for _, e in ipairs(edges) do
+    local t = frame:CreateTexture(nil, "BORDER")
+    t:SetPoint(e[1], frame, e[1], e[2], e[3])
+    t:SetPoint(e[4], frame, e[4], e[5], e[6])
+    t:SetColorTexture(r, g, b, a)
+  end
+end
+
 -- A scrolling list. makeRow(row) sets up a new row; fill(row, item) shows an item.
+-- list:SetEmptyText(text) sets what it says when there's nothing to show.
 function UI.List(parent, width, height, rowHeight, makeRow, fill)
   local sf = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
   sf:SetSize(width, height)
@@ -109,7 +146,21 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill)
   content:SetSize(width - 4, 1)
   sf:SetScrollChild(content)
 
-  local list = { frame = sf, rows = {} }
+  -- A dark background with a faint gold edge, so the list stands apart from the panel.
+  local bg = sf:CreateTexture(nil, "BACKGROUND")
+  bg:SetPoint("TOPLEFT", -2, 2)
+  bg:SetPoint("BOTTOMRIGHT", 2, -2)
+  bg:SetColorTexture(0, 0, 0, 0.3)
+  UI.Border(sf, UI.GOLD[1], UI.GOLD[2], UI.GOLD[3], 0.25, 2)
+
+  local empty = sf:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+  empty:SetPoint("TOPLEFT", 8, -10)
+  empty:SetWidth(width - 24)
+  empty:SetJustifyH("LEFT")
+  empty:Hide()
+
+  local list = { frame = sf, rows = {}, empty = empty }
+  function list:SetEmptyText(text) self.emptyText = text end
   function list:SetItems(items)
     for i, item in ipairs(items) do
       local row = self.rows[i]
@@ -118,6 +169,11 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill)
         row:SetSize(width - 4, rowHeight)
         row:SetPoint("TOPLEFT", 0, -(i - 1) * rowHeight)
         row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+        if i % 2 == 0 then -- every other row slightly lighter, to follow a row across
+          local stripe = row:CreateTexture(nil, "BACKGROUND")
+          stripe:SetAllPoints()
+          stripe:SetColorTexture(1, 1, 1, 0.04)
+        end
         makeRow(row)
         self.rows[i] = row
       end
@@ -127,6 +183,8 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill)
     end
     for i = #items + 1, #self.rows do self.rows[i]:Hide() end
     content:SetHeight(math.max(#items * rowHeight, 1))
+    empty:SetText(self.emptyText or "")
+    empty:SetShown(#items == 0 and (self.emptyText or "") ~= "")
   end
   return list
 end

@@ -115,6 +115,7 @@ local function Refresh()
     selected = fresh
   end
 
+  P.list:SetEmptyText(q ~= "" and "Nobody matches your search." or "The guild roster is still loading.")
   P.list:SetItems(shown)
 
   local online, with, outdated = ns.VersionSummary(roster)
@@ -151,6 +152,7 @@ local function Build(page)
   local check = UI.Button(page, "Check addon versions", 170)
   check:SetPoint("TOPRIGHT", -4, -2)
   check:SetScript("OnClick", ns.CheckVersions)
+  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of The Imperium they have. The list and the Addon tab update as they answer.")
 
   P.list = UI.List(page, 290, 240, 20,
     function(row)
@@ -211,6 +213,7 @@ local function Build(page)
 
   d.save = UI.Button(d, "Save notes", 110)
   d.save:SetPoint("TOPLEFT", 0, -158)
+  UI.Tooltip(d.save, "Save notes", "Saves the public and officer notes typed above. Each one needs your rank to have permission to edit it.")
   d.save:SetScript("OnClick", function()
     local m = selected
     if not m then return end
@@ -226,14 +229,17 @@ local function Build(page)
   d.promote = UI.SecureButton(d, "Promote", 95)
   d.promote:SetPoint("TOPLEFT", 0, -196)
   d.promote:HookScript("PostClick", afterAction)
+  UI.Tooltip(d.promote, "Promote", "Moves this member up one guild rank. Your rank needs permission to promote, and it can't be done in combat.")
 
   d.demote = UI.SecureButton(d, "Demote", 95)
   d.demote:SetPoint("LEFT", d.promote, "RIGHT", 4, 0)
   d.demote:HookScript("PostClick", afterAction)
+  UI.Tooltip(d.demote, "Demote", "Moves this member down one guild rank. Your rank needs permission to demote, and it can't be done in combat.")
 
   -- Remove asks for confirmation: the first click shows a confirm button.
   d.remove = UI.Button(d, "Remove", 95)
   d.remove:SetPoint("LEFT", d.demote, "RIGHT", 4, 0)
+  UI.Tooltip(d.remove, "Remove from guild", "Removes this member from the guild. You'll be asked to confirm first.")
   d.remove:SetScript("OnClick", function()
     if selected and not InCombatLockdown() then
       d.confirm:SetText("Remove " .. Ambiguate(selected.name, "guild") .. "?")
@@ -260,6 +266,7 @@ local function Build(page)
   P.inviteBox:SetPoint("TOPLEFT", 14, -318)
   P.inviteBtn = UI.SecureButton(page, "Invite", 80)
   P.inviteBtn:SetPoint("LEFT", P.inviteBox, "RIGHT", 8, 0)
+  UI.Tooltip(P.inviteBtn, "Invite to guild", "Invites the player named in the box to the guild.")
   P.inviteBox:SetScript("OnTextChanged", function(self)
     local name = strtrim(self:GetText() or "")
     UI.SetCommand(P.inviteBtn, name ~= "" and (CMD.invite .. " " .. name) or "")
@@ -275,6 +282,7 @@ local function Build(page)
   P.motdBox:SetPoint("TOPLEFT", 14, -362)
   P.motdBtn = UI.SecureButton(page, "Save", 80)
   P.motdBtn:SetPoint("LEFT", P.motdBox, "RIGHT", 8, 0)
+  UI.Tooltip(P.motdBtn, "Save message of the day", "Sets the guild's message of the day to this text, for everyone.")
   P.motdBox:SetScript("OnTextChanged", function(self)
     local text = (self:GetText() or ""):gsub("[\r\n]", " ")
     UI.SetCommand(P.motdBtn, CMD.motd .. " " .. text)

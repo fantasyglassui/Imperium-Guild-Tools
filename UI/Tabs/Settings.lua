@@ -134,6 +134,7 @@ local function Build(page)
 
   P.save = UI.Button(content, "Save for whole guild", 170)
   P.save:SetPoint("TOPLEFT", 8, y - 32)
+  UI.Tooltip(P.save, "Save for whole guild", "Sends these settings to every guildmate's addon. Members who are offline get them when they next log in while an officer is online.")
   P.save:SetScript("OnClick", function()
     local types = {}
     for key, cb in pairs(P.guildTypes) do types[key] = cb:GetChecked() and true or false end
@@ -228,6 +229,7 @@ local function Build(page)
   local test = UI.Button(content, "Show test alert", 130)
   test:SetPoint("TOPLEFT", x, y)
   test:SetScript("OnClick", ns.TestAlert)
+  UI.Tooltip(test, "Show test alert", "Shows an example alert just for you, so you can see how alerts look and sound. Nobody else sees it.")
   local hint = UI.Label(content, "A different alert type each click.", "GameFontDisableSmall")
   hint:SetPoint("LEFT", test, "RIGHT", 8, 0)
   y = y - 34

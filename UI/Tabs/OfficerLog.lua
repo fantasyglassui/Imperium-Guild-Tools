@@ -24,7 +24,6 @@ local function Refresh()
   P.clear:SetShown(ns.IsGuildMaster()) -- only the Guild Master can clear logs
   local entries = ns.db.audit
   P.list:SetItems(entries)
-  P.empty:SetShown(#entries == 0)
 end
 
 local function Build(page)
@@ -38,6 +37,7 @@ local function Build(page)
   P.clear = clear
   clear:SetPoint("TOPRIGHT", -4, -2)
   clear:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_CLEAR_AUDIT") end)
+  UI.Tooltip(clear, "Clear the officer log", "Clears the officer log for the whole guild. Only the Guild Master can do this, and you'll be asked to confirm.")
 
   P.list = UI.List(page, 640, 330, 18,
     function(row)
@@ -54,9 +54,7 @@ local function Build(page)
       row.text:SetText(ns.DescribeAction(e))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -56)
-
-  P.empty = UI.Label(page, "Nothing recorded yet.", "GameFontDisable")
-  P.empty:SetPoint("TOPLEFT", 12, -66)
+  P.list:SetEmptyText("Nothing recorded yet. Promotions, demotions, joins, leaves and kicks show here once they happen while you're online.")
 end
 
 UI.AddTab({ id = "officers", title = "Officers", build = Build, refresh = Refresh, visible = ns.CanSeeOfficerTools })

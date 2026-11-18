@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- Lists across the guild panel have a dark background with a thin gold edge, and every other row is shaded, so it's easier to follow a row across.
+- Every list says something when it's empty or nothing matches your search, including ones that used to be blank: the roster, DKP standings and changes, raid sign-ups, your raid group and the Addon tab.
+- The guild panel opens on the tab you used last.
+- Tooltips on 30 buttons that didn't explain themselves, such as Promote, Start raid, Add DKP, Decay now, Import balances and the kill log filters. They show even when a button is greyed out, so you can see what it does.
 - Behind the scenes: the addon's files are organized into folders by feature (Core, Guild, PvP, Raids, and the panel's tabs under UI/Tabs). Nothing changes in game. If you install by hand, delete the old TheImperium folder before unzipping the new one, so the old loose files don't stay behind (they're unused, but it keeps things tidy).
 
 ## 2.11.1
