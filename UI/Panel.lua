@@ -267,7 +267,9 @@ function ns.TogglePanel()
 end
 
 -- tab: a tab's position, or its id ("kills", "settings", ...).
-function ns.OpenPanel(tab)
+-- tab: a tab's id or number. view: for tabs with views switched at the top
+-- (a UI.Segmented saved as tab.view once built), which one to show.
+function ns.OpenPanel(tab, view)
   if blockedByCombat() then return end
   if not panel then CreatePanel() end
   local index = tonumber(tab) or 1
@@ -278,6 +280,11 @@ function ns.OpenPanel(tab)
   end
   panel:Show()
   ShowTab(index)
+  local t = UI.tabs[index]
+  if view and t and t.view then
+    t.view:SetValue(view)
+    ns.RefreshPanel()
+  end
 end
 
 ns.OnEvent("PLAYER_REGEN_DISABLED", function()

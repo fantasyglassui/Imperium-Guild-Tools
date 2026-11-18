@@ -333,9 +333,24 @@ def demo_guild():
     for i, (victim, killers) in enumerate(kills):
         me.ns.MergeKill(me.lua.eval('{ t = %d, kind = "kill_world", victim = "%s", zone = "Stranglethorn Vale", killers = { %s } }'
                                     % (t - i * 3000, victim, ",".join('"%s"' % k for k in killers))))
-    for i in range(2):
-        me.ns.MergeDeath(me.lua.eval('{ t = %d, who = "Lyra", kind = "pvp", sub = "world", zone = "Stranglethorn Vale", killer = "Ganker-Stormrage" }'
-                                     % (t - 20000 - i * 4000)))
+    deaths = [("Lyra", "Ganker-Stormrage"), ("Lyra", "Ganker-Stormrage"), ("Mira", "Ganker-Stormrage"),
+              ("Brakk", "Shadowfang-Stormrage"), ("Seren", "Shadowfang-Stormrage"), ("Brakk", "Shadowfang-Stormrage")]
+    for i, (who, killer) in enumerate(deaths):
+        me.ns.MergeDeath(me.lua.eval('{ t = %d, who = "%s", kind = "pvp", sub = "world", zone = "Stranglethorn Vale", killer = "%s" }'
+                                     % (t - 20000 - i * 4000, who, killer)))
+    me.lua.eval('function(ns, t) table.insert(ns.db.spotted, 1, { name = "Shadowfang", zone = "Booty Bay", by = "Thorne", t = t, mapID = 1434, x = 0.3, y = 0.7 }); ns.OnHistoryChanged() end')(me.ns, t - 600)
+    me.lua.eval("""function(ns, t)
+      local log = ns.db.audit
+      local function add(dt, actor, action, target, detail)
+        table.insert(log, 1, { t = t - dt, actor = actor, action = action, target = target, detail = detail or "" })
+      end
+      add(400000, "Seren", "join", "Seren")
+      add(300000, "Thorne", "promote", "Lyra", "Officer")
+      add(200000, "Thorne", "onote", "Brakk")
+      add(90000, "Aldric", "join", "Aldric")
+      add(40000, "Thorne", "motd")
+      add(5000, "Thorne", "promote", "Mira", "Veteran")
+    end""")(me.ns, t)
     ev = me.ns.CreateRaid("Molten Core", t + 3 * 86400, "")
     guild.run(2)
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
@@ -359,6 +374,10 @@ if __name__ == "__main__":
         me.ns.RefreshPanel()
         panel = me.lua.eval("TheImperiumPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
+    for tab, view in (("settings", "general"),):
+        me.ns.OpenPanel(tab, view)
+        print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
+    me.ns.OpenPanel("settings", "alerts")
     me.ns.ShowAltsWindow()
     print(rd.render(me.lua.eval("TheImperiumAlts"), os.path.join(out, "window-alts.png")))
     me.ns.ShowPlayerCard("Lyra")
