@@ -163,6 +163,8 @@ function ns.RefreshCouncilWindow()
 
   local officer = ns.IsAddonOfficer()
   local cands = ns.CouncilCandidates()
+  -- Members only need the answer buttons and the result: a smaller window.
+  win:SetHeight(officer and HEIGHT or 230)
   win.table:SetShown(officer)
   win.memberNote:SetShown(not officer)
   win.timer:ClearAllPoints()
