@@ -23,7 +23,7 @@ To make the window bigger, drag its **bottom-right corner**: the lists stretch t
 | Tab | What's there |
 | --- | --- |
 | Roster | The guild roster. Officers manage notes, ranks, invites and the Message of the Day. |
-| Raids | Scheduled raids and sign-ups, and your current raid group. |
+| Raids | Scheduled raids and sign-ups, your current raid group, the raid calendar, and the guild's progress through each raid. |
 | DKP | Everyone's DKP and attendance, loot history, and your alts. |
 | Wishlist | The loot the guild wants, and your own wishlist. |
 | Kills | PvP kills by guild members and the Top Head Hunters board. |
@@ -32,6 +32,12 @@ To make the window bigger, drag its **bottom-right corner**: the lists stretch t
 | Settings | Alerts (for the guild and just for you), quiet mode, the map, the recap, your title and the window's size. |
 | Officers | A log of guild changes, with a search and filter (officers only). |
 | Addon | Who in the guild has the addon, and which version. |
+
+## The welcome and help
+
+The first time Warcrest loads, a short **welcome** shows what it does and where to start. If you're an officer and nobody has set Warcrest up for your guild yet, it also asks who manages Warcrest and whether your guild uses DKP. Type `/warcrest welcome` to see it again.
+
+Click **Help** at the bottom of the side menu (or type `/warcrest help`) for short answers about every part of Warcrest, and every command.
 
 ## Player cards
 

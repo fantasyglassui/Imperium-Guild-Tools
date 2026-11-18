@@ -29,6 +29,9 @@ The **Achievements** tab shows what you've earned and what you're working toward
 | Raider | Attend a raid night | |
 | Veteran Raider | Attend 10 raid nights | |
 | Iron Raider | Attend 25 raid nights | the Iron Raider |
+| Boss Down | Be there when the guild kills a raid boss | |
+| Boss Slayer | Be there for 25 guild boss kills | the Slayer |
+| Pioneer | Be there for the guild's first kill of a boss | the Pioneer |
 | Lucky | Win an item at a loot auction or roll | |
 | Big Spender | Spend 100 DKP or more on one item | the Big Spender |
 | Wish Granted | Win an item that was on your wishlist | |

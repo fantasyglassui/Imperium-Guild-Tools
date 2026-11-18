@@ -2,6 +2,10 @@
 
 The DKP tab's officer area holds the guild's DKP rules, backups, imports and seasons.
 
+## Not using DKP?
+
+If your guild hands out loot another way, untick **Use DKP for loot** in **Settings > Alerts** (Guild-wide) and click **Save for whole guild**, or pick **No DKP** in the welcome's guild setup (`/warcrest welcome`). The DKP tab, loot auctions and raid night DKP are then hidden for everyone. Raids, sign-ups, attendance, boss kills, wishlists and everything else still work. Tick it again any time to bring DKP back; nothing is lost.
+
 ## DKP rules (whole guild)
 
 | Setting | What it does |
