@@ -11,6 +11,12 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "2.13.0", date = "Nov 18, 2026", items = {
+    "Player cards: click a guild member's name on the Roster, Kills, DKP or Raids tab to see their kills, deaths, nemesis, best streak, DKP, attendance and loot in one place. Or type /imperium card Name.",
+    "Kill streaks: the guild hears when someone gets 3, 5, 10 or more kills in a row, and when a big streak is ended. The Kills tab shows the period's best streak.",
+    "Revenge: the guild hears when someone kills an enemy player who just killed a guildmate.",
+    "The DKP, Raids and Roster tabs are redesigned in the new look.",
+  } },
   { version = "2.12.0", date = "Nov 17, 2026", items = {
     "A new look: the guild panel and its windows are redesigned, dark and flat with Imperium gold, a new font, and a side menu with icons.",
     "The Kills tab is redesigned: a kill table, this month's leader, and Top Head Hunters with bars. Pick the period at the top, and drag the borders between column headings to see long names in full.",

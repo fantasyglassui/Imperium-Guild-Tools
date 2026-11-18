@@ -4,7 +4,7 @@ Open the **Raids** tab, pick a raid on the left, choose your role, and click **A
 
 ## Signing up
 
-1. Click the role button until it shows **Tank**, **Healer** or **DPS**.
+1. Pick a raid on the left, then pick **Tank**, **Healer** or **DPS** on the switch under its details.
 2. Click **Accept**, **Tentative** or **Decline**. You can change your answer any time before the raid.
 3. If you accepted or are tentative, you get a reminder 15 minutes before the start, and an invite when officers send them.
 
@@ -17,6 +17,8 @@ Under the sign-up counts, the Raids tab lists who has accepted by class, and nam
 - **Tanks:** 2 wanted once 10 or more have accepted, otherwise 1.
 - **Healers:** about one for every five players.
 - **Classes:** once 10 have accepted, any class with max-level members in the guild that nobody has signed up with.
+
+Click a name in the sign-up list to open their **player card** (their attendance, DKP and more).
 
 Hover the warning for the full breakdown, including tentative sign-ups by role. Raids with gaps have an orange **!** in the Upcoming raids list. If you can play a role the raid is missing, now's the time to say so.
 

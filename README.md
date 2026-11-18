@@ -13,6 +13,8 @@ The official addon of The Imperium for World of Warcraft: Forever.
 - **PvP kill alerts.** When a guild member kills an enemy player, the guild hears about it. Guildmates who take down the same player together share one alert.
 - **Choose what you see.** Turn each alert type on or off for yourself.
 - **Deaths on the map.** Recent guild deaths (24 hours by default, adjustable from 1 hour to 7 days) are marked on the world map with an X (a skull for PvP), including inside OpenMap. Click a mark to set a TomTom waypoint.
+- **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
+- **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
 - **Kill log and Top Head Hunters.** Every PvP kill by guild members, with killing blows and assists, and a monthly board of the guild's top PvP killers.
 - **Wanted list.** Enemy players who keep killing guild members. When a guildmate sees one, the whole guild is alerted and the sighting goes on the map.
 - **Celebrations.** The guild cheers when a member reaches every 10th level and max level, or every level if you prefer.
@@ -53,6 +55,7 @@ When updating, delete the old `TheImperium` folder first so no old files are lef
 | `/imperium auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
 | `/imperium kills` | Open the kill log |
 | `/imperium wanted` | Open the wanted list |
+| `/imperium card [name]` | Show a guild member's player card (yours if no name) |
 | `/imperium quiet` | Turn holding alerts during combat on or off |
 | `/imperium sync` | Fetch the last two days of guild history from guildmates |
 | `/imperium test` | Show a test alert (a different death type each time) |

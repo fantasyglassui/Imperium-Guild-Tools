@@ -19,6 +19,22 @@ The **Kills** tab lists every kill as a table (killer, victim, where and when) w
 - The board **starts fresh on the 1st of each month** (realm time).
 - On reset day, the guild hears last month's **top three**, and last month's champion is shown at the bottom of the board.
 
+## Kill streaks and revenge
+
+A **streak** is a guild member's killing blows in a row without dying to an enemy player, with no more than an hour between kills.
+
+- The guild hears when someone reaches **3, 5, 10, 15, 20, 25 and 30** kills in a row.
+- When a streak of **5 or more** is ended, the guild hears who ended it.
+- The Kills tab shows the **best streak** of the period you picked, under Top Head Hunters.
+
+**Revenge:** when a guild member kills an enemy player who killed a guildmate in the last 30 minutes, the guild hears about it.
+
+Turn these off for yourself in **Settings** (Streaks and revenge). Officers can turn them off for the whole guild.
+
+## Player cards
+
+Click a killer on the Kills tab, or a name on Top Head Hunters, to open their **player card**: kills this month and all time, assists, deaths, current and best streak, their **nemesis** (the enemy player who has killed them most) and who they've killed most, plus their DKP, attendance and loot. You can open cards from the Roster, DKP and Raids tabs too, or type `/imperium card Name`.
+
 ## The Wanted list
 
 Enemy players who keep killing guild members in world PvP (3 times in 30 days by default) go on the **Wanted** tab.
