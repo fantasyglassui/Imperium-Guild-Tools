@@ -42,6 +42,17 @@ Link your alts to your main so they share one DKP balance and one attendance rec
 
 Your alt can now bid with your main's DKP. To undo it, log in on the alt and click **Unlink this alt**, or ask an officer.
 
+## Your wishlist
+
+The **Wishlist** tab is where you mark the loot you're after.
+
+1. Shift-click an item (from your bags, chat or a loot window) into the box on the right.
+2. Pick **Need** (a big upgrade) or **Want** (nice to have), and click **Add**.
+
+Your list is shared with the guild. The table on the left shows every item guildmates want, Need first, and **In my raid** narrows it to the people in your raid right now. Click one of your items to switch it between Need and Want, or click the X to remove it.
+
+When an item on your wishlist is auctioned, you get a message in chat, and the auction window shows everyone who wished for it (Need in gold). Once you win an item it's marked **Won** on your list and stops counting you as wanting it.
+
 ## Seasons
 
 Officers occasionally start a new **season**. You keep your DKP; older DKP changes and loot history are archived so the addon stays fast.

@@ -10,6 +10,8 @@ All commands start with `/imperium` (or the short `/imp`).
 | `/imperium kills` | Kills and Top Head Hunters |
 | `/imperium wanted` | Wanted list |
 | `/imperium card [name]` | A guild member's player card (yours if no name) |
+| `/imperium wishlist` | The guild's loot wishlist, and yours |
+| `/imperium achievements` | Your achievements and title |
 | `/imperium addon` | Who has the addon, and who's out of date |
 | `/imperium auction [item] [min bid]` | Auction an item to your raid (officers) |
 | `/imperium test` | Show a test alert (a different kind each time) |

@@ -11,6 +11,12 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "2.14.0", date = "Nov 18, 2026", items = {
+    "Loot wishlists: mark the items you Need or Want on the new Wishlist tab. When one is auctioned, you're told, and the auction window shows who wants it.",
+    "Achievements and titles: 21 achievements for kills, streaks, revenge, bounties, raids and loot on the new Achievements tab. Some come with a title to show after your name.",
+    "The Wanted, Settings, Officers and Addon tabs are redesigned in the new look.",
+    "New commands: /imperium wishlist and /imperium achievements.",
+  } },
   { version = "2.13.0", date = "Nov 18, 2026", items = {
     "Player cards: click a guild member's name on the Roster, Kills, DKP or Raids tab to see their kills, deaths, nemesis, best streak, DKP, attendance and loot in one place. Or type /imperium card Name.",
     "Kill streaks: the guild hears when someone gets 3, 5, 10 or more kills in a row, and when a big streak is ended. The Kills tab shows the period's best streak.",

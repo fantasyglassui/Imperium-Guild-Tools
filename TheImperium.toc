@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: |cffd4af37The Imperium|r
-## Notes: Official addon of <The Imperium>. Guild kill and level-up alerts, shared logs and leaderboards, a wanted list of gankers, raid sign-ups and DKP with loot auctions, and officer guild tools.
+## Notes: Official addon of <The Imperium>. Guild kill and level-up alerts, shared logs and leaderboards, a wanted list of gankers, raid sign-ups, DKP with loot auctions and wishlists, achievements and titles, and officer guild tools.
 ## Author: The Imperium
-## Version: 2.13.0
+## Version: 2.14.0
 ## Category: Guild
 ## IconTexture: Interface\AddOns\TheImperium\Media\Icon
 ## AddonCompartmentFunc: TheImperium_OnAddonCompartmentClick
