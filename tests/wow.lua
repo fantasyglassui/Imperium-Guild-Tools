@@ -81,6 +81,7 @@ local VALUES = {
   GetWidth = 140, GetHeight = 140, GetEffectiveScale = 1, GetStringHeight = 12, GetStringWidth = 60, GetText = "",
   GetChecked = false, IsShown = false, HasFocus = false, IsEnabled = true, IsProtected = false,
   GetObjectType = "Frame", GetValue = 0, GetNumPoints = 0, GetID = 1, GetMapID = 0, GetFrameLevel = 1,
+  GetVerticalScroll = 0,
 }
 -- Where things are placed, so tests/render.py can draw the interface.
 local function layout(w)
@@ -177,6 +178,7 @@ widgetMeta = { __index = function(self, key)
   if key == "GetCenter" then return function() return 0, 0 end end
   if key == "GetMinMaxValues" then return function() return 0, 100 end end
   if key == "SetChecked" then return function(w, v) rawset(w, "_GetChecked", v and true or false) end end
+  if key == "SetVerticalScroll" then return function(w, v) rawset(w, "_GetVerticalScroll", v) end end
   if key == "Show" then return function(w) rawset(w, "_IsShown", true) end end
   if key == "Hide" then return function(w) rawset(w, "_IsShown", false) end end
   if key == "SetShown" then return function(w, v) rawset(w, "_IsShown", v and true or false) end end
@@ -360,3 +362,9 @@ ERR_GUILD_DEMOTE_SSS = "%s has demoted %s to %s."
 ERR_GUILD_REMOVE_SS = "%s has been kicked out of the guild by %s."
 ERR_GUILD_JOIN_S = "%s has joined the guild."
 ERR_GUILD_LEAVE_S = "%s has left the guild."
+
+-- The instance you're in: set INSTANCE = { "Hyjal Summit", "raid" } to be in a raid instance.
+function GetInstanceInfo()
+  if INSTANCE then return INSTANCE[1], INSTANCE[2], 9, "", 20, 0, false, INSTANCE[3] or 2000 end
+  return "Eastern Kingdoms", "none", 0, "", 0, 0, false, 0
+end

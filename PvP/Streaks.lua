@@ -23,25 +23,55 @@ local MILESTONE = { [3] = true, [5] = true, [10] = true, [15] = true, [20] = tru
 local STREAK_COLOR = "|cffffad33"
 local REVENGE_COLOR = "|cffff6b6b"
 
+-- Every guild member's killing blows and deaths to enemy players, oldest
+-- first, built in one pass over the logs and kept until they change.
+local byKey, builtFor
+local ledgerVersion = 0
+ns.OnLoad(function() -- (the ledger loads after this file)
+  ns.OnLedgerChanged(function() ledgerVersion = ledgerVersion + 1 end) -- removed kills
+end)
+
+local function signature()
+  local kl, dl = ns.db.killLog or {}, ns.db.deathLog or {}
+  return #kl .. ":" .. (kl[1] and kl[1].t or 0) .. ":" .. #dl .. ":" .. (dl[1] and dl[1].t or 0) .. ":" .. ledgerVersion
+end
+
+local function byTime(a, b)
+  if a.t ~= b.t then return a.t < b.t end
+  return (a.death and 1 or 0) < (b.death and 1 or 0) -- a kill and death at the same moment: kill first
+end
+
+local function build()
+  local sig = signature()
+  if byKey and builtFor == sig then return byKey end
+  byKey = {}
+  local function add(key, e)
+    local list = byKey[key]
+    if not list then list = {}; byKey[key] = list end
+    list[#list + 1] = e
+  end
+  for _, k in ipairs(ns.db.killLog or {}) do
+    local kb = not ns.KillHidden(k) and ns.KillingBlow(k)
+    if kb then add(ns.Key(kb), { t = k.t, kill = true, name = kb }) end
+  end
+  for _, d in ipairs(ns.db.deathLog or {}) do
+    if d.kind == "pvp" then add(ns.Key(d.who), { t = d.t, death = true }) end
+  end
+  for _, list in pairs(byKey) do table.sort(list, byTime) end
+  builtFor = sig
+  return byKey
+end
+
 -- One guild member's killing blows and deaths to enemy players, oldest first.
 -- before: only events earlier than this time.
 local function events(name, before)
-  local key, list = ns.Key(name), {}
-  for _, k in ipairs(ns.db.killLog or {}) do
-    if (not before or k.t < before) and not ns.KillHidden(k) and ns.Key(ns.KillingBlow(k)) == key then
-      list[#list + 1] = { t = k.t, kill = true }
-    end
+  local list = build()[ns.Key(name)] or {}
+  if not before then return list end
+  local out = {}
+  for _, e in ipairs(list) do
+    if e.t < before then out[#out + 1] = e else break end
   end
-  for _, d in ipairs(ns.db.deathLog or {}) do
-    if (not before or d.t < before) and d.kind == "pvp" and ns.Key(d.who) == key then
-      list[#list + 1] = { t = d.t, death = true }
-    end
-  end
-  table.sort(list, function(a, b)
-    if a.t ~= b.t then return a.t < b.t end
-    return (a.death and 1 or 0) < (b.death and 1 or 0) -- a kill and death at the same moment: kill first
-  end)
-  return list
+  return out
 end
 
 -- Each streak in a list of events: fn(count, firstKill, lastKill, stillGoing).
@@ -86,20 +116,20 @@ end
 
 -- The longest streaks in a period: { { name, count }, ... }, longest first.
 function ns.BestStreaks(fromT, toT, max)
-  local names, best = {}, {}
-  for _, k in ipairs(ns.db.killLog or {}) do
-    if (not fromT or k.t >= fromT) and (not toT or k.t < toT) and not ns.KillHidden(k) then
-      names[ns.KillingBlow(k)] = true
+  local best = {}
+  for _, list in pairs(build()) do
+    local name, inRange = nil, {}
+    for _, e in ipairs(list) do
+      if (not fromT or e.t >= fromT) and (not toT or e.t < toT) then
+        inRange[#inRange + 1] = e
+        if e.kill then name = name or e.name end
+      end
     end
-  end
-  for name in pairs(names) do
-    local longest = 0
-    local list = {}
-    for _, e in ipairs(events(name)) do
-      if (not fromT or e.t >= fromT) and (not toT or e.t < toT) then list[#list + 1] = e end
+    if name then
+      local longest = 0
+      eachStreak(inRange, function(count) longest = math.max(longest, count) end)
+      if longest >= 2 then best[#best + 1] = { name = name, count = longest } end
     end
-    eachStreak(list, function(count) longest = math.max(longest, count) end)
-    if longest >= 2 then best[#best + 1] = { name = name, count = longest } end
   end
   table.sort(best, function(a, b)
     if a.count ~= b.count then return a.count > b.count end

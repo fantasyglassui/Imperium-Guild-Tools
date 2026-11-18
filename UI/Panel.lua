@@ -167,6 +167,19 @@ local function CreatePanel()
 
   local version = UI.Label(side, "v" .. (ns.version or "?"), "MutedSmall")
   version:SetPoint("BOTTOMLEFT", 16, 12)
+  -- Help, at the bottom of the side menu.
+  local help = CreateFrame("Button", nil, side)
+  help:SetSize(SIDEBAR - 20, 30)
+  help:SetPoint("BOTTOMLEFT", 10, 30)
+  local hover = help:CreateTexture(nil, "HIGHLIGHT")
+  hover:SetAllPoints()
+  hover:SetColorTexture(1, 1, 1, 0.04)
+  local q = UI.Label(help, "?", "Subheading")
+  q:SetPoint("LEFT", 9, 0)
+  q:SetTextColor(C.navText[1], C.navText[2], C.navText[3])
+  local hl = UI.Label(help, "Help", "Nav")
+  hl:SetPoint("LEFT", 32, 0)
+  help:SetScript("OnClick", function() if ns.ShowHelp then ns.ShowHelp() end end)
 
   -- Header
   panel.heading = UI.Label(panel, "", "Title")
@@ -266,7 +279,7 @@ local reopenAfterCombat = false
 
 local function blockedByCombat()
   if InCombatLockdown() then
-    ns.Say("Guild tools can't be opened during combat.")
+    ns.Say("Warcrest can't be opened during combat.")
     return true
   end
 end

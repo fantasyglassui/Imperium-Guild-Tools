@@ -361,8 +361,55 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   empty:SetJustifyH("LEFT")
   empty:Hide()
 
-  local list = { frame = sf, rows = {}, empty = empty, width = width, height = height }
+  -- Only the rows that fit on screen (plus one) are made. Scrolling moves
+  -- them down and fills them with the items now in view, so a list of
+  -- thousands costs no more than a list of twenty.
+  local list = { frame = sf, rows = {}, empty = empty, width = width, height = height, items = {} }
   function list:SetEmptyText(text) self.emptyText = text end
+
+  local function makeOne(i)
+    local row = CreateFrame("Button", nil, content)
+    row:SetSize(width - 4, rowHeight)
+    row.stripe = row:CreateTexture(nil, "BACKGROUND") -- every other row slightly lighter, to follow a row across
+    row.stripe:SetAllPoints()
+    row.stripe:SetColorTexture(1, 1, 1, 0.025)
+    local hover = row:CreateTexture(nil, "HIGHLIGHT")
+    hover:SetAllPoints()
+    hover:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.08)
+    makeRow(row)
+    list.rows[i] = row
+    return row
+  end
+
+  -- Fill the visible rows from the scroll position.
+  local function update()
+    local items = list.items
+    local first = math.floor((sf:GetVerticalScroll() or 0) / rowHeight) -- items above the view
+    first = math.max(0, math.min(first, math.max(0, #items - 1)))
+    local visible = math.ceil(list.height / rowHeight) + 1
+    for i = 1, visible do
+      local index = first + i
+      local item = items[index]
+      local row = list.rows[i]
+      if item then
+        row = row or makeOne(i)
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", 0, -(index - 1) * rowHeight)
+        row.index = index
+        row.stripe:SetShown(index % 2 == 0)
+        row.item = item
+        fill(row, item)
+        row:Show()
+      elseif row then
+        row:Hide()
+      end
+    end
+    for i = visible + 1, #list.rows do list.rows[i]:Hide() end
+  end
+  list.Update = update
+  sf:HookScript("OnVerticalScroll", update)
+  sf:HookScript("OnScrollRangeChanged", update)
+
   -- A new size, rows and all (used when the window is resized).
   function list:Resize(w, h)
     width = w
@@ -371,31 +418,16 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
     content:SetWidth(w - 4)
     empty:SetWidth(w - 24)
     for _, row in ipairs(self.rows) do row:SetWidth(w - 4) end
+    update()
   end
+
   function list:SetItems(items)
-    for i, item in ipairs(items) do
-      local row = self.rows[i]
-      if not row then
-        row = CreateFrame("Button", nil, content)
-        row:SetSize(width - 4, rowHeight)
-        row:SetPoint("TOPLEFT", 0, -(i - 1) * rowHeight)
-        if i % 2 == 0 then -- every other row slightly lighter, to follow a row across
-          local stripe = row:CreateTexture(nil, "BACKGROUND")
-          stripe:SetAllPoints()
-          stripe:SetColorTexture(1, 1, 1, 0.025)
-        end
-        local hover = row:CreateTexture(nil, "HIGHLIGHT")
-        hover:SetAllPoints()
-        hover:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.08)
-        makeRow(row)
-        self.rows[i] = row
-      end
-      row.item = item
-      fill(row, item)
-      row:Show()
-    end
-    for i = #items + 1, #self.rows do self.rows[i]:Hide() end
+    self.items = items
     content:SetHeight(math.max(#items * rowHeight, 1))
+    -- Keep the scroll position if it's still in range.
+    local maxScroll = math.max(0, #items * rowHeight - self.height)
+    if (sf:GetVerticalScroll() or 0) > maxScroll then sf:SetVerticalScroll(maxScroll) end
+    update()
     empty:SetText(self.emptyText or "")
     empty:SetShown(#items == 0 and (self.emptyText or "") ~= "")
   end

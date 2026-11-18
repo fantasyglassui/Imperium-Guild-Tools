@@ -1,0 +1,226 @@
+--[[
+  Warcrest
+  The welcome window: shown once, the first time Warcrest loads for a
+  character in a guild. Three steps:
+    1. What Warcrest does.
+    2. Guild setup: officers choose who manages Warcrest and whether the
+       guild uses DKP, and save it for everyone. Members are told their
+       officers handle this.
+    3. Where to start: the tabs worth a look first.
+  /warcrest welcome shows it again.
+]]
+
+local _, ns = ...
+local UI = ns.UI
+local C = UI.C
+
+local WIDTH, HEIGHT = 520, 420
+local INNER = WIDTH - 48
+local win
+local step = 1
+local pages = {}
+local rankValue
+
+local function setStep(n)
+  step = n
+  for i, p in ipairs(pages) do p:SetShown(i == n) end
+  for i, dot in ipairs(win.dots) do
+    local col = i == n and C.accent or C.faint
+    dot:SetColorTexture(col[1], col[2], col[3], 1)
+  end
+  win.back:SetShown(n > 1)
+  win.next:SetText(n == #pages and "Open Warcrest" or "Next")
+  if pages[n].refresh then pages[n].refresh() end
+end
+
+local function Page(title, subtitle)
+  local p = CreateFrame("Frame", nil, win)
+  p:SetPoint("TOPLEFT", 0, -28)
+  p:SetSize(WIDTH, HEIGHT - 28 - 57)
+  p.title = UI.Label(p, title, "Title")
+  p.title:SetPoint("TOPLEFT", 24, -22)
+  if subtitle then
+    p.sub = UI.Label(p, subtitle, "Small")
+    p.sub:SetPoint("TOPLEFT", 24, -50)
+    p.sub:SetWidth(INNER)
+    p.sub:SetSpacing(3)
+  end
+  pages[#pages + 1] = p
+  return p
+end
+
+-- A line with an icon: what Warcrest does, or where to start.
+local function Feature(parent, y, icon, title, text)
+  local i = UI.Icon(parent, icon, 16, C.accent)
+  i:SetPoint("TOPLEFT", 24, y)
+  local t = UI.Label(parent, title, "Subheading")
+  t:SetPoint("TOPLEFT", 52, y + 1)
+  local d = UI.Label(parent, text, "MutedSmall")
+  d:SetPoint("TOPLEFT", 52, y - 17)
+  d:SetWidth(INNER - 28)
+  return t, d
+end
+
+local function BuildWelcome()
+  local p = Page("Welcome to Warcrest", "")
+  p.refresh = function()
+    local guild = ns.GuildName()
+    p.sub:SetText(guild and ("Guild tools for " .. UI.Code("accent") .. guild .. "|r, shared automatically with every guildmate who has Warcrest.")
+      or "Guild tools, shared automatically with every guildmate who has Warcrest. Join a guild to get started.")
+  end
+  Feature(p, -92, "raids", "Raids, sign-ups and DKP", "Schedule raids, sign up as Tank, Healer or DPS, track attendance, and run loot auctions.")
+  Feature(p, -138, "kills", "PvP kills and the Wanted list", "Hear about guild kills and streaks, and who keeps ganking your guild.")
+  Feature(p, -184, "trophy", "Achievements and player cards", "Earn achievements and titles; click any name to see someone's record.")
+  Feature(p, -230, "roster", "Officer tools", "Roster, notes, ranks, invites and a log of every change.")
+end
+
+local function BuildSetup()
+  local p = Page("Set up your guild", "")
+  local officerBox = CreateFrame("Frame", nil, p)
+  officerBox:SetPoint("TOPLEFT", 0, -98)
+  officerBox:SetSize(WIDTH, 230)
+  local memberText = UI.Label(p, "", "Body")
+  memberText:SetPoint("TOPLEFT", 24, -88)
+  memberText:SetWidth(INNER)
+  memberText:SetSpacing(4)
+
+  UI.FieldLabel(officerBox, "Who manages Warcrest", 24, 0)
+  local down = UI.Button(officerBox, "<", 28)
+  down:SetHeight(26)
+  down:SetPoint("TOPLEFT", 24, -16)
+  local rankText = UI.Label(officerBox, "", "Body")
+  rankText:SetPoint("LEFT", down, "RIGHT", 10, 0)
+  rankText:SetWidth(220)
+  local up = UI.Button(officerBox, ">", 28)
+  up:SetHeight(26)
+  up:SetPoint("LEFT", down, "RIGHT", 240, 0)
+  local function stepRank(d)
+    rankValue = math.max(0, math.min(UI.NumRanks() - 1, rankValue + d))
+    rankText:SetText(UI.RankName(rankValue) .. " and higher")
+  end
+  down:SetScript("OnClick", function() stepRank(-1) end)
+  up:SetScript("OnClick", function() stepRank(1) end)
+  local rankHint = UI.Label(officerBox, "These ranks run raids and DKP, and set the guild's alerts. Only the Guild Master can change this.", "MutedSmall")
+  rankHint:SetPoint("TOPLEFT", 24, -48)
+  rankHint:SetWidth(INNER)
+
+  UI.FieldLabel(officerBox, "Loot", 24, -86)
+  local dkp = UI.Segmented(officerBox, { { "yes", "Use DKP" }, { "no", "No DKP" } })
+  dkp:SetPoint("TOPLEFT", 24, -102)
+  local dkpHint = UI.Label(officerBox, "No DKP hides the DKP tab and loot auctions. Raids, sign-ups, attendance, "
+    .. "wishlists and everything else still work. You can change this later in Settings.", "MutedSmall")
+  dkpHint:SetPoint("TOPLEFT", 24, -134)
+  dkpHint:SetWidth(INNER)
+
+  local save = UI.Button(officerBox, "Save for the guild", 180, "primary")
+  save:SetHeight(28)
+  save:SetPoint("TOPLEFT", 24, -178)
+  local saved = UI.Label(officerBox, "", "Small")
+  saved:SetPoint("LEFT", save, "RIGHT", 12, 0)
+  save:SetScript("OnClick", function()
+    local types = {}
+    for k, v in pairs(ns.cfg.types) do types[k] = v end
+    if ns.PushConfig({ enabled = ns.cfg.enabled, types = types, officerRank = rankValue, dkp = dkp.value == "yes" }) then
+      saved:SetText(UI.Code("good") .. "Saved and sent to everyone online.|r")
+    end
+  end)
+
+  p.refresh = function()
+    local officer = ns.IsAddonOfficer()
+    local gm = ns.MyRank() == 0
+    officerBox:SetShown(officer)
+    memberText:SetShown(not officer)
+    if officer then
+      p.sub:SetText(ns.cfg.stamp > 0
+        and ("Your guild's settings were last saved by " .. ns.cfg.by .. ". Change anything here, or later in Settings.")
+        or "Nobody has set Warcrest up for your guild yet. Pick these two things and save them for everyone.")
+      rankValue = rankValue or ns.cfg.officerRank
+      rankText:SetText(UI.RankName(rankValue) .. " and higher")
+      UI.SetEnabled(down, gm)
+      UI.SetEnabled(up, gm)
+      dkp:SetValue(ns.UsesDKP() and "yes" or "no")
+      saved:SetText("")
+    else
+      p.sub:SetText("")
+      memberText:SetText(("Your officers (%s and higher) look after Warcrest's guild settings: raids, DKP and which alerts the guild hears.\n\n"
+        .. "You choose what you see yourself. Every alert can be turned off just for you in %sSettings|r, and quiet mode holds alerts in dungeons, raids and combat.")
+        :format(UI.RankName(ns.cfg.officerRank), UI.Code("accent")))
+    end
+  end
+end
+
+local function BuildStart()
+  local p = Page("Where to start", "A few places worth a look first. Type /warcrest (or /wc), or click the crest by your minimap, any time.")
+  local items = {
+    { "raids", "Raids", "Sign up for the next raid, or see the calendar and the guild's progress.", "raids" },
+    { "roster", "Roster", "Click any name for their player card: kills, DKP, attendance and loot.", "roster" },
+    { "trophy", "Achievements", "See what you've earned already, and pick a title.", "achievements" },
+    { "settings", "Settings", "Choose which alerts you see, and how.", "settings" },
+  }
+  for i, it in ipairs(items) do
+    local y = -96 - (i - 1) * 50
+    Feature(p, y, it[1], it[2], it[3])
+    local open = UI.Button(p, "Open", 64)
+    open:SetHeight(24)
+    open:SetPoint("TOPRIGHT", -24, y + 2)
+    open:SetScript("OnClick", function() win:Hide(); ns.OpenPanel(it[4]) end)
+  end
+end
+
+local function Build()
+  win = UI.Window("WarcrestWelcome", WIDTH, HEIGHT, "Warcrest")
+  -- The footer: step dots, Back and Next.
+  local rule = win:CreateTexture(nil, "BORDER")
+  rule:SetPoint("BOTTOMLEFT", 0, 56)
+  rule:SetPoint("BOTTOMRIGHT", 0, 56)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+  win.next = UI.Button(win, "Next", 130, "primary")
+  win.next:SetHeight(30)
+  win.next:SetPoint("BOTTOMRIGHT", -24, 13)
+  win.next:SetScript("OnClick", function()
+    if step < #pages then setStep(step + 1) else win:Hide(); ns.OpenPanel() end
+  end)
+  win.back = UI.Button(win, "Back", 90)
+  win.back:SetHeight(30)
+  win.back:SetPoint("RIGHT", win.next, "LEFT", -8, 0)
+  win.back:SetScript("OnClick", function() setStep(step - 1) end)
+  local help = UI.Button(win, "Help", 70)
+  help:SetHeight(30)
+  help:SetPoint("BOTTOMLEFT", 24, 13)
+  help:SetScript("OnClick", function() win:Hide(); if ns.ShowHelp then ns.ShowHelp() end end)
+
+  BuildWelcome()
+  BuildSetup()
+  BuildStart()
+  win.dots = {}
+  for i = 1, #pages do
+    local dot = win:CreateTexture(nil, "ARTWORK")
+    dot:SetSize(8, 8)
+    dot:SetPoint("TOPRIGHT", win, "TOPRIGHT", -24 - (#pages - i) * 16, -58)
+    win.dots[i] = dot
+  end
+end
+
+function ns.ShowWelcome()
+  if not win then Build() end
+  rankValue = nil
+  setStep(1)
+  win:Show()
+  ns.db.welcomed = true
+end
+
+-- The first time Warcrest loads for this character in a guild. Players who
+-- already used it (or came over from The Imperium) know their way around,
+-- unless they're an officer in a guild nobody has set up yet.
+local isNew
+ns.OnLoad(function() isNew = ns.isNewInstall end)
+table.insert(ns.OnGuildReady, function()
+  if ns.db.welcomed then return end
+  local needsSetup = ns.IsAddonOfficer() and ns.cfg.stamp == 0
+  if (not isNew or ns.movedFromImperium) and not needsSetup then ns.db.welcomed = true return end
+  C_Timer.After(4, function()
+    if ns.db.welcomed or InCombatLockdown() or not ns.GuildName() then return end
+    ns.ShowWelcome()
+  end)
+end)

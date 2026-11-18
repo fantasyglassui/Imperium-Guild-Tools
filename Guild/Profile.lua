@@ -21,9 +21,7 @@ function ns.PlayerProfile(name)
   local p = { name = name }
 
   -- Roster details.
-  for _, m in ipairs(ns.GetRoster()) do
-    if ns.Key(m.name) == key then p.member = m break end
-  end
+  p.member = ns.Member(name)
 
   -- PvP: this month and all time.
   local monthFrom, monthTo = ns.MonthRange(0)
@@ -82,6 +80,10 @@ function ns.PlayerProfile(name)
       if #p.loot < 4 then p.loot[#p.loot + 1] = l end
     end
   end
+  -- Raid bosses they were there for.
+  p.bossKills = ns.BossKillTimes and #ns.BossKillTimes(name) or 0
+  p.bossFirsts = ns.BossKillTimes and #ns.BossKillTimes(name, true) or 0
+
   -- Wishlist: what they still want.
   p.wishes, p.wishNeed = {}, 0
   for _, w in ipairs(ns.Wishes and ns.Wishes(name) or {}) do

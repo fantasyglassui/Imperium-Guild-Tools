@@ -703,4 +703,5 @@ local function Subtitle()
   return text
 end
 
-UI.AddTab({ id = "dkp", title = "DKP", build = Build, refresh = Refresh, subtitle = Subtitle })
+UI.AddTab({ id = "dkp", title = "DKP", build = Build, refresh = Refresh, subtitle = Subtitle,
+  visible = function() return ns.UsesDKP() end })

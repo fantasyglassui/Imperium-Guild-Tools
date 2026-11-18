@@ -1,7 +1,7 @@
 --[[
   Warcrest
   Achievements tab. Three views, switched at the top:
-    PvP, Raids & more: a member's achievements as tiles (yours, or whoever's
+    PvP, Hunts, Raids, Loot & more: a member's achievements as tiles (yours, or whoever's
                        you opened from their player card), with progress.
     Guild:             achievements earned across the guild, newest first,
                        and who has the most.
@@ -19,7 +19,7 @@ local viewing -- whose achievements; nil = yours
 local COLS = 4
 local GAP = 10
 local TOP = 66              -- the strip with the member's name above the tiles
-local TILE_W = (740 - (COLS - 1) * GAP) / COLS
+local TILE_W = (740 - (COLS - 1) * GAP) / COLS -- changes when the window is resized
 local TILE_H = 86
 local MAX_TILES = 16
 
@@ -152,7 +152,7 @@ local function RefreshTiles(cat)
   local mine = ns.MemberAchievements(name)
   local shown = {}
   for _, a in ipairs(ns.ACHIEVEMENTS) do
-    if a.cat == cat or (cat == "raid" and a.cat == "guild") then shown[#shown + 1] = a end
+    if a.cat == cat then shown[#shown + 1] = a end
   end
   for i = 1, MAX_TILES do
     local t = P.tiles[i]
@@ -162,10 +162,7 @@ local function RefreshTiles(cat)
   end
 
   -- The strip at the top.
-  local m
-  for _, r in ipairs(ns.GetRoster()) do
-    if ns.Key(r.name) == ns.Key(name) then m = r break end
-  end
+  local m = ns.Member(name)
   P.who:SetText(ns.TitledName(name))
   P.who:SetTextColor(UI.ClassColor(m and m.classFile))
   local count, total = ns.AchievementCount(name), #ns.ACHIEVEMENTS
@@ -309,8 +306,23 @@ local function BuildGuild(page)
   P.leadersEmpty:SetPoint("TOPLEFT", 14, -38)
 end
 
+-- A wider window: wider tiles, four to a row.
+local function relayoutTiles(width)
+  TILE_W = (width - (COLS - 1) * GAP) / COLS
+  for i, t in ipairs(P.tiles) do
+    local col, row = (i - 1) % COLS, math.floor((i - 1) / COLS)
+    t:ClearAllPoints()
+    t:SetPoint("TOPLEFT", P.tilesView, "TOPLEFT", col * (TILE_W + GAP) + 1, -TOP - row * (TILE_H + GAP) - 1)
+    t:SetWidth(TILE_W - 2)
+    t.name:SetWidth(TILE_W - 90)
+    t.desc:SetWidth(TILE_W - 24)
+    t.status:SetWidth(TILE_W - 24)
+  end
+end
+
 local function Build(page)
-  P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "raid", "Raids & more" }, { "guild", "Guild" } },
+  P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "hunt", "Hunts" }, { "raid", "Raids" },
+    { "loot", "Loot & more" }, { "guild", "Guild" } },
     ns.RefreshPanel)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view
@@ -322,7 +334,7 @@ local function Build(page)
   UI.Follow(page, P.leadCard, 1, 0)
   UI.Grow(page, P.leadCard, 0, 1)
   UI.Grow(page, P.tilesView, 1, 0)
-  UI.FollowAll(page, { P.picker, P.back, P.cardButton }, 1, 0)
+  table.insert(page.growth, function(dw) relayoutTiles(740 + dw) end)
 end
 
 -- Open the tab on someone's achievements (nil: yours).

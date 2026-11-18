@@ -11,6 +11,14 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.1.0", date = "Nov 18, 2026", items = {
+    "Raid progress: boss kills are recorded for the guild. The Raids tab's Progress view shows how far you've got in each raid, and guild first kills are announced.",
+    "Raid calendar: the Raids tab's Calendar view shows the month's raids, raid nights and boss kills.",
+    "22 new achievements, 43 in all, in four groups: PvP, Hunts, Raids, and Loot & more. 14 new titles to earn.",
+    "A welcome and guild setup for new players and guilds, and guilds can now turn DKP off.",
+    "Help: click Help at the bottom of the side menu, or type /warcrest help.",
+    "Faster in big guilds, and lots of polish.",
+  } },
   { version = "3.0.0", date = "Nov 18, 2026", items = {
     "The Imperium is now Warcrest, guild tools for any guild. Members of <The Imperium> keep the Imperium emblem; your settings and history came with you.",
     "Commands start with /warcrest, or /wc for short. /imperium still works.",

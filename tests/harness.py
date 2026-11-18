@@ -65,6 +65,9 @@ class Client:
         rows = ",".join('{"%s", %d, %s, "%s", %d}' % (n, r, "true" if on else "false", cls, lvl)
                         for n, r, on, cls, lvl in self.guild.roster())
         self.lua.execute("guildRoster = { %s }" % rows)
+        ns = getattr(self, "ns", None)
+        if ns is not None and ns.RosterChanged:
+            ns.RosterChanged()        # as GUILD_ROSTER_UPDATE would in the game
 
     def set_raid(self, names):
         self.lua.execute("raidMembers = { %s }" % ",".join('"%s"' % n for n in names))

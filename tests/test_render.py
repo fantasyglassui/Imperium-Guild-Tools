@@ -6,7 +6,8 @@ import pytest
 pytest.importorskip("PIL")
 from render import Renderer, demo_guild  # noqa: E402
 
-TABS = ("roster", "raids", "dkp", "kills", "wanted", "settings", "officers", "addon")
+TABS = ("roster", "raids", "raids:group", "raids:calendar", "raids:progress", "dkp", "wishlist", "kills", "wanted",
+        "achievements", "achievements:hunt", "achievements:raid", "achievements:loot", "achievements:guild", "settings", "settings:general", "officers", "addon")
 
 
 def walk_text(rd, node):
@@ -40,15 +41,29 @@ def sticking_out(rd, node, bounds, found, in_scroll=False):
             sticking_out(rd, k, bounds, found, in_scroll or scrolls)
 
 
+def outside_parent(rd, node, found, in_scroll=False):
+    """Text that runs outside the frame it belongs to (a heading past its card's edge, say)."""
+    for k in rd.kids(node):
+        if not rd.visible(k) or not rd.region_shown(k):
+            continue
+        if k["kind"] == "FontString" and not in_scroll:
+            l, t, r, b = rd.rect(k)
+            pl, pt, pr, pb = rd.rect(node)
+            if r - l > 0 and pr - pl > 20 and (l < pl - 4 or r > pr + 4 or t < pt - 4 or b > pb + 4):
+                found.append((k["_GetText"], (l, t, r, b), (pl, pt, pr, pb)))
+        outside_parent(rd, k, found, in_scroll or k["kind"] == "ScrollFrame")
+
+
 @pytest.mark.parametrize("tab", TABS)
 def test_tab_fits_in_panel(tab, tmp_path):
     guild, me = demo_guild()
-    me.ns.OpenPanel(tab)
+    me.ns.OpenPanel(*tab.split(":"))
     rd = Renderer(me)
     panel = me.lua.eval("WarcrestPanel")
-    rd.render(panel, os.path.join(tmp_path, tab + ".png"))
+    rd.render(panel, os.path.join(tmp_path, tab.replace(":", "-") + ".png"))
     found = []
     sticking_out(rd, panel, rd.rect(panel), found)
+    outside_parent(rd, panel, found)
     assert found == [], found
     assert me.errors() == []
 
@@ -57,14 +72,15 @@ def test_tab_fits_in_panel(tab, tmp_path):
 def test_tab_fits_in_a_bigger_window(tab, tmp_path):
     guild, me = demo_guild()
     me.ns.db.panelWidth, me.ns.db.panelHeight = 1300, 760   # dragged bigger from the corner
-    me.ns.OpenPanel(tab)
+    me.ns.OpenPanel(*tab.split(":"))
     rd = Renderer(me)
     panel = me.lua.eval("WarcrestPanel")
-    rd.render(panel, os.path.join(tmp_path, tab + "-big.png"))
+    rd.render(panel, os.path.join(tmp_path, tab.replace(":", "-") + "-big.png"))
     l, t, r, b = rd.rect(panel)
     assert (r - l, b - t) == (1300, 760)
     found = []
     sticking_out(rd, panel, (l, t, r, b), found)
+    outside_parent(rd, panel, found)
     assert found == [], found
     assert me.errors() == []
 

@@ -9,7 +9,9 @@ local UI = ns.UI
 
 local P = {}
 local selectedId
-local view = "event"          -- "event", "group" or "new"
+local TAB
+local view = "event"          -- "event", "group", "calendar", "progress" or "new"
+local FULL = { calendar = true, progress = true } -- views that use the whole page
 local myRole = "dps"
 local newDay = 0               -- days from today for a new raid
 
@@ -185,30 +187,37 @@ end
 local function RefreshSession()
   local s = ns.ActiveSession()
   local officer = ns.IsAddonOfficer()
+  local dkp = ns.UsesDKP()
   if s then
-    local text = ("%sIn progress:|r %s, started %s by %s. %d DKP per hour%s.")
-      :format(UI.Code("good"), s.title, date("%H:%M", s.t), s.a, s.hourly,
-        (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
-    local mine = ns.db.session
-    if mine and mine.id == s.id then
-      text = text .. (" Next hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
+    local text = ("%sIn progress:|r %s, started %s by %s."):format(UI.Code("good"), s.title, date("%H:%M", s.t), s.a)
+    if dkp and s.hourly > 0 then
+      text = text .. (" %d DKP per hour%s."):format(s.hourly, (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
+      local mine = ns.db.session
+      if mine and mine.id == s.id then
+        text = text .. (" Next hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
+      end
     end
     P.sessionText:SetText(text)
     P.sessionButton:SetText("End raid")
     P.sessionButton:SetStyle(nil)
   else
-    P.sessionText:SetText(officer and "Not started. Starting gives everyone in the raid the On time DKP, then hourly and boss DKP."
-      or "No raid night in progress.")
+    P.sessionText:SetText(not officer and "No raid night in progress."
+      or (dkp and "Not started. Starting gives everyone in the raid the On time DKP, then hourly and boss DKP."
+      or "Not started. Starting records who's in the raid for attendance."))
     P.sessionButton:SetText("Start raid")
     P.sessionButton:SetStyle("primary")
   end
-  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
-    w:SetShown(officer)
+  -- The DKP amounts only when the guild uses DKP.
+  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
+    w:SetShown(officer and dkp)
   end
+  P.sessionButton:SetShown(officer)
   for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do UI.SetEnabled(w, officer) end
 end
 
 local function Refresh()
+  -- The switch at the top was set from outside (ns.OpenPanel with a view).
+  if view ~= "new" and P.view.value ~= view then view = P.view.value end
   local events = ns.RaidEvents()
   if selectedId and not ns.RaidEvent(selectedId) then selectedId = nil end
   if not selectedId and events[1] then selectedId = events[1].id end
@@ -225,6 +234,13 @@ local function Refresh()
   P.newFrame:SetShown(view == "new")
   P.view:SetShown(view ~= "new")
   if view ~= "new" then P.view:SetValue(view) end
+  -- Calendar and Progress use the whole page.
+  local full = FULL[view] or false
+  for _, f in ipairs({ P.raidsCard, P.night, P.right }) do f:SetShown(not full) end
+  UI.RaidCalendar.frame:SetShown(view == "calendar")
+  UI.RaidProgress.frame:SetShown(view == "progress")
+  if view == "calendar" then UI.RaidCalendar.Refresh() return end
+  if view == "progress" then UI.RaidProgress.Refresh() return end
 
   if view == "event" then RefreshEvent(event)
   elseif view == "group" then RefreshGroup(event)
@@ -558,18 +574,21 @@ local function BuildNewView(parent)
   local back = UI.Button(n, "Cancel", 90)
   back:SetHeight(28)
   back:SetPoint("LEFT", create, "RIGHT", 6, 0)
-  back:SetScript("OnClick", function() view = "event"; ns.RefreshPanel() end)
+  back:SetScript("OnClick", function() view = "event"; P.view:SetValue("event"); ns.RefreshPanel() end)
 end
 
 local function Build(page)
   -- Header: the selected raid, or your raid group right now.
-  P.view = UI.Segmented(page.headerBar, { { "event", "Selected raid" }, { "group", "Raid group" } },
-    function(v) view = v; ns.RefreshPanel() end)
+  P.view = UI.Segmented(page.headerBar, { { "event", "Raid" }, { "group", "Group" }, { "calendar", "Calendar" },
+    { "progress", "Progress" } }, function(v) view = v; ns.RefreshPanel() end)
   P.view:SetPoint("RIGHT")
-  UI.Tooltip(P.view, "Switch view", "Switch between the selected raid's sign-ups and everyone in your raid group right now.")
+  TAB.view = P.view
+  UI.Tooltip(P.view, "Switch view", "Raid: the selected raid's sign-ups. Group: everyone in your raid group right now. "
+    .. "Calendar: the month's raids and raid nights. Progress: the bosses the guild has killed in each raid.")
 
   -- Upcoming raids.
   local raids = CreateFrame("Frame", nil, page)
+  P.raidsCard = raids
   raids:SetPoint("TOPLEFT", 1, -1)
   raids:SetSize(LEFT_W - 2, 252)
   UI.Card(raids, 1)
@@ -608,7 +627,7 @@ local function Build(page)
       RowLine(row)
       row:SetScript("OnClick", function(self)
         selectedId = self.item.id
-        if view == "new" then view = "event" end
+        if view == "new" or FULL[view] then view = "event"; P.view:SetValue("event") end
         ns.RefreshPanel()
       end)
     end,
@@ -621,6 +640,8 @@ local function Build(page)
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
       row.count:SetText(c.accept)
+      local cc = c.accept > 0 and C.good or C.faint -- nobody yet: grey, not green
+      row.count:SetTextColor(cc[1], cc[2], cc[3])
       row.mine:SetText(mine and statusText(mine.status) or "")
       row.warn:SetShown(c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0)
     end, true)
@@ -644,6 +665,7 @@ local function Build(page)
 
   -- Raid night (attendance DKP).
   local night = CreateFrame("Frame", nil, page)
+  P.night = night
   night:SetPoint("TOPLEFT", 1, -265)
   night:SetSize(LEFT_W - 2, 184)
   UI.Card(night, 1)
@@ -685,6 +707,7 @@ local function Build(page)
 
   -- The selected raid, the raid group, or the new raid form.
   local right = CreateFrame("Frame", nil, page)
+  P.right = right
   right:SetPoint("TOPLEFT", RIGHT_X + 1, -1)
   right:SetSize(RIGHT_W - 2, 448)
   UI.Card(right, 1)
@@ -692,7 +715,19 @@ local function Build(page)
   BuildGroupView(right)
   BuildNewView(right)
 
+  -- Calendar and Progress.
+  local cal = UI.RaidCalendar.Build(page)
+  local prog = UI.RaidProgress
+  prog.Build(page)
+
   -- A bigger window: more upcoming raids show, raid night moves down, and the right side grows.
+  UI.Grow(page, cal, 1, 1)
+  table.insert(page.growth, function(dw, dh) UI.RaidCalendar.Resize(740 + dw, 450 + dh) end)
+  UI.Grow(page, prog.frame, 1, 1)
+  UI.Grow(page, prog.card, 1, 1)
+  UI.Grow(page, prog.bosses, 1, 1)
+  UI.Grow(page, prog.raidsCard, 0, 1)
+  UI.Grow(page, prog.raids, 0, 1)
   UI.Grow(page, raids, 0, 1)
   UI.Grow(page, P.list, 0, 1)
   UI.Follow(page, night, 0, 1)
@@ -707,4 +742,13 @@ local function Subtitle()
   return text
 end
 
-UI.AddTab({ id = "raids", title = "Raids", build = Build, refresh = Refresh, subtitle = Subtitle })
+-- Open a raid on the Raids tab (from the calendar, say).
+function ns.SelectRaid(id)
+  selectedId = id
+  view = "event"
+  if P.view then P.view:SetValue("event") end
+  ns.OpenPanel("raids")
+end
+
+TAB = { id = "raids", title = "Raids", build = Build, refresh = Refresh, subtitle = Subtitle }
+UI.AddTab(TAB)

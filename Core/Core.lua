@@ -42,6 +42,11 @@ local function setLook(name)
 end
 setLook("warcrest")
 
+-- Whether the guild uses DKP for loot (officers can turn it off in Settings).
+function ns.UsesDKP()
+  return not ns.cfg or ns.cfg.dkp ~= false
+end
+
 -- Your guild's name, or nil.
 function ns.GuildName()
   if not (IsInGuild and IsInGuild()) then return end
@@ -80,11 +85,12 @@ ns.TYPES = {
   { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "achievement",  group = "achievement", label = "Achievements earned" },
+  { key = "boss_first",   group = "raid", label = "Guild first boss kills" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
 ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members", streak = "Streaks and revenge",
-  wanted = "Wanted list", achievement = "Achievements", celebrate = "Celebrations" }
+  wanted = "Wanted list", achievement = "Achievements", raid = "Raids", celebrate = "Celebrations" }
 ns.PVP_TYPES = { pvp = true }
 
 local frame = CreateFrame("Frame")
@@ -454,7 +460,7 @@ end
 -- Login greeting, then let modules sync once the guild roster is ready.
 ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
   if isLogin then
-    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/warcrest|r to open guild tools.")
+    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/warcrest|r (or |cffffffff/wc|r) to open it, or |cffffffff/warcrest help|r for help.")
   end
   if isLogin or isReload then
     C_Timer.After(8, function()
@@ -538,6 +544,10 @@ SlashCmdList.WARCREST = function(input)
     if ns.OpenPanel then ns.OpenPanel("addon") end
   elseif msg == "versions" then
     if ns.CheckVersions then ns.CheckVersions() end
+  elseif msg == "help" or msg == "?" then
+    if ns.ShowHelp then ns.ShowHelp() end
+  elseif msg == "welcome" or msg == "setup" then
+    if ns.ShowWelcome then ns.ShowWelcome() end
   elseif msg == "updates" or msg == "news" or msg == "changes" then
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
   elseif msg == "recap" or msg == "recap now" or msg == "recap week" then
@@ -560,26 +570,10 @@ SlashCmdList.WARCREST = function(input)
     end
   else
     ns.Say("Commands:")
-    print("  /warcrest - open guild tools")
-    print("  /warcrest raids - open raid sign-ups")
-    print("  /warcrest dkp - open DKP")
-    print("  /warcrest auction [item] [min bid] - auction an item to your raid (officers)")
-    print("  /warcrest kills - open the kill log")
-    print("  /warcrest wanted - open the wanted list")
+    print("  /warcrest - open Warcrest (or /wc)")
+    print("  /warcrest raids | dkp | kills | wanted | wishlist | achievements - open that tab")
     print("  /warcrest card [name] - a guild member's player card")
-    print("  /warcrest wishlist - the guild's loot wishlist, and yours")
-    print("  /warcrest achievements - your achievements and title")
-    print("  /warcrest quiet - hold alerts during combat on or off")
-    print("  /warcrest sync - fetch recent guild history from guildmates")
-    print("  /warcrest test - show a test alert")
-    print("  /warcrest sound | warn - toggle alert sound or center-screen warning")
-    print("  /warcrest minimap - show or hide the minimap button")
-    print("  /warcrest addon - see who has the addon installed")
-    print("  /warcrest versions - check which version guildmates have")
-    print("  /warcrest debug - show error details in chat (troubleshooting)")
-    print("  /warcrest recap - last week's guild recap (/warcrest recap now: this week so far)")
-    print("  /warcrest updates - show what changed in recent versions")
-    print("  /warcrest version - show your installed version")
+    print("  /warcrest help - the help window, with every command")
   end
 end
 

@@ -45,10 +45,8 @@ local TILES = {
 }
 
 local function classColorOf(name)
-  local key = ns.Key(name or "")
-  for _, m in ipairs(ns.GetRoster()) do
-    if ns.Key(m.name) == key then return UI.ClassColor(m.classFile) end
-  end
+  local m = ns.Member(name)
+  if m then return UI.ClassColor(m.classFile) end
   return C.textSoft[1], C.textSoft[2], C.textSoft[3]
 end
 

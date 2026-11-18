@@ -15,7 +15,12 @@ function ns.RequestRoster()
   if f then pcall(f) end
 end
 
-function ns.GetRoster()
+-- The roster is read from the game once and kept until it changes, so
+-- tabs and lookups don't walk hundreds of members over and over.
+local rosterCache, rosterByKey, rosterAt
+local ROSTER_FRESH = 10 -- seconds; the game also tells us when it changes
+
+local function readRoster()
   local list = {}
   for i = 1, (GetNumGuildMembers() or 0) do
     local name, rankName, rankIndex, level, className, zone, publicNote, officerNote,
@@ -30,6 +35,33 @@ function ns.GetRoster()
     end
   end
   return list
+end
+
+local function loadRoster()
+  if not rosterCache or #rosterCache ~= (GetNumGuildMembers() or 0) or GetTime() - rosterAt > ROSTER_FRESH then
+    rosterCache, rosterAt = readRoster(), GetTime()
+    rosterByKey = {}
+    for _, m in ipairs(rosterCache) do rosterByKey[ns.Key(m.name)] = m end
+  end
+end
+
+-- Forget the cached roster (the game says it changed).
+function ns.RosterChanged() rosterCache, rosterByKey = nil, nil end
+
+-- Every guild member: { index, name, rankName, rankIndex, level, classFile, ... }.
+-- A new list each time (callers may sort it); the members themselves are shared.
+function ns.GetRoster()
+  loadRoster()
+  local copy = {}
+  for i, m in ipairs(rosterCache) do copy[i] = m end
+  return copy
+end
+
+-- One guild member by name (with or without realm), or nil.
+function ns.Member(name)
+  if not name then return end
+  loadRoster()
+  return rosterByKey[ns.Key(name)]
 end
 
 function ns.RankOf(name)
@@ -115,6 +147,7 @@ local heardCfgAt = 0
 local function fillConfig(c)
   if c.enabled == nil then c.enabled = true end
   if c.officerRank == nil then c.officerRank = 1 end
+  if c.dkp == nil then c.dkp = true end -- the guild uses DKP for loot
   c.stamp = c.stamp or 0
   c.by = c.by or ""
   if not c.types then
@@ -145,11 +178,13 @@ ns.OnLoad(syncGuildConfig)
 ns.OnLoad(ns.ApplyGuildLook)
 table.insert(ns.OnGuildReady, ns.ApplyGuildLook)
 ns.OnEvent("PLAYER_GUILD_UPDATE", function()
+  ns.RosterChanged()
   ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
 ns.OnEvent("GUILD_ROSTER_UPDATE", function()
+  ns.RosterChanged()
   ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
@@ -161,7 +196,10 @@ end)
 -- Which alert groups each settings message knows about. Older versions only
 -- understand the older messages, so officers send all of them.
 local CONFIG_GROUPS = {
-  C7 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true, achievement = true }, -- 2.14.0 and later
+  -- 3.1.0 and later: also guild features (like DKP on or off), after the sender's name.
+  C8 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true, achievement = true,
+    raid = true },
+  C7 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true, achievement = true }, -- 2.14.0 to 3.0
   C6 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true }, -- 2.13.x
   C5 = { death = true, kill = true, duel = true, wanted = true, celebrate = true }, -- 1.8.0 and later
   C4 = { death = true, kill = true, duel = true }, -- 1.5.x to 1.7.x
@@ -180,12 +218,13 @@ end
 local function sendConfig()
   local c = ns.cfg
   local on = c.enabled and "1" or "0"
+  ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, c.dkp and "dkp" or "")
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
   end
 end
 
--- new = { enabled = bool, types = { key = bool }, officerRank = number }
+-- new = { enabled = bool, types = { key = bool }, officerRank = number, dkp = bool (optional) }
 function ns.PushConfig(new)
   if not ns.IsAddonOfficer() then
     ns.Say("Your rank can't change the guild's alert settings.")
@@ -197,6 +236,7 @@ function ns.PushConfig(new)
   end
   local c = ns.cfg
   c.enabled, c.officerRank = new.enabled, new.officerRank
+  if new.dkp ~= nil then c.dkp = new.dkp and true or false end
   for _, t in ipairs(ns.TYPES) do c.types[t.key] = new.types[t.key] and true or false end
   c.types.kill_honor = true -- grey kills never count, whatever an older version sends
   c.stamp, c.by = GetServerTime(), UnitName("player")
@@ -237,6 +277,11 @@ local function handleConfig(parts, sender, retried, groups)
   end
   c.officerRank = newOfficerRank
   c.by = (parts[6] and parts[6] ~= "") and parts[6] or Ambiguate(sender, "short")
+  if groups.raid then -- C8 and later: guild features
+    local features = {}
+    for f in (parts[7] or ""):gmatch("[^,]+") do features[f] = true end
+    c.dkp = features.dkp or false
+  end
   heardCfgAt = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end

@@ -65,10 +65,8 @@ function ns.AltsOf(main)
   local out, k = {}, ns.Key(main)
   for alt, m in pairs(links) do
     if ns.Key(m) == k then
-      local name = alt
-      for _, r in ipairs(ns.GetRoster()) do
-        if ns.Key(r.name) == alt then name = Ambiguate(r.name, "short") break end
-      end
+      local r = ns.Member(alt)
+      local name = r and Ambiguate(r.name, "short") or alt
       out[#out + 1] = name
     end
   end
@@ -82,10 +80,8 @@ function ns.PendingAltRequests()
   local me, out = ns.Key(UnitName("player")), {}
   for alt, main in pairs(pending) do
     if ns.Key(main) == me then
-      local name = alt
-      for _, r in ipairs(ns.GetRoster()) do
-        if ns.Key(r.name) == alt then name = Ambiguate(r.name, "short") break end
-      end
+      local r = ns.Member(alt)
+      local name = r and Ambiguate(r.name, "short") or alt
       out[#out + 1] = name
     end
   end
@@ -655,6 +651,7 @@ local function tick()
 end
 
 function ns.StartAuction(link, minBid, duration)
+  if not ns.UsesDKP() then ns.Say("DKP is turned off for the guild (Settings > Alerts > Use DKP for loot).") return end
   if not ns.IsAddonOfficer() then ns.Say("Only officers can run loot auctions.") return end
   if not IsInRaid() then ns.Say("You need to be in a raid group to run an auction.") return end
   if auction then ns.Say("An auction is already running.") return end

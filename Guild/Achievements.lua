@@ -24,36 +24,63 @@ local WANTED_KILLS = 3
 local NEMESIS_KILLS = 3
 local ANNOUNCE_WITHIN = 15 * 60   -- only announce achievements earned in the last 15 minutes
 local MAX_LEVEL = 60
+local DOUBLE_KILL = 10            -- seconds between two killing blows for a Double Kill
+local GRUDGE_KILLS = 5            -- kills of one enemy for Grudge Match
+local PERFECT_MIN = 4             -- raid nights a month needs for Perfect Attendance
+local WEEK = 7 * 86400
 
 ------------------------------------------------------------------------
 -- The achievements. goal: how many of stat it takes. stat(s) returns the
 -- player's list of times (sorted), or a time / nil for one-off ones.
 ------------------------------------------------------------------------
 local LIST = {
-  -- PvP
+  -- PvP: killing blows, assists and streaks
   { id = "kill1", cat = "pvp", name = "First Blood", desc = "Land a killing blow on an enemy player.", stat = "kills", goal = 1 },
   { id = "kill25", cat = "pvp", name = "Head Hunter", desc = "25 killing blows on enemy players.", stat = "kills", goal = 25 },
   { id = "kill100", cat = "pvp", name = "Executioner", desc = "100 killing blows.", stat = "kills", goal = 100, title = "the Executioner" },
   { id = "kill250", cat = "pvp", name = "Warlord", desc = "250 killing blows.", stat = "kills", goal = 250, title = "the Warlord" },
+  { id = "kill500", cat = "pvp", name = "Legend", desc = "500 killing blows.", stat = "kills", goal = 500, title = "the Legend" },
   { id = "assist25", cat = "pvp", name = "Wingman", desc = "Help guildmates with 25 kills.", stat = "assists", goal = 25 },
+  { id = "assist100", cat = "pvp", name = "Shield Brother", desc = "Help guildmates with 100 kills.", stat = "assists", goal = 100 },
   { id = "streak3", cat = "pvp", name = "On a Roll", desc = "3 killing blows in a row without dying.", stat = "streak3", goal = 1 },
   { id = "streak5", cat = "pvp", name = "Rampage", desc = "A 5-kill streak.", stat = "streak5", goal = 1 },
   { id = "streak10", cat = "pvp", name = "Unstoppable", desc = "A 10-kill streak.", stat = "streak10", goal = 1, title = "the Unstoppable" },
-  { id = "revenge1", cat = "pvp", name = "Payback", desc = "Kill an enemy who killed a guildmate in the last 30 minutes.", stat = "revenge", goal = 1 },
-  { id = "revenge10", cat = "pvp", name = "Avenger", desc = "10 revenge kills.", stat = "revenge", goal = 10, title = "the Avenger" },
-  { id = "bounty", cat = "pvp", name = "Bounty Hunter", desc = "Kill an enemy who killed guild members 3 times in 30 days.", stat = "bounty", goal = 1, title = "the Bounty Hunter" },
-  { id = "nemesis", cat = "pvp", name = "Nemesis Slayer", desc = "Kill an enemy who has killed you 3 times.", stat = "nemesis", goal = 1, title = "the Nemesis Slayer" },
-  { id = "champion", cat = "pvp", name = "Champion", desc = "Finish a month top of Top Head Hunters.", stat = "champion", goal = 1, title = "the Champion" },
-  -- Raids and loot
+  { id = "streak15", cat = "pvp", name = "Godlike", desc = "A 15-kill streak.", stat = "streak15", goal = 1, title = "the Godlike" },
+  { id = "double", cat = "pvp", name = "Double Kill", desc = "Two killing blows within 10 seconds.", stat = "double", goal = 1 },
+  { id = "night", cat = "pvp", name = "Night Owl", desc = "A killing blow between midnight and 5 in the morning.", stat = "night", goal = 1 },
+  { id = "zones", cat = "pvp", name = "Globetrotter", desc = "Killing blows in 10 different zones.", stat = "zones", goal = 10 },
+  -- Hunts: revenge, bounties, grudges and the monthly crown
+  { id = "revenge1", cat = "hunt", name = "Payback", desc = "Kill an enemy who killed a guildmate in the last 30 minutes.", stat = "revenge", goal = 1 },
+  { id = "revenge10", cat = "hunt", name = "Avenger", desc = "10 revenge kills.", stat = "revenge", goal = 10, title = "the Avenger" },
+  { id = "bounty", cat = "hunt", name = "Bounty Hunter", desc = "Kill an enemy who killed guild members 3 times in 30 days.", stat = "bounty", goal = 1, title = "the Bounty Hunter" },
+  { id = "bounty5", cat = "hunt", name = "Manhunter", desc = "5 kills of wanted enemies.", stat = "bounty", goal = 5, title = "the Manhunter" },
+  { id = "nemesis", cat = "hunt", name = "Nemesis Slayer", desc = "Kill an enemy who has killed you 3 times.", stat = "nemesis", goal = 1, title = "the Nemesis Slayer" },
+  { id = "grudge", cat = "hunt", name = "Grudge Match", desc = "Kill the same enemy player 5 times.", stat = "grudge", goal = 1, title = "the Relentless" },
+  { id = "champion", cat = "hunt", name = "Champion", desc = "Finish a month top of Top Head Hunters.", stat = "champion", goal = 1, title = "the Champion" },
+  { id = "champion3", cat = "hunt", name = "Dynasty", desc = "Finish 3 months top of Top Head Hunters.", stat = "champion", goal = 3, title = "the Undisputed" },
+  -- Raids and bosses
   { id = "raid1", cat = "raid", name = "Raider", desc = "Attend a raid night.", stat = "raids", goal = 1 },
   { id = "raid10", cat = "raid", name = "Veteran Raider", desc = "Attend 10 raid nights.", stat = "raids", goal = 10 },
   { id = "raid25", cat = "raid", name = "Iron Raider", desc = "Attend 25 raid nights.", stat = "raids", goal = 25, title = "the Iron Raider" },
-  { id = "loot1", cat = "raid", name = "Lucky", desc = "Win an item at a loot auction or roll.", stat = "loot", goal = 1 },
-  { id = "spender", cat = "raid", name = "Big Spender", desc = "Spend 100 DKP or more on one item.", stat = "bigBuy", goal = 1, title = "the Big Spender" },
-  { id = "wish", cat = "raid", name = "Wish Granted", desc = "Win an item that was on your wishlist.", stat = "wish", goal = 1 },
-  -- Guild
-  { id = "level", cat = "guild", name = "Max Level", desc = "Reach level " .. MAX_LEVEL .. ".", stat = "maxLevel", goal = 1 },
-  { id = "decorated", cat = "guild", name = "Decorated", desc = "Earn 10 other achievements.", stat = "others", goal = 10, title = "the Decorated" },
+  { id = "raid50", cat = "raid", name = "Stalwart", desc = "Attend 50 raid nights.", stat = "raids", goal = 50, title = "the Stalwart" },
+  { id = "perfect", cat = "raid", name = "Perfect Attendance", desc = "Attend every raid night in a month (at least 4).", stat = "perfect", goal = 1, title = "the Dependable" },
+  { id = "boss1", cat = "raid", name = "Boss Down", desc = "Be there when the guild kills a raid boss.", stat = "bosses", goal = 1 },
+  { id = "boss25", cat = "raid", name = "Boss Slayer", desc = "Be there for 25 guild boss kills.", stat = "bosses", goal = 25, title = "the Slayer" },
+  { id = "boss100", cat = "raid", name = "Raidbreaker", desc = "Be there for 100 guild boss kills.", stat = "bosses", goal = 100, title = "the Raidbreaker" },
+  { id = "pioneer", cat = "raid", name = "Pioneer", desc = "Be there for the guild's first kill of a boss.", stat = "bossFirsts", goal = 1, title = "the Pioneer" },
+  { id = "pioneer5", cat = "raid", name = "Trailblazer", desc = "Be there for the guild's first kill of 5 bosses.", stat = "bossFirsts", goal = 5, title = "the Trailblazer" },
+  { id = "clear", cat = "raid", name = "Full Clear", desc = "Kill every boss of a raid within one week.", stat = "fullClear", goal = 1, title = "the Conqueror" },
+  -- Loot and the guild
+  { id = "loot1", cat = "loot", name = "Lucky", desc = "Win an item at a loot auction or roll.", stat = "loot", goal = 1 },
+  { id = "loot10", cat = "loot", name = "Geared Up", desc = "Win 10 items.", stat = "loot", goal = 10 },
+  { id = "roll", cat = "loot", name = "Lucky Roll", desc = "Win an item in a free roll.", stat = "rolls", goal = 1 },
+  { id = "spender", cat = "loot", name = "Big Spender", desc = "Spend 100 DKP or more on one item.", stat = "bigBuy", goal = 1, title = "the Big Spender" },
+  { id = "wish", cat = "loot", name = "Wish Granted", desc = "Win an item that was on your wishlist.", stat = "wish", goal = 1 },
+  { id = "wish5", cat = "loot", name = "Fortunate", desc = "Win 5 items that were on your wishlist.", stat = "wish", goal = 5, title = "the Fortunate" },
+  { id = "level", cat = "loot", name = "Max Level", desc = "Reach level " .. MAX_LEVEL .. ".", stat = "maxLevel", goal = 1 },
+  { id = "alts", cat = "loot", name = "Altoholic", desc = "Link 3 alts to your main.", stat = "alts", goal = 1 },
+  { id = "decorated", cat = "loot", name = "Decorated", desc = "Earn 10 other achievements.", stat = "others", goal = 10, title = "the Decorated" },
+  { id = "hero", cat = "loot", name = "Guild Hero", desc = "Earn 25 other achievements.", stat = "others", goal = 25, title = "the Hero" },
 }
 ns.ACHIEVEMENTS = LIST
 local BY_ID = {}
@@ -100,7 +127,13 @@ local function buildIndex()
   end
 
   local revenge, bounty, nemesis = {}, {}, {}
-  for _, k in ipairs(ns.db.killLog or {}) do
+  local double, night, zones, grudge = {}, {}, {}, {}
+  local zoneSeen, victimCount, lastKill = {}, {}, {}
+  -- Oldest first, so "the 10th zone" and "the 5th time" happen in order.
+  local log = {}
+  for _, k in ipairs(ns.db.killLog or {}) do log[#log + 1] = k end
+  table.sort(log, function(a, b) return a.t < b.t end)
+  for _, k in ipairs(log) do
     if not ns.KillHidden(k) then
       local kb = ns.KillingBlow(k)
       if kb then
@@ -113,11 +146,28 @@ local function buildIndex()
         end
         local mine = deathsOf[me] and deathsOf[me][enemy]
         if mine and countIn(mine, 0, k.t) >= NEMESIS_KILLS then push(nemesis, me, k.t) end
+        -- Two killing blows within 10 seconds.
+        if lastKill[me] and k.t - lastKill[me] <= DOUBLE_KILL then push(double, me, k.t) end
+        lastKill[me] = k.t
+        -- Between midnight and 5 in the morning (your clock).
+        local hour = tonumber(date("%H", k.t))
+        if hour < 5 then push(night, me, k.t) end
+        -- A new zone.
+        zoneSeen[me] = zoneSeen[me] or {}
+        local zone = k.zone or ""
+        if zone ~= "" and not zoneSeen[me][zone] then
+          zoneSeen[me][zone] = true
+          push(zones, me, k.t)
+        end
+        -- The same enemy, a 5th time.
+        victimCount[me] = victimCount[me] or {}
+        victimCount[me][enemy] = (victimCount[me][enemy] or 0) + 1
+        if victimCount[me][enemy] == GRUDGE_KILLS then push(grudge, me, k.t) end
       end
       for _, a in ipairs(ns.Assists(k)) do push(assists, ns.Key(a), k.t) end
     end
   end
-  sortAll(kills); sortAll(assists); sortAll(revenge); sortAll(bounty); sortAll(nemesis)
+  for _, t in ipairs({ kills, assists, revenge, bounty, nemesis, double, night, zones, grudge }) do sortAll(t) end
 
   -- Champions: the leader of each finished month that had kills.
   local champion = {}
@@ -134,10 +184,11 @@ local function buildIndex()
   sortAll(champion)
 
   -- Loot.
-  local loot, bigBuy, wonItem = {}, {}, {}
+  local loot, bigBuy, wonItem, rolls = {}, {}, {}, {}
   for _, l in ipairs(ns.LootHistory()) do
     local k = ns.Key(l.winner)
     push(loot, k, l.t)
+    if l.roll then push(rolls, k, l.t) end
     if not l.roll and l.amount >= 100 then push(bigBuy, k, l.t) end
     local id = ns.ItemID(l.item)
     if id then
@@ -145,10 +196,11 @@ local function buildIndex()
       wonItem[k][id] = math.min(wonItem[k][id] or math.huge, l.t)
     end
   end
-  sortAll(loot); sortAll(bigBuy)
+  sortAll(loot); sortAll(bigBuy); sortAll(rolls)
 
   index = { kills = kills, assists = assists, revenge = revenge, bounty = bounty, nemesis = nemesis,
-    champion = champion, loot = loot, bigBuy = bigBuy, wonItem = wonItem }
+    double = double, night = night, zones = zones, grudge = grudge,
+    champion = champion, loot = loot, bigBuy = bigBuy, rolls = rolls, wonItem = wonItem }
   return index
 end
 
@@ -158,6 +210,8 @@ local function statTimes(name, stat)
   local k = ns.Key(name)
   if ix[stat] then return ix[stat][k] or {} end
   if stat == "raids" then return ns.RaidNightsAttended(name) end
+  if stat == "bosses" then return ns.BossKillTimes(name) end
+  if stat == "bossFirsts" then return ns.BossKillTimes(name, true) end
   if stat:find("^streak") then
     local t = ns.FirstStreakOf(name, tonumber(stat:match("%d+")))
     return t and { t } or {}
@@ -171,10 +225,58 @@ local function statTimes(name, stat)
     table.sort(out)
     return out
   end
-  if stat == "maxLevel" then
-    for _, m in ipairs(ns.GetRoster()) do
-      if ns.Key(m.name) == k and m.level >= MAX_LEVEL then return { 0 } end -- 0: earned, when unknown
+  if stat == "perfect" then
+    -- Months (finished ones) with at least PERFECT_MIN raid nights, all attended.
+    local mine = {}
+    for _, t in ipairs(ns.RaidNightsAttended(name)) do mine[t] = true end
+    local months = {}
+    for _, s in ipairs(ns.LedgerEntries("RS")) do
+      local m = date("%Y-%m", s.t)
+      months[m] = months[m] or { total = 0, here = 0, last = 0 }
+      months[m].total = months[m].total + 1
+      if mine[s.t] then months[m].here = months[m].here + 1 end
+      months[m].last = math.max(months[m].last, s.t)
     end
+    local current, out = date("%Y-%m"), {}
+    for m, v in pairs(months) do
+      if m ~= current and v.total >= PERFECT_MIN and v.here == v.total then out[#out + 1] = v.last end
+    end
+    table.sort(out)
+    return out
+  end
+  if stat == "fullClear" then
+    -- Every boss of a raid (where the count is known) within 7 days, with you there for each.
+    local key, byRaid, out = k, {}, {}
+    for _, kill in ipairs(ns.BossKills and ns.BossKills() or {}) do
+      if kill.set[key] and ns.RAID_BOSSES[kill.raid] then
+        byRaid[kill.raid] = byRaid[kill.raid] or {}
+        table.insert(byRaid[kill.raid], 1, kill) -- oldest first
+      end
+    end
+    for raid, kills in pairs(byRaid) do
+      local need = ns.RAID_BOSSES[raid]
+      for i = 1, #kills do
+        local seen, n = {}, 0
+        for j = i, #kills do
+          if kills[j].t - kills[i].t > WEEK then break end
+          if not seen[kills[j].boss] then
+            seen[kills[j].boss] = true
+            n = n + 1
+            if n >= need then out[#out + 1] = kills[j].t break end
+          end
+        end
+        if n >= need then break end
+      end
+    end
+    table.sort(out)
+    return out
+  end
+  if stat == "alts" then
+    return #ns.AltsOf(name) >= 3 and { 0 } or {}
+  end
+  if stat == "maxLevel" then
+    local m = ns.Member(name)
+    if m and m.level >= MAX_LEVEL then return { 0 } end -- 0: earned, when unknown
     return {}
   end
   return {}
@@ -205,15 +307,18 @@ local function compute(name)
       if out[a.id].t then count = count + 1 end
     end
   end
-  -- Decorated: earned once 10 others are.
-  local d = BY_ID.decorated
-  if count >= d.goal then
-    local times = {}
-    for _, e in pairs(out) do if e.t then times[#times + 1] = e.t end end
-    table.sort(times)
-    out.decorated = { t = saved.decorated or times[d.goal], progress = d.goal }
-  else
-    out.decorated = { progress = count }
+  -- Decorated and Guild Hero: earned once enough of the others are.
+  local times = {}
+  for _, e in pairs(out) do if e.t then times[#times + 1] = e.t end end
+  table.sort(times)
+  for _, a in ipairs(LIST) do
+    if a.stat == "others" then
+      if count >= a.goal then
+        out[a.id] = { t = saved[a.id] or times[a.goal], progress = a.goal }
+      else
+        out[a.id] = { progress = count }
+      end
+    end
   end
   -- Remember what's earned, so it stays even if history goes.
   for id, e in pairs(out) do
