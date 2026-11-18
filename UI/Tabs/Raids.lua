@@ -640,6 +640,8 @@ local function Build(page)
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
       row.count:SetText(c.accept)
+      local cc = c.accept > 0 and C.good or C.faint -- nobody yet: grey, not green
+      row.count:SetTextColor(cc[1], cc[2], cc[3])
       row.mine:SetText(mine and statusText(mine.status) or "")
       row.warn:SetShown(c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0)
     end, true)

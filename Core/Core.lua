@@ -460,7 +460,7 @@ end
 -- Login greeting, then let modules sync once the guild roster is ready.
 ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
   if isLogin then
-    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/warcrest|r to open guild tools.")
+    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/warcrest|r (or |cffffffff/wc|r) to open it, or |cffffffff/warcrest help|r for help.")
   end
   if isLogin or isReload then
     C_Timer.After(8, function()

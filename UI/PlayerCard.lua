@@ -9,7 +9,7 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 
-local WIDTH, HEIGHT = 420, 470
+local WIDTH, HEIGHT = 420, 486
 local card -- the window
 local shownName
 
@@ -138,11 +138,20 @@ local function fill(p)
   f.noShows.number:SetTextColor(noShowColor[1], noShowColor[2], noShowColor[3])
   f.items.number:SetText(p.itemsWon)
   local loot = {}
+  if p.bossKills > 0 then
+    loot[#loot + 1] = ("Boss kills: %s%d|r%s"):format(UI.Code("text"), p.bossKills,
+      p.bossFirsts > 0 and (" (" .. p.bossFirsts .. " guild first" .. (p.bossFirsts == 1 and "" or "s") .. ")") or "")
+  end
   if #p.wishes > 0 then
-    local names = {}
-    for i = 1, math.min(2, #p.wishes) do names[i] = p.wishes[i].name end
-    loot[#loot + 1] = ("Wishlist: %s%d|r item%s%s: %s%s"):format(UI.Code("text"), #p.wishes, #p.wishes == 1 and "" or "s",
-      p.wishNeed > 0 and (" (" .. p.wishNeed .. " Need)") or "", table.concat(names, ", "), #p.wishes > 2 and "..." or "")
+    -- The first item they want (Need first), cut short so the line fits.
+    local first = p.wishes[1].name
+    if #first > 30 then first = first:sub(1, 28) .. "..." end
+    if #p.wishes == 1 then
+      loot[#loot + 1] = ("Wishlist: %s%s|r (%s)"):format(UI.Code("text"), first, p.wishNeed > 0 and "Need" or "Want")
+    else
+      loot[#loot + 1] = ("Wishlist: %s%d|r items%s, like %s"):format(UI.Code("text"), #p.wishes,
+        p.wishNeed > 0 and (" (" .. p.wishNeed .. " Need)") or "", first)
+    end
   end
   if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
   for _, l in ipairs(p.loot) do

@@ -343,7 +343,7 @@ function ns.EndRaidSession()
   local s = ns.ActiveSession()
   if s then ns.LedgerAdd("RE", { ref = s.id }) end
   ns.db.session = nil
-  ns.Say("Raid ended. No more hourly DKP will be awarded.")
+  ns.Say(ns.UsesDKP() and "Raid ended. No more hourly DKP will be awarded." or "Raid ended.")
 end
 
 -- Hourly awards, run by the officer who started the session.

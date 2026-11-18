@@ -279,7 +279,7 @@ local reopenAfterCombat = false
 
 local function blockedByCombat()
   if InCombatLockdown() then
-    ns.Say("Guild tools can't be opened during combat.")
+    ns.Say("Warcrest can't be opened during combat.")
     return true
   end
 end
