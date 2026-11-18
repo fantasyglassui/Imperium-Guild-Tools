@@ -362,3 +362,9 @@ ERR_GUILD_DEMOTE_SSS = "%s has demoted %s to %s."
 ERR_GUILD_REMOVE_SS = "%s has been kicked out of the guild by %s."
 ERR_GUILD_JOIN_S = "%s has joined the guild."
 ERR_GUILD_LEAVE_S = "%s has left the guild."
+
+-- The instance you're in: set INSTANCE = { "Hyjal Summit", "raid" } to be in a raid instance.
+function GetInstanceInfo()
+  if INSTANCE then return INSTANCE[1], INSTANCE[2], 9, "", 20, 0, false, INSTANCE[3] or 2000 end
+  return "Eastern Kingdoms", "none", 0, "", 0, 0, false, 0
+end

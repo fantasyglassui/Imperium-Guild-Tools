@@ -35,6 +35,7 @@ Core\Ledger.lua
 
 # 4. Raids and DKP (kept in the ledger)
 Raids\Raids.lua
+Raids\Bosses.lua
 Raids\DKP.lua
 Raids\Wishlist.lua
 

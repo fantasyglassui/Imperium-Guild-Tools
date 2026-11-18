@@ -80,11 +80,12 @@ ns.TYPES = {
   { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "achievement",  group = "achievement", label = "Achievements earned" },
+  { key = "boss_first",   group = "raid", label = "Guild first boss kills" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
 ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members", streak = "Streaks and revenge",
-  wanted = "Wanted list", achievement = "Achievements", celebrate = "Celebrations" }
+  wanted = "Wanted list", achievement = "Achievements", raid = "Raids", celebrate = "Celebrations" }
 ns.PVP_TYPES = { pvp = true }
 
 local frame = CreateFrame("Frame")

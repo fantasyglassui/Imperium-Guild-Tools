@@ -48,6 +48,9 @@ local LIST = {
   { id = "raid1", cat = "raid", name = "Raider", desc = "Attend a raid night.", stat = "raids", goal = 1 },
   { id = "raid10", cat = "raid", name = "Veteran Raider", desc = "Attend 10 raid nights.", stat = "raids", goal = 10 },
   { id = "raid25", cat = "raid", name = "Iron Raider", desc = "Attend 25 raid nights.", stat = "raids", goal = 25, title = "the Iron Raider" },
+  { id = "boss1", cat = "raid", name = "Boss Down", desc = "Be there when the guild kills a raid boss.", stat = "bosses", goal = 1 },
+  { id = "boss25", cat = "raid", name = "Boss Slayer", desc = "Be there for 25 guild boss kills.", stat = "bosses", goal = 25, title = "the Slayer" },
+  { id = "pioneer", cat = "raid", name = "Pioneer", desc = "Be there for the guild's first kill of a boss.", stat = "bossFirsts", goal = 1, title = "the Pioneer" },
   { id = "loot1", cat = "raid", name = "Lucky", desc = "Win an item at a loot auction or roll.", stat = "loot", goal = 1 },
   { id = "spender", cat = "raid", name = "Big Spender", desc = "Spend 100 DKP or more on one item.", stat = "bigBuy", goal = 1, title = "the Big Spender" },
   { id = "wish", cat = "raid", name = "Wish Granted", desc = "Win an item that was on your wishlist.", stat = "wish", goal = 1 },
@@ -158,6 +161,8 @@ local function statTimes(name, stat)
   local k = ns.Key(name)
   if ix[stat] then return ix[stat][k] or {} end
   if stat == "raids" then return ns.RaidNightsAttended(name) end
+  if stat == "bosses" then return ns.BossKillTimes(name) end
+  if stat == "bossFirsts" then return ns.BossKillTimes(name, true) end
   if stat:find("^streak") then
     local t = ns.FirstStreakOf(name, tonumber(stat:match("%d+")))
     return t and { t } or {}

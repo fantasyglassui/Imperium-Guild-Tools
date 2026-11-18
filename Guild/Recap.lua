@@ -63,6 +63,8 @@ function ns.WeeklyRecap(offset)
       unique(r.raids, s.title)
     end
   end
+  for _, k in ipairs(ns.BossKills(fromT, toT)) do unique(r.bosses, k.name) end
+  -- Before boss kills were recorded (3.0 and earlier), boss DKP shows them.
   for _, c in ipairs(ns.DKPChanges()) do
     local boss = c.entry.reason and c.entry.reason:match("^Boss: (.+)$")
     if boss and not c.undone and inRange(c.entry.t, fromT, toT) then unique(r.bosses, boss) end
