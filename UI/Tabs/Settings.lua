@@ -79,7 +79,7 @@ local function RefreshAlerts()
   end
 
   P.sound:SetChecked(db.sound)
-  P.warn:SetChecked(db.warning)
+  P.warn:Sync()
 end
 
 local function RefreshGeneral()
@@ -236,10 +236,26 @@ local function BuildAppearCard(parent)
   UI.Label(a, "How alerts appear", "Heading"):SetPoint("TOPLEFT", 14, -12)
   P.sound = UI.Check(a, "Play a sound", 10, -36)
   P.sound:SetScript("OnClick", function(self) ns.db.sound = self:GetChecked() and true or false end)
-  P.warn = UI.Check(a, "Show in the middle of the screen", 10, -62)
-  P.warn:SetScript("OnClick", function(self) ns.db.warning = self:GetChecked() and true or false end)
+  local onScreen = UI.Label(a, "On screen", "Body")
+  onScreen:SetPoint("TOPLEFT", 14, -70)
+  P.warn = UI.Cycle(a, 150, { { "banner", "Banner" }, { "warning", "Raid warning text" }, { "off", "Chat only" } },
+    function(v)
+      ns.db.alertStyle = v
+      ns.db.warning = v ~= "off"
+    end)
+  P.warn:SetHeight(24)
+  P.warn:SetPoint("TOPRIGHT", -14, -64)
+  P.warn.Sync = function(self)
+    local style = ns.AlertStyle()
+    for i, o in ipairs(self.options) do
+      if o[1] == style then self.index, self.value = i, o[1]; self:SetText(o[2]) end
+    end
+  end
+  UI.Tooltip(P.warn, "On screen", "Banner: a card at the top of the screen with an icon and colour for each kind of alert. "
+    .. "Click it to open the matching tab, right-click to dismiss, Shift-drag to move. Raid warning text: the game's "
+    .. "big text in the middle of the screen. Chat only: nothing on screen.")
   local chat = UI.Label(a, "Alerts always go to chat too.", "MutedSmall")
-  chat:SetPoint("TOPLEFT", 42, -92)
+  chat:SetPoint("TOPLEFT", 14, -98)
 
   local test = UI.Button(a, "Show test alert", INNER)
   test:SetHeight(26)

@@ -289,7 +289,7 @@ function ns.ShowAlert(e, force)
   local text = ns.DeathColor(e) .. ns.DescribeDeath(e) .. "|r"
   local warning = text
   if ns.PVP_TYPES[e.kind] then warning = ns.SKULL .. " " .. text .. " " .. ns.SKULL end
-  ns.Notify(ns.DeathIcon(e) .. text, warning, nil, force)
+  ns.Notify(ns.DeathIcon(e) .. text, warning, nil, force, "death")
 end
 
 -- Insert into a newest-first log, keeping it in time order.

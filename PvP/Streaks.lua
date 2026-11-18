@@ -177,7 +177,7 @@ function ns.OnLiveKill(k)
         text = ("Revenge! %s killed %s, who killed %s %s."):format(killer, k.victim,
           Ambiguate(avenged.who, "short"), ago(k.t - avenged.t))
       end
-      ns.Notify(ns.KILL_ICON .. " " .. REVENGE_COLOR .. text .. "|r", REVENGE_COLOR .. text .. "|r")
+      ns.Notify(ns.KILL_ICON .. " " .. REVENGE_COLOR .. text .. "|r", REVENGE_COLOR .. text .. "|r", nil, nil, "revenge")
     end
   end
 
@@ -185,7 +185,7 @@ function ns.OnLiveKill(k)
   local n = ns.CurrentStreak(killer, k.t)
   if MILESTONE[n] and wanted("kill_streak") then
     local text = ("%s is on a %d-kill streak!"):format(killer, n)
-    ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r")
+    ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r", nil, nil, "streak")
   end
 end
 
@@ -196,6 +196,6 @@ function ns.OnLiveDeath(d)
   if ended >= ANNOUNCE_ENDED and wanted("kill_streak") then
     local text = ("%s's %d-kill streak was ended%s."):format(Ambiguate(d.who, "short"), ended,
       d.killer and (" by " .. Ambiguate(d.killer, "short")) or "")
-    ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r")
+    ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r", nil, nil, "streak")
   end
 end

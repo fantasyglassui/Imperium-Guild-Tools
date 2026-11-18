@@ -257,9 +257,10 @@ ns.OnLoad(function()
           if wanted() then
             local text = ("Guild first! %s is down in %s."):format(b.name, r.raid)
             if r.total and r.killed == r.total and b.first == r.last then
-              text = text .. (" That's all %d bosses: %s is cleared!"):format(r.total, r.raid)
+              text = text .. (r.total == 1 and (" %s is cleared!"):format(r.raid)
+                or (" That's all %d bosses: %s is cleared!"):format(r.total, r.raid))
             end
-            ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r")
+            ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "boss", "Guild first")
           end
         end
       end

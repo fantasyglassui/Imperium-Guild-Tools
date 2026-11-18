@@ -290,7 +290,7 @@ function ns.ShowKill(k, force)
     if ns.KillHidden(k) then return end
   end
   local text = KILL_COLOR .. ns.DescribeKill(k) .. "|r"
-  ns.Notify(KILL_ICON .. " " .. text, KILL_ICON .. " " .. text .. " " .. KILL_ICON, nil, force)
+  ns.Notify(KILL_ICON .. " " .. text, KILL_ICON .. " " .. text .. " " .. KILL_ICON, nil, force, "kill")
 end
 
 ns.KILL_ICON, ns.KILL_COLOR = KILL_ICON, KILL_COLOR
@@ -469,7 +469,7 @@ local function announceChampion()
   local heading = ("The month has reset! Top Head Hunters of %s:"):format(name)
   ns.Notify(KILL_ICON .. " |cffd4af37" .. heading .. "|r  " .. table.concat(places, "   "),
     ("|cffd4af37%s champion: %s with %d killing blow%s!|r"):format(name, top[1].name, top[1].count,
-      top[1].count == 1 and "" or "s"))
+      top[1].count == 1 and "" or "s"), nil, nil, "champion")
 end
 ns.AnnounceChampion = announceChampion
 

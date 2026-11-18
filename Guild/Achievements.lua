@@ -451,7 +451,7 @@ local function recheck()
         if e.t and not (was[a.id] and was[a.id].t) and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
           local text = ("%s earned %s!"):format(short, a.name)
           if a.title then text = text .. (" New title: %s %s."):format(short, a.title) end
-          ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r")
+          ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
         end
       end
     end

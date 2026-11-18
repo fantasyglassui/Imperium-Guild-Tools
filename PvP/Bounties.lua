@@ -191,11 +191,11 @@ local function announce(quiet)
           local reward = b.amount > 0 and (" " .. b.amount .. " DKP") or ""
           local text = ("Bounty placed:%s on %s's head, by %s.%s"):format(reward, b.target, b.by,
             b.note ~= "" and (" \"" .. b.note .. "\"") or "")
-          ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r")
+          ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r", nil, nil, "bounty")
         elseif b.state == "claimed" and (b.claimedAt or 0) >= fresh then
           local text = ("%s claimed the bounty on %s%s!"):format(b.killer, b.target,
             b.amount > 0 and ns.UsesDKP() and (" for " .. b.amount .. " DKP") or "")
-          ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r")
+          ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r", nil, nil, "bounty")
         end
       end
     end

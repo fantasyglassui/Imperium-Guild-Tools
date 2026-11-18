@@ -50,7 +50,8 @@ function ns.ShowLevel(who, level, force)
   end
   local text = CHEER_COLOR .. ns.DescribeLevel(who, level) .. "|r"
   local sound = SOUNDKIT and (level == maxLevel() and (SOUNDKIT.LEVELUP or SOUNDKIT.UI_LEVELUP) or SOUNDKIT.RAID_WARNING)
-  ns.Notify(STAR .. " " .. text, STAR .. " " .. text .. " " .. STAR, sound, force)
+  ns.Notify(STAR .. " " .. text, STAR .. " " .. text .. " " .. STAR, sound, force, "celebrate",
+    level == maxLevel() and "Max level" or "Level up")
 end
 
 ns.OnMessage("L", function(p, sender)

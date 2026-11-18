@@ -421,18 +421,45 @@ local function playSound(kit)
   if ns.db.sound and kit then pcall(PlaySound, kit, "Master") end
 end
 
--- chat: the chat line. warning: the center-screen text (defaults to chat).
--- sound: a SOUNDKIT id (defaults to the raid warning sound).
-function ns.Notify(chat, warning, sound, force)
+-- A sound for each kind of alert, so you can tell them apart without looking.
+-- (Names differ between game versions; anything missing falls back to the raid warning.)
+local KIND_SOUNDS = {
+  kill = "PVP_THROUGH_QUEUE", streak = "PVP_THROUGH_QUEUE", revenge = "PVP_THROUGH_QUEUE",
+  wanted = "ALARM_CLOCK_WARNING_3", death = "ALARM_CLOCK_WARNING_2",
+  boss = "UI_RAID_BOSS_DEFEATED", achievement = "ACHIEVEMENT_MENU_OPEN", champion = "UI_RAID_BOSS_DEFEATED",
+  raid = "READY_CHECK", loot = "RAID_WARNING", bounty = "LOOTWINDOWCOINSOUND",
+}
+
+-- How alerts show on screen: "banner" (Warcrest's own), "warning" (the game's
+-- raid warning text) or "off" (chat only).
+function ns.AlertStyle()
+  local s = ns.db.alertStyle
+  if s then return s end
+  return ns.db.warning == false and "off" or "banner"
+end
+
+-- chat: the chat line. warning: the on-screen text (defaults to chat).
+-- sound: a SOUNDKIT id (defaults to one for the kind). kind: what it is, for the
+-- banner's colour, icon and heading (UI/Banner.lua); title overrides the heading.
+function ns.Notify(chat, warning, sound, force, kind, title)
   if not force and ns.IsQuiet() then
     if #held < MAX_HELD then held[#held + 1] = chat end
     return
   end
   ns.Say(chat)
-  if ns.db.warning and RaidWarningFrame then
+  local style = ns.AlertStyle()
+  if style == "banner" and ns.ShowBanner then
+    -- The banner has its own icon: drop the little ones around the text.
+    local text = (warning or chat):gsub("|T.-|t", ""):gsub("^%s+", ""):gsub("%s+$", "")
+    -- One colour around everything: the banner's own white reads better under its coloured heading.
+    local inner = text:match("^|c%x%x%x%x%x%x%x%x(.*)|r$")
+    if inner and not inner:find("|c", 1, true) then text = inner end
+    ns.ShowBanner(kind, text, title)
+  elseif style ~= "off" and RaidWarningFrame then
     RaidNotice_AddMessage(RaidWarningFrame, warning or chat, ChatTypeInfo["RAID_WARNING"])
   end
-  playSound(sound or (SOUNDKIT and SOUNDKIT.RAID_WARNING))
+  local kit = sound or (SOUNDKIT and (SOUNDKIT[KIND_SOUNDS[kind or ""] or ""] or SOUNDKIT.RAID_WARNING))
+  playSound(kit)
 end
 
 local function flushHeld()

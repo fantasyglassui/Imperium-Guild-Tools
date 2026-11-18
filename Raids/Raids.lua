@@ -336,7 +336,7 @@ end
 ns.OnMessage("RN", function(p, sender)
   if not ns.IsOfficerName(sender) then return end
   ns.Notify(("|cff66ccffThe raid has started: %s. You signed up - log in or ask %s for an invite!|r")
-    :format(p[2] or "raid", Ambiguate(sender, "short")), nil, nil, true)
+    :format(p[2] or "raid", Ambiguate(sender, "short")), nil, nil, true, "raid", "Raid started")
 end)
 
 function ns.EndRaidSession()
@@ -568,7 +568,7 @@ local function remind()
       ns.db.reminded[e.id] = true
       local mins = math.max(1, math.floor((e.start - now) / 60))
       ns.Notify(("|cff66ccffRaid reminder: %s starts at %s (in %d min).|r"):format(e.title,
-        date("%H:%M", e.start), mins))
+        date("%H:%M", e.start), mins), nil, nil, nil, "raid", "Raid reminder")
     end
   end
 end

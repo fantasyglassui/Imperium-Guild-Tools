@@ -186,7 +186,7 @@ function ns.ShowSighting(s, force)
     if not (c.enabled and c.types.wanted and show.wanted) then return end
   end
   local text = SPOT_COLOR .. ns.DescribeSighting(s) .. "|r"
-  ns.Notify(SPOT_ICON .. " " .. text, SPOT_ICON .. " " .. text .. " " .. SPOT_ICON, nil, force)
+  ns.Notify(SPOT_ICON .. " " .. text, SPOT_ICON .. " " .. text .. " " .. SPOT_ICON, nil, force, "wanted")
 end
 
 ns.OnMessage("S", function(p, sender)
