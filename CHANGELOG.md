@@ -16,7 +16,7 @@
 - Guilds can now turn DKP off (Settings > Alerts > Use DKP for loot). Without DKP, the DKP tab, loot auctions and raid night DKP are hidden for everyone; raids, sign-ups, attendance, boss kills, wishlists and everything else still work.
 - New: a help window, with short answers about every part of Warcrest and every command. Open it with Help at the bottom of the side menu, /warcrest help, or from the welcome.
 - Big guilds: Warcrest stays smooth with hundreds of members and thousands of kills. Lists only make the rows you can see, the roster is read once instead of over and over, and streaks and achievements are worked out in one pass.
-- Polish: the Achievements tiles widen with the window, raids with no sign-ups yet show a grey 0 instead of green, the raid night card leaves out DKP when the guild doesn't use it, and messages are shorter and clearer. /warcrest on its own (or an unknown command) now lists the main commands and points to the help.
+- Polish: the Achievements tiles widen with the window, raids with no sign-ups yet show a grey 0 instead of green, the raid night card leaves out DKP when the guild doesn't use it, and messages are shorter and clearer. An unknown /warcrest command now lists the main commands and points to the help.
 
 ## 3.0.0
 - The Imperium is now **Warcrest**, guild tools for any guild on WoW Forever. Members of <The Imperium> still see the Imperium emblem and name; every other guild gets the Warcrest crest, with their own guild's name under it.
