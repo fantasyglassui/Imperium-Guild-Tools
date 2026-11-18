@@ -18,7 +18,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
 - **Loot wishlists.** Mark the items you Need or Want; officers and bidders see who wants an item when it's auctioned.
 - **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid and guild-first announcements, and a month calendar of raids and raid nights.
-- **Achievements and titles.** 24 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
+- **Achievements and titles.** 43 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
 - **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
 - **Kill log and Top Head Hunters.** Every PvP kill by guild members, with killing blows and assists, and a monthly board of the guild's top PvP killers.
 - **Wanted list.** Enemy players who keep killing guild members. When a guildmate sees one, the whole guild is alerted and the sighting goes on the map.

@@ -14,7 +14,7 @@ local CHANGES = {
   { version = "3.1.0", date = "Nov 18, 2026", items = {
     "Raid progress: boss kills are recorded for the guild. The Raids tab's Progress view shows how far you've got in each raid, and guild first kills are announced.",
     "Raid calendar: the Raids tab's Calendar view shows the month's raids, raid nights and boss kills.",
-    "Three new boss achievements, two with titles: the Slayer and the Pioneer.",
+    "22 new achievements, 43 in all, in four groups: PvP, Hunts, Raids, and Loot & more. 14 new titles to earn.",
     "A welcome and guild setup for new players and guilds, and guilds can now turn DKP off.",
     "Help: click Help at the bottom of the side menu, or type /warcrest help.",
     "Faster in big guilds, and lots of polish.",

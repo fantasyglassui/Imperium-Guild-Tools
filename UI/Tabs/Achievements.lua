@@ -1,7 +1,7 @@
 --[[
   Warcrest
   Achievements tab. Three views, switched at the top:
-    PvP, Raids & more: a member's achievements as tiles (yours, or whoever's
+    PvP, Hunts, Raids, Loot & more: a member's achievements as tiles (yours, or whoever's
                        you opened from their player card), with progress.
     Guild:             achievements earned across the guild, newest first,
                        and who has the most.
@@ -152,7 +152,7 @@ local function RefreshTiles(cat)
   local mine = ns.MemberAchievements(name)
   local shown = {}
   for _, a in ipairs(ns.ACHIEVEMENTS) do
-    if a.cat == cat or (cat == "raid" and a.cat == "guild") then shown[#shown + 1] = a end
+    if a.cat == cat then shown[#shown + 1] = a end
   end
   for i = 1, MAX_TILES do
     local t = P.tiles[i]
@@ -321,7 +321,8 @@ local function relayoutTiles(width)
 end
 
 local function Build(page)
-  P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "raid", "Raids & more" }, { "guild", "Guild" } },
+  P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "hunt", "Hunts" }, { "raid", "Raids" },
+    { "loot", "Loot & more" }, { "guild", "Guild" } },
     ns.RefreshPanel)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view

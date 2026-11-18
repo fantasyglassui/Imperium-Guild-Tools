@@ -4,7 +4,12 @@
 - New: raid progress. When the guild kills a raid boss, it's recorded for everyone: which boss, which raid, and who was there. The Raids tab's new Progress view shows how far the guild has got in each raid (like 4 / 13 bosses in Hyjal Summit), with each boss's first kill, how many times it's died, and the last kill. A kill counts when 5 or more guild members, at least half the raid, kill a raid boss.
 - Guild firsts: the first time the guild kills a boss, everyone hears about it, and again when a raid is fully cleared for the first time. Turn it off under Settings > Alerts (Guild first boss kills).
 - New: raid calendar. The Raids tab's Calendar view shows a month at a glance: raids scheduled (gold), raid nights held (green) with how many bosses died, and past raids. Hover a day for the details, or click a raid to open it.
-- Three new achievements: Boss Down (be there for a guild boss kill), Boss Slayer (25 boss kills, title "the Slayer") and Pioneer (be there for the guild's first kill of a boss, title "the Pioneer"). That makes 24.
+- 22 new achievements, 43 in all, now in four groups on the Achievements tab: PvP, Hunts, Raids, and Loot & more.
+  - PvP: Legend (500 killing blows), Shield Brother (100 assists), Godlike (a 15-kill streak), Double Kill (two killing blows within 10 seconds), Night Owl (a kill between midnight and 5 in the morning) and Globetrotter (kills in 10 zones).
+  - Hunts: Manhunter (5 kills of wanted enemies), Grudge Match (kill the same enemy 5 times) and Dynasty (top of Top Head Hunters for 3 months).
+  - Raids: Stalwart (50 raid nights), Perfect Attendance (every raid night in a month, at least 4), Boss Down, Boss Slayer (25 boss kills), Raidbreaker (100), Pioneer (the guild's first kill of a boss), Trailblazer (5 guild firsts) and Full Clear (every boss of a raid within a week).
+  - Loot & more: Geared Up (10 items), Lucky Roll (win a free roll), Fortunate (5 wishlist items won), Altoholic (3 alts linked) and Guild Hero (25 other achievements).
+  - 14 new titles: the Legend, the Godlike, the Manhunter, the Relentless, the Undisputed, the Stalwart, the Dependable, the Slayer, the Raidbreaker, the Pioneer, the Trailblazer, the Conqueror, the Fortunate and the Hero.
 - Player cards show how many boss kills someone was there for, and how many were guild firsts.
 - The weekly recap lists the bosses the guild killed.
 - New: a welcome for new players and guilds. The first time Warcrest loads, a short welcome shows what it does and where to start. Officers in a guild nobody has set up yet choose who manages Warcrest and whether the guild uses DKP, and save it for everyone. /warcrest welcome shows it again.
