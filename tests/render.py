@@ -351,6 +351,15 @@ def demo_guild():
       add(40000, "Thorne", "motd")
       add(5000, "Thorne", "promote", "Mira", "Veteran")
     end""")(me.ns, t)
+    items = [(19019, "Thunderfury, Blessed Blade of the Windseeker"), (16901, "Stormrage Legguards"),
+             (17076, "Bonereaver's Edge"), (18814, "Choker of the Fire Lord"), (16922, "Leggings of Transcendence")]
+    def link(i):
+        return "|cffa335ee|Hitem:%d::::::::60:::::::|h[%s]|h|r" % items[i]
+    for who, wishes in [("Lyra", [(0, "need"), (3, "want")]), ("Brakk", [(0, "need"), (2, "need")]),
+                        ("Mira", [(4, "need"), (3, "need")]), ("Thorne", [(1, "want"), (2, "want"), (0, "want")])]:
+        for i, prio in wishes:
+            guild[who].ns.WishlistAdd(link(i), prio)
+    guild.run(2)
     ev = me.ns.CreateRaid("Molten Core", t + 3 * 86400, "")
     guild.run(2)
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
@@ -369,7 +378,7 @@ if __name__ == "__main__":
     guild, me = demo_guild()
     rd = Renderer(me)
     panel = None
-    for tab in ("roster", "raids", "dkp", "kills", "wanted", "settings", "officers", "addon"):
+    for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
         panel = me.lua.eval("TheImperiumPanel")

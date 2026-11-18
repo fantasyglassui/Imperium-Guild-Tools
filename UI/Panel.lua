@@ -21,6 +21,7 @@ local TAB_INFO = {
   roster = { icon = "roster", text = "Members, notes and ranks" },
   raids = { icon = "raids", text = "Sign-ups, raid nights and invites" },
   dkp = { icon = "dkp", text = "Standings, loot and auctions" },
+  wishlist = { icon = "wishlist", text = "The loot the guild wants" },
   kills = { icon = "kills", text = "PvP kills by guild members" },
   wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
   settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },

@@ -719,6 +719,7 @@ ns.OnMessage("B1", function(p, sender)
     ends = GetTime() + duration, by = Ambiguate(sender, "short"), hidden = p[6] == "hidden" }
   if ns.ShowAuctionWindow then ns.ShowAuctionWindow() end
   ns.Notify(("|cffffd200Loot auction: %s - minimum bid %d DKP.|r"):format(link, ns.auction.min), nil, nil, true)
+  if ns.OnAuctionStarted then ns.OnAuctionStarted(ns.auction) end
 end)
 
 ns.OnMessage("B3", function(p)

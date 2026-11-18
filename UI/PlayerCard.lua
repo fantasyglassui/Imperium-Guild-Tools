@@ -9,7 +9,7 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 
-local WIDTH, HEIGHT = 420, 450
+local WIDTH, HEIGHT = 420, 470
 local card -- the window
 local shownName
 
@@ -127,12 +127,19 @@ local function fill(p)
   f.noShows.number:SetTextColor(noShowColor[1], noShowColor[2], noShowColor[3])
   f.items.number:SetText(p.itemsWon)
   local loot = {}
+  if #p.wishes > 0 then
+    local names = {}
+    for i = 1, math.min(2, #p.wishes) do names[i] = p.wishes[i].name end
+    loot[#loot + 1] = ("Wishlist: %s%d|r item%s%s: %s%s"):format(UI.Code("text"), #p.wishes, #p.wishes == 1 and "" or "s",
+      p.wishNeed > 0 and (" (" .. p.wishNeed .. " Need)") or "", table.concat(names, ", "), #p.wishes > 2 and "..." or "")
+  end
+  if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
   for _, l in ipairs(p.loot) do
     loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), date("%b %d", l.t), l.item,
       l.roll and (UI.Code("muted") .. "free roll|r") or (UI.Code("text") .. l.amount .. " DKP|r"))
   end
-  f.lootLines:SetText(#loot > 0 and ("Recent loot:\n" .. table.concat(loot, "\n"))
-    or (UI.Code("muted") .. "No loot won yet.|r"))
+  if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
+  f.lootLines:SetText(table.concat(loot, "\n"))
 end
 
 -- Open a guild member's card.

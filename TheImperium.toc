@@ -35,6 +35,7 @@ Core\Ledger.lua
 # 4. Raids and DKP (kept in the ledger)
 Raids\Raids.lua
 Raids\DKP.lua
+Raids\Wishlist.lua
 
 # 5. Officer log and the weekly recap
 Guild\OfficerLog.lua
@@ -51,6 +52,7 @@ UI\Tabs\Roster.lua
 UI\Tabs\Raids.lua
 UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
+UI\Tabs\Wishlist.lua
 UI\Tabs\KillLog.lua
 UI\Tabs\Wanted.lua
 UI\Tabs\Settings.lua

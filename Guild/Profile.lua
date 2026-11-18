@@ -82,5 +82,13 @@ function ns.PlayerProfile(name)
       if #p.loot < 4 then p.loot[#p.loot + 1] = l end
     end
   end
+  -- Wishlist: what they still want.
+  p.wishes, p.wishNeed = {}, 0
+  for _, w in ipairs(ns.Wishes and ns.Wishes(name) or {}) do
+    if not w.won then
+      p.wishes[#p.wishes + 1] = w
+      if w.prio == "need" then p.wishNeed = p.wishNeed + 1 end
+    end
+  end
   return p
 end
