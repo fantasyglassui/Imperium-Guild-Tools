@@ -38,6 +38,17 @@ function ns.RaidEvents()
   return out
 end
 
+-- Every raid that wasn't cancelled, past ones too (as far back as the
+-- record goes), for the calendar.
+function ns.AllRaidEvents()
+  local gone, out = cancelled(), {}
+  for _, e in ipairs(ns.LedgerEntries("EV")) do
+    if not gone[e.id] then out[#out + 1] = e end
+  end
+  table.sort(out, function(a, b) return a.start < b.start end)
+  return out
+end
+
 function ns.RaidEvent(id)
   return id and ns.db.ledger[id]
 end

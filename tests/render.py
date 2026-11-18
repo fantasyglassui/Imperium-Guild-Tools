@@ -363,14 +363,39 @@ def demo_guild(guild_name=None):
         for i, prio in wishes:
             guild[who].ns.WishlistAdd(link(i), prio)
     guild.run(2)
-    ev = me.ns.CreateRaid("Molten Core", t + 3 * 86400, "")
+    ev = me.ns.CreateRaid("Hyjal Summit", t + 3 * 86400, "Bring fire resistance gear.")
+    me.ns.CreateRaid("Barrow Deeps", t + 6 * 86400, "")
+    me.ns.CreateRaid("Hyjal Summit", t + 10 * 86400, "")
+    guild.run(2)
+    # Past raid nights and boss kills (backdated), for the calendar and progress.
+    me.lua.eval("""function(ns, now)
+      local everyone = "Thorne,Lyra,Mira,Brakk,Aldric,Seren"
+      local function at(e, t) e.t = t; return e end
+      local night = 0
+      local function raid(daysAgo, title, kills)
+        local start = now - daysAgo * 86400 - 3 * 3600
+        at(ns.LedgerAdd("RS", { ref = "", onTime = 10, hourly = 10, title = title, boss = 15 }), start)
+        for i, k in ipairs(kills) do
+          at(ns.LedgerAdd("BK", { boss = k[1], name = k[2], raid = title, size = 6, names = everyone }), start + i * 1500)
+        end
+      end
+      raid(18, "Barrow Deeps", { {3001, "Gravewarden Ulric"}, {3002, "The Hollow King"}, {3003, "Mistress Vael"} })
+      raid(15, "Barrow Deeps", { {3001, "Gravewarden Ulric"}, {3002, "The Hollow King"}, {3003, "Mistress Vael"},
+        {3004, "Rotfang"}, {3005, "Barrow Wight Lord"} })
+      raid(11, "Barrow Deeps", { {3001, "Gravewarden Ulric"}, {3002, "The Hollow King"}, {3003, "Mistress Vael"},
+        {3004, "Rotfang"}, {3005, "Barrow Wight Lord"}, {3006, "The Twin Shades"}, {3007, "Morbane"},
+        {3008, "Ancient of Bones"} })
+      raid(8, "Onyxia's Lair", { {1084, "Onyxia"} })
+      raid(4, "Hyjal Summit", { {2001, "Rage Winterchill"}, {2002, "Anetheron"} })
+      raid(1, "Hyjal Summit", { {2001, "Rage Winterchill"}, {2002, "Anetheron"}, {2003, "Kaz'rogal"}, {2004, "Azgalor"} })
+    end""")(me.ns, t)
     guild.run(2)
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
         guild[n].ns.SignUp(ev.id, "accept", role)
         guild.run(0.5)
     guild["Lyra"].ns.SetTitle("bounty")
     guild.run(1)
-    me.ns.StartRaidSession(ev.id, "Molten Core", 10, 10, 15)
+    me.ns.StartRaidSession(ev.id, "Hyjal Summit", 10, 10, 15)
     guild.run(3)
     me.ns.AwardDKP(me.lua.table_from(["Lyra", "Mira"]), 25, "Ragnaros bonus")
     guild.run(3)
@@ -388,7 +413,8 @@ if __name__ == "__main__":
         me.ns.RefreshPanel()
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
-    for tab, view in (("settings", "general"), ("achievements", "raid"), ("achievements", "guild")):
+    for tab, view in (("settings", "general"), ("achievements", "raid"), ("achievements", "guild"),
+                      ("raids", "calendar"), ("raids", "progress")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")

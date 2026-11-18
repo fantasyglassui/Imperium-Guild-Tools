@@ -52,6 +52,8 @@ UI\Panel.lua
 
 # 7. The panel's tabs
 UI\Tabs\Roster.lua
+UI\Tabs\RaidCalendar.lua
+UI\Tabs\RaidProgress.lua
 UI\Tabs\Raids.lua
 UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
