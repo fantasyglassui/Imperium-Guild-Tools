@@ -110,7 +110,7 @@ local function Refresh()
   P.import:SetShown(officer)
   P.season:SetShown(officer)
   local requests = #ns.PendingAltRequests()
-  P.alts:SetText(requests > 0 and ("Alts |cffff6060(" .. requests .. ")|r") or "Alts")
+  P.alts:SetText(requests > 0 and ("Alts |cffff6b6b(" .. requests .. ")|r") or "Alts")
   local list = ns.DKPStandings()
   local inRaid
   if raidOnly then
@@ -142,15 +142,15 @@ local function Refresh()
   P.officer:SetShown(officer)
   P.member:SetShown(not officer)
   local sn = ns.CurrentSeason()
-  P.mine:SetText(("Your DKP: |cffd4af37%d|r"):format(ns.Balance(UnitName("player")))
-    .. (sn and ("  |cff888888(" .. sn.name .. ")|r") or ""))
+  P.mine:SetText(("Your DKP: |cffe0b94c%d|r"):format(ns.Balance(UnitName("player")))
+    .. (sn and ("  |cff8b95a7(" .. sn.name .. ")|r") or ""))
   local lines = {}
   for i, e in ipairs(ns.DKPHistory(UnitName("player"))) do
     if i > 14 then break end
-    lines[#lines + 1] = ("|cff999999%s|r  %s%d|r  %s"):format(date("%b %d", e.t),
-      e.amount >= 0 and "|cff40ff40+" or "|cffff6060", e.amount, e.reason)
+    lines[#lines + 1] = ("|cff8b95a7%s|r  %s%d|r  %s"):format(date("%b %d", e.t),
+      e.amount >= 0 and "|cff6fd08c+" or "|cffff6b6b", e.amount, e.reason)
   end
-  P.myHistory:SetText(#lines > 0 and table.concat(lines, "\n") or "|cff888888No DKP changes yet.|r")
+  P.myHistory:SetText(#lines > 0 and table.concat(lines, "\n") or "|cff8b95a7No DKP changes yet.|r")
 
   local rules = ns.DKPRules()
   if not P.decay:HasFocus() then P.decay:SetText(rules.decay) end
@@ -211,7 +211,7 @@ local function BuildOfficer(parent)
   P.reason = UI.EditBox(o, 200, 60)
   P.reason:SetPoint("TOPLEFT", 86, -88)
 
-  local add = UI.Button(o, "Add DKP", 110)
+  local add = UI.Button(o, "Add DKP", 110, "primary")
   add:SetPoint("TOPLEFT", 0, -114)
   add:SetScript("OnClick", function() award(1) end)
   UI.Tooltip(add, "Add DKP", "Gives the amount to everyone selected, with the reason typed. Every guildmate's addon records it, and it can be undone from the All changes view.")
@@ -244,7 +244,7 @@ local function BuildOfficer(parent)
     { 20, "20 seconds" } })
   P.duration:SetPoint("TOPLEFT", 90, -232)
 
-  P.auctionStart = UI.Button(o, "Start auction", 120)
+  P.auctionStart = UI.Button(o, "Start auction", 120, "primary")
   P.auctionStart:SetPoint("TOPLEFT", 0, -264)
   P.auctionStart:SetScript("OnClick", function()
     if ns.StartAuction(P.item:GetText(), P.minBid:GetText(), P.duration.value) then
@@ -399,7 +399,7 @@ local function Build(page)
       row.date:SetText(date("%b %d", l.t))
       row.item:SetText(l.item)
       row.winner:SetText(l.winner)
-      row.dkp:SetText(l.roll and "|cff888888roll|r" or l.amount)
+      row.dkp:SetText(l.roll and "|cff8b95a7roll|r" or l.amount)
     end)
   P.lootList.frame:SetPoint("TOPLEFT", 4, -48)
 
@@ -452,9 +452,9 @@ local function Build(page)
       local e = c.entry
       local dim = c.undone and 0.45 or 1
       row.date:SetText(date("%b %d", e.t))
-      row.amount:SetText((e.amount >= 0 and "|cff40ff40+" or "|cffff6060") .. e.amount .. "|r")
+      row.amount:SetText((e.amount >= 0 and "|cff6fd08c+" or "|cffff6b6b") .. e.amount .. "|r")
       row.who:SetText(e.names:gsub(",", ", "))
-      row.reason:SetText(c.undone and ("|cff888888(undone) " .. e.reason .. "|r") or e.reason)
+      row.reason:SetText(c.undone and ("|cff8b95a7(undone) " .. e.reason .. "|r") or e.reason)
       row.amount:SetAlpha(dim); row.who:SetAlpha(dim); row.date:SetAlpha(dim)
     end)
   P.changeList.frame:SetPoint("TOPLEFT", 4, -48)
@@ -466,9 +466,8 @@ local function Build(page)
 
   P.list = UI.List(page, 360, 330, 20,
     function(row)
-      row.check = CreateFrame("CheckButton", nil, row, "UICheckButtonTemplate")
-      row.check:SetSize(20, 20)
-      row.check:SetPoint("LEFT", 4, 0)
+      row.check = UI.CheckBox(row, 14)
+      row.check:SetPoint("LEFT", 7, 0)
       row.check:SetScript("OnClick", function(self)
         selected[row.item.key] = self:GetChecked() and true or nil
         ns.RefreshPanel()
@@ -509,7 +508,7 @@ local function Build(page)
       local officer = ns.IsAddonOfficer()
       row.check:SetShown(officer)
       row.check:SetChecked(selected[m.key] or false)
-      row.name:SetText(m.name .. (m.left and " |cff888888(left guild)|r" or "")
+      row.name:SetText(m.name .. (m.left and " |cff8b95a7(left guild)|r" or "")
         .. ((m.alts and #m.alts > 0) and (" |cff8888ff+" .. #m.alts .. " alt" .. (#m.alts > 1 and "s" or "") .. "|r") or ""))
       local r, g, b = UI.ClassColor(m.classFile)
       row.name:SetTextColor(r, g, b)
@@ -518,10 +517,10 @@ local function Build(page)
       local attended, total, noShows = ns.Attendance(m.name)
       if total > 0 then
         local pct = math.floor(attended / total * 100 + 0.5)
-        local color = pct >= 75 and "|cff40ff40" or (pct >= 40 and "|cffffd200" or "|cffff6060")
-        row.att:SetText(color .. pct .. "%|r" .. (#noShows > 0 and " |cffff6060!|r" or ""))
+        local color = pct >= 75 and "|cff6fd08c" or (pct >= 40 and "|cffe0b94c" or "|cffff6b6b")
+        row.att:SetText(color .. pct .. "%|r" .. (#noShows > 0 and " |cffff6b6b!|r" or ""))
       else
-        row.att:SetText("|cff888888-|r")
+        row.att:SetText("|cff8b95a7-|r")
       end
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -48)
@@ -547,27 +546,17 @@ local exportWin
 
 function ns.ShowExport(text)
   if not exportWin then
-    local ok, f = pcall(CreateFrame, "Frame", "TheImperiumExport", UIParent, "BasicFrameTemplateWithInset")
-    if not ok then f = CreateFrame("Frame", "TheImperiumExport", UIParent) end
+    local f = UI.Window("TheImperiumExport", 560, 420, "DKP export")
     exportWin = f
-    f:SetSize(560, 420)
-    f:SetPoint("CENTER")
-    f:SetFrameStrata("DIALOG")
-    f:SetMovable(true)
-    f:EnableMouse(true)
-    f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
-    tinsert(UISpecialFrames, "TheImperiumExport")
-    if f.TitleText then f.TitleText:SetText(ns.COLOR .. "The Imperium|r  -  DKP export") end
     local hint = UI.Label(f, "Press Ctrl+C to copy, then paste it into a text file or spreadsheet.", "GameFontHighlightSmall")
     hint:SetPoint("TOPLEFT", 16, -32)
     local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+    UI.Card(sf, 4)
     sf:SetPoint("TOPLEFT", 16, -52)
     sf:SetPoint("BOTTOMRIGHT", -34, 16)
     local box = CreateFrame("EditBox", nil, sf)
     box:SetMultiLine(true)
-    box:SetFontObject(ChatFontNormal)
+    box:SetFontObject(UI.Fonts.Body)
     box:SetWidth(500)
     box:SetAutoFocus(false)
     box:SetScript("OnEscapePressed", function() f:Hide() end)

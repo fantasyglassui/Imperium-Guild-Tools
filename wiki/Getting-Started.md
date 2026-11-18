@@ -16,6 +16,8 @@ Install **The Imperium** from CurseForge, and everything else is shared with the
 
 ## The tabs
 
+The menu down the left side of the window switches between tabs, and the window opens on whichever tab you used last.
+
 | Tab | What's there |
 | --- | --- |
 | Roster | The guild roster. Officers manage notes, ranks, invites and the Message of the Day. |

@@ -63,19 +63,18 @@ local function Refresh()
   P.list:SetItems(shown)
 
   local total = #all
-  P.summary:SetText(("|cff40ff40%d|r of %d members have the addon%s.   Online now: %d of %d."):format(
+  P.summary:SetText(("|cff6fd08c%d|r of %d members have the addon%s.   Online now: %d of %d."):format(
     counts.yes + counts.old, total,
-    counts.old > 0 and (" (|cffff6060%d out of date|r)"):format(counts.old) or "",
+    counts.old > 0 and (" (|cffff6b6b%d out of date|r)"):format(counts.old) or "",
     counts.onlineWith, counts.online))
   P.newest:SetText("Newest version: " .. ns.COLOR .. newest .. "|r")
 end
 
 local function Build(page)
-  UI.Label(page, "Who has the addon", "GameFontNormalLarge"):SetPoint("TOPLEFT", 8, -4)
   P.summary = UI.Label(page, "", "GameFontHighlight")
-  P.summary:SetPoint("TOPLEFT", 8, -28)
+  P.summary:SetPoint("TOPLEFT", 8, -8)
   P.newest = UI.Label(page, "", "GameFontHighlightSmall")
-  P.newest:SetPoint("TOPLEFT", 8, -46)
+  P.newest:SetPoint("TOPLEFT", 8, -26)
 
   local check = UI.Button(page, "Check now", 110)
   check:SetPoint("TOPRIGHT", -4, -2)
@@ -113,15 +112,15 @@ local function Build(page)
       row.cols[1]:SetTextColor(cr * dim, cg * dim, cb * dim)
       row.cols[2]:SetText(m.rankName)
       row.cols[2]:SetTextColor(dim, dim, dim)
-      row.cols[3]:SetText(m.online and "|cff40ff40Online|r" or "|cff888888Offline|r")
+      row.cols[3]:SetText(m.online and "|cff6fd08cOnline|r" or "|cff8b95a7Offline|r")
       if r.status == "yes" then
-        row.cols[4]:SetText("|cff40ff40v" .. (r.version or "?") .. "|r")
+        row.cols[4]:SetText("|cff6fd08cv" .. (r.version or "?") .. "|r")
       elseif r.status == "old" then
-        row.cols[4]:SetText("|cffff6060v" .. r.version .. " (update)|r")
+        row.cols[4]:SetText("|cffff6b6bv" .. r.version .. " (update)|r")
       else
-        row.cols[4]:SetText("|cff888888Not detected|r")
+        row.cols[4]:SetText("|cff8b95a7Not detected|r")
       end
-      row.cols[5]:SetText(r.live and "|cff40ff40Now|r" or (r.seen and ago(r.seen)) or "|cff888888-|r")
+      row.cols[5]:SetText(r.live and "|cff6fd08cNow|r" or (r.seen and ago(r.seen)) or "|cff8b95a7-|r")
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -86)
 

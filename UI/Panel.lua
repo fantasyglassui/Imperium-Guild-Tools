@@ -5,13 +5,49 @@
 
 local _, ns = ...
 local UI = ns.UI
+local C = UI.C
 local ICON = ns.PORTRAIT
 local panel
 local current = 1
 
+local WIDTH, HEIGHT = 910, 520
+local SIDEBAR = 150   -- width of the side menu
+local HEADER = 52     -- height of the header above each tab
+
+-- Icon and one-line description for each tab, by its id.
+local TAB_INFO = {
+  roster = { icon = "roster", text = "Members, notes and ranks" },
+  raids = { icon = "raids", text = "Sign-ups, raid nights and invites" },
+  dkp = { icon = "dkp", text = "Standings, loot and auctions" },
+  kills = { icon = "kills", text = "PvP kills by guild members" },
+  wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
+  settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },
+  officers = { icon = "officers", text = "Guild changes seen while you're online" },
+  addon = { icon = "addon", text = "Who has The Imperium installed" },
+}
+
 local function tabVisible(i)
   local t = UI.tabs[i]
   return not t.visible or t.visible()
+end
+
+-- Highlight the current tab's menu item.
+local function paintNav()
+  for i, b in ipairs(panel.navButtons) do
+    local active = i == current
+    b.active:SetShown(active)
+    b.bar:SetShown(active)
+    b.text:SetFontObject(active and UI.Fonts.NavActive or UI.Fonts.Nav)
+    local c = active and C.accent or C.navText
+    b.icon:SetVertexColor(c[1], c[2], c[3])
+  end
+end
+
+local function setHeader()
+  local t = UI.tabs[current]
+  local info = TAB_INFO[t.id] or {}
+  panel.heading:SetText(t.title)
+  panel.subheading:SetText((t.subtitle and t.subtitle()) or info.text or "")
 end
 
 local function ShowTab(id)
@@ -19,39 +55,52 @@ local function ShowTab(id)
   current = id
   ns.db.lastTab = UI.tabs[id].id -- reopen here next time
   for i, t in ipairs(UI.tabs) do t.page:SetShown(i == id) end
-  if panel.realTabs and PanelTemplates_SetTab then
-    PanelTemplates_SetTab(panel, id)
-  else
-    for i, tab in ipairs(panel.tabButtons) do tab:SetEnabled(i ~= id) end
-  end
+  paintNav()
   ns.RefreshPanel()
 end
 
+-- Officer-only tabs come and go with your rank: lay out the menu again.
 local function UpdateTabVisibility()
-  for i, tab in ipairs(panel.tabButtons) do tab:SetShown(tabVisible(i)) end
+  local y = -64
+  for i, b in ipairs(panel.navButtons) do
+    local shown = tabVisible(i)
+    b:SetShown(shown)
+    if shown then
+      b:ClearAllPoints()
+      b:SetPoint("TOPLEFT", 10, y)
+      y = y - 30
+    end
+  end
   if not tabVisible(current) then ShowTab(1) end
 end
 
-local function MakeTab(id, text)
-  local ok, tab = pcall(CreateFrame, "Button", "TheImperiumPanelTab" .. id, panel, "PanelTabButtonTemplate")
-  if not ok then tab = UI.Button(panel, text, 120) end
-  tab:SetID(id)
-  tab:SetText(text)
-  if ok and PanelTemplates_TabResize then PanelTemplates_TabResize(tab, 0) end
-  tab:SetScript("OnClick", function()
+local function MakeNavButton(parent, id, tab)
+  local b = CreateFrame("Button", nil, parent)
+  b:SetSize(SIDEBAR - 20, 28)
+  b.active = UI.Fill(b, C.accent, 0.12)
+  b.bar = b:CreateTexture(nil, "BORDER")
+  b.bar:SetPoint("TOPLEFT")
+  b.bar:SetPoint("BOTTOMLEFT")
+  b.bar:SetWidth(2)
+  b.bar:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
+  local hover = b:CreateTexture(nil, "HIGHLIGHT")
+  hover:SetAllPoints()
+  hover:SetColorTexture(1, 1, 1, 0.04)
+  local info = TAB_INFO[tab.id] or {}
+  b.icon = UI.Icon(b, info.icon or "addon", 14, C.navText)
+  b.icon:SetPoint("LEFT", 11, 0)
+  b.text = UI.Label(b, tab.title, "Nav")
+  b.text:SetPoint("LEFT", b.icon, "RIGHT", 9, 0)
+  b:SetScript("OnClick", function()
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     ShowTab(id)
   end)
-  return tab, ok
+  return b
 end
 
 local function CreatePanel()
-  local ok, f = pcall(CreateFrame, "Frame", "TheImperiumPanel", UIParent, "ButtonFrameTemplate")
-  if not ok then
-    f = CreateFrame("Frame", "TheImperiumPanel", UIParent, "BasicFrameTemplateWithInset")
-  end
-  panel = f
-  panel:SetSize(760, 520)
+  panel = CreateFrame("Frame", "TheImperiumPanel", UIParent)
+  panel:SetSize(WIDTH, HEIGHT)
   panel:SetPoint("CENTER")
   panel:SetFrameStrata("HIGH")
   panel:SetToplevel(true)
@@ -63,52 +112,61 @@ local function CreatePanel()
   panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
   panel:Hide()
   tinsert(UISpecialFrames, "TheImperiumPanel") -- Escape closes it
+  UI.Fill(panel, C.window)
+  UI.Border(panel, C.edge[1], C.edge[2], C.edge[3], 1)
 
-  local title = ns.COLOR .. "The Imperium|r  -  Guild Tools"
-  if panel.SetTitle then
-    panel:SetTitle(title)
-  elseif panel.TitleText then
-    panel.TitleText:SetText(title)
-  end
-  if panel.SetPortraitToAsset then
-    panel:SetPortraitToAsset(ICON)
-  elseif panel.SetPortraitTextureRaw then
-    panel:SetPortraitTextureRaw(ICON)
-  end
+  -- Side menu
+  local side = CreateFrame("Frame", nil, panel)
+  side:SetPoint("TOPLEFT")
+  side:SetPoint("BOTTOMLEFT")
+  side:SetWidth(SIDEBAR)
+  UI.Fill(side, C.sidebar)
+  local divider = side:CreateTexture(nil, "BORDER")
+  divider:SetPoint("TOPRIGHT")
+  divider:SetPoint("BOTTOMRIGHT")
+  divider:SetWidth(1)
+  divider:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
-  panel.tabButtons = {}
+  local emblem = side:CreateTexture(nil, "ARTWORK")
+  emblem:SetTexture(ICON)
+  emblem:SetSize(30, 30)
+  emblem:SetPoint("TOPLEFT", 14, -16)
+  local brand = UI.Label(side, "The Imperium", "Brand")
+  brand:SetPoint("TOPLEFT", emblem, "TOPRIGHT", 9, -1)
+  local sub = UI.Label(side, "Guild Tools", "MutedSmall")
+  sub:SetPoint("TOPLEFT", brand, "BOTTOMLEFT", 0, -3)
+
+  panel.navButtons = {}
   for i, t in ipairs(UI.tabs) do
+    panel.navButtons[i] = MakeNavButton(side, i, t)
+  end
+
+  local version = UI.Label(side, "v" .. (ns.version or "?"), "MutedSmall")
+  version:SetPoint("BOTTOMLEFT", 16, 12)
+
+  -- Header
+  panel.heading = UI.Label(panel, "", "Title")
+  panel.heading:SetPoint("TOPLEFT", SIDEBAR + 20, -12)
+  panel.subheading = UI.Label(panel, "", "MutedSmall")
+  panel.subheading:SetPoint("TOPLEFT", panel.heading, "BOTTOMLEFT", 0, -4)
+  local rule = panel:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", SIDEBAR, -HEADER)
+  rule:SetPoint("TOPRIGHT", 0, -HEADER)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+  local close = UI.CloseButton(panel)
+  close:SetSize(26, 26)
+  close:SetPoint("TOPRIGHT", -12, -13)
+
+  -- One page per tab, all the same size.
+  for _, t in ipairs(UI.tabs) do
     local page = CreateFrame("Frame", nil, panel)
-    page:SetPoint("TOPLEFT", 10, -66)
-    page:SetPoint("BOTTOMRIGHT", -10, 28)
+    page:SetPoint("TOPLEFT", SIDEBAR + 10, -HEADER - 8)
+    page:SetPoint("BOTTOMRIGHT", -10, 10)
     page:Hide()
     t.page = page
     t.build(page)
-
-    local tab, real = MakeTab(i, t.title)
-    panel.tabButtons[i] = tab
-    panel.realTabs = real
-    if real then
-      if i == 1 then
-        tab:SetPoint("TOPLEFT", panel, "BOTTOMLEFT", 12, 2)
-      else
-        tab:SetPoint("LEFT", panel.tabButtons[i - 1], "RIGHT", -16, 0)
-      end
-    else
-      if i == 1 then
-        tab:SetPoint("TOPLEFT", 70, -32)
-      else
-        tab:SetPoint("LEFT", panel.tabButtons[i - 1], "RIGHT", 6, 0)
-      end
-    end
   end
-  if panel.realTabs then
-    panel.Tabs = panel.tabButtons
-    if PanelTemplates_SetNumTabs then PanelTemplates_SetNumTabs(panel, #UI.tabs) end
-  end
-
-  local version = UI.Label(panel, "v" .. (ns.version or "?"), "GameFontDisableSmall")
-  version:SetPoint("BOTTOMRIGHT", -12, 8)
 
   panel:SetScript("OnShow", function()
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
@@ -123,12 +181,14 @@ local function CreatePanel()
   for i, t in ipairs(UI.tabs) do
     if t.id == ns.db.lastTab then start = i end
   end
+  UpdateTabVisibility()
   ShowTab(start)
 end
 
 function ns.RefreshPanel()
   if not (panel and panel:IsShown()) then return end
   UpdateTabVisibility()
+  setHeader()
   local t = UI.tabs[current]
   if t and t.refresh then t.refresh(t.page) end
 end

@@ -27,10 +27,9 @@ local function Refresh()
 end
 
 local function Build(page)
-  UI.Label(page, "Officer Log", "GameFontNormalLarge"):SetPoint("TOPLEFT", 8, -4)
   local desc = UI.Label(page, "Promotions, demotions, removals, joins, leaves, note edits, Message of the Day "
     .. "and alert settings changes, recorded while you're online.", "GameFontHighlightSmall")
-  desc:SetPoint("TOPLEFT", 8, -26)
+  desc:SetPoint("TOPLEFT", 8, -8)
   desc:SetWidth(540)
 
   local clear = UI.Button(page, "Clear log", 90)

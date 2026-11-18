@@ -36,11 +36,10 @@ local function Refresh()
 end
 
 local function Build(page)
-  UI.Label(page, "Wanted", "GameFontNormalLarge"):SetPoint("TOPLEFT", 8, -4)
   local desc = UI.Label(page, "Enemy players who keep killing guild members in world PvP (last 30 days). "
     .. "When a guildmate sees one, the guild is alerted and the sighting is marked on the map.",
     "GameFontHighlightSmall")
-  desc:SetPoint("TOPLEFT", 8, -26)
+  desc:SetPoint("TOPLEFT", 8, -8)
   desc:SetWidth(470)
 
   local options = { { 2, "Wanted after 2 kills" }, { 3, "Wanted after 3 kills" },
@@ -99,7 +98,7 @@ local function Build(page)
       row.cols[2]:SetText(w.count)
       row.cols[3]:SetText(w.victimCount)
       row.cols[4]:SetText(ago(w.last))
-      row.cols[5]:SetText(w.seen and (ago(w.seen.t) .. " in " .. w.seen.zone) or "|cff888888-|r")
+      row.cols[5]:SetText(w.seen and (ago(w.seen.t) .. " in " .. w.seen.zone) or "|cff8b95a7-|r")
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -80)
 

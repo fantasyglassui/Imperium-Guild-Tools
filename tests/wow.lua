@@ -78,23 +78,93 @@ end
 ------------------------------------------------------------------------
 frames = {}
 local VALUES = {
-  GetWidth = 140, GetHeight = 140, GetEffectiveScale = 1, GetStringHeight = 12, GetText = "",
+  GetWidth = 140, GetHeight = 140, GetEffectiveScale = 1, GetStringHeight = 12, GetStringWidth = 60, GetText = "",
   GetChecked = false, IsShown = false, HasFocus = false, IsEnabled = true, IsProtected = false,
   GetObjectType = "Frame", GetValue = 0, GetNumPoints = 0, GetID = 1, GetMapID = 0,
 }
+-- Where things are placed, so tests/render.py can draw the interface.
+local function layout(w)
+  local l = rawget(w, "_layout")
+  if not l then l = { points = {} }; rawset(w, "_layout", l) end
+  return l
+end
+local function adopt(parent, child)
+  if type(parent) ~= "table" then return end
+  rawset(child, "_parent", parent)
+  local kids = rawget(parent, "_kids")
+  if not kids then kids = {}; rawset(parent, "_kids", kids) end
+  kids[#kids + 1] = child
+end
+local function frameOf(rel) if type(rel) == "string" then return _G[rel] end return rel end
+local METHODS = {
+  SetPoint = function(w, point, a, b, c, d)
+    local rel, relPoint, x, y
+    if type(a) == "number" then x, y = a, b
+    elseif a ~= nil then
+      rel = frameOf(a)
+      if type(b) == "string" then relPoint, x, y = b, c, d else x, y = b, c end
+    end
+    table.insert(layout(w).points, { point = point, rel = rel, relPoint = relPoint or point, x = x or 0, y = y or 0 })
+  end,
+  SetAllPoints = function(w, rel)
+    rel = frameOf(rel)
+    layout(w).points = {
+      { point = "TOPLEFT", rel = rel, relPoint = "TOPLEFT", x = 0, y = 0 },
+      { point = "BOTTOMRIGHT", rel = rel, relPoint = "BOTTOMRIGHT", x = 0, y = 0 },
+    }
+  end,
+  ClearAllPoints = function(w) layout(w).points = {} end,
+  SetSize = function(w, width, height)
+    layout(w).w, layout(w).h = width, height
+    rawset(w, "_GetWidth", width); rawset(w, "_GetHeight", height)
+  end,
+  SetWidth = function(w, width) layout(w).w = width; rawset(w, "_GetWidth", width) end,
+  SetHeight = function(w, height) layout(w).h = height; rawset(w, "_GetHeight", height) end,
+  SetColorTexture = function(w, r, g, b, a) layout(w).color = { r, g, b, a or 1 } end,
+  SetTexture = function(w, path) layout(w).tex = path end,
+  SetVertexColor = function(w, r, g, b, a) layout(w).tint = { r, g, b, a or 1 } end,
+  SetAlpha = function(w, a) layout(w).alpha = a end,
+  SetJustifyH = function(w, j) layout(w).justify = j end,
+  SetFontObject = function(w, f) layout(w).font = f end,
+  SetFont = function(w, path, size) layout(w).path, layout(w).size = path, size; return true end,
+  SetTextColor = function(w, r, g, b) layout(w).textColor = { r, g, b } end,
+  SetFontString = function(w, fs) rawset(w, "_fs", fs) end,
+  GetFontString = function(w) return rawget(w, "_fs") or NewWidget() end,
+  SetNormalFontObject = function(w, f)
+    rawset(w, "_normalFont", f)
+    local fs = rawget(w, "_fs")
+    if fs then layout(fs).font = f end
+  end,
+  SetText = function(w, v)
+    rawset(w, "_GetText", v)
+    local fs = rawget(w, "_fs")
+    if fs then rawset(fs, "_GetText", v) end
+  end,
+  SetScrollChild = function(w, child) layout(w).scrollChild = child; adopt(w, child) end,
+  CreateTexture = function(w, _, layer)
+    local t = NewWidget("Texture"); adopt(w, t); layout(t).layer = layer or "ARTWORK"; return t
+  end,
+  CreateFontString = function(w, _, layer)
+    local t = NewWidget("FontString"); adopt(w, t); layout(t).layer = layer or "ARTWORK"; return t
+  end,
+  GetParent = function(w) return rawget(w, "_parent") end,
+  SetCheckedTexture = function(w, t) if type(t) == "table" then rawset(t, "_checkedOf", w) end end,
+  SetDisabledCheckedTexture = function(w, t) if type(t) == "table" then rawset(t, "_disabledCheckOf", w) end end,
+}
+
 -- Parts that frame templates create (BasicFrameTemplate's title, and so on).
 local CHILDREN = { TitleText = true, CloseButton = true, Icon = true, Text = true }
 local widgetMeta
 widgetMeta = { __index = function(self, key)
   if type(key) ~= "string" or not key:find("^%u") then return nil end
   if CHILDREN[key] then local c = NewWidget(); rawset(self, key, c); return c end
+  if METHODS[key] then return METHODS[key] end
   if VALUES[key] ~= nil then
     local v = VALUES[key]
     return function(w) local own = rawget(w, "_" .. key); if own ~= nil then return own end return v end
   end
   if key == "GetCenter" then return function() return 0, 0 end end
   if key == "GetMinMaxValues" then return function() return 0, 100 end end
-  if key == "SetText" then return function(w, v) rawset(w, "_GetText", v) end end
   if key == "SetChecked" then return function(w, v) rawset(w, "_GetChecked", v and true or false) end end
   if key == "Show" then return function(w) rawset(w, "_IsShown", true) end end
   if key == "Hide" then return function(w) rawset(w, "_IsShown", false) end end
@@ -105,15 +175,19 @@ widgetMeta = { __index = function(self, key)
   if key == "RegisterEvent" then return function(w, ev) w.events[ev] = true end end
   return function() return NewWidget() end
 end }
+local widgetCount = 0
 function NewWidget(kind)
-  local w = setmetatable({ events = {}, kind = kind }, widgetMeta)
+  widgetCount = widgetCount + 1
+  local w = setmetatable({ events = {}, kind = kind, _uid = widgetCount }, widgetMeta)
   if kind == "EditBox" then rawset(w, "_GetObjectType", "EditBox") end
   if kind == "Slider" then rawset(w, "_GetObjectType", "Slider") end
   return w
 end
-function CreateFrame(kind, name)
+function CreateFrame(kind, name, parent, template)
   local f = NewWidget(kind)
   frames[#frames + 1] = f
+  adopt(frameOf(parent), f)
+  rawset(f, "_template", template)
   if name then _G[name] = f end
   return f
 end
@@ -126,6 +200,8 @@ function fire(event, ...)
   end
 end
 
+function CreateFont(name) local f = NewWidget(); if name then _G[name] = f end return f end
+STANDARD_TEXT_FONT = "Fonts\\FRIZQT__.TTF"
 UIParent, Minimap, GameTooltip = NewWidget(), NewWidget(), NewWidget()
 UISpecialFrames, StaticPopupDialogs, SlashCmdList = {}, {}, {}
 ChatTypeInfo = { RAID_WARNING = {} }

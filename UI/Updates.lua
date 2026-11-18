@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "2.12.0", date = "Nov 18, 2026", items = {
+    "A new look: the guild panel and its windows are redesigned, dark and flat with Imperium gold, a new font, and a side menu with icons.",
+    "Every list says something when it's empty, and the panel opens on the tab you used last.",
+    "Tooltips on buttons that didn't explain themselves. They show even when a button is greyed out.",
+  } },
   { version = "2.11.1", date = "Nov 17, 2026", items = {
     "Fixed: kills of grey-level players were still being logged. Grey kills are now never announced or logged, and any already in your Kills tab are cleared out.",
   } },
@@ -95,28 +100,18 @@ end
 local function buildText(entries)
   local lines = {}
   for _, c in ipairs(entries) do
-    lines[#lines + 1] = ("%sVersion %s|r  |cff888888%s|r"):format(ns.COLOR, c.version, c.date)
-    for _, item in ipairs(c.items) do lines[#lines + 1] = "  |cffd4af37•|r  " .. item end
+    lines[#lines + 1] = ("%sVersion %s|r  |cff8b95a7%s|r"):format(ns.COLOR, c.version, c.date)
+    for _, item in ipairs(c.items) do lines[#lines + 1] = "  |cffe0b94c•|r  " .. item end
     lines[#lines + 1] = " "
   end
   return table.concat(lines, "\n")
 end
 
 local function create()
-  local ok, f = pcall(CreateFrame, "Frame", "TheImperiumUpdates", UIParent, "BasicFrameTemplateWithInset")
-  if not ok then f = CreateFrame("Frame", "TheImperiumUpdates", UIParent) end
+  local f = UI.Window("TheImperiumUpdates", 460, 380, "What's new")
   win = f
-  f:SetSize(460, 380)
+  f:ClearAllPoints()
   f:SetPoint("CENTER", 0, 40)
-  f:SetFrameStrata("DIALOG")
-  f:SetMovable(true)
-  f:EnableMouse(true)
-  f:SetClampedToScreen(true)
-  f:RegisterForDrag("LeftButton")
-  f:SetScript("OnDragStart", f.StartMoving)
-  f:SetScript("OnDragStop", f.StopMovingOrSizing)
-  tinsert(UISpecialFrames, "TheImperiumUpdates") -- Escape closes it
-  if f.TitleText then f.TitleText:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. "The Imperium|r  -  What's new") end
 
   local icon = f:CreateTexture(nil, "ARTWORK")
   icon:SetSize(48, 48)
@@ -140,7 +135,7 @@ local function create()
   f.body:SetSpacing(3)
   f.content = content
 
-  local close = UI.Button(f, "Got it", 110)
+  local close = UI.Button(f, "Got it", 110, "primary")
   close:SetPoint("BOTTOM", 0, 14)
   close:SetScript("OnClick", function() f:Hide() end)
 end

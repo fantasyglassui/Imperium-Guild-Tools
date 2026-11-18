@@ -17,19 +17,11 @@ local function itemIcon(link)
 end
 
 local function create()
-  local ok, f = pcall(CreateFrame, "Frame", "TheImperiumAuction", UIParent, "BasicFrameTemplateWithInset")
-  if not ok then f = CreateFrame("Frame", "TheImperiumAuction", UIParent) end
+  -- Escape doesn't close it: bidding shouldn't vanish by accident mid-raid.
+  local f = UI.Window("TheImperiumAuction", 340, 256, "Loot auction", true)
   win = f
-  f:SetSize(340, 256)
+  f:ClearAllPoints()
   f:SetPoint("TOP", 0, -140)
-  f:SetFrameStrata("DIALOG")
-  f:SetMovable(true)
-  f:EnableMouse(true)
-  f:SetClampedToScreen(true)
-  f:RegisterForDrag("LeftButton")
-  f:SetScript("OnDragStart", f.StartMoving)
-  f:SetScript("OnDragStop", f.StopMovingOrSizing)
-  if f.TitleText then f.TitleText:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. "The Imperium|r  -  Loot auction") end
 
   f.icon = f:CreateTexture(nil, "ARTWORK")
   f.icon:SetSize(40, 40)
@@ -78,7 +70,7 @@ local function create()
     bid()
     self:ClearFocus()
   end)
-  f.bidButton = UI.Button(f, "Bid", 70)
+  f.bidButton = UI.Button(f, "Bid", 70, "primary")
   f.bidButton:SetPoint("LEFT", f.bid, "RIGHT", 8, 0)
   f.bidButton:SetScript("OnClick", bid)
 
@@ -86,7 +78,7 @@ local function create()
   f.warn:SetPoint("TOPLEFT", 16, -170)
   f.warn:SetWidth(308)
 
-  f.rollButton = UI.Button(f, "Roll (1-100)", 120)
+  f.rollButton = UI.Button(f, "Roll (1-100)", 120, "primary")
   f.rollButton:SetPoint("TOPLEFT", 16, -140)
   f.rollButton:SetScript("OnClick", function(self)
     ns.RollForItem()
@@ -152,19 +144,19 @@ function ns.RefreshAuctionWindow()
     local _, classFile = UnitClass("player")
     a.unusable = ns.CanUseItem(a.link, classFile) == false
   end
-  win.warn:SetText(a.unusable and "|cffff6060Your class can't normally use this item.|r" or "")
+  win.warn:SetText(a.unusable and "|cffff6b6bYour class can't normally use this item.|r" or "")
   win.icon:SetTexture(itemIcon(a.link))
   win.item:SetText(a.link)
   win.by:SetText("Auctioned by " .. a.by)
   if a.hidden then
-    win.high:SetText(("|cffd4af37Hidden bids|r - minimum %d. Highest wins, pays 2nd-highest + 1."):format(a.min))
+    win.high:SetText(("|cffe0b94cHidden bids|r - minimum %d. Highest wins, pays 2nd-highest + 1."):format(a.min))
     win.mine:SetText(("Your DKP: %d%s"):format(ns.Balance(UnitName("player")),
-      a.myBid and ("     Your bid: |cff40ff40%d|r (you can change it)"):format(a.myBid) or ""))
+      a.myBid and ("     Your bid: |cff6fd08c%d|r (you can change it)"):format(a.myBid) or ""))
   else
     if a.leader then
-      win.high:SetText(("Highest bid: |cffd4af37%d|r by %s"):format(a.high, a.leader))
+      win.high:SetText(("Highest bid: |cffe0b94c%d|r by %s"):format(a.high, a.leader))
     else
-      win.high:SetText(("No bids yet. Minimum: |cffd4af37%d|r"):format(a.min))
+      win.high:SetText(("No bids yet. Minimum: |cffe0b94c%d|r"):format(a.min))
     end
     win.mine:SetText(("Your DKP: %d"):format(ns.Balance(UnitName("player"))))
   end
@@ -175,7 +167,7 @@ function ns.RefreshAuctionWindow()
   end
   win.rollButton:SetShown(a.rolling == true)
   if a.rolling then
-    win.high:SetText("|cffffd200Nobody bid. Free roll!|r Roll if you'd like it; the highest roll wins it for free.")
+    win.high:SetText("|cffe0b94cNobody bid. Free roll!|r Roll if you'd like it; the highest roll wins it for free.")
     UI.SetEnabled(win.rollButton, not win.rollButton.rolled)
   end
   win.result:SetText(a.result or "")

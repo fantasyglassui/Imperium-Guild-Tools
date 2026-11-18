@@ -32,12 +32,12 @@ end
 local function addonVersionText(m)
   local v = ns.versions[m.full]
   if not v then
-    return m.online and "|cff888888Addon not detected|r" or ""
+    return m.online and "|cff8b95a7Addon not detected|r" or ""
   end
   if ns.CompareVersions(v, ns.NewestVersion()) < 0 then
-    return "|cffff6060Addon v" .. v .. " (out of date)|r"
+    return "|cffff6b6bAddon v" .. v .. " (out of date)|r"
   end
-  return "|cff40ff40Addon v" .. v .. "|r"
+  return "|cff6fd08cAddon v" .. v .. "|r"
 end
 
 local function UpdateDetail()
@@ -52,7 +52,7 @@ local function UpdateDetail()
   if not m then
     hideRemoveConfirm()
     d.name:SetText(IsInGuild() and "Select a member" or "You're not in a guild")
-    d.name:SetTextColor(1, 0.82, 0)
+    d.name:SetTextColor(UI.C.accent[1], UI.C.accent[2], UI.C.accent[3])
     d.info:SetText("")
     d.zone:SetText("")
     d.addon:SetText("")
@@ -120,7 +120,7 @@ local function Refresh()
 
   local online, with, outdated = ns.VersionSummary(roster)
   local summary = ("%d shown  |  %d of %d online have the addon"):format(#shown, with, online)
-  if outdated > 0 then summary = summary .. ("  |  |cffff6060%d out of date|r"):format(outdated) end
+  if outdated > 0 then summary = summary .. ("  |  |cffff6b6b%d out of date|r"):format(outdated) end
   P.count:SetText(summary)
 
   UpdateDetail()
@@ -158,7 +158,7 @@ local function Build(page)
     function(row)
       row.sel = row:CreateTexture(nil, "BACKGROUND")
       row.sel:SetAllPoints()
-      row.sel:SetColorTexture(1, 0.8, 0, 0.2)
+      row.sel:SetColorTexture(UI.C.accent[1], UI.C.accent[2], UI.C.accent[3], 0.14)
       row.name = UI.Label(row, "", "GameFontHighlightSmall")
       row.name:SetPoint("LEFT", 4, 0)
       row.name:SetWidth(135)

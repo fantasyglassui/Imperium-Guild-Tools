@@ -8,20 +8,7 @@ local _, ns = ...
 local UI = ns.UI
 
 local function Window(name, title, width, height)
-  local ok, f = pcall(CreateFrame, "Frame", name, UIParent, "BasicFrameTemplateWithInset")
-  if not ok then f = CreateFrame("Frame", name, UIParent) end
-  f:SetSize(width, height)
-  f:SetPoint("CENTER")
-  f:SetFrameStrata("DIALOG")
-  f:SetMovable(true)
-  f:EnableMouse(true)
-  f:SetClampedToScreen(true)
-  f:RegisterForDrag("LeftButton")
-  f:SetScript("OnDragStart", f.StartMoving)
-  f:SetScript("OnDragStop", f.StopMovingOrSizing)
-  tinsert(UISpecialFrames, name)
-  if f.TitleText then f.TitleText:SetText(ns.COLOR .. "The Imperium|r  -  " .. title) end
-  return f
+  return UI.Window(name, width, height, title)
 end
 
 ------------------------------------------------------------------------
@@ -40,16 +27,16 @@ local function RefreshAlts()
   else
     local mine = ns.AltsOf(me)
     lines[#lines + 1] = #mine > 0 and ("Your alts: " .. table.concat(mine, ", "))
-      or "|cff888888This character has no alts linked.|r"
+      or "|cff8b95a7This character has no alts linked.|r"
   end
   local asked = ns.MyAltRequest()
   if asked then
-    lines[#lines + 1] = ("|cffffd200Waiting for %s to confirm. Log in on %s and open this window.|r"):format(asked, asked)
+    lines[#lines + 1] = ("|cffe0b94cWaiting for %s to confirm. Log in on %s and open this window.|r"):format(asked, asked)
   end
   alts.status:SetText(table.concat(lines, "\n\n"))
 
   local requests = ns.PendingAltRequests()
-  alts.requestText:SetText(#requests > 0 and ("|cffffd200%s asked to be linked as your alt.|r"):format(requests[1]) or "")
+  alts.requestText:SetText(#requests > 0 and ("|cffe0b94c%s asked to be linked as your alt.|r"):format(requests[1]) or "")
   alts.confirm:SetShown(#requests > 0)
   alts.decline:SetShown(#requests > 0)
   alts.confirm.alt = requests[1]
@@ -87,7 +74,7 @@ function ns.ShowAltsWindow()
 
     f.requestText = UI.Label(f, "", "GameFontHighlight")
     f.requestText:SetPoint("TOPLEFT", 16, -174)
-    f.confirm = UI.Button(f, "Confirm", 90)
+    f.confirm = UI.Button(f, "Confirm", 90, "primary")
     f.confirm:SetPoint("TOPLEFT", 16, -192)
     f.confirm:SetScript("OnClick", function(self) if self.alt then ns.ConfirmAlt(self.alt) end end)
     f.decline = UI.Button(f, "Decline", 90)
@@ -140,8 +127,8 @@ local function preview()
   local unknown = 0
   for _, r in ipairs(rows) do if not r.known then unknown = unknown + 1 end end
   local text = ("%d member%s found."):format(#rows, #rows == 1 and "" or "s")
-  if unknown > 0 then text = text .. (" |cffffd200%d not in the guild (they'll still be set).|r"):format(unknown) end
-  if #bad > 0 then text = text .. (" |cffff6060%d line%s couldn't be read, e.g. \"%s\".|r"):format(#bad, #bad == 1 and "" or "s", bad[1]) end
+  if unknown > 0 then text = text .. (" |cffe0b94c%d not in the guild (they'll still be set).|r"):format(unknown) end
+  if #bad > 0 then text = text .. (" |cffff6b6b%d line%s couldn't be read, e.g. \"%s\".|r"):format(#bad, #bad == 1 and "" or "s", bad[1]) end
   import.preview:SetText(text)
   UI.SetEnabled(import.go, #rows > 0)
   return rows
@@ -167,16 +154,16 @@ function ns.ShowImportWindow()
     hint:SetPoint("TOPLEFT", 16, -32)
     hint:SetWidth(428)
 
-    local bg = f:CreateTexture(nil, "BACKGROUND")
+    local bg = f:CreateTexture(nil, "BORDER") -- the box to paste into
     bg:SetPoint("TOPLEFT", 14, -64)
     bg:SetPoint("BOTTOMRIGHT", -32, 76)
-    bg:SetColorTexture(0, 0, 0, 0.35)
+    bg:SetColorTexture(UI.C.control[1], UI.C.control[2], UI.C.control[3], 1)
     local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
     sf:SetPoint("TOPLEFT", 18, -68)
     sf:SetPoint("BOTTOMRIGHT", -34, 80)
     local box = CreateFrame("EditBox", nil, sf)
     box:SetMultiLine(true)
-    box:SetFontObject(ChatFontNormal)
+    box:SetFontObject(UI.Fonts.Body)
     box:SetWidth(390)
     box:SetAutoFocus(false)
     box:SetScript("OnEscapePressed", box.ClearFocus)
@@ -189,7 +176,7 @@ function ns.ShowImportWindow()
     f.preview:SetPoint("BOTTOMLEFT", 16, 50)
     f.preview:SetWidth(428)
 
-    f.go = UI.Button(f, "Import", 110)
+    f.go = UI.Button(f, "Import", 110, "primary")
     f.go:SetPoint("BOTTOM", 0, 14)
     f.go:SetScript("OnClick", function()
       local rows = preview()

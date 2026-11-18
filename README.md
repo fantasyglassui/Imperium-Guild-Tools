@@ -176,3 +176,7 @@ Every change is checked automatically by luacheck and a test suite that runs the
 ## License
 
 The Imperium is released under the [MIT License](LICENSE).
+
+## Credits
+
+The interface uses the [Inter](https://rsms.me/inter/) typeface by Rasmus Andersson, included under the SIL Open Font License (see `Media/Fonts/LICENSE-Inter.txt`).

@@ -13,8 +13,8 @@ local view = "event"          -- "event", "group" or "new"
 local myRole = "dps"
 local newDay = 0               -- days from today for a new raid
 
-local STATUS_TEXT = { accept = "|cff40ff40Accepted|r", tentative = "|cffffd200Tentative|r",
-  decline = "|cffff6060Declined|r" }
+local STATUS_TEXT = { accept = "|cff6fd08cAccepted|r", tentative = "|cffe0b94cTentative|r",
+  decline = "|cffff6b6bDeclined|r" }
 local ROLE_TEXT = { tank = "Tank", healer = "Healer", dps = "DPS" }
 
 local function when(t) return date("%a %b %d  %H:%M", t) end
@@ -53,10 +53,10 @@ local function RefreshEvent(event)
     return
   end
   d.title:SetText(event.title)
-  d.when:SetText(when(event.start) .. "   |cff888888scheduled by " .. event.a .. "|r")
-  d.notes:SetText(event.notes ~= "" and event.notes or "|cff888888No notes.|r")
+  d.when:SetText(when(event.start) .. "   |cff8b95a7scheduled by " .. event.a .. "|r")
+  d.notes:SetText(event.notes ~= "" and event.notes or "|cff8b95a7No notes.|r")
   local c = ns.SignupCounts(event.id)
-  d.counts:SetText(("|cff40ff40%d accepted|r  (%d tank, %d healer, %d DPS)   |cffffd200%d tentative|r   |cffff6060%d declined|r")
+  d.counts:SetText(("|cff6fd08c%d accepted|r  (%d tank, %d healer, %d DPS)   |cffe0b94c%d tentative|r   |cffff6b6b%d declined|r")
     :format(c.accept, c.tank, c.healer, c.dps, c.tentative, c.decline))
   -- Who's coming by class, and what the raid is short of.
   local mk = ns.RaidMakeup(event.id)
@@ -70,9 +70,9 @@ local function RefreshEvent(event)
   if mk.accept == 0 then
     d.gaps:SetText("")
   elseif #mk.warnings > 0 then
-    d.gaps:SetText("|cffff9900! " .. table.concat(mk.warnings, ".  ") .. ".|r")
+    d.gaps:SetText("|cffffad33! " .. table.concat(mk.warnings, ".  ") .. ".|r")
   else
-    d.gaps:SetText("|cff40ff40Tanks and healers covered.|r")
+    d.gaps:SetText("|cff6fd08cTanks and healers covered.|r")
   end
   -- After the raid night, mark accepted sign-ups who never came.
   local noShows, attended = ns.NoShows(event.id)
@@ -84,8 +84,8 @@ local function RefreshEvent(event)
   P.signups:SetEmptyText("Nobody has signed up yet.")
   P.signups:SetItems(rows)
   if noShows then
-    d.noShows:SetText(#noShows > 0 and ("|cffff6060No-shows:|r " .. table.concat(noShows, ", "))
-      or "|cff40ff40Everyone who accepted showed up.|r")
+    d.noShows:SetText(#noShows > 0 and ("|cffff6b6bNo-shows:|r " .. table.concat(noShows, ", "))
+      or "|cff6fd08cEveryone who accepted showed up.|r")
   else
     d.noShows:SetText("")
   end
@@ -97,7 +97,8 @@ local function RefreshEvent(event)
   UI.SetEnabled(d.role, true)
   for _, b in ipairs(d.statusButtons) do
     UI.SetEnabled(b, true)
-    if mine and mine.status == b.status then b:LockHighlight() else b:UnlockHighlight() end
+    -- Your current answer is shown in gold.
+    b:SetStyle(mine and mine.status == b.status and "primary" or nil)
   end
 end
 
@@ -125,9 +126,9 @@ local function RefreshGroup(event)
   local standby = session and ns.StandbyList(session.id) or {}
   if session then
     P.standbyText:SetText(#standby > 0 and table.concat(standby, ", ")
-      or "|cff888888Nobody. Standby members earn the same DKP as the raid.|r")
+      or "|cff8b95a7Nobody. Standby members earn the same DKP as the raid.|r")
   else
-    P.standbyText:SetText("|cff888888Start the raid to add standby members.|r")
+    P.standbyText:SetText("|cff8b95a7Start the raid to add standby members.|r")
   end
   local officer = ns.IsAddonOfficer()
   for _, w in ipairs({ P.standbyName, P.standbyAdd, P.standbyRemove }) do
@@ -140,7 +141,7 @@ local function RefreshSession()
   local s = ns.ActiveSession()
   local officer = ns.IsAddonOfficer()
   if s then
-    local text = ("|cff40ff40Raid in progress:|r %s, started %s by %s. %d DKP per hour%s.")
+    local text = ("|cff6fd08cRaid in progress:|r %s, started %s by %s. %d DKP per hour%s.")
       :format(s.title, date("%H:%M", s.t), s.a, s.hourly, (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
     local mine = ns.db.session
     if mine and mine.id == s.id then
@@ -148,10 +149,12 @@ local function RefreshSession()
     end
     P.sessionText:SetText(text)
     P.sessionButton:SetText("End raid")
+    P.sessionButton:SetStyle(nil)
   else
     P.sessionText:SetText(officer and "Start a raid to award on-time and hourly DKP to everyone in the raid."
       or "No raid in progress.")
     P.sessionButton:SetText("Start raid")
+    P.sessionButton:SetStyle("primary")
   end
   for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do
     UI.SetEnabled(w, officer)
@@ -278,7 +281,7 @@ local function BuildEventView(parent)
       row.name:SetText(Ambiguate(s.name, "short"))
       row.name:SetTextColor(UI.ClassColor(s.classFile))
       row.role:SetText(ROLE_TEXT[s.role])
-      row.status:SetText(s.noShow and "|cffff6060No-show|r" or STATUS_TEXT[s.status])
+      row.status:SetText(s.noShow and "|cffff6b6bNo-show|r" or STATUS_TEXT[s.status])
     end)
   P.signups.frame:SetPoint("TOPLEFT", 0, -174)
 
@@ -320,11 +323,11 @@ local function BuildGroupView(parent)
     end,
     function(row, m)
       local r, gg, b = UI.ClassColor(m.classFile)
-      row.cols[1]:SetText(Ambiguate(m.name, "short") .. (m.inGuild and "" or " |cff888888(not in guild)|r"))
+      row.cols[1]:SetText(Ambiguate(m.name, "short") .. (m.inGuild and "" or " |cff8b95a7(not in guild)|r"))
       row.cols[1]:SetTextColor(r, gg, b)
       row.cols[1]:SetAlpha(m.online and 1 or 0.5)
-      row.cols[2]:SetText(m.role and ROLE_TEXT[m.role] or "|cff888888-|r")
-      row.cols[3]:SetText(m.signup and STATUS_TEXT[m.signup.status] or "|cff888888Not signed up|r")
+      row.cols[2]:SetText(m.role and ROLE_TEXT[m.role] or "|cff8b95a7-|r")
+      row.cols[3]:SetText(m.signup and STATUS_TEXT[m.signup.status] or "|cff8b95a7Not signed up|r")
       row.cols[4]:SetText(m.inGuild and m.dkp or "")
     end)
   P.group.frame:SetPoint("TOPLEFT", 0, -88)
@@ -384,7 +387,7 @@ local function BuildNewView(parent)
   P.newNotes = UI.EditBox(n, 400, 120)
   P.newNotes:SetPoint("TOPLEFT", 6, -202)
 
-  local create = UI.Button(n, "Create raid", 120)
+  local create = UI.Button(n, "Create raid", 120, "primary")
   create:SetPoint("TOPLEFT", 0, -234)
   create:SetScript("OnClick", function()
     local seconds = parseTime(P.newTime:GetText())
@@ -410,7 +413,7 @@ local function Build(page)
     function(row)
       row.sel = row:CreateTexture(nil, "BACKGROUND")
       row.sel:SetAllPoints()
-      row.sel:SetColorTexture(1, 0.8, 0, 0.2)
+      row.sel:SetColorTexture(UI.C.accent[1], UI.C.accent[2], UI.C.accent[3], 0.14)
       row.when = UI.Label(row, "", "GameFontHighlightSmall")
       row.when:SetPoint("LEFT", 4, 0)
       row.title = UI.Label(row, "", "GameFontHighlightSmall")
@@ -432,7 +435,7 @@ local function Build(page)
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
       local short = c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0
-      row.count:SetText(("%s|cff40ff40%d|r%s"):format(short and "|cffff9900!|r " or "", c.accept,
+      row.count:SetText(("%s|cff6fd08c%d|r%s"):format(short and "|cffffad33!|r " or "", c.accept,
         mine and (" " .. STATUS_TEXT[mine.status]) or ""))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -28)
@@ -456,25 +459,25 @@ local function Build(page)
   P.sessionText:SetPoint("TOPLEFT", 8, -292)
   P.sessionText:SetWidth(300)
   P.onTimeLabel = UI.Label(page, "On time", "GameFontNormalSmall")
-  P.onTimeLabel:SetPoint("TOPLEFT", 8, -330)
+  P.onTimeLabel:SetPoint("TOPLEFT", 8, -350)
   P.onTime = UI.EditBox(page, 50, 4)
-  P.onTime:SetPoint("TOPLEFT", 14, -344)
+  P.onTime:SetPoint("TOPLEFT", 8, -364)
   P.onTime:SetNumeric(true)
   P.onTime:SetText("10")
   P.hourlyLabel = UI.Label(page, "Per hour", "GameFontNormalSmall")
-  P.hourlyLabel:SetPoint("TOPLEFT", 72, -330)
+  P.hourlyLabel:SetPoint("TOPLEFT", 66, -350)
   P.hourly = UI.EditBox(page, 50, 4)
-  P.hourly:SetPoint("TOPLEFT", 78, -344)
+  P.hourly:SetPoint("TOPLEFT", 66, -364)
   P.hourly:SetNumeric(true)
   P.hourly:SetText("10")
   P.bossLabel = UI.Label(page, "Per boss", "GameFontNormalSmall")
-  P.bossLabel:SetPoint("TOPLEFT", 136, -330)
+  P.bossLabel:SetPoint("TOPLEFT", 124, -350)
   P.boss = UI.EditBox(page, 50, 4)
-  P.boss:SetPoint("TOPLEFT", 142, -344)
+  P.boss:SetPoint("TOPLEFT", 124, -364)
   P.boss:SetNumeric(true)
   P.boss:SetText("0")
-  P.sessionButton = UI.Button(page, "Start raid", 100)
-  P.sessionButton:SetPoint("TOPLEFT", 204, -342)
+  P.sessionButton = UI.Button(page, "Start raid", 100, "primary")
+  P.sessionButton:SetPoint("TOPLEFT", 190, -364)
   UI.Tooltip(P.sessionButton, function() return ns.ActiveSession() and "End raid" or "Start raid" end, function()
     if ns.ActiveSession() then return "Stops awarding DKP for tonight's raid night." end
     return "Starts tonight's raid night. Everyone in your raid gets the On time DKP now, Per hour DKP every hour, and Per boss DKP for each boss killed. Attendance is recorded."

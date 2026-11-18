@@ -51,12 +51,12 @@ local function Refresh()
       local guildOn = c.types[key]
       cb:SetChecked(guildOn or db.show[key])
       UI.SetEnabled(cb, not guildOn)
-      cb.label:SetText(cb.baseLabel .. (guildOn and "  |cff888888(on for guild)|r" or ""))
+      cb.label:SetText(cb.baseLabel .. (guildOn and "  |cff8b95a7(on for guild)|r" or ""))
     else
       local guildOn = c.enabled and c.types[key]
       cb:SetChecked(db.show[key])
       UI.SetEnabled(cb, guildOn)
-      cb.label:SetText(cb.baseLabel .. (guildOn and "" or "  |cff888888(off for guild)|r"))
+      cb.label:SetText(cb.baseLabel .. (guildOn and "" or "  |cff8b95a7(off for guild)|r"))
     end
   end
   P.sound:SetChecked(db.sound)
@@ -132,7 +132,7 @@ local function Build(page)
   P.rankDown:SetScript("OnClick", function() step(-1) end)
   P.rankUp:SetScript("OnClick", function() step(1) end)
 
-  P.save = UI.Button(content, "Save for whole guild", 170)
+  P.save = UI.Button(content, "Save for whole guild", 170, "primary")
   P.save:SetPoint("TOPLEFT", 8, y - 32)
   UI.Tooltip(P.save, "Save for whole guild", "Sends these settings to every guildmate's addon. Members who are offline get them when they next log in while an officer is online.")
   P.save:SetScript("OnClick", function()

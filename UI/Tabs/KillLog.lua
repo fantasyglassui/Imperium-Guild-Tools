@@ -47,7 +47,7 @@ local function Refresh()
   -- Last month's winner, under the board.
   local lastFrom, lastTo, lastName = ns.MonthRange(-1)
   local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
-  P.champion:SetText(champ and ("|cffd4af37%s champion:|r %s (%d)"):format(lastName, champ.name, champ.count) or "")
+  P.champion:SetText(champ and ("|cffe0b94c%s champion:|r %s (%d)"):format(lastName, champ.name, champ.count) or "")
   P.list:SetEmptyText(fromT and "No kills yet this month." or "No kills recorded yet.")
   P.list:SetItems(kills)
   P.total:SetText(("%d kills shown"):format(#kills))
@@ -56,12 +56,12 @@ local function Refresh()
   for i, fs in ipairs(P.hunters) do
     local e = top[i]
     if e then
-      local name = i <= 3 and ("|cffd4af37" .. e.name .. "|r") or e.name -- gold for the top three
-      local assists = e.assists > 0 and ("  |cff888888+%d assist%s|r"):format(e.assists, e.assists == 1 and "" or "s") or ""
+      local name = i <= 3 and ("|cffe0b94c" .. e.name .. "|r") or e.name -- gold for the top three
+      local assists = e.assists > 0 and ("  |cff8b95a7+%d assist%s|r"):format(e.assists, e.assists == 1 and "" or "s") or ""
       fs:SetText(("%d.  %s  |cffffffff%d|r%s"):format(i, name, e.count, assists))
     else
-      fs:SetText(i == 1 and (P.period.value == "month" and "|cff888888No kills yet this month|r"
-        or "|cff888888No kills yet|r") or "")
+      fs:SetText(i == 1 and (P.period.value == "month" and "|cff8b95a7No kills yet this month|r"
+        or "|cff8b95a7No kills yet|r") or "")
     end
   end
 end
@@ -124,7 +124,10 @@ local function Build(page)
       row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     end,
     function(row, k)
-      row.text:SetText(("|cff999999%s|r  %s%s|r"):format(date("%b %d %H:%M", k.t), ns.KILL_COLOR, ns.DescribeKill(k)))
+      -- The killing blow's name in gold, the rest in the body color.
+      local text, kb = ns.DescribeKill(k), ns.KillingBlow(k)
+      if kb and text:sub(1, #kb) == kb then text = UI.Code("accent") .. kb .. "|r" .. text:sub(#kb + 1) end
+      row.text:SetText(("%s%s|r  %s%s|r"):format(UI.Code("muted"), date("%b %d %H:%M", k.t), UI.Code("textSoft"), text))
     end)
   P.list.frame:SetPoint("TOPLEFT", 4, -32)
 

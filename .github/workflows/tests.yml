@@ -23,5 +23,5 @@ jobs:
 
       - name: Run the tests
         run: |
-          pip install lupa pytest
+          pip install lupa pytest pillow
           pytest tests -v

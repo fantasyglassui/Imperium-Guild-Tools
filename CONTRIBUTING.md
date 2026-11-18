@@ -11,9 +11,9 @@ This repository ([fantasyglassui/Imperium-Guild-Tools](https://github.com/fantas
 | `Guild/` | Roster, permissions and guild-wide settings (`Guild.lua`), level-up celebrations, the officer log, the weekly recap |
 | `PvP/` | Kill alerts and the kill log, deaths (used by the Wanted list), the Wanted list |
 | `Raids/` | Raid sign-ups and raid nights (`Raids.lua`), DKP and loot auctions (`DKP.lua`) |
-| `UI/` | Shared widgets, the guild panel, map pins, the minimap button, the loot auction window, the updates panel |
+| `UI/` | The theme (`Theme.lua`: colors, fonts, icons), shared widgets, the guild panel, map pins, the minimap button, the loot auction window, the updates panel |
 | `UI/Tabs/` | One file per tab of the guild panel |
-| `Media/` | The icon and artwork |
+| `Media/` | The icon and artwork, the Inter font (`Fonts/`) and the side menu icons (`Icons/`, white so they can be tinted) |
 | `tests/` | Tests that run the addon outside the game (not shipped) |
 | `wiki/` | The wiki's pages (not shipped) |
 | `.github/` | The build, test and wiki workflows, and the issue forms (not shipped) |
@@ -51,10 +51,16 @@ Every pull request, and every push to `main`, runs the "Tests" workflow:
 A red X on a pull request means one of them failed; open **Details** to see which. To run them yourself (Python 3 and Lua's luacheck needed):
 
 ```
-pip install lupa pytest
+pip install lupa pytest pillow
 pytest tests
 luacheck .
 ```
+
+To see the interface without the game, run `python3 tests/render.py some-folder`: it draws every tab of the panel and a window or two as PNG pictures, from the layout the addon's own code sets up. It's an approximation (no game textures, scroll bars or tooltips), but close enough to spot something out of place. `tests/test_render.py` uses it to check nothing sticks out past the panel's edges.
+
+## The look
+
+`UI/Theme.lua` holds the colors and fonts. Build screens from the helpers in `UI/Widgets.lua` (`UI.Label`, `UI.Button`, `UI.EditBox`, `UI.Check`, `UI.List`, `UI.Window`...) rather than the game's templates, so everything matches. Labels can ask for the game's usual text styles (`GameFontNormalLarge` and so on) and get the matching Imperium style. Give a screen's main action the gold style: `UI.Button(parent, "Start raid", 100, "primary")`.
 
 To test a new feature, copy the pattern of an existing test: make a `Guild`, call the addon's functions on one member, `guild.run(seconds)`, and check what the others see.
 
