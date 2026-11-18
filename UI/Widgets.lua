@@ -93,10 +93,12 @@ function UI.Cycle(parent, width, options, onChange)
   chevron:SetPoint("RIGHT", -7, 0)
   b.index = 1
   b.value = options[1][1]
+  b.options = options -- may be replaced later to change the choices
   b:SetScript("OnClick", function(self)
-    self.index = self.index % #options + 1
-    self.value = options[self.index][1]
-    self:SetText(options[self.index][2])
+    local opts = self.options
+    self.index = self.index % #opts + 1
+    self.value = opts[self.index][1]
+    self:SetText(opts[self.index][2])
     if onChange then onChange(self.value) end
   end)
   return b

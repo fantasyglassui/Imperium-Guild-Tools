@@ -23,6 +23,7 @@ local TAB_INFO = {
   dkp = { icon = "dkp", text = "Standings, loot and auctions" },
   wishlist = { icon = "wishlist", text = "The loot the guild wants" },
   kills = { icon = "kills", text = "PvP kills by guild members" },
+  achievements = { icon = "trophy", text = "Achievements and titles" },
   wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
   settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },
   officers = { icon = "officers", text = "Guild changes seen while you're online" },

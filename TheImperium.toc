@@ -37,10 +37,11 @@ Raids\Raids.lua
 Raids\DKP.lua
 Raids\Wishlist.lua
 
-# 5. Officer log and the weekly recap
+# 5. Officer log, the weekly recap, player profiles and achievements
 Guild\OfficerLog.lua
 Guild\Recap.lua
 Guild\Profile.lua
+Guild\Achievements.lua
 
 # 6. Interface: the theme, shared widgets and the guild panel
 UI\Theme.lua
@@ -55,6 +56,7 @@ UI\Tabs\DKPTools.lua
 UI\Tabs\Wishlist.lua
 UI\Tabs\KillLog.lua
 UI\Tabs\Wanted.lua
+UI\Tabs\Achievements.lua
 UI\Tabs\Settings.lua
 UI\Tabs\OfficerLog.lua
 UI\Tabs\AddonUsers.lua

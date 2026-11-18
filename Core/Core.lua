@@ -29,11 +29,12 @@ ns.TYPES = {
   { key = "kill_streak",  group = "streak", label = "Kill streaks" },
   { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
+  { key = "achievement",  group = "achievement", label = "Achievements earned" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
 ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members", streak = "Streaks and revenge",
-  wanted = "Wanted list", celebrate = "Celebrations" }
+  wanted = "Wanted list", achievement = "Achievements", celebrate = "Celebrations" }
 ns.PVP_TYPES = { pvp = true }
 
 local frame = CreateFrame("Frame")
@@ -477,6 +478,8 @@ SlashCmdList.THEIMPERIUM = function(input)
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
   elseif msg == "recap" or msg == "recap now" or msg == "recap week" then
     if ns.ShowRecap then ns.ShowRecap(msg == "recap" and -1 or 0) end
+  elseif msg == "achievements" or msg == "ach" then
+    ns.ShowAchievements()
   elseif msg == "wishlist" or msg == "wish" then
     ns.OpenPanel("wishlist")
   elseif msg:find("^card") then
@@ -501,6 +504,7 @@ SlashCmdList.THEIMPERIUM = function(input)
     print("  /imperium wanted - open the wanted list")
     print("  /imperium card [name] - a guild member's player card")
     print("  /imperium wishlist - the guild's loot wishlist, and yours")
+    print("  /imperium achievements - your achievements and title")
     print("  /imperium quiet - hold alerts during combat on or off")
     print("  /imperium sync - fetch recent guild history from guildmates")
     print("  /imperium test - show a test alert")

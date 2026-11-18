@@ -157,7 +157,8 @@ end)
 -- Which alert groups each settings message knows about. Older versions only
 -- understand the older messages, so officers send all of them.
 local CONFIG_GROUPS = {
-  C6 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true }, -- 2.13.0 and later
+  C7 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true, achievement = true }, -- 2.14.0 and later
+  C6 = { death = true, kill = true, duel = true, wanted = true, celebrate = true, streak = true }, -- 2.13.x
   C5 = { death = true, kill = true, duel = true, wanted = true, celebrate = true }, -- 1.8.0 and later
   C4 = { death = true, kill = true, duel = true }, -- 1.5.x to 1.7.x
   C3 = { death = true, kill = true },              -- 1.4.x
@@ -175,7 +176,7 @@ end
 local function sendConfig()
   local c = ns.cfg
   local on = c.enabled and "1" or "0"
-  for _, msg in ipairs({ "C6", "C5", "C4", "C3", "C2" }) do
+  for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
   end
 end

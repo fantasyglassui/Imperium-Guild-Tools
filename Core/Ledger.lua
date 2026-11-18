@@ -8,7 +8,7 @@
 
   Who may write what:
     - Raids, raid cancellations, DKP changes and raid sessions: officers only.
-    - Sign-ups and wishlists: any guild member, for themselves.
+    - Sign-ups, wishlists and titles: any guild member, for themselves.
   Officer entries are only accepted straight from the officer who made them,
   or passed along by another officer, so nobody can slip in fake DKP. For the
   same reason only officers answer catch-up requests; members ask again every
@@ -21,7 +21,7 @@ local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, K
   AT = true, SB = true, DS = true, UN = true, SN = true, SS = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
-local DIRECT_ONLY = { AL = true, WL = true }
+local DIRECT_ONLY = { AL = true, WL = true, TI = true }
 -- Fields of each kind, in message order.
 local FIELDS = {
   EV = { "title", "start", "notes" },          -- a scheduled raid
@@ -39,6 +39,7 @@ local FIELDS = {
                                                -- "set" (officer) or "off" (unlink)
   SN = { "name", "parts" },                    -- a new DKP season starts; history before it is archived
   SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
+  TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,

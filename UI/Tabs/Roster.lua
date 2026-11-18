@@ -70,7 +70,8 @@ local function UpdateDetail()
   UI.SetCommand(d.demote, CMD.demote .. " " .. cmdName(m))
   UI.SetCommand(d.confirm, CMD.remove .. " " .. cmdName(m))
 
-  d.name:SetText(Ambiguate(m.name, "guild"))
+  local title = ns.TitleOf and ns.TitleOf(m.name)
+  d.name:SetText(Ambiguate(m.name, "guild") .. (title and (" " .. UI.Code("accent") .. title .. "|r") or ""))
   d.name:SetTextColor(UI.ClassColor(m.classFile))
   d.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
   if m.online then

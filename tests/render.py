@@ -365,6 +365,8 @@ def demo_guild():
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
         guild[n].ns.SignUp(ev.id, "accept", role)
         guild.run(0.5)
+    guild["Lyra"].ns.SetTitle("bounty")
+    guild.run(1)
     me.ns.StartRaidSession(ev.id, "Molten Core", 10, 10, 15)
     guild.run(3)
     me.ns.AwardDKP(me.lua.table_from(["Lyra", "Mira"]), 25, "Ragnaros bonus")
@@ -378,12 +380,12 @@ if __name__ == "__main__":
     guild, me = demo_guild()
     rd = Renderer(me)
     panel = None
-    for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "settings", "officers", "addon"):
+    for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
         panel = me.lua.eval("TheImperiumPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
-    for tab, view in (("settings", "general"),):
+    for tab, view in (("settings", "general"), ("achievements", "raid"), ("achievements", "guild")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")

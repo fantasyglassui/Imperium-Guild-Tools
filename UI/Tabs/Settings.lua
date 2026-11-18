@@ -334,8 +334,9 @@ local function BuildGeneral(page)
 
   -- Commands
   local h = UI.Box(f, x2, -296, COL_W, 154, "Good to know")
-  local tips = UI.Label(h, "Type /imperium for this window, /imperium card Name for a guild member's player card, "
-    .. "and /imperium updates for what's new. /imperium on its own lists every command in chat.", "Small")
+  local tips = UI.Label(h, "/imperium card Name opens a guild member's player card. /imperium wishlist and "
+    .. "/imperium achievements open those tabs, and /imperium updates shows what's new. "
+    .. "/imperium help lists every command in chat.", "Small")
   tips:SetPoint("TOPLEFT", 14, -38)
   tips:SetWidth(inner)
   tips:SetSpacing(3)

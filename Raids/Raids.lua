@@ -420,6 +420,25 @@ local function buildAttendance()
   return attendanceCache
 end
 
+-- Every raid night each member attended, all time (as far back as the record
+-- goes): main's name key -> sorted list of session start times.
+local nightsCache
+ns.OnLedgerChanged(function() nightsCache = nil end)
+function ns.RaidNightsAttended(name)
+  if not nightsCache then
+    nightsCache = {}
+    for _, s in ipairs(ns.LedgerEntries("RS")) do
+      local mains = {}
+      for k in pairs(attendedSet(s)) do mains[ns.Key(ns.MainOf(k))] = true end
+      for k in pairs(mains) do
+        nightsCache[k] = nightsCache[k] or {}
+        table.insert(nightsCache[k], s.t)
+      end
+    end
+  end
+  return nightsCache[ns.Key(ns.MainOf(name))] or {}
+end
+
 -- attended, total sessions, and the raids they accepted but didn't show for.
 function ns.Attendance(name)
   local a = attendanceCache or buildAttendance()

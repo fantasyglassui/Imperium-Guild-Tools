@@ -42,13 +42,13 @@ local function Build()
 
   f.name = UI.Label(f, "", "Title")
   f.name:SetPoint("TOPLEFT", 16, -42)
-  f.name:SetWidth(inner - 110)
+  f.name:SetWidth(inner - 130)
   f.name:SetWordWrap(false)
   f.info = UI.Label(f, "", "Small")
   f.info:SetPoint("TOPLEFT", 16, -64)
   f.status = UI.Label(f, "", "MutedSmall")
   f.status:SetPoint("TOPLEFT", 16, -80)
-  f.status:SetWidth(inner)
+  f.status:SetWidth(inner - 130)
   f.status:SetWordWrap(false)
 
   -- PvP
@@ -74,7 +74,7 @@ local function Build()
   f.lootLines:SetWidth(inner)
   f.lootLines:SetSpacing(4)
 
-  f.whisper = UI.Button(f, "Whisper", 100)
+  f.whisper = UI.Button(f, "Whisper", 120)
   f.whisper:SetHeight(26)
   f.whisper:SetPoint("TOPRIGHT", -16, -46)
   f.whisper:SetScript("OnClick", function()
@@ -86,12 +86,23 @@ local function Build()
     end
   end)
   UI.Tooltip(f.whisper, "Whisper", "Starts a whisper to them in chat.")
+
+  f.achievements = UI.Button(f, "", 120)
+  f.achievements:SetHeight(22)
+  f.achievements:SetPoint("TOPRIGHT", -16, -78)
+  f.achievements:SetScript("OnClick", function() if shownName then ns.ShowAchievements(shownName) end end)
+  UI.Tooltip(f.achievements, "Achievements", "Opens their achievements in the guild window.")
 end
 
 local function fill(p)
   local f = card
   local m = p.member
-  f.name:SetText(Ambiguate(p.name, "short"))
+  local title = ns.TitleOf and ns.TitleOf(p.name)
+  f.name:SetText(Ambiguate(p.name, "short") .. (title and (" " .. UI.Code("accent") .. title .. "|r") or ""))
+  if ns.AchievementCount then
+    local n = ns.AchievementCount(p.name)
+    f.achievements:SetText(n == 1 and "1 achievement" or (n .. " achievements"))
+  end
   f.name:SetTextColor(UI.ClassColor(m and m.classFile))
   if m then
     f.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
