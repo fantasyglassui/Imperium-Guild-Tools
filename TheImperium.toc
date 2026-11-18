@@ -20,10 +20,11 @@ Core\Core.lua
 Core\Release.lua
 Guild\Guild.lua
 
-# 2. Alerts: PvP kills, deaths (for the Wanted list), the Wanted list, level-ups
+# 2. Alerts: PvP kills, deaths (for the Wanted list), the Wanted list, streaks and revenge, level-ups
 PvP\Deaths.lua
 PvP\Kills.lua
 PvP\Wanted.lua
+PvP\Streaks.lua
 Guild\Celebrations.lua
 
 # 3. Shared history: syncing logs, clearing logs, the shared ledger

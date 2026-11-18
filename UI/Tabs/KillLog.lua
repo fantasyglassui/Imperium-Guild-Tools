@@ -112,6 +112,15 @@ local function Refresh()
   end
   P.boardEmpty:SetShown(first == nil)
 
+  -- The longest streak in this period.
+  local fromT, toT = ns.MonthRange(0)
+  if period == "lastmonth" then fromT, toT = ns.MonthRange(-1)
+  elseif period == "week" then fromT, toT = time() - 7 * 86400, nil
+  elseif period == "all" then fromT, toT = nil, nil end
+  local best = ns.BestStreaks(fromT, toT, 1)[1]
+  P.streak:SetText(best and ("Best streak: %s%s|r · %d kills in a row"):format(UI.Code("text"), best.name, best.count)
+    or "Best streak: none yet")
+
   -- Last month's winner.
   local lastFrom, lastTo, lastName = ns.MonthRange(-1)
   local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
@@ -429,10 +438,18 @@ local function BuildSide(page)
   P.boardEmpty:SetPoint("TOPLEFT", 14, -38)
 
   local rule = board:CreateTexture(nil, "BORDER")
-  rule:SetPoint("BOTTOMLEFT", 14, 36)
-  rule:SetPoint("BOTTOMRIGHT", -14, 36)
+  rule:SetPoint("BOTTOMLEFT", 14, 58)
+  rule:SetPoint("BOTTOMRIGHT", -14, 58)
   rule:SetHeight(1)
   rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  P.streak = UI.Label(board, "", "MutedSmall")
+  P.streak:SetPoint("BOTTOMLEFT", 14, 36)
+  P.streak:SetWidth(SIDE_W - 30)
+  P.streak:SetWordWrap(false)
+  local streakHover = CreateFrame("Frame", nil, board)
+  streakHover:SetPoint("BOTTOMLEFT", 10, 32)
+  streakHover:SetSize(SIDE_W - 22, 18)
+  UI.Tooltip(streakHover, "Kill streaks", "Killing blows in a row without dying to an enemy player, each within an hour of the last. The guild hears about streaks of 3, 5, 10 and more, and when a streak of 5 or more is ended.")
   P.champion = UI.Label(board, "", "MutedSmall")
   P.champion:SetPoint("BOTTOMLEFT", 14, 14)
   P.champion:SetWidth(SIDE_W - 30)

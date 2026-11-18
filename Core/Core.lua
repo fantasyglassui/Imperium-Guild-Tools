@@ -26,11 +26,13 @@ ns.TYPES = {
   { key = "kill_bg",      group = "kill",  label = "Battleground & arena kills" },
   -- Always on since 2.11.1 (grey kills are never logged). Kept so older versions still get it from officers.
   { key = "kill_honor",   group = "kill",  label = "Honor kills only (no grey kills)", filter = true, hidden = true },
+  { key = "kill_streak",  group = "streak", label = "Kill streaks" },
+  { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
-ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members",
+ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members", streak = "Streaks and revenge",
   wanted = "Wanted list", celebrate = "Celebrations" }
 ns.PVP_TYPES = { pvp = true }
 
