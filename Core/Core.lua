@@ -537,6 +537,8 @@ SlashCmdList.WARCREST = function(input)
       ns.SetMinimapButtonShown(show)
       ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /warcrest minimap to bring it back."))
     end
+  elseif msg == "bosses" or msg == "boss" then
+    ns.ShowBossChecks()
   elseif msg == "debug" then
     ns.db.debug = not ns.db.debug
     ns.Say("Debug messages " .. (ns.db.debug and "on. Error details will show in chat." or "off."))

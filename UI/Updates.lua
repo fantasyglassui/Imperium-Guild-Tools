@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.1.1", date = "Nov 18, 2026", items = {
+    "Ready for raid launch: /warcrest bosses shows the last raid bosses that died and whether each counted for the guild (and why not).",
+  } },
   { version = "3.1.0", date = "Nov 18, 2026", items = {
     "Raid progress: boss kills are recorded for the guild. The Raids tab's Progress view shows how far you've got in each raid, and guild first kills are announced.",
     "Raid calendar: the Raids tab's Calendar view shows the month's raids, raid nights and boss kills.",

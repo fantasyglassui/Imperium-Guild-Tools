@@ -72,3 +72,30 @@ def test_boss_achievements():
     got = {k for k, e in guild["Eve"].ns.MemberAchievements("Finn").items() if e.t is not None}
     assert {"boss1", "pioneer"} <= got
     assert guild["Eve"].ns.MemberAchievements("Finn")["boss25"].progress == 1
+
+
+def test_boss_checks_say_why_a_kill_did_or_didnt_count():
+    guild = Guild(MEMBERS, raid=["Alice", "Bob", "Cara", "Dan"] + ["Pug%d" % i for i in range(6)])
+    in_raid_instance(guild)
+    alice = guild["Alice"]
+    alice.fire("ENCOUNTER_END", 2001, "Rage Winterchill", 9, 20, 1)
+    guild.run(8)
+    alice.ns.ShowBossChecks()
+    assert alice.said("Not counted: fewer than 5 guild members")
+    # With debug on, it shows in chat right away; BOSS_KILL works too, and a kill counts once.
+    alice.run('SlashCmdList.WARCREST("debug")')
+    guild.set_raid(RAID)
+    alice.fire("BOSS_KILL", 2002, "Anetheron")
+    alice.fire("ENCOUNTER_END", 2002, "Anetheron", 9, 20, 1)
+    guild.run(8)
+    assert alice.said("Boss check: Boss kill: Anetheron")
+    assert len(alice.ns.LedgerEntries("BK")) == 1
+
+
+def test_a_boss_with_no_id_still_counts():
+    guild = Guild(MEMBERS, raid=RAID)
+    in_raid_instance(guild)
+    guild["Alice"].fire("ENCOUNTER_END", None, "Mystery Boss", 9, 20, 1)
+    guild.run(8)
+    kills = list(guild["Bob"].ns.BossKills().values())
+    assert len(kills) == 1 and kills[0].name == "Mystery Boss" and kills[0].boss > 0

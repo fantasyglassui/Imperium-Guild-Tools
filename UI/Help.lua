@@ -81,7 +81,8 @@ local TOPICS = {
     B("/warcrest minimap") .. "  show or hide the minimap button",
     B("/warcrest welcome") .. "  the welcome and guild setup again",
     B("/warcrest updates") .. "  what's new",
-    B("/warcrest debug") .. "  show error details in chat",
+    B("/warcrest bosses") .. "  the last raid bosses that died, and whether each counted",
+    B("/warcrest debug") .. "  show error details (and boss checks) in chat",
   }, "\n") end },
 }
 

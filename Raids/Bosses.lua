@@ -167,20 +167,74 @@ function ns.RecordBossKill(boss, name, raid, names)
     names = table.concat(names, ",") })
 end
 
-ns.OnEvent("ENCOUNTER_END", function(encounterID, encounterName, _, _, success)
-  if ns.Usable(success) ~= 1 and ns.Usable(success) ~= true then return end
-  if not IsInRaid() then return end
-  local raid, kind = GetInstanceInfo()
-  if kind ~= "raid" then return end
-  local names, total = guildInRaid()
-  if #names < MIN_GUILD or #names < total * MIN_SHARE then return end
-  local boss = tonumber(ns.Usable(encounterID))
+-- What happened at the last few boss fights, and why each did or didn't
+-- count: shown with /warcrest bosses, and in chat while debug is on. If kills
+-- aren't recorded on raid night, this says why.
+local function note(text)
+  local log = ns.db.bossChecks
+  table.insert(log, 1, date("%H:%M:%S") .. "  " .. text)
+  for i = #log, 21, -1 do log[i] = nil end
+  if ns.db.debug then ns.Say("Boss check: " .. text) end
+end
+
+ns.OnLoad(function() ns.db.bossChecks = ns.db.bossChecks or {} end)
+
+-- A stable number for a boss the game gave no ID for (from its name).
+local function idFromName(name)
+  local n = 0
+  for i = 1, #name do n = (n * 31 + name:byte(i)) % 2000000000 end
+  return 1000000 + n % 1000000000
+end
+
+local lastSeen = {} -- boss name -> time, so ENCOUNTER_END and BOSS_KILL count once
+
+local function bossDied(source, encounterID, encounterName)
   local name = ns.Usable(encounterName)
-  if not boss or not name then return end
+  local id = tonumber(ns.Usable(encounterID))
+  local raid, kind, difficulty, _, maxPlayers = GetInstanceInfo()
+  raid = ns.Usable(raid)
+  local names, total = guildInRaid()
+  local what = ("%s: %s (ID %s) in %s (%s, %s players, difficulty %s). Guild %d of %d in the group."):format(
+    source, tostring(name), tostring(id), tostring(raid), tostring(kind), tostring(maxPlayers),
+    tostring(difficulty), #names, total)
+  if not name or name == "" then note(what .. " Not counted: the game didn't say which boss.") return end
+  if lastSeen[name] and GetTime() - lastSeen[name] < 60 then return end -- already handled
+  lastSeen[name] = GetTime()
+  if kind ~= "raid" then note(what .. " Not counted: not a raid instance.") return end
+  if not IsInRaid() then note(what .. " Not counted: you're not in a raid group.") return end
+  if #names < MIN_GUILD then note(what .. (" Not counted: fewer than %d guild members."):format(MIN_GUILD)) return end
+  if #names < total * MIN_SHARE then note(what .. " Not counted: guild members aren't half the raid.") return end
+  id = id or idFromName(name)
+  note(what .. " Counted.")
   C_Timer.After(1 + math.random() * 4, function()
-    ns.RecordBossKill(boss, name, ns.Usable(raid) or "Raid", names)
+    ns.RecordBossKill(id, name, raid or "Raid", names)
   end)
+end
+
+ns.OnEvent("ENCOUNTER_END", function(encounterID, encounterName, _, _, success)
+  local ok = ns.Usable(success)
+  if ok ~= 1 and ok ~= true then
+    if ns.db.debug and ns.Usable(encounterName) then note("Wipe on " .. tostring(ns.Usable(encounterName)) .. ": not counted.") end
+    return
+  end
+  bossDied("Encounter end", encounterID, encounterName)
 end)
+
+-- Some clients send BOSS_KILL as well (or instead): the same check.
+ns.OnEvent("BOSS_KILL", function(encounterID, encounterName)
+  bossDied("Boss kill", encounterID, encounterName)
+end)
+
+-- /warcrest bosses: the last boss checks.
+function ns.ShowBossChecks()
+  local log = ns.db.bossChecks or {}
+  if #log == 0 then
+    ns.Say("No boss fights seen yet. When a raid boss dies, Warcrest notes here whether it counted for the guild, and why.")
+    return
+  end
+  ns.Say("Last boss fights (newest first):")
+  for i = 1, math.min(8, #log) do print("  " .. log[i]) end
+end
 
 ------------------------------------------------------------------------
 -- Guild firsts

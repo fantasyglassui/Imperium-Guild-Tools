@@ -11,6 +11,7 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest wanted` | Wanted list |
 | `/warcrest card [name]` | A guild member's player card (yours if no name) |
 | `/warcrest wishlist` | The guild's loot wishlist, and yours |
+| `/warcrest bosses` | The last raid bosses that died, and whether each counted for the guild (and why not) |
 | `/warcrest achievements` | Your achievements and title |
 | `/warcrest addon` | Who has the addon, and who's out of date |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers) |

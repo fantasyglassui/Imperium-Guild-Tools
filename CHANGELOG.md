@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.1
+- Ready for raid launch: Warcrest now notes every raid boss that dies and whether it counted for the guild, and why not if it didn't (not a raid instance, not in a raid group, fewer than 5 guild members, or guild members under half the raid). Type /warcrest bosses to see the last few. With /warcrest debug on, each check also shows in chat as it happens.
+- Boss kills are also picked up from the game's boss-kill event, in case the encounter event doesn't come, and a boss the game gives no ID for still counts (by its name).
+
 ## 3.1.0
 - New: raid progress. When the guild kills a raid boss, it's recorded for everyone: which boss, which raid, and who was there. The Raids tab's new Progress view shows how far the guild has got in each raid (like 4 / 13 bosses in Hyjal Summit), with each boss's first kill, how many times it's died, and the last kill. A kill counts when 5 or more guild members, at least half the raid, kill a raid boss.
 - Guild firsts: the first time the guild kills a boss, everyone hears about it, and again when a raid is fully cleared for the first time. Turn it off under Settings > Alerts (Guild first boss kills).
