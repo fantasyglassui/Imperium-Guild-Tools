@@ -319,7 +319,6 @@ local function Build(page)
   UI.Follow(page, P.leadCard, 1, 0)
   UI.Grow(page, P.leadCard, 0, 1)
   UI.Grow(page, P.tilesView, 1, 0)
-  UI.FollowAll(page, { P.picker, P.back, P.cardButton }, 1, 0)
 end
 
 -- Open the tab on someone's achievements (nil: yours).
