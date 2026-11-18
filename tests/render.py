@@ -393,6 +393,12 @@ def demo_guild(guild_name=None):
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
         guild[n].ns.SignUp(ev.id, "accept", role)
         guild.run(0.5)
+    me.ns.SignUp(ev.id, "accept", "tank")
+    guild.run(0.5)
+    me.ns.AutoPlan(ev.id, 10)
+    guild.run(1)
+    me.ns.SetPlanGroup(ev.id, "Brakk", 2)
+    guild.run(1)
     guild["Lyra"].ns.SetTitle("bounty")
     guild.run(1)
     me.ns.StartRaidSession(ev.id, "Hyjal Summit", 10, 10, 15)
@@ -414,7 +420,7 @@ if __name__ == "__main__":
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     for tab, view in (("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "guild"),
-                      ("raids", "calendar"), ("raids", "progress")):
+                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")

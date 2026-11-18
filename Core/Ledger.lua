@@ -18,7 +18,8 @@
 local _, ns = ...
 
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
-  AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true }
+  AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true,
+  RG = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
 local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true }
@@ -41,13 +42,14 @@ local FIELDS = {
   SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
   TI = { "title" },
+  RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)
   BX = { "ref" },                              -- a bounty withdrawn
   BC = { "ref", "killer", "when" },            -- a bounty claimed: who killed the target, and when                            -- the title a member shows: an achievement's id, or "" for none
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
-  parts = true, size = true, when = true }
+  parts = true, size = true, when = true, group = true }
 local CLAIM_WINDOW = 30
 
 local counter = 0
@@ -110,7 +112,7 @@ end
 -- more than 30 days before it. Alt links, DKP rules and kill removals are kept.
 local KEEP_RAIDS = 30 * 86400
 local BEFORE_SEASON = { DK = true, UN = true }                  -- folded into the starting balances
-local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX = true, SU = true }
+local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX = true, SU = true, RG = true }
 local byKind     -- kind -> sorted list of entries, rebuilt after any change
 local season     -- the current season, once all its starting balances are here
 

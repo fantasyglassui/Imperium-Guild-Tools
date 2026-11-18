@@ -526,9 +526,12 @@ function ns.InviteSignups(eventId)
   end
   wipe(inviteQueue)
   local offline = 0
+  -- With a raid plan, only the planned groups are invited (not the bench).
+  local plan = ns.HasRaidPlan and ns.HasRaidPlan(eventId) and ns.RaidPlan(eventId)
   for _, su in ipairs((ns.Signups(eventId))) do
     local k = ns.Key(su.name)
-    if su.status ~= "decline" and not ns.IsMe(su.name) and not inGroup[k] then
+    local planned = not plan or (plan[k] and plan[k].group >= 1)
+    if su.status ~= "decline" and planned and not ns.IsMe(su.name) and not inGroup[k] then
       if online[k] then inviteQueue[#inviteQueue + 1] = Ambiguate(online[k], "none") else offline = offline + 1 end
     end
   end

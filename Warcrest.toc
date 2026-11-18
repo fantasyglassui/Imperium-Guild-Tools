@@ -37,6 +37,7 @@ Core\Ledger.lua
 # 4. Raids and DKP (kept in the ledger)
 Raids\Raids.lua
 Raids\Bosses.lua
+Raids\RaidPlan.lua
 Raids\DKP.lua
 Raids\Wishlist.lua
 Raids\Council.lua
@@ -54,6 +55,7 @@ UI\Panel.lua
 
 # 7. The panel's tabs
 UI\Tabs\Roster.lua
+UI\Tabs\RaidPlanView.lua
 UI\Tabs\RaidCalendar.lua
 UI\Tabs\RaidProgress.lua
 UI\Tabs\Raids.lua

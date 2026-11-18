@@ -285,11 +285,21 @@ partyOnly = false -- true while the group is a party rather than a raid
 function IsInRaid() return #raidMembers > 0 and not partyOnly end
 function IsInGroup() return #raidMembers > 0 end
 function GetNumGroupMembers() return #raidMembers end
+raidSubgroups = {} -- name -> group, once moved (otherwise five to a group in order)
+local function subgroupOf(i)
+  return raidSubgroups[raidMembers[i]] or math.floor((i - 1) / 5) + 1
+end
 function GetRaidRosterInfo(i)
   local n = raidMembers[i]
-  if n then return n, 0, 1, 60, "Class", "WARRIOR", "Zone", true, false, nil, false, "DAMAGER" end
+  if n then return n, 0, subgroupOf(i), 60, "Class", "WARRIOR", "Zone", true, false, nil, false, "DAMAGER" end
+end
+function SetRaidSubgroup(i, g) raidSubgroups[raidMembers[i]] = g end
+function SwapRaidSubgroup(i, j)
+  local a, b = subgroupOf(i), subgroupOf(j)
+  raidSubgroups[raidMembers[i]], raidSubgroups[raidMembers[j]] = b, a
 end
 function UnitIsGroupLeader() return true end
+function UnitIsGroupAssistant() return false end
 
 function UnitClass() return "Class", playerClass end
 function UnitLevel(unit)
