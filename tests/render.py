@@ -320,13 +320,16 @@ class Renderer:
         return path
 
 
-def demo_guild():
-    """A small guild with some history, so every tab has something to show."""
+def demo_guild(guild_name=None):
+    """A small guild with some history, so every tab has something to show.
+    guild_name: another guild than The Imperium (to show Warcrest's own look)."""
     from harness import Guild
     members = [("Thorne", 1, "WARRIOR"), ("Lyra", 3, "MAGE"), ("Mira", 3, "PRIEST"), ("Brakk", 3, "ROGUE"),
                ("Aldric", 3, "PALADIN"), ("Seren", 3, "DRUID", 58)]
-    guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"])
+    setup = (lambda c: c.run('GUILD_NAME = "%s"' % guild_name)) if guild_name else None
+    guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"], setup=setup)
     me = guild["Thorne"]
+    me.fire("GUILD_ROSTER_UPDATE")
     t = int(guild.clock)
     kills = [("Ganker", ["Thorne", "Lyra"]), ("Shadowstep", ["Lyra"]), ("Grimtusk", ["Brakk", "Thorne", "Mira"]),
              ("Venomfang", ["Mira"]), ("Bonecrusher", ["Thorne"]), ("Nightreaver", ["Lyra"])]
