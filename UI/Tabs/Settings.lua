@@ -38,6 +38,8 @@ local function RefreshAlerts()
 
   P.enabled:SetChecked(c.enabled)
   UI.SetEnabled(P.enabled, officer)
+  P.dkp:SetChecked(c.dkp)
+  UI.SetEnabled(P.dkp, officer)
   for key, cb in pairs(P.guildTypes) do
     cb:SetChecked(c.types[key])
     UI.SetEnabled(cb, officer and c.enabled)
@@ -159,7 +161,7 @@ local function BuildAlertTable(parent)
 end
 
 local function BuildGuildCard(parent)
-  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 226, "Guild-wide")
+  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 252, "Guild-wide")
   P.guildCard = g
   local d = UI.Label(g, "Set by officers for everyone.", "MutedSmall")
   d:SetPoint("TOPLEFT", 14, -34)
@@ -169,14 +171,17 @@ local function BuildGuildCard(parent)
     for _, cb in pairs(P.guildTypes) do UI.SetEnabled(cb, self:GetChecked()) end
   end)
   UI.Tooltip(P.enabled, "Guild alerts on", "Turns every alert off or on for the whole guild at once. Click Save for whole guild to send it.")
+  P.dkp = UI.Check(g, "Use DKP for loot", 10, -74)
+  UI.Tooltip(P.dkp, "Use DKP for loot", "Off: the DKP tab, loot auctions and raid night DKP are hidden for everyone. "
+    .. "Raids, sign-ups, attendance, wishlists and everything else still work. Click Save for whole guild to send it.")
 
-  UI.FieldLabel(g, "Who can change these", 14, -86)
+  UI.FieldLabel(g, "Who can change these", 14, -110)
   P.rankDown = UI.Button(g, "<", 26)
   P.rankDown:SetHeight(24)
-  P.rankDown:SetPoint("TOPLEFT", 14, -100)
+  P.rankDown:SetPoint("TOPLEFT", 14, -124)
   P.rankUp = UI.Button(g, ">", 26)
   P.rankUp:SetHeight(24)
-  P.rankUp:SetPoint("TOPRIGHT", -14, -100)
+  P.rankUp:SetPoint("TOPRIGHT", -14, -124)
   P.rankText = UI.Label(g, "", "Small")
   P.rankText:SetPoint("LEFT", P.rankDown, "RIGHT", 8, 0)
   P.rankText:SetPoint("RIGHT", P.rankUp, "LEFT", -8, 0)
@@ -194,7 +199,7 @@ local function BuildGuildCard(parent)
 
   P.save = UI.Button(g, "Save for whole guild", INNER, "primary")
   P.save:SetHeight(28)
-  P.save:SetPoint("TOPLEFT", 14, -136)
+  P.save:SetPoint("TOPLEFT", 14, -160)
   UI.Tooltip(P.save, "Save for whole guild", "Sends the Guild column to every guildmate's addon. Members who are offline get it when they next log in while an officer is online.")
   P.save:SetScript("OnClick", function()
     local types = {}
@@ -204,11 +209,12 @@ local function BuildGuildCard(parent)
       enabled = P.enabled:GetChecked() and true or false,
       types = types,
       officerRank = P.rankValue,
+      dkp = P.dkp:GetChecked() and true or false,
     })
   end)
 
   P.status = UI.Label(g, "", "MutedSmall")
-  P.status:SetPoint("TOPLEFT", 14, -174)
+  P.status:SetPoint("TOPLEFT", 14, -198)
   P.status:SetWidth(INNER)
   P.status:SetSpacing(2)
 end

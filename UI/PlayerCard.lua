@@ -131,7 +131,7 @@ local function fill(p)
     p.favoriteCount, p.favoriteCount == 1 and "" or "s") or "Most killed: nobody yet"
   f.pvpLines:SetText(table.concat(lines, "\n"))
 
-  f.dkp.number:SetText(p.dkp)
+  f.dkp.number:SetText(ns.UsesDKP() and p.dkp or "-")
   f.attendance.number:SetText(p.raids > 0 and (p.attended .. " / " .. p.raids) or "-")
   f.noShows.number:SetText(#p.noShows)
   local noShowColor = #p.noShows > 0 and C.bad or C.text

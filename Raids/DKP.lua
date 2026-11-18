@@ -651,6 +651,7 @@ local function tick()
 end
 
 function ns.StartAuction(link, minBid, duration)
+  if not ns.UsesDKP() then ns.Say("DKP is turned off for the guild (Settings > Alerts > Use DKP for loot).") return end
   if not ns.IsAddonOfficer() then ns.Say("Only officers can run loot auctions.") return end
   if not IsInRaid() then ns.Say("You need to be in a raid group to run an auction.") return end
   if auction then ns.Say("An auction is already running.") return end

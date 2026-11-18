@@ -187,26 +187,31 @@ end
 local function RefreshSession()
   local s = ns.ActiveSession()
   local officer = ns.IsAddonOfficer()
+  local dkp = ns.UsesDKP()
   if s then
-    local text = ("%sIn progress:|r %s, started %s by %s. %d DKP per hour%s.")
-      :format(UI.Code("good"), s.title, date("%H:%M", s.t), s.a, s.hourly,
-        (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
-    local mine = ns.db.session
-    if mine and mine.id == s.id then
-      text = text .. (" Next hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
+    local text = ("%sIn progress:|r %s, started %s by %s."):format(UI.Code("good"), s.title, date("%H:%M", s.t), s.a)
+    if dkp and s.hourly > 0 then
+      text = text .. (" %d DKP per hour%s."):format(s.hourly, (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
+      local mine = ns.db.session
+      if mine and mine.id == s.id then
+        text = text .. (" Next hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
+      end
     end
     P.sessionText:SetText(text)
     P.sessionButton:SetText("End raid")
     P.sessionButton:SetStyle(nil)
   else
-    P.sessionText:SetText(officer and "Not started. Starting gives everyone in the raid the On time DKP, then hourly and boss DKP."
-      or "No raid night in progress.")
+    P.sessionText:SetText(not officer and "No raid night in progress."
+      or (dkp and "Not started. Starting gives everyone in the raid the On time DKP, then hourly and boss DKP."
+      or "Not started. Starting records who's in the raid for attendance."))
     P.sessionButton:SetText("Start raid")
     P.sessionButton:SetStyle("primary")
   end
-  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
-    w:SetShown(officer)
+  -- The DKP amounts only when the guild uses DKP.
+  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
+    w:SetShown(officer and dkp)
   end
+  P.sessionButton:SetShown(officer)
   for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do UI.SetEnabled(w, officer) end
 end
 

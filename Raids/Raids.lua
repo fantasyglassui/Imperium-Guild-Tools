@@ -306,6 +306,7 @@ function ns.StartRaidSession(eventId, title, onTime, hourly, boss)
   if not IsInRaid() then ns.Say("You need to be in a raid group to start a raid.") return end
   if ns.ActiveSession() then ns.Say("A raid is already in progress. End it first.") return end
   onTime, hourly, boss = tonumber(onTime) or 0, tonumber(hourly) or 0, tonumber(boss) or 0
+  if not ns.UsesDKP() then onTime, hourly, boss = 0, 0, 0 end -- the guild doesn't use DKP
   local e = ns.LedgerAdd("RS", { ref = eventId or "", onTime = onTime, hourly = hourly, title = title, boss = boss })
   if not e then return end
   ns.db.session = { id = e.id, title = title, hourly = hourly, boss = boss, bosses = {}, hour = 0,
@@ -313,8 +314,12 @@ function ns.StartRaidSession(eventId, title, onTime, hourly, boss)
   local names = ns.RaidAttendees()
   recordAttendance(e.id, names, "raid")
   if onTime > 0 and #names > 0 then ns.AwardDKP(names, onTime, "On time: " .. title) end
-  ns.Say(("Raid started: %s. %d members got %d DKP for being on time; %d DKP every hour%s from now.")
-    :format(title, #names, onTime, hourly, boss > 0 and (" and " .. boss .. " per boss kill") or ""))
+  if onTime + hourly + boss > 0 then
+    ns.Say(("Raid started: %s. %d members got %d DKP for being on time; %d DKP every hour%s from now.")
+      :format(title, #names, onTime, hourly, boss > 0 and (" and " .. boss .. " per boss kill") or ""))
+  else
+    ns.Say(("Raid started: %s. Attendance recorded for %d members."):format(title, #names))
+  end
   -- Let guildmates who signed up but aren't here know the raid has started.
   if eventId and eventId ~= "" then
     local here = {}
