@@ -54,6 +54,7 @@ local LIST = {
   { id = "revenge10", cat = "hunt", name = "Avenger", desc = "10 revenge kills.", stat = "revenge", goal = 10, title = "the Avenger" },
   { id = "bounty", cat = "hunt", name = "Bounty Hunter", desc = "Kill an enemy who killed guild members 3 times in 30 days.", stat = "bounty", goal = 1, title = "the Bounty Hunter" },
   { id = "bounty5", cat = "hunt", name = "Manhunter", desc = "5 kills of wanted enemies.", stat = "bounty", goal = 5, title = "the Manhunter" },
+  { id = "claim1", cat = "hunt", name = "Collector", desc = "Claim a bounty an officer placed.", stat = "claims", goal = 1, title = "the Collector" },
   { id = "nemesis", cat = "hunt", name = "Nemesis Slayer", desc = "Kill an enemy who has killed you 3 times.", stat = "nemesis", goal = 1, title = "the Nemesis Slayer" },
   { id = "grudge", cat = "hunt", name = "Grudge Match", desc = "Kill the same enemy player 5 times.", stat = "grudge", goal = 1, title = "the Relentless" },
   { id = "champion", cat = "hunt", name = "Champion", desc = "Finish a month top of Top Head Hunters.", stat = "champion", goal = 1, title = "the Champion" },
@@ -271,6 +272,7 @@ local function statTimes(name, stat)
     table.sort(out)
     return out
   end
+  if stat == "claims" then return ns.BountyClaimTimes and ns.BountyClaimTimes(name) or {} end
   if stat == "alts" then
     return #ns.AltsOf(name) >= 3 and { 0 } or {}
   end

@@ -84,6 +84,7 @@ ns.TYPES = {
   { key = "kill_streak",  group = "streak", label = "Kill streaks" },
   { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
+  { key = "bounty",       group = "wanted", label = "Bounties placed and claimed" },
   { key = "achievement",  group = "achievement", label = "Achievements earned" },
   { key = "boss_first",   group = "raid", label = "Guild first boss kills" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },

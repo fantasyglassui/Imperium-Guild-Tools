@@ -26,6 +26,7 @@ PvP\Deaths.lua
 PvP\Kills.lua
 PvP\Wanted.lua
 PvP\Streaks.lua
+PvP\Bounties.lua
 Guild\Celebrations.lua
 
 # 3. Shared history: syncing logs, clearing logs, the shared ledger
@@ -59,6 +60,7 @@ UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
 UI\Tabs\Wishlist.lua
 UI\Tabs\KillLog.lua
+UI\Tabs\BountyView.lua
 UI\Tabs\Wanted.lua
 UI\Tabs\Achievements.lua
 UI\Tabs\Settings.lua

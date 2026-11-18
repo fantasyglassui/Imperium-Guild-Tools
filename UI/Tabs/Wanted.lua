@@ -54,10 +54,28 @@ local function RefreshDetail(w, list)
     w.seen and ("Last seen: %s by %s, %s."):format(w.seen.zone, Ambiguate(w.seen.by, "short"), ago(w.seen.t))
       or (UI.Code("muted") .. "Not seen lately.|r"),
   }
+  local bounty = ns.BountiesOn() and ns.BountyOn(w.name)
+  if bounty then
+    lines[#lines + 1] = ("|cffffb347Bounty: %s, placed by %s.|r"):format(
+      bounty.amount > 0 and (bounty.amount .. " DKP") or "for the glory", bounty.by)
+  end
   d.lines:SetText(table.concat(lines, "\n"))
 end
 
 local function Refresh()
+  -- Bounties: a second view, when the guild has them on.
+  local bounties = ns.BountiesOn()
+  P.view:SetShown(bounties)
+  local view = bounties and P.view.value or "wanted"
+  local showBounties = view == "bounties"
+  for _, w in ipairs({ P.card, P.note, P.side }) do w:SetShown(not showBounties) end
+  UI.BountyView.frame:SetShown(showBounties)
+  P.threshold:SetShown(not showBounties)
+  if showBounties then
+    P.unhide:Hide()
+    UI.BountyView.Refresh()
+    return
+  end
   local list = ns.WantedList()
   P.list:SetEmptyText(("Nobody has killed guild members %d or more times in world PvP in the last 30 days."):format(
     ns.db.wantedThreshold or 3))
@@ -208,12 +226,24 @@ local function BuildHeader(bar)
   P.unhide:SetHeight(26)
   P.unhide:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0)
   P.unhide:SetScript("OnClick", ns.UnhideAllWanted)
+
+  P.view = UI.Segmented(bar, { { "wanted", "Wanted" }, { "bounties", "Bounties" } }, ns.RefreshPanel)
+  P.view:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0)
 end
 
+local TAB
 local function Build(page)
   BuildHeader(page.headerBar)
+  TAB.view = P.view
   BuildTable(page)
   BuildSide(page)
+  local bv = UI.BountyView
+  bv.Build(page)
+  UI.Grow(page, bv.frame, 1, 1)
+  UI.Grow(page, bv.card, 1, 1)
+  UI.Grow(page, bv.list, 1, 1)
+  UI.Follow(page, bv.side, 1, 0)
+  UI.Grow(page, bv.side, 0, 1)
   UI.Grow(page, P.card, 1, 1)
   UI.Grow(page, P.list, 1, 1)
   UI.Follow(page, P.note, 0, 1)
@@ -223,9 +253,15 @@ end
 
 -- The header's subtitle: how many are on the list.
 local function Subtitle()
+  if ns.BountiesOn() and P.view and P.view.value == "bounties" then
+    local open = 0
+    for _, b in ipairs(ns.Bounties()) do if b.state == "open" then open = open + 1 end end
+    return open == 0 and "No open bounties" or (open == 1 and "1 open bounty" or (open .. " open bounties"))
+  end
   local n = #ns.WantedList()
   if n == 0 then return "Nobody is wanted right now" end
   return n == 1 and "1 enemy player wanted" or (n .. " enemy players wanted")
 end
 
-UI.AddTab({ id = "wanted", title = "Wanted", build = Build, refresh = Refresh, subtitle = Subtitle })
+TAB = { id = "wanted", title = "Wanted", build = Build, refresh = Refresh, subtitle = Subtitle }
+UI.AddTab(TAB)

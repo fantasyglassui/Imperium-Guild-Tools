@@ -21,7 +21,7 @@ local SIDE_X = TABLE_W + 14
 local SIDE_W = 740 - SIDE_X
 local INNER = SIDE_W - 30
 local GUILD_R, YOU_R = -86, -30  -- the two checkbox columns, from the card's right edge
-local ROW, GROUP = 24, 20
+local ROW, GROUP = 22, 20
 
 local function formatHours(h)
   if h < 24 then return h == 1 and "1 hour" or (h .. " hours") end
@@ -40,6 +40,8 @@ local function RefreshAlerts()
   UI.SetEnabled(P.enabled, officer)
   P.dkp:SetChecked(c.dkp)
   UI.SetEnabled(P.dkp, officer)
+  P.bounties:SetChecked(c.bounties)
+  UI.SetEnabled(P.bounties, officer)
   for key, cb in pairs(P.guildTypes) do
     cb:SetChecked(c.types[key])
     UI.SetEnabled(cb, officer and c.enabled)
@@ -161,7 +163,7 @@ local function BuildAlertTable(parent)
 end
 
 local function BuildGuildCard(parent)
-  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 252, "Guild-wide")
+  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 272, "Guild-wide")
   P.guildCard = g
   local d = UI.Label(g, "Set by officers for everyone.", "MutedSmall")
   d:SetPoint("TOPLEFT", 14, -34)
@@ -175,13 +177,17 @@ local function BuildGuildCard(parent)
   UI.Tooltip(P.dkp, "Use DKP for loot", "Off: the DKP tab, loot auctions and raid night DKP are hidden for everyone. "
     .. "Raids, sign-ups, attendance, wishlists and everything else still work. Click Save for whole guild to send it.")
 
-  UI.FieldLabel(g, "Who can change these", 14, -110)
+  P.bounties = UI.Check(g, "Bounties", 10, -98)
+  UI.Tooltip(P.bounties, "Bounties", "Officers can put a reward on an enemy player's head, and the guild member who kills them "
+    .. "claims it (paid in DKP if the guild uses DKP). Off until an officer turns it on. Click Save for whole guild to send it.")
+
+  UI.FieldLabel(g, "Who can change these", 14, -132)
   P.rankDown = UI.Button(g, "<", 26)
   P.rankDown:SetHeight(24)
-  P.rankDown:SetPoint("TOPLEFT", 14, -124)
+  P.rankDown:SetPoint("TOPLEFT", 14, -146)
   P.rankUp = UI.Button(g, ">", 26)
   P.rankUp:SetHeight(24)
-  P.rankUp:SetPoint("TOPRIGHT", -14, -124)
+  P.rankUp:SetPoint("TOPRIGHT", -14, -146)
   P.rankText = UI.Label(g, "", "Small")
   P.rankText:SetPoint("LEFT", P.rankDown, "RIGHT", 8, 0)
   P.rankText:SetPoint("RIGHT", P.rankUp, "LEFT", -8, 0)
@@ -199,7 +205,7 @@ local function BuildGuildCard(parent)
 
   P.save = UI.Button(g, "Save for whole guild", INNER, "primary")
   P.save:SetHeight(28)
-  P.save:SetPoint("TOPLEFT", 14, -160)
+  P.save:SetPoint("TOPLEFT", 14, -180)
   UI.Tooltip(P.save, "Save for whole guild", "Sends the Guild column to every guildmate's addon. Members who are offline get it when they next log in while an officer is online.")
   P.save:SetScript("OnClick", function()
     local types = {}
@@ -210,11 +216,12 @@ local function BuildGuildCard(parent)
       types = types,
       officerRank = P.rankValue,
       dkp = P.dkp:GetChecked() and true or false,
+      bounties = P.bounties:GetChecked() and true or false,
     })
   end)
 
   P.status = UI.Label(g, "", "MutedSmall")
-  P.status:SetPoint("TOPLEFT", 14, -198)
+  P.status:SetPoint("TOPLEFT", 14, -216)
   P.status:SetWidth(INNER)
   P.status:SetSpacing(2)
 end
@@ -223,7 +230,7 @@ local function BuildAppearCard(parent)
   local a = CreateFrame("Frame", nil, parent)
   P.appear = a
   a:SetPoint("BOTTOMLEFT", SIDE_X + 1, 1)
-  a:SetSize(SIDE_W - 2, 172)
+  a:SetSize(SIDE_W - 2, 164)
   UI.Card(a, 1)
   UI.Label(a, "How alerts appear", "Heading"):SetPoint("TOPLEFT", 14, -12)
   P.sound = UI.Check(a, "Play a sound", 10, -36)

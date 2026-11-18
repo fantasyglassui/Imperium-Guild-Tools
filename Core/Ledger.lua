@@ -7,7 +7,7 @@
   and guildmates fill in each other's gaps when they log in, day by day.
 
   Who may write what:
-    - Raids, raid cancellations, DKP changes and raid sessions: officers only.
+    - Raids, raid cancellations, DKP changes, raid sessions and bounties: officers only.
     - Sign-ups, wishlists, titles and boss kills: any guild member, in their own name.
   Officer entries are only accepted straight from the officer who made them,
   or passed along by another officer, so nobody can slip in fake DKP. For the
@@ -18,7 +18,7 @@
 local _, ns = ...
 
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
-  AT = true, SB = true, DS = true, UN = true, SN = true, SS = true }
+  AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
 local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true }
@@ -40,11 +40,14 @@ local FIELDS = {
   SN = { "name", "parts" },                    -- a new DKP season starts; history before it is archived
   SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
-  TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
+  TI = { "title" },
+  BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)
+  BX = { "ref" },                              -- a bounty withdrawn
+  BC = { "ref", "killer", "when" },            -- a bounty claimed: who killed the target, and when                            -- the title a member shows: an achievement's id, or "" for none
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
-  parts = true, size = true }
+  parts = true, size = true, when = true }
 local CLAIM_WINDOW = 30
 
 local counter = 0

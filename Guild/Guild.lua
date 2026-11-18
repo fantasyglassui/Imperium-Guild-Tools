@@ -148,6 +148,7 @@ local function fillConfig(c)
   if c.enabled == nil then c.enabled = true end
   if c.officerRank == nil then c.officerRank = 1 end
   if c.dkp == nil then c.dkp = true end -- the guild uses DKP for loot
+  if c.bounties == nil then c.bounties = false end -- bounties: off until an officer turns them on
   c.stamp = c.stamp or 0
   c.by = c.by or ""
   if not c.types then
@@ -218,13 +219,16 @@ end
 local function sendConfig()
   local c = ns.cfg
   local on = c.enabled and "1" or "0"
-  ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, c.dkp and "dkp" or "")
+  local features = {}
+  if c.dkp then features[#features + 1] = "dkp" end
+  if c.bounties then features[#features + 1] = "bounties" end
+  ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, table.concat(features, ","))
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
   end
 end
 
--- new = { enabled = bool, types = { key = bool }, officerRank = number, dkp = bool (optional) }
+-- new = { enabled = bool, types = { key = bool }, officerRank = number, dkp = bool, bounties = bool (both optional) }
 function ns.PushConfig(new)
   if not ns.IsAddonOfficer() then
     ns.Say("Your rank can't change the guild's alert settings.")
@@ -237,6 +241,7 @@ function ns.PushConfig(new)
   local c = ns.cfg
   c.enabled, c.officerRank = new.enabled, new.officerRank
   if new.dkp ~= nil then c.dkp = new.dkp and true or false end
+  if new.bounties ~= nil then c.bounties = new.bounties and true or false end
   for _, t in ipairs(ns.TYPES) do c.types[t.key] = new.types[t.key] and true or false end
   c.types.kill_honor = true -- grey kills never count, whatever an older version sends
   c.stamp, c.by = GetServerTime(), UnitName("player")
@@ -281,6 +286,7 @@ local function handleConfig(parts, sender, retried, groups)
     local features = {}
     for f in (parts[7] or ""):gmatch("[^,]+") do features[f] = true end
     c.dkp = features.dkp or false
+    c.bounties = features.bounties or false
   end
   heardCfgAt = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end
