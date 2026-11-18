@@ -154,6 +154,11 @@ local METHODS = {
     local t = NewWidget("FontString"); adopt(w, t); layout(t).layer = layer or "ARTWORK"; return t
   end,
   GetParent = function(w) return rawget(w, "_parent") end,
+  -- Roughly how wide text is (no fonts here): about 6.5 pixels a letter, minus color codes.
+  GetStringWidth = function(w)
+    local t = tostring(rawget(w, "_GetText") or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    return #t * 6.5
+  end,
   SetCheckedTexture = function(w, t) if type(t) == "table" then rawset(t, "_checkedOf", w) end end,
   SetDisabledCheckedTexture = function(w, t) if type(t) == "table" then rawset(t, "_disabledCheckOf", w) end end,
 }

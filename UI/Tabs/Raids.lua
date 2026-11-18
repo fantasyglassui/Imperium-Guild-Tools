@@ -13,11 +13,7 @@ local view = "event"          -- "event", "group" or "new"
 local myRole = "dps"
 local newDay = 0               -- days from today for a new raid
 
-local STATUS_TEXT = { accept = "|cff6fd08cAccepted|r", tentative = "|cffe0b94cTentative|r",
-  decline = "|cffff6b6bDeclined|r" }
 local ROLE_TEXT = { tank = "Tank", healer = "Healer", dps = "DPS" }
-
-local function when(t) return date("%a %b %d  %H:%M", t) end
 
 -- Midnight of today + n days, local time.
 local function dayStart(n)
@@ -33,50 +29,98 @@ local function parseTime(text)
   return h * 3600 + m * 60
 end
 
+local C = UI.C
+local LEFT_W = 280                -- the raids list and raid night; the selected raid fills the rest
+local RIGHT_X = LEFT_W + 14
+local RIGHT_W = 740 - RIGHT_X
+local MAX_CHIPS = 12
+local SCROLL_ROOM = 26            -- rows end this much left of their box, for the scroll bar
+
+-- Statuses in words, colored.
+local function statusText(status)
+  if status == "accept" then return UI.Code("good") .. "Accepted|r" end
+  if status == "tentative" then return UI.Code("accent") .. "Tentative|r" end
+  return UI.Code("muted") .. "Declined|r"
+end
+
 ------------------------------------------------------------------------
 -- Refresh
 ------------------------------------------------------------------------
+-- The class chips: "Mage 3", "Warrior 2"... in class colors, as many as fit.
+local function layoutChips(mk)
+  local d, x, shown = P.event, 0, 0
+  local room = RIGHT_W - 36
+  for i, chip in ipairs(d.chips) do
+    local cl = mk.classes[i]
+    if cl then
+      local r, g, b = UI.ClassColor(cl.classFile)
+      chip.text:SetText(("|cff%02x%02x%02x%s|r %s%d|r"):format(math.floor(r * 255), math.floor(g * 255),
+        math.floor(b * 255), cl.name, UI.Code("textSoft"), cl.count))
+      local w = math.floor(chip.text:GetStringWidth() + 20)
+      if x + w > room then
+        chip:Hide()
+      else
+        chip:SetWidth(w)
+        chip:ClearAllPoints()
+        chip:SetPoint("TOPLEFT", d.chipRow, "TOPLEFT", x, 0)
+        chip:Show()
+        x = x + w + 6
+        shown = shown + 1
+      end
+    else
+      chip:Hide()
+    end
+  end
+  d.chipRow:SetShown(shown > 0)
+end
+
 local function RefreshEvent(event)
   local d = P.event
+  for _, b in ipairs(d.statusButtons) do b:SetShown(event ~= nil) end
+  d.role:SetShown(event ~= nil)
+  d.signupBox:SetShown(event ~= nil)
   if not event then
     d.title:SetText("No raid selected")
     d.when:SetText(#ns.RaidEvents() == 0 and "No raids are scheduled yet." or "Pick a raid on the left.")
     d.notes:SetText("")
-    d.counts:SetText("")
-    d.classes:SetText("")
-    d.gaps:SetText("")
-    P.signups:SetItems({})
-    for _, b in ipairs(d.statusButtons) do UI.SetEnabled(b, false) end
-    UI.SetEnabled(d.role, false)
+    for _, stat in pairs(d.stats) do stat:Hide() end
+    d.chipRow:Hide()
+    d.banner:Hide()
     d.invite:Hide()
     d.noShows:SetText("")
     return
   end
   d.title:SetText(event.title)
-  d.when:SetText(when(event.start) .. "   |cff8b95a7scheduled by " .. event.a .. "|r")
-  d.notes:SetText(event.notes ~= "" and event.notes or "|cff8b95a7No notes.|r")
+  d.when:SetText(date("%a %b %d, %H:%M", event.start) .. "  ·  by " .. event.a)
+  d.notes:SetText(event.notes ~= "" and event.notes or "No notes.")
+
   local c = ns.SignupCounts(event.id)
-  -- Counts in color only when there are some, so a row of zeros stays quiet.
-  local function count(n, word, color) return (n > 0 and color or UI.Code("muted")) .. n .. " " .. word .. "|r" end
-  d.counts:SetText(("%s  %s(%d tank, %d healer, %d DPS)|r   %s   %s"):format(
-    count(c.accept, "accepted", UI.Code("good")), UI.Code("muted"), c.tank, c.healer, c.dps,
-    count(c.tentative, "tentative", UI.Code("accent")), count(c.decline, "declined", UI.Code("bad"))))
+  for key, n in pairs({ accept = c.accept, tentative = c.tentative, decline = c.decline }) do
+    local stat = d.stats[key]
+    stat.number:SetText(n)
+    local col = n == 0 and C.faint or (key == "accept" and C.good or (key == "tentative" and C.text or C.muted))
+    stat.number:SetTextColor(col[1], col[2], col[3])
+    stat:Show()
+  end
+
   -- Who's coming by class, and what the raid is short of.
   local mk = ns.RaidMakeup(event.id)
-  local parts = {}
-  for _, cl in ipairs(mk.classes) do
-    local r, g, b = UI.ClassColor(cl.classFile)
-    parts[#parts + 1] = ("|cff%02x%02x%02x%s %d|r"):format(math.floor(r * 255), math.floor(g * 255),
-      math.floor(b * 255), cl.name, cl.count)
-  end
-  d.classes:SetText(table.concat(parts, "  "))
+  layoutChips(mk)
   if mk.accept == 0 then
-    d.gaps:SetText("")
-  elseif #mk.warnings > 0 then
-    d.gaps:SetText("|cffffad33! " .. table.concat(mk.warnings, ".  ") .. ".|r")
+    d.banner:Hide()
   else
-    d.gaps:SetText("|cff6fd08cTanks and healers covered.|r")
+    local warn = #mk.warnings > 0
+    local col = warn and C.warn or C.good
+    d.banner.fill:SetColorTexture(col[1], col[2], col[3], 0.08)
+    d.banner.border:SetColor(col[1], col[2], col[3], 0.35)
+    d.banner.icon:SetTexture(UI.IconPath(warn and "warning" or "check"))
+    d.banner.icon:SetVertexColor(col[1], col[2], col[3])
+    d.banner.text:SetText(warn and (table.concat(mk.warnings, ". ") .. ".") or
+      ("Tanks and healers covered for %d players."):format(mk.accept))
+    d.banner.text:SetTextColor(col[1], col[2], col[3])
+    d.banner:Show()
   end
+
   -- After the raid night, mark accepted sign-ups who never came.
   local noShows, attended = ns.NoShows(event.id)
   local rows = {}
@@ -87,8 +131,8 @@ local function RefreshEvent(event)
   P.signups:SetEmptyText("Nobody has signed up yet.")
   P.signups:SetItems(rows)
   if noShows then
-    d.noShows:SetText(#noShows > 0 and ("|cffff6b6bNo-shows:|r " .. table.concat(noShows, ", "))
-      or "|cff6fd08cEveryone who accepted showed up.|r")
+    d.noShows:SetText(#noShows > 0 and (UI.Code("bad") .. "No-shows:|r " .. table.concat(noShows, ", "))
+      or (UI.Code("good") .. "Everyone who accepted showed up.|r"))
   else
     d.noShows:SetText("")
   end
@@ -96,10 +140,8 @@ local function RefreshEvent(event)
 
   local mine = ns.MySignup(event.id)
   if mine then myRole = mine.role end
-  d.role:SetText("Role: " .. ROLE_TEXT[myRole])
-  UI.SetEnabled(d.role, true)
+  d.role:SetValue(myRole)
   for _, b in ipairs(d.statusButtons) do
-    UI.SetEnabled(b, true)
     -- Your current answer is shown in gold.
     b:SetStyle(mine and mine.status == b.status and "primary" or nil)
   end
@@ -129,9 +171,9 @@ local function RefreshGroup(event)
   local standby = session and ns.StandbyList(session.id) or {}
   if session then
     P.standbyText:SetText(#standby > 0 and table.concat(standby, ", ")
-      or "|cff8b95a7Nobody. Standby members earn the same DKP as the raid.|r")
+      or (UI.Code("muted") .. "Nobody. Standby members earn the same DKP as the raid.|r"))
   else
-    P.standbyText:SetText("|cff8b95a7Start the raid to add standby members.|r")
+    P.standbyText:SetText(UI.Code("muted") .. "Start the raid to add standby members.|r")
   end
   local officer = ns.IsAddonOfficer()
   for _, w in ipairs({ P.standbyName, P.standbyAdd, P.standbyRemove }) do
@@ -144,28 +186,26 @@ local function RefreshSession()
   local s = ns.ActiveSession()
   local officer = ns.IsAddonOfficer()
   if s then
-    local text = ("|cff6fd08cRaid in progress:|r %s, started %s by %s. %d DKP per hour%s.")
-      :format(s.title, date("%H:%M", s.t), s.a, s.hourly, (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
+    local text = ("%sIn progress:|r %s, started %s by %s. %d DKP per hour%s.")
+      :format(UI.Code("good"), s.title, date("%H:%M", s.t), s.a, s.hourly,
+        (s.boss or 0) > 0 and (", " .. s.boss .. " per boss") or "")
     local mine = ns.db.session
     if mine and mine.id == s.id then
-      text = text .. ("\nNext hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
+      text = text .. (" Next hourly award in %d min."):format(math.max(0, math.ceil((mine.nextTick - GetServerTime()) / 60)))
     end
     P.sessionText:SetText(text)
     P.sessionButton:SetText("End raid")
     P.sessionButton:SetStyle(nil)
   else
-    P.sessionText:SetText(officer and "Start a raid to award on-time and hourly DKP to everyone in the raid."
-      or "No raid in progress.")
+    P.sessionText:SetText(officer and "Not started. Starting gives everyone in the raid the On time DKP, then hourly and boss DKP."
+      or "No raid night in progress.")
     P.sessionButton:SetText("Start raid")
     P.sessionButton:SetStyle("primary")
   end
-  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do
-    UI.SetEnabled(w, officer)
+  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
     w:SetShown(officer)
   end
-  P.onTimeLabel:SetShown(officer)
-  P.hourlyLabel:SetShown(officer)
-  P.bossLabel:SetShown(officer)
+  for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do UI.SetEnabled(w, officer) end
 end
 
 local function Refresh()
@@ -183,12 +223,13 @@ local function Refresh()
   P.event:SetShown(view == "event")
   P.groupFrame:SetShown(view == "group")
   P.newFrame:SetShown(view == "new")
-  P.viewButton:SetText(view == "group" and "Show selected raid" or "Show current raid group")
+  P.view:SetShown(view ~= "new")
+  if view ~= "new" then P.view:SetValue(view) end
 
   if view == "event" then RefreshEvent(event)
   elseif view == "group" then RefreshGroup(event)
   else
-    P.newDayText:SetText(date("%a %b %d", dayStart(newDay)))
+    P.newDayText:SetText(date("%A, %b %d", dayStart(newDay)))
   end
   RefreshSession()
 end
@@ -207,32 +248,108 @@ StaticPopupDialogs["IMPERIUM_CANCEL_RAID"] = {
   preferredIndex = 3,
 }
 
+local function FieldLabel(parent, text, x, y)
+  local fs = UI.Label(parent, text:upper(), "Label")
+  fs:SetPoint("TOPLEFT", x, y)
+  return fs
+end
+
+-- A bordered box holding a table: heading row and a scrolling list.
+local function TableBox(parent, heads)
+  local box = CreateFrame("Frame", nil, parent)
+  UI.Border(box, C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  local headBg = box:CreateTexture(nil, "BACKGROUND")
+  headBg:SetPoint("TOPLEFT")
+  headBg:SetPoint("TOPRIGHT")
+  headBg:SetHeight(24)
+  headBg:SetColorTexture(C.window[1], C.window[2], C.window[3], 1)
+  local rule = box:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", 0, -24)
+  rule:SetPoint("TOPRIGHT", 0, -24)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  for _, h in ipairs(heads) do
+    local fs = UI.Label(box, h[1], "Label")
+    if h[3] then
+      fs:SetPoint("TOPRIGHT", h[2] - SCROLL_ROOM, -8)
+      fs:SetJustifyH("RIGHT")
+    else
+      fs:SetPoint("TOPLEFT", h[2], -8)
+    end
+  end
+  return box
+end
+
+local function RowLine(row)
+  local line = row:CreateTexture(nil, "BORDER")
+  line:SetPoint("BOTTOMLEFT")
+  line:SetPoint("BOTTOMRIGHT")
+  line:SetHeight(1)
+  line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+end
+
 local function BuildEventView(parent)
   local d = CreateFrame("Frame", nil, parent)
   d:SetAllPoints()
   P.event = d
 
-  d.title = UI.Label(d, "", "GameFontNormalLarge")
-  d.title:SetPoint("TOPLEFT", 0, -30)
-  d.when = UI.Label(d, "", "GameFontHighlight")
-  d.when:SetPoint("TOPLEFT", 0, -52)
-  d.notes = UI.Label(d, "", "GameFontHighlightSmall")
-  d.notes:SetPoint("TOPLEFT", 0, -70)
-  d.notes:SetWidth(410)
-  d.counts = UI.Label(d, "", "GameFontHighlightSmall")
-  d.counts:SetPoint("TOPLEFT", 0, -100)
-  d.classes = UI.Label(d, "", "GameFontHighlightSmall")
-  d.classes:SetPoint("TOPLEFT", 0, -114)
-  d.classes:SetWidth(410)
-  d.classes:SetWordWrap(false)
-  d.gaps = UI.Label(d, "", "GameFontHighlightSmall")
-  d.gaps:SetPoint("TOPLEFT", 0, -128)
-  d.gaps:SetWidth(410)
-  d.gaps:SetWordWrap(false)
-  local hover = CreateFrame("Frame", nil, d) -- text can't take the mouse, so a frame over it does
-  hover:SetPoint("TOPLEFT", d.gaps, "TOPLEFT")
-  hover:SetSize(410, 14)
-  hover:SetScript("OnEnter", function(self)
+  d.title = UI.Label(d, "", "Title")
+  d.title:SetPoint("TOPLEFT", 18, -16)
+  d.when = UI.Label(d, "", "Small")
+  d.when:SetPoint("TOPLEFT", 18, -40)
+  d.when:SetWidth(RIGHT_W - 36 - 190) -- clear of the counts on the right
+  d.when:SetWordWrap(false)
+  d.notes = UI.Label(d, "", "MutedSmall")
+  d.notes:SetPoint("TOPLEFT", 18, -57)
+  d.notes:SetWidth(RIGHT_W - 200)
+  d.notes:SetWordWrap(false)
+
+  -- Accepted / tentative / declined, top right.
+  d.stats = {}
+  local x = -18
+  for _, s in ipairs({ { "decline", "declined" }, { "tentative", "tentative" }, { "accept", "accepted" } }) do
+    local stat = CreateFrame("Frame", nil, d)
+    stat:SetSize(58, 38)
+    stat:SetPoint("TOPRIGHT", x, -14)
+    stat.number = UI.Label(stat, "", "Heading")
+    stat.number:SetPoint("TOP", 0, 0)
+    stat.number:SetJustifyH("CENTER")
+    local word = UI.Label(stat, s[2], "MutedSmall")
+    word:SetPoint("TOP", 0, -20)
+    word:SetJustifyH("CENTER")
+    d.stats[s[1]] = stat
+    x = x - 60
+  end
+
+  -- Class chips.
+  d.chipRow = CreateFrame("Frame", nil, d)
+  d.chipRow:SetPoint("TOPLEFT", 18, -80)
+  d.chipRow:SetSize(RIGHT_W - 36, 22)
+  d.chips = {}
+  for i = 1, MAX_CHIPS do
+    local chip = CreateFrame("Frame", nil, d.chipRow)
+    chip:SetHeight(22)
+    UI.Fill(chip, C.control)
+    UI.Border(chip, C.edge[1], C.edge[2], C.edge[3], 1)
+    chip.text = UI.Label(chip, "", "Small")
+    chip.text:SetPoint("CENTER")
+    d.chips[i] = chip
+  end
+
+  -- The makeup banner: what the raid is short of, or that it's covered.
+  local banner = CreateFrame("Frame", nil, d)
+  banner:SetPoint("TOPLEFT", 18, -112)
+  banner:SetSize(RIGHT_W - 36, 28)
+  banner.fill = UI.Fill(banner, C.warn, 0.08)
+  banner.border = UI.Border(banner, C.warn[1], C.warn[2], C.warn[3], 0.35)
+  banner.icon = UI.Icon(banner, "warning", 14, C.warn)
+  banner.icon:SetPoint("LEFT", 10, 0)
+  banner.text = UI.Label(banner, "", "Small")
+  banner.text:SetPoint("LEFT", banner.icon, "RIGHT", 8, 0)
+  banner.text:SetPoint("RIGHT", -10, 0)
+  banner.text:SetWordWrap(false)
+  banner:EnableMouse(true)
+  banner:SetScript("OnEnter", function(self)
     if not selectedId then return end
     local mk = ns.RaidMakeup(selectedId)
     if mk.accept == 0 then return end
@@ -247,111 +364,123 @@ local function BuildEventView(parent)
       0.7, 0.7, 0.7, true)
     GameTooltip:Show()
   end)
-  hover:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  banner:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  d.banner = banner
 
-  -- Your sign-up
-  d.role = UI.Button(d, "Role: DPS", 100)
-  d.role:SetPoint("TOPLEFT", 0, -146)
-  UI.Tooltip(d.role, "Your role", "Click to switch between Tank, Healer and DPS. If you've already signed up, your sign-up changes too.")
-  d.role:SetScript("OnClick", function()
-    myRole = (myRole == "tank" and "healer") or (myRole == "healer" and "dps") or "tank"
+  -- Your sign-up: role, then your answer.
+  d.role = UI.Segmented(d, { { "tank", "Tank" }, { "healer", "Healer" }, { "dps", "DPS" } }, function(v)
+    myRole = v
     local mine = selectedId and ns.MySignup(selectedId)
     if mine then ns.SignUp(selectedId, mine.status, myRole) end
     ns.RefreshPanel()
   end)
+  d.role:SetPoint("TOPLEFT", 18, -152)
+  UI.Tooltip(d.role, "Your role", "Pick the role you'll play. If you've already signed up, your sign-up changes too.")
   d.statusButtons = {}
-  local prev = d.role
-  for _, s in ipairs({ { "accept", "Accept" }, { "tentative", "Tentative" }, { "decline", "Decline" } }) do
-    local b = UI.Button(d, s[2], 90)
+  local prev
+  for i = 3, 1, -1 do
+    local s = ({ { "accept", "Accept" }, { "tentative", "Tentative" }, { "decline", "Decline" } })[i]
+    local b = UI.Button(d, s[2], 72)
+    b:SetHeight(26)
     b.status = s[1]
-    b:SetPoint("LEFT", prev, "RIGHT", 6, 0)
+    if prev then b:SetPoint("RIGHT", prev, "LEFT", -6, 0) else b:SetPoint("TOPRIGHT", -18, -152) end
     b:SetScript("OnClick", function() if selectedId then ns.SignUp(selectedId, s[1], myRole) end end)
-    d.statusButtons[#d.statusButtons + 1] = b
+    d.statusButtons[i] = b
     prev = b
   end
 
-  P.signups = UI.List(d, 410, 126, 18,
+  -- Sign-ups.
+  d.signupBox = TableBox(d, { { "NAME", 12 }, { "ROLE", 190 }, { "STATUS", 280 } })
+  d.signupBox:SetPoint("TOPLEFT", 18, -192)
+  d.signupBox:SetPoint("BOTTOMRIGHT", -18, 50)
+  P.signups = UI.List(d.signupBox, RIGHT_W - 36 - 4, 450 - 192 - 50 - 26, 24,
     function(row)
-      row.name = UI.Label(row, "", "GameFontHighlightSmall")
-      row.name:SetPoint("LEFT", 4, 0)
+      row.name = UI.Label(row, "", "Subheading")
+      row.name:SetPoint("LEFT", 12, 0)
       row.name:SetWidth(170)
-      row.role = UI.Label(row, "", "GameFontHighlightSmall")
-      row.role:SetPoint("LEFT", 180, 0)
-      row.status = UI.Label(row, "", "GameFontHighlightSmall")
-      row.status:SetPoint("LEFT", 260, 0)
+      row.name:SetWordWrap(false)
+      row.role = UI.Label(row, "", "Small")
+      row.role:SetPoint("LEFT", 190, 0)
+      row.status = UI.Label(row, "", "Small")
+      row.status:SetPoint("LEFT", 280, 0)
+      RowLine(row)
     end,
     function(row, s)
       row.name:SetText(Ambiguate(s.name, "short"))
       row.name:SetTextColor(UI.ClassColor(s.classFile))
       row.role:SetText(ROLE_TEXT[s.role])
-      row.status:SetText(s.noShow and "|cffff6b6bNo-show|r" or STATUS_TEXT[s.status])
-    end)
-  P.signups.frame:SetPoint("TOPLEFT", 0, -174)
+      row.status:SetText(s.noShow and (UI.Code("bad") .. "No-show|r") or statusText(s.status))
+    end, true)
+  P.signups.frame:SetPoint("TOPLEFT", d.signupBox, "TOPLEFT", 0, -25)
 
+  d.noShows = UI.Label(d, "", "Small")
+  d.noShows:SetPoint("BOTTOMLEFT", 18, 22)
+  d.noShows:SetWidth(RIGHT_W - 200)
+  d.noShows:SetWordWrap(false)
   d.invite = UI.Button(d, "Invite sign-ups", 130)
-  d.invite:SetPoint("TOPLEFT", 0, -306)
+  d.invite:SetHeight(26)
+  d.invite:SetPoint("BOTTOMRIGHT", -18, 14)
   d.invite:SetScript("OnClick", function() if selectedId then ns.InviteSignups(selectedId) end end)
-  d.invite:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Invite everyone who signed up")
-    GameTooltip:AddLine("Invites every online guild member who accepted or is tentative and isn't in your group yet. A party is turned into a raid automatically.", 1, 1, 1, true)
-    GameTooltip:Show()
-  end)
-  d.invite:SetScript("OnLeave", function() GameTooltip:Hide() end)
-  d.noShows = UI.Label(d, "", "GameFontHighlightSmall")
-  d.noShows:SetPoint("TOPLEFT", 0, -336)
-  d.noShows:SetWidth(410)
+  UI.Tooltip(d.invite, "Invite everyone who signed up", "Invites every online guild member who accepted or is tentative and isn't in your group yet. A party is turned into a raid automatically.")
 
   local page = parent:GetParent()
   UI.Grow(page, P.signups, 1, 1)
-  UI.FollowAll(page, { d.invite, d.noShows }, 0, 1)
+  UI.Grow(page, banner, 1, 0)
 end
 
 local function BuildGroupView(parent)
   local g = CreateFrame("Frame", nil, parent)
   g:SetAllPoints()
   P.groupFrame = g
-  UI.Label(g, "Current raid group", "GameFontNormalLarge"):SetPoint("TOPLEFT", 0, -30)
-  P.groupInfo = UI.Label(g, "", "GameFontHighlightSmall")
-  P.groupInfo:SetPoint("TOPLEFT", 0, -52)
-  P.groupInfo:SetWidth(410)
+  UI.Label(g, "Current raid group", "Title"):SetPoint("TOPLEFT", 18, -16)
+  P.groupInfo = UI.Label(g, "", "Small")
+  P.groupInfo:SetPoint("TOPLEFT", 18, -40)
+  P.groupInfo:SetWidth(RIGHT_W - 36)
 
-  local heads = { { "Name", 4 }, { "Role", 150 }, { "Signed up", 220 }, { "DKP", 330 } }
-  for _, h in ipairs(heads) do UI.Label(g, h[1], "GameFontNormalSmall"):SetPoint("TOPLEFT", h[2], -72) end
-
-  P.group = UI.List(g, 410, 220, 18,
+  local heads = { { "NAME", 12 }, { "ROLE", 170 }, { "SIGNED UP", 240 }, { "DKP", -12, true } }
+  local box = TableBox(g, heads)
+  box:SetPoint("TOPLEFT", 18, -66)
+  box:SetPoint("BOTTOMRIGHT", -18, 104)
+  P.group = UI.List(box, RIGHT_W - 36 - 4, 450 - 66 - 104 - 26, 24,
     function(row)
-      row.cols = {}
-      for i, h in ipairs(heads) do
-        local fs = UI.Label(row, "", "GameFontHighlightSmall")
-        fs:SetPoint("LEFT", h[2], 0)
-        row.cols[i] = fs
-      end
+      row.name = UI.Label(row, "", "Subheading")
+      row.name:SetPoint("LEFT", 12, 0)
+      row.name:SetWidth(150)
+      row.name:SetWordWrap(false)
+      row.role = UI.Label(row, "", "Small")
+      row.role:SetPoint("LEFT", 170, 0)
+      row.signup = UI.Label(row, "", "Small")
+      row.signup:SetPoint("LEFT", 240, 0)
+      row.dkp = UI.Label(row, "", "Number")
+      row.dkp:SetPoint("RIGHT", -12, 0)
+      row.dkp:SetJustifyH("RIGHT")
+      RowLine(row)
     end,
     function(row, m)
       local r, gg, b = UI.ClassColor(m.classFile)
-      row.cols[1]:SetText(Ambiguate(m.name, "short") .. (m.inGuild and "" or " |cff8b95a7(not in guild)|r"))
-      row.cols[1]:SetTextColor(r, gg, b)
-      row.cols[1]:SetAlpha(m.online and 1 or 0.5)
-      row.cols[2]:SetText(m.role and ROLE_TEXT[m.role] or "|cff8b95a7-|r")
-      row.cols[3]:SetText(m.signup and STATUS_TEXT[m.signup.status] or "|cff8b95a7Not signed up|r")
-      row.cols[4]:SetText(m.inGuild and m.dkp or "")
-    end)
-  P.group.frame:SetPoint("TOPLEFT", 0, -88)
-  P.group.frame:SetHeight(200)
-  P.group.height = 200
+      row.name:SetText(Ambiguate(m.name, "short") .. (m.inGuild and "" or (" " .. UI.Code("muted") .. "(not in guild)|r")))
+      row.name:SetTextColor(r, gg, b)
+      row.name:SetAlpha(m.online and 1 or 0.5)
+      row.role:SetText(m.role and ROLE_TEXT[m.role] or (UI.Code("faint") .. "-|r"))
+      row.signup:SetText(m.signup and statusText(m.signup.status) or (UI.Code("muted") .. "Not signed up|r"))
+      row.dkp:SetText(m.inGuild and m.dkp or "")
+    end, true)
+  P.group.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 0, -25)
 
-  local standbyLabel = UI.Label(g, "Standby", "GameFontNormal")
-  standbyLabel:SetPoint("TOPLEFT", 0, -296)
-  P.standbyText = UI.Label(g, "", "GameFontHighlightSmall")
-  P.standbyText:SetPoint("TOPLEFT", 0, -314)
-  P.standbyText:SetWidth(410)
-  P.standbyName = UI.EditBox(g, 140, 40)
-  P.standbyName:SetPoint("TOPLEFT", 6, -346)
-  local page = parent:GetParent()
-  UI.Grow(page, P.group, 1, 1)
-  UI.FollowAll(page, { standbyLabel, P.standbyText, P.standbyName }, 0, 1)
+  local standbyLabel = UI.Label(g, "Standby", "Heading")
+  standbyLabel:SetPoint("BOTTOMLEFT", 18, 78)
+  P.standbyText = UI.Label(g, "", "Small")
+  P.standbyText:SetPoint("BOTTOMLEFT", 18, 58)
+  P.standbyText:SetWidth(RIGHT_W - 36)
+  P.standbyText:SetWordWrap(false)
+  P.standbyName = UI.EditBox(g, 160, 40)
+  P.standbyName:SetHeight(26)
+  P.standbyName:SetPoint("BOTTOMLEFT", 18, 16)
+  P.standbyName.hint = UI.Label(P.standbyName, "Member name", "MutedSmall")
+  P.standbyName.hint:SetPoint("LEFT", 8, 0)
+  P.standbyName:HookScript("OnTextChanged", function(self) self.hint:SetShown((self:GetText() or "") == "") end)
   P.standbyAdd = UI.Button(g, "Add to standby", 120)
+  P.standbyAdd:SetHeight(26)
   P.standbyAdd:SetPoint("LEFT", P.standbyName, "RIGHT", 8, 0)
   UI.Tooltip(P.standbyAdd, "Add to standby", "Puts the guild member named in the box on standby for tonight's raid night. They earn the same DKP as the raid, and count as attending.")
   P.standbyAdd:SetScript("OnClick", function()
@@ -360,47 +489,58 @@ local function BuildGroupView(parent)
     ns.RefreshPanel()
   end)
   P.standbyRemove = UI.Button(g, "Remove", 80)
-  P.standbyRemove:SetPoint("LEFT", P.standbyAdd, "RIGHT", 4, 0)
+  P.standbyRemove:SetHeight(26)
+  P.standbyRemove:SetPoint("LEFT", P.standbyAdd, "RIGHT", 6, 0)
   UI.Tooltip(P.standbyRemove, "Remove from standby", "Takes the guild member named in the box off standby.")
   P.standbyRemove:SetScript("OnClick", function()
     ns.RemoveStandby(P.standbyName:GetText())
     P.standbyName:SetText("")
     ns.RefreshPanel()
   end)
+
+  UI.Grow(parent:GetParent(), P.group, 1, 1)
 end
 
 local function BuildNewView(parent)
   local n = CreateFrame("Frame", nil, parent)
   n:SetAllPoints()
   P.newFrame = n
-  UI.Label(n, "Schedule a raid", "GameFontNormalLarge"):SetPoint("TOPLEFT", 0, -30)
+  UI.Label(n, "Schedule a raid", "Title"):SetPoint("TOPLEFT", 18, -16)
+  UI.Label(n, "Guild members can sign up as soon as it's created, and get a reminder before it starts.", "MutedSmall")
+    :SetPoint("TOPLEFT", 18, -40)
 
-  UI.Label(n, "Raid", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -60)
-  P.newTitle = UI.EditBox(n, 260, 40)
-  P.newTitle:SetPoint("TOPLEFT", 6, -74)
+  FieldLabel(n, "Raid", 18, -68)
+  P.newTitle = UI.EditBox(n, 300, 40)
+  P.newTitle:SetHeight(26)
+  P.newTitle:SetPoint("TOPLEFT", 18, -80)
 
-  UI.Label(n, "Day", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -102)
-  local prev = UI.Button(n, "<", 24)
-  prev:SetPoint("TOPLEFT", 0, -116)
-  P.newDayText = UI.Label(n, "")
-  P.newDayText:SetPoint("LEFT", prev, "RIGHT", 8, 0)
-  P.newDayText:SetWidth(110)
-  local nextB = UI.Button(n, ">", 24)
-  nextB:SetPoint("LEFT", prev, "RIGHT", 124, 0)
+  FieldLabel(n, "Day", 18, -118)
+  local prev = UI.Button(n, "<", 26)
+  prev:SetHeight(26)
+  prev:SetPoint("TOPLEFT", 18, -130)
+  P.newDayText = UI.Label(n, "", "Subheading")
+  P.newDayText:SetPoint("LEFT", prev, "RIGHT", 10, 0)
+  P.newDayText:SetWidth(150)
+  local nextB = UI.Button(n, ">", 26)
+  nextB:SetHeight(26)
+  nextB:SetPoint("LEFT", prev, "RIGHT", 170, 0)
   prev:SetScript("OnClick", function() newDay = math.max(0, newDay - 1); ns.RefreshPanel() end)
   nextB:SetScript("OnClick", function() newDay = math.min(60, newDay + 1); ns.RefreshPanel() end)
 
-  UI.Label(n, "Start time (24-hour, your time)", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -146)
-  P.newTime = UI.EditBox(n, 60, 5)
-  P.newTime:SetPoint("TOPLEFT", 6, -160)
+  FieldLabel(n, "Start time (24-hour, your time)", 18, -168)
+  P.newTime = UI.EditBox(n, 70, 5)
+  P.newTime:SetHeight(26)
+  P.newTime:SetPoint("TOPLEFT", 18, -180)
   P.newTime:SetText("20:00")
 
-  UI.Label(n, "Notes (optional)", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -188)
-  P.newNotes = UI.EditBox(n, 400, 120)
-  P.newNotes:SetPoint("TOPLEFT", 6, -202)
+  FieldLabel(n, "Notes (optional)", 18, -218)
+  P.newNotes = UI.EditBox(n, RIGHT_W - 36, 120)
+  P.newNotes:SetHeight(26)
+  P.newNotes:SetPoint("TOPLEFT", 18, -230)
 
   local create = UI.Button(n, "Create raid", 120, "primary")
-  create:SetPoint("TOPLEFT", 0, -234)
+  create:SetHeight(28)
+  create:SetPoint("TOPLEFT", 18, -276)
   create:SetScript("OnClick", function()
     local seconds = parseTime(P.newTime:GetText())
     if not seconds then ns.Say("Enter the start time like 20:00.") return end
@@ -413,27 +553,57 @@ local function BuildNewView(parent)
       ns.RefreshPanel()
     end
   end)
-  local back = UI.Button(n, "Cancel", 80)
+  local back = UI.Button(n, "Cancel", 90)
+  back:SetHeight(28)
   back:SetPoint("LEFT", create, "RIGHT", 6, 0)
   back:SetScript("OnClick", function() view = "event"; ns.RefreshPanel() end)
 end
 
 local function Build(page)
-  UI.Label(page, "Upcoming raids", "GameFontNormalLarge"):SetPoint("TOPLEFT", 8, -4)
+  -- Header: the selected raid, or your raid group right now.
+  P.view = UI.Segmented(page.headerBar, { { "event", "Selected raid" }, { "group", "Raid group" } },
+    function(v) view = v; ns.RefreshPanel() end)
+  P.view:SetPoint("RIGHT")
+  UI.Tooltip(P.view, "Switch view", "Switch between the selected raid's sign-ups and everyone in your raid group right now.")
 
-  P.list = UI.List(page, 290, 200, 20,
+  -- Upcoming raids.
+  local raids = CreateFrame("Frame", nil, page)
+  raids:SetPoint("TOPLEFT", 1, -1)
+  raids:SetSize(LEFT_W - 2, 252)
+  UI.Card(raids, 1)
+  UI.Label(raids, "UPCOMING RAIDS", "Label"):SetPoint("TOPLEFT", 14, -13)
+  local rule = raids:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", 0, -32)
+  rule:SetPoint("TOPRIGHT", 0, -32)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+
+  P.list = UI.List(raids, LEFT_W - 24, 252 - 33 - 46, 42,
     function(row)
       row.sel = row:CreateTexture(nil, "BACKGROUND")
       row.sel:SetAllPoints()
-      row.sel:SetColorTexture(UI.C.accent[1], UI.C.accent[2], UI.C.accent[3], 0.14)
-      row.when = UI.Label(row, "", "GameFontHighlightSmall")
-      row.when:SetPoint("LEFT", 4, 0)
-      row.title = UI.Label(row, "", "GameFontHighlightSmall")
-      row.title:SetPoint("LEFT", 110, 0)
-      row.title:SetWidth(110)
+      row.sel:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.10)
+      row.bar = row:CreateTexture(nil, "BORDER")
+      row.bar:SetPoint("TOPLEFT")
+      row.bar:SetPoint("BOTTOMLEFT")
+      row.bar:SetWidth(2)
+      row.bar:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
+      row.title = UI.Label(row, "", "Subheading")
+      row.title:SetPoint("TOPLEFT", 14, -7)
+      row.title:SetPoint("RIGHT", -80, 0)
       row.title:SetWordWrap(false)
-      row.count = UI.Label(row, "", "GameFontHighlightSmall")
-      row.count:SetPoint("RIGHT", -4, 0)
+      row.when = UI.Label(row, "", "MutedSmall")
+      row.when:SetPoint("TOPLEFT", 14, -24)
+      row.count = UI.Label(row, "", "Heading")
+      row.count:SetPoint("RIGHT", -12, 4)
+      row.count:SetJustifyH("RIGHT")
+      row.count:SetTextColor(C.good[1], C.good[2], C.good[3])
+      row.mine = UI.Label(row, "", "MutedSmall")
+      row.mine:SetPoint("TOPRIGHT", -12, -25)
+      row.mine:SetJustifyH("RIGHT")
+      row.warn = UI.Icon(row, "warning", 13, C.warn)
+      row.warn:SetPoint("RIGHT", row.count, "LEFT", -6, 0)
+      RowLine(row)
       row:SetScript("OnClick", function(self)
         selectedId = self.item.id
         if view == "new" then view = "event" end
@@ -441,23 +611,28 @@ local function Build(page)
       end)
     end,
     function(row, e)
-      row.sel:SetShown(e.id == selectedId)
-      row.when:SetText(date("%a %d  %H:%M", e.start))
+      local on = e.id == selectedId
+      row.sel:SetShown(on)
+      row.bar:SetShown(on)
       row.title:SetText(e.title)
+      row.when:SetText(date("%a %b %d · %H:%M", e.start))
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
-      local short = c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0
-      row.count:SetText(("%s|cff6fd08c%d|r%s"):format(short and "|cffffad33!|r " or "", c.accept,
-        mine and (" " .. STATUS_TEXT[mine.status]) or ""))
-    end)
-  P.list.frame:SetPoint("TOPLEFT", 4, -28)
+      row.count:SetText(c.accept)
+      row.mine:SetText(mine and statusText(mine.status) or "")
+      row.warn:SetShown(c.accept > 0 and #ns.RaidMakeup(e.id).warnings > 0)
+    end, true)
+  P.list.frame:SetPoint("TOPLEFT", raids, "TOPLEFT", 0, -33)
   P.list:SetEmptyText("No raids scheduled.")
 
-  P.newButton = UI.Button(page, "New raid", 100)
-  P.newButton:SetPoint("TOPLEFT", 4, -234)
+  local half = (LEFT_W - 2 - 34) / 2
+  P.newButton = UI.Button(raids, "New raid", half)
+  P.newButton:SetHeight(26)
+  P.newButton:SetPoint("BOTTOMLEFT", 14, 12)
   UI.Tooltip(P.newButton, "Schedule a raid", "Adds a raid to the calendar for guild members to sign up to. They get a reminder before it starts.")
   P.newButton:SetScript("OnClick", function() view = "new"; ns.RefreshPanel() end)
-  P.cancelButton = UI.Button(page, "Cancel raid", 100)
+  P.cancelButton = UI.Button(raids, "Cancel raid", half)
+  P.cancelButton:SetHeight(26)
   P.cancelButton:SetPoint("LEFT", P.newButton, "RIGHT", 6, 0)
   UI.Tooltip(P.cancelButton, "Cancel raid", "Cancels the selected raid for everyone. You'll be asked to confirm first.")
   P.cancelButton:SetScript("OnClick", function()
@@ -465,32 +640,32 @@ local function Build(page)
     if e then StaticPopup_Show("IMPERIUM_CANCEL_RAID", e.title, nil, e.id) end
   end)
 
-  -- Raid session (attendance DKP)
-  local nightLabel = UI.Label(page, "Raid night", "GameFontNormalLarge")
-  nightLabel:SetPoint("TOPLEFT", 8, -268)
-  P.sessionText = UI.Label(page, "", "GameFontHighlightSmall")
-  P.sessionText:SetPoint("TOPLEFT", 8, -292)
-  P.sessionText:SetWidth(300)
-  P.onTimeLabel = UI.Label(page, "On time", "GameFontNormalSmall")
-  P.onTimeLabel:SetPoint("TOPLEFT", 8, -350)
-  P.onTime = UI.EditBox(page, 50, 4)
-  P.onTime:SetPoint("TOPLEFT", 8, -364)
-  P.onTime:SetNumeric(true)
-  P.onTime:SetText("10")
-  P.hourlyLabel = UI.Label(page, "Per hour", "GameFontNormalSmall")
-  P.hourlyLabel:SetPoint("TOPLEFT", 66, -350)
-  P.hourly = UI.EditBox(page, 50, 4)
-  P.hourly:SetPoint("TOPLEFT", 66, -364)
-  P.hourly:SetNumeric(true)
-  P.hourly:SetText("10")
-  P.bossLabel = UI.Label(page, "Per boss", "GameFontNormalSmall")
-  P.bossLabel:SetPoint("TOPLEFT", 124, -350)
-  P.boss = UI.EditBox(page, 50, 4)
-  P.boss:SetPoint("TOPLEFT", 124, -364)
-  P.boss:SetNumeric(true)
-  P.boss:SetText("0")
-  P.sessionButton = UI.Button(page, "Start raid", 100, "primary")
-  P.sessionButton:SetPoint("TOPLEFT", 190, -364)
+  -- Raid night (attendance DKP).
+  local night = CreateFrame("Frame", nil, page)
+  night:SetPoint("TOPLEFT", 1, -265)
+  night:SetSize(LEFT_W - 2, 184)
+  UI.Card(night, 1)
+  UI.Label(night, "Raid night", "Heading"):SetPoint("TOPLEFT", 14, -12)
+  P.sessionText = UI.Label(night, "", "MutedSmall")
+  P.sessionText:SetPoint("TOPLEFT", 14, -32)
+  P.sessionText:SetWidth(LEFT_W - 32)
+  P.sessionText:SetSpacing(2)
+  local third = (LEFT_W - 2 - 28 - 16) / 3
+  local function rate(label, x, default)
+    local fs = FieldLabel(night, label, x, -92)
+    local box = UI.EditBox(night, third, 4)
+    box:SetHeight(24)
+    box:SetPoint("TOPLEFT", x, -104)
+    box:SetNumeric(true)
+    box:SetText(default)
+    return fs, box
+  end
+  P.onTimeLabel, P.onTime = rate("On time", 14, "10")
+  P.hourlyLabel, P.hourly = rate("Per hour", 14 + third + 8, "10")
+  P.bossLabel, P.boss = rate("Per boss", 14 + 2 * (third + 8), "0")
+  P.sessionButton = UI.Button(night, "Start raid", LEFT_W - 30, "primary")
+  P.sessionButton:SetHeight(28)
+  P.sessionButton:SetPoint("BOTTOMLEFT", 14, 14)
   UI.Tooltip(P.sessionButton, function() return ns.ActiveSession() and "End raid" or "Start raid" end, function()
     if ns.ActiveSession() then return "Stops awarding DKP for tonight's raid night." end
     return "Starts tonight's raid night. Everyone in your raid gets the On time DKP now, Per hour DKP every hour, and Per boss DKP for each boss killed. Attendance is recorded."
@@ -506,25 +681,20 @@ local function Build(page)
     ns.RefreshPanel()
   end)
 
-  -- Right side
+  -- The selected raid, the raid group, or the new raid form.
   local right = CreateFrame("Frame", nil, page)
-  right:SetPoint("TOPLEFT", 320, 0)
-  right:SetPoint("BOTTOMRIGHT", -4, 0)
-  P.viewButton = UI.Button(right, "Show current raid group", 190)
-  P.viewButton:SetPoint("TOPRIGHT", 0, -2)
-  UI.Tooltip(P.viewButton, "Switch view", "Switches between the selected raid's sign-ups and everyone in your raid group right now.")
-  P.viewButton:SetScript("OnClick", function()
-    view = (view == "group") and "event" or "group"
-    ns.RefreshPanel()
-  end)
+  right:SetPoint("TOPLEFT", RIGHT_X + 1, -1)
+  right:SetSize(RIGHT_W - 2, 448)
+  UI.Card(right, 1)
   BuildEventView(right)
   BuildGroupView(right)
   BuildNewView(right)
 
-  -- A bigger window: more upcoming raids show, and the raid night controls move down.
+  -- A bigger window: more upcoming raids show, raid night moves down, and the right side grows.
+  UI.Grow(page, raids, 0, 1)
   UI.Grow(page, P.list, 0, 1)
-  UI.FollowAll(page, { P.newButton, nightLabel, P.sessionText, P.onTimeLabel, P.onTime, P.hourlyLabel, P.hourly,
-    P.bossLabel, P.boss, P.sessionButton }, 0, 1)
+  UI.Follow(page, night, 0, 1)
+  UI.Grow(page, right, 1, 1)
 end
 
 -- The header's subtitle: how many raids are coming up, and whether one is on.
