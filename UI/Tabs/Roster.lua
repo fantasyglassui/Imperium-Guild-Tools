@@ -32,12 +32,12 @@ end
 local function addonVersionText(m)
   local v = ns.versions[m.full]
   if not v then
-    return m.online and "|cff8b95a7Addon not detected|r" or ""
+    return m.online and (UI.Code("muted") .. "Addon not detected|r") or ""
   end
   if ns.CompareVersions(v, ns.NewestVersion()) < 0 then
-    return "|cffff6b6bAddon v" .. v .. " (out of date)|r"
+    return UI.Code("bad") .. "Addon v" .. v .. " (out of date)|r"
   end
-  return "|cff6fd08cAddon v" .. v .. "|r"
+  return UI.Code("good") .. "Addon v" .. v .. "|r"
 end
 
 local function UpdateDetail()
@@ -71,7 +71,7 @@ local function UpdateDetail()
 
   d.name:SetText(Ambiguate(m.name, "guild"))
   d.name:SetTextColor(UI.ClassColor(m.classFile))
-  d.info:SetText(("Level %d %s  -  %s"):format(m.level, m.className, m.rankName))
+  d.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
   if m.online then
     d.zone:SetText("Online in " .. (m.zone ~= "" and m.zone or "unknown zone"))
   else
@@ -119,8 +119,8 @@ local function Refresh()
   P.list:SetItems(shown)
 
   local online, with, outdated = ns.VersionSummary(roster)
-  local summary = ("%d shown  |  %d of %d online have the addon"):format(#shown, with, online)
-  if outdated > 0 then summary = summary .. ("  |  |cffff6b6b%d out of date|r"):format(outdated) end
+  local summary = ("%d shown  ·  %d of %d online have the addon"):format(#shown, with, online)
+  if outdated > 0 then summary = summary .. ("  ·  %s%d out of date|r"):format(UI.Code("bad"), outdated) end
   P.count:SetText(summary)
 
   UpdateDetail()
@@ -135,37 +135,82 @@ local function Refresh()
   end
 end
 
-local function Build(page)
-  local search = UI.EditBox(page, 170, 40)
-  search:SetPoint("TOPLEFT", 10, -4)
-  search.hint = UI.Label(search, "Search name or rank", "GameFontDisableSmall")
-  search.hint:SetPoint("LEFT", 2, 0)
+local C = UI.C
+local LEFT_W = 440               -- the member table; the cards on the right fill the rest
+local SIDE_X = LEFT_W + 14
+local SIDE_W = 740 - SIDE_X
+local INNER = SIDE_W - 30        -- width inside a card's padding
+
+local function FieldLabel(parent, text, x, y)
+  local fs = UI.Label(parent, text:upper(), "Label")
+  fs:SetPoint("TOPLEFT", x, y)
+  return fs
+end
+
+local function Card(parent, x, y, w, h)
+  local f = CreateFrame("Frame", nil, parent)
+  f:SetPoint("TOPLEFT", x + 1, y - 1)
+  f:SetSize(w - 2, h)
+  UI.Card(f, 1)
+  return f
+end
+
+local function BuildTable(page)
+  local search = UI.EditBox(page, 260, 40)
+  search:SetHeight(26)
+  search:SetPoint("TOPLEFT", 1, -1)
+  search:SetTextInsets(28, 8, 0, 0)
+  local glass = UI.Icon(search, "search", 13, C.faint)
+  glass:SetPoint("LEFT", 9, 0)
+  search.hint = UI.Label(search, "Search name or rank", "MutedSmall")
+  search.hint:SetPoint("LEFT", 28, 0)
   search:SetScript("OnTextChanged", function(self)
     filterText = self:GetText() or ""
     self.hint:SetShown(filterText == "")
     ns.RefreshPanel()
   end)
-
-  P.offline = UI.Check(page, "Show offline", 190, 0)
+  P.offline = UI.Check(page, "Show offline", 270, 0)
   P.offline:SetScript("OnClick", ns.RefreshPanel)
 
-  local check = UI.Button(page, "Check addon versions", 170)
-  check:SetPoint("TOPRIGHT", -4, -2)
-  check:SetScript("OnClick", ns.CheckVersions)
-  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of The Imperium they have. The list and the Addon tab update as they answer.")
+  local card = Card(page, 0, -36, LEFT_W, 390)
+  P.card = card
+  local heads = { { "NAME", 12 }, { "LVL", 166 }, { "RANK", 202 }, { "WHERE", 318 } }
+  for _, h in ipairs(heads) do UI.Label(card, h[1], "Label"):SetPoint("TOPLEFT", h[2], -9) end
+  local rule = card:CreateTexture(nil, "BORDER")
+  rule:SetPoint("TOPLEFT", 0, -26)
+  rule:SetPoint("TOPRIGHT", 0, -26)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
 
-  P.list = UI.List(page, 290, 240, 20,
+  P.list = UI.List(card, LEFT_W - 24, 390 - 28, 24,
     function(row)
       row.sel = row:CreateTexture(nil, "BACKGROUND")
       row.sel:SetAllPoints()
-      row.sel:SetColorTexture(UI.C.accent[1], UI.C.accent[2], UI.C.accent[3], 0.14)
-      row.name = UI.Label(row, "", "GameFontHighlightSmall")
-      row.name:SetPoint("LEFT", 4, 0)
-      row.name:SetWidth(135)
-      row.info = UI.Label(row, "", "GameFontHighlightSmall")
-      row.info:SetPoint("RIGHT", -4, 0)
-      row.info:SetWidth(140)
-      row.info:SetJustifyH("RIGHT")
+      row.sel:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.10)
+      row.bar = row:CreateTexture(nil, "BORDER")
+      row.bar:SetPoint("TOPLEFT")
+      row.bar:SetPoint("BOTTOMLEFT")
+      row.bar:SetWidth(2)
+      row.bar:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
+      row.name = UI.Label(row, "", "Subheading")
+      row.name:SetPoint("LEFT", 12, 0)
+      row.name:SetWidth(148)
+      row.name:SetWordWrap(false)
+      row.level = UI.Label(row, "", "Small")
+      row.level:SetPoint("LEFT", 166, 0)
+      row.rank = UI.Label(row, "", "Small")
+      row.rank:SetPoint("LEFT", 202, 0)
+      row.rank:SetWidth(108)
+      row.rank:SetWordWrap(false)
+      row.where = UI.Label(row, "", "MutedSmall")
+      row.where:SetPoint("LEFT", 318, 0)
+      row.where:SetPoint("RIGHT", -8, 0)
+      row.where:SetWordWrap(false)
+      local line = row:CreateTexture(nil, "BORDER")
+      line:SetPoint("BOTTOMLEFT")
+      line:SetPoint("BOTTOMRIGHT")
+      line:SetHeight(1)
+      line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
       row:SetScript("OnClick", function(self)
         selected = self.item
         hideRemoveConfirm()
@@ -176,43 +221,56 @@ local function Build(page)
       local r, g, b = UI.ClassColor(m.classFile)
       local dim = m.online and 1 or 0.5
       row.name:SetText(Ambiguate(m.name, "guild"))
-      row.name:SetTextColor(r * dim, g * dim, b * dim)
-      row.info:SetText(m.level .. "   " .. m.rankName)
-      row.info:SetTextColor(dim, dim, dim)
-      row.sel:SetShown(selected ~= nil and selected.full == m.full)
-    end)
-  P.list.frame:SetPoint("TOPLEFT", 4, -32)
+      row.name:SetTextColor(r, g, b)
+      row.name:SetAlpha(dim)
+      row.level:SetText(m.level)
+      row.level:SetAlpha(dim)
+      row.rank:SetText(m.rankName)
+      row.rank:SetAlpha(dim)
+      if m.online then
+        row.where:SetText(m.zone ~= "" and m.zone or "Online")
+      else
+        row.where:SetText(m.mobile and "On mobile" or (UI.Code("faint") .. "Offline|r"))
+      end
+      local on = selected ~= nil and selected.full == m.full
+      row.sel:SetShown(on)
+      row.bar:SetShown(on)
+    end, true)
+  P.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, -27)
 
-  P.count = UI.Label(page, "", "GameFontDisableSmall")
-  P.count:SetPoint("TOPLEFT", 8, -278)
+  P.count = UI.Label(page, "", "MutedSmall")
+  P.count:SetPoint("TOPLEFT", 4, -436)
+end
 
-  -- Member details
-  local d = CreateFrame("Frame", nil, page)
-  d:SetPoint("TOPLEFT", 330, -34)
-  d:SetSize(340, 240)
+local function BuildMember(side)
+  local d = Card(side, 0, 0, SIDE_W, 300)
   P.detail = d
 
-  d.name = UI.Label(d, "", "GameFontNormalLarge")
-  d.name:SetPoint("TOPLEFT", 0, 0)
-  d.info = UI.Label(d, "", "GameFontHighlightSmall")
-  d.info:SetPoint("TOPLEFT", 0, -24)
-  d.zone = UI.Label(d, "", "GameFontDisableSmall")
-  d.zone:SetPoint("TOPLEFT", 0, -40)
-  d.addon = UI.Label(d, "", "GameFontHighlightSmall")
-  d.addon:SetPoint("TOPLEFT", 0, -54)
+  d.name = UI.Label(d, "", "Title")
+  d.name:SetPoint("TOPLEFT", 14, -14)
+  d.name:SetWidth(INNER)
+  d.name:SetWordWrap(false)
+  d.info = UI.Label(d, "", "Small")
+  d.info:SetPoint("TOPLEFT", 14, -38)
+  d.zone = UI.Label(d, "", "MutedSmall")
+  d.zone:SetPoint("TOPLEFT", 14, -54)
+  d.addon = UI.Label(d, "", "Small")
+  d.addon:SetPoint("TOPLEFT", 14, -68)
 
-  UI.Label(d, "Public note", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -76)
-  d.pub = UI.EditBox(d, 300, 31)
-  d.pub:SetPoint("TOPLEFT", 6, -90)
+  FieldLabel(d, "Public note", 14, -92)
+  d.pub = UI.EditBox(d, INNER, 31)
+  d.pub:SetHeight(24)
+  d.pub:SetPoint("TOPLEFT", 14, -104)
+  FieldLabel(d, "Officer note", 14, -136)
+  d.off = UI.EditBox(d, INNER, 31)
+  d.off:SetHeight(24)
+  d.off:SetPoint("TOPLEFT", 14, -148)
+  d.offHidden = UI.Label(d, "Your rank can't see officer notes", "MutedSmall")
+  d.offHidden:SetPoint("LEFT", d.off, "LEFT", 8, 0)
 
-  UI.Label(d, "Officer note", "GameFontNormalSmall"):SetPoint("TOPLEFT", 0, -116)
-  d.off = UI.EditBox(d, 300, 31)
-  d.off:SetPoint("TOPLEFT", 6, -130)
-  d.offHidden = UI.Label(d, "(your rank can't see officer notes)", "GameFontDisableSmall")
-  d.offHidden:SetPoint("LEFT", d.off, "LEFT", 2, 0)
-
-  d.save = UI.Button(d, "Save notes", 110)
-  d.save:SetPoint("TOPLEFT", 0, -158)
+  d.save = UI.Button(d, "Save notes", 100)
+  d.save:SetHeight(24)
+  d.save:SetPoint("TOPLEFT", 14, -182)
   UI.Tooltip(d.save, "Save notes", "Saves the public and officer notes typed above. Each one needs your rank to have permission to edit it.")
   d.save:SetScript("OnClick", function()
     local m = selected
@@ -225,20 +283,24 @@ local function Build(page)
   end)
 
   local function afterAction() C_Timer.After(1, ns.RequestRoster) end
+  local third = (INNER - 12) / 3
 
-  d.promote = UI.SecureButton(d, "Promote", 95)
-  d.promote:SetPoint("TOPLEFT", 0, -196)
+  d.promote = UI.SecureButton(d, "Promote", third)
+  d.promote:SetHeight(26)
+  d.promote:SetPoint("TOPLEFT", 14, -222)
   d.promote:HookScript("PostClick", afterAction)
   UI.Tooltip(d.promote, "Promote", "Moves this member up one guild rank. Your rank needs permission to promote, and it can't be done in combat.")
 
-  d.demote = UI.SecureButton(d, "Demote", 95)
-  d.demote:SetPoint("LEFT", d.promote, "RIGHT", 4, 0)
+  d.demote = UI.SecureButton(d, "Demote", third)
+  d.demote:SetHeight(26)
+  d.demote:SetPoint("LEFT", d.promote, "RIGHT", 6, 0)
   d.demote:HookScript("PostClick", afterAction)
   UI.Tooltip(d.demote, "Demote", "Moves this member down one guild rank. Your rank needs permission to demote, and it can't be done in combat.")
 
   -- Remove asks for confirmation: the first click shows a confirm button.
-  d.remove = UI.Button(d, "Remove", 95)
-  d.remove:SetPoint("LEFT", d.demote, "RIGHT", 4, 0)
+  d.remove = UI.Button(d, "Remove", third)
+  d.remove:SetHeight(26)
+  d.remove:SetPoint("LEFT", d.demote, "RIGHT", 6, 0)
   UI.Tooltip(d.remove, "Remove from guild", "Removes this member from the guild. You'll be asked to confirm first.")
   d.remove:SetScript("OnClick", function()
     if selected and not InCombatLockdown() then
@@ -248,25 +310,36 @@ local function Build(page)
     end
   end)
 
-  d.confirm = UI.SecureButton(d, "Confirm", 200)
-  d.confirm:SetPoint("TOPLEFT", 0, -222)
+  d.confirm = UI.SecureButton(d, "Confirm", INNER - 86, "primary")
+  d.confirm:SetHeight(26)
+  d.confirm:SetPoint("TOPLEFT", 14, -256)
   d.confirm:Hide()
   d.confirm:HookScript("PostClick", function()
     hideRemoveConfirm()
     afterAction()
   end)
   d.cancel = UI.Button(d, "Cancel", 80)
-  d.cancel:SetPoint("LEFT", d.confirm, "RIGHT", 4, 0)
+  d.cancel:SetHeight(26)
+  d.cancel:SetPoint("LEFT", d.confirm, "RIGHT", 6, 0)
   d.cancel:Hide()
   d.cancel:SetScript("OnClick", hideRemoveConfirm)
+end
+
+local function BuildGuild(side)
+  local gc = CreateFrame("Frame", nil, side)
+  gc:SetPoint("BOTTOMLEFT", 1, 1)
+  gc:SetSize(SIDE_W - 2, 136)
+  UI.Card(gc, 1)
+  UI.Label(gc, "Guild", "Heading"):SetPoint("TOPLEFT", 14, -12)
 
   -- Invite
-  local inviteLabel = UI.Label(page, "Invite player", "GameFontNormalSmall")
-  inviteLabel:SetPoint("TOPLEFT", 8, -304)
-  P.inviteBox = UI.EditBox(page, 180, 60)
-  P.inviteBox:SetPoint("TOPLEFT", 14, -318)
-  P.inviteBtn = UI.SecureButton(page, "Invite", 80)
-  P.inviteBtn:SetPoint("LEFT", P.inviteBox, "RIGHT", 8, 0)
+  FieldLabel(gc, "Invite player", 14, -36)
+  P.inviteBox = UI.EditBox(gc, INNER - 86, 60)
+  P.inviteBox:SetHeight(24)
+  P.inviteBox:SetPoint("TOPLEFT", 14, -48)
+  P.inviteBtn = UI.SecureButton(gc, "Invite", 80)
+  P.inviteBtn:SetHeight(24)
+  P.inviteBtn:SetPoint("LEFT", P.inviteBox, "RIGHT", 6, 0)
   UI.Tooltip(P.inviteBtn, "Invite to guild", "Invites the player named in the box to the guild.")
   P.inviteBox:SetScript("OnTextChanged", function(self)
     local name = strtrim(self:GetText() or "")
@@ -278,12 +351,13 @@ local function Build(page)
   end)
 
   -- Message of the day
-  local motdLabel = UI.Label(page, "Message of the day", "GameFontNormalSmall")
-  motdLabel:SetPoint("TOPLEFT", 8, -348)
-  P.motdBox = UI.EditBox(page, 540, 128)
-  P.motdBox:SetPoint("TOPLEFT", 14, -362)
-  P.motdBtn = UI.SecureButton(page, "Save", 80)
-  P.motdBtn:SetPoint("LEFT", P.motdBox, "RIGHT", 8, 0)
+  FieldLabel(gc, "Message of the day", 14, -82)
+  P.motdBox = UI.EditBox(gc, INNER - 86, 128)
+  P.motdBox:SetHeight(24)
+  P.motdBox:SetPoint("TOPLEFT", 14, -94)
+  P.motdBtn = UI.SecureButton(gc, "Save", 80)
+  P.motdBtn:SetHeight(24)
+  P.motdBtn:SetPoint("LEFT", P.motdBox, "RIGHT", 6, 0)
   UI.Tooltip(P.motdBtn, "Save message of the day", "Sets the guild's message of the day to this text, for everyone.")
   P.motdBox:SetScript("OnTextChanged", function(self)
     local text = (self:GetText() or ""):gsub("[\r\n]", " ")
@@ -294,11 +368,28 @@ local function Build(page)
     if ns.LogAction then ns.LogAction("motd") end
     C_Timer.After(1, ns.RequestRoster)
   end)
+end
 
-  -- A bigger window: a longer roster, and the invite and message boxes move down.
-  UI.Grow(page, P.list, 0, 1)
-  UI.FollowAll(page, { P.count, inviteLabel, P.inviteBox, motdLabel, P.motdBox }, 0, 1)
-  UI.Grow(page, P.motdBox, 1, 0)
+local function Build(page)
+  local check = UI.Button(page.headerBar, "Check addon versions", 160)
+  check:SetHeight(26)
+  check:SetPoint("RIGHT")
+  check:SetScript("OnClick", ns.CheckVersions)
+  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of The Imperium they have. The list and the Addon tab update as they answer.")
+
+  BuildTable(page)
+  local side = CreateFrame("Frame", nil, page)
+  side:SetPoint("TOPLEFT", SIDE_X, 0)
+  side:SetSize(SIDE_W, 450)
+  BuildMember(side)
+  BuildGuild(side)
+
+  -- A bigger window: the table gets the room, the cards move right, the Guild card stays at the bottom.
+  UI.Grow(page, P.card, 1, 1)
+  UI.Grow(page, P.list, 1, 1)
+  UI.Follow(page, P.count, 0, 1)
+  UI.Follow(page, side, 1, 0)
+  UI.Grow(page, side, 0, 1)
 end
 
 -- The header's subtitle: guild size and who's online.
