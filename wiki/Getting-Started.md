@@ -31,6 +31,10 @@ To make the window bigger, drag its **bottom-right corner**: the lists stretch t
 | Officers | A log of guild changes (officers only). |
 | Addon | Who in the guild has the addon, and which version. |
 
+## Player cards
+
+Click a guild member's name almost anywhere in the window (the Roster, a killer on the Kills tab, Top Head Hunters, the DKP standings or a raid's sign-ups) to open their **player card**: their PvP record and streaks, nemesis, DKP, attendance and recent loot, all in one place. On the Roster, pick someone and click **View player card**, or double-click their name. You can also type `/imperium card Name`.
+
 ## The weekly recap
 
 After the Tuesday reset, you get a short summary of the guild's last week in chat: enemy players killed and the top three head hunters, guild members killed by enemy players, raid nights and bosses, and loot handed out. If you're offline at the reset, it shows at your next login. Turn it off in **Settings** (Weekly recap), where you can also show it again.

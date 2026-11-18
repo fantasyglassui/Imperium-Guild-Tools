@@ -26,11 +26,13 @@ ns.TYPES = {
   { key = "kill_bg",      group = "kill",  label = "Battleground & arena kills" },
   -- Always on since 2.11.1 (grey kills are never logged). Kept so older versions still get it from officers.
   { key = "kill_honor",   group = "kill",  label = "Honor kills only (no grey kills)", filter = true, hidden = true },
+  { key = "kill_streak",  group = "streak", label = "Kill streaks" },
+  { key = "kill_revenge", group = "streak", label = "Revenge kills" },
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
-ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members",
+ns.GROUP_LABELS = { death = "Deaths", kill = "PvP kills by guild members", streak = "Streaks and revenge",
   wanted = "Wanted list", celebrate = "Celebrations" }
 ns.PVP_TYPES = { pvp = true }
 
@@ -475,6 +477,10 @@ SlashCmdList.THEIMPERIUM = function(input)
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
   elseif msg == "recap" or msg == "recap now" or msg == "recap week" then
     if ns.ShowRecap then ns.ShowRecap(msg == "recap" and -1 or 0) end
+  elseif msg:find("^card") then
+    -- /imperium card [name]: a guild member's player card (yours if no name).
+    local who = input:match("^%s*%S+%s+(%S+)") or UnitName("player")
+    if ns.ShowPlayerCard then ns.ShowPlayerCard(who) end
   elseif msg == "version" then
     ns.Say("Version " .. ns.version .. (ns.QueueSize() > 0 and (" (" .. ns.QueueSize() .. " messages waiting to send)") or ""))
     if #ns.loadErrors > 0 then
@@ -491,6 +497,7 @@ SlashCmdList.THEIMPERIUM = function(input)
     print("  /imperium auction [item] [min bid] - auction an item to your raid (officers)")
     print("  /imperium kills - open the kill log")
     print("  /imperium wanted - open the wanted list")
+    print("  /imperium card [name] - a guild member's player card")
     print("  /imperium quiet - hold alerts during combat on or off")
     print("  /imperium sync - fetch recent guild history from guildmates")
     print("  /imperium test - show a test alert")

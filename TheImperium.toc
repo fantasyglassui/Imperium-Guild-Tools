@@ -2,7 +2,7 @@
 ## Title: |cffd4af37The Imperium|r
 ## Notes: Official addon of <The Imperium>. Guild kill and level-up alerts, shared logs and leaderboards, a wanted list of gankers, raid sign-ups and DKP with loot auctions, and officer guild tools.
 ## Author: The Imperium
-## Version: 2.12.0
+## Version: 2.13.0
 ## Category: Guild
 ## IconTexture: Interface\AddOns\TheImperium\Media\Icon
 ## AddonCompartmentFunc: TheImperium_OnAddonCompartmentClick
@@ -20,10 +20,11 @@ Core\Core.lua
 Core\Release.lua
 Guild\Guild.lua
 
-# 2. Alerts: PvP kills, deaths (for the Wanted list), the Wanted list, level-ups
+# 2. Alerts: PvP kills, deaths (for the Wanted list), the Wanted list, streaks and revenge, level-ups
 PvP\Deaths.lua
 PvP\Kills.lua
 PvP\Wanted.lua
+PvP\Streaks.lua
 Guild\Celebrations.lua
 
 # 3. Shared history: syncing logs, clearing logs, the shared ledger
@@ -38,6 +39,7 @@ Raids\DKP.lua
 # 5. Officer log and the weekly recap
 Guild\OfficerLog.lua
 Guild\Recap.lua
+Guild\Profile.lua
 
 # 6. Interface: the theme, shared widgets and the guild panel
 UI\Theme.lua
@@ -60,4 +62,5 @@ UI\MapPins.lua
 UI\MapPins.xml
 UI\MinimapButton.lua
 UI\Auction.lua
+UI\PlayerCard.lua
 UI\Updates.lua

@@ -112,6 +112,15 @@ local function Refresh()
   end
   P.boardEmpty:SetShown(first == nil)
 
+  -- The longest streak in this period.
+  local fromT, toT = ns.MonthRange(0)
+  if period == "lastmonth" then fromT, toT = ns.MonthRange(-1)
+  elseif period == "week" then fromT, toT = time() - 7 * 86400, nil
+  elseif period == "all" then fromT, toT = nil, nil end
+  local best = ns.BestStreaks(fromT, toT, 1)[1]
+  P.streak:SetText(best and ("Best streak: %s%s|r · %d kills in a row"):format(UI.Code("text"), best.name, best.count)
+    or "Best streak: none yet")
+
   -- Last month's winner.
   local lastFrom, lastTo, lastName = ns.MonthRange(-1)
   local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
@@ -308,10 +317,14 @@ local function BuildTable(page)
       line:SetHeight(1)
       line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
-      row:RegisterForClicks("RightButtonUp")
+      row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
       row:SetScript("OnClick", function(self, button)
-        if button == "RightButton" and ns.IsAddonOfficer() then
-          StaticPopup_Show("IMPERIUM_REMOVE_KILL", ns.DescribeKill(self.item), nil, self.item)
+        if button == "RightButton" then
+          if ns.IsAddonOfficer() then
+            StaticPopup_Show("IMPERIUM_REMOVE_KILL", ns.DescribeKill(self.item), nil, self.item)
+          end
+        else
+          ns.ShowPlayerCard(ns.KillingBlow(self.item))
         end
       end)
       row:SetScript("OnEnter", function(self)
@@ -322,6 +335,7 @@ local function BuildTable(page)
         local assists = ns.Assists(k)
         if #assists > 0 then GameTooltip:AddLine("Assists: " .. table.concat(assists, ", "), 0.8, 0.8, 0.8, true) end
         GameTooltip:AddLine(k.zone .. ", " .. UI.FormatTime(k.t), 0.7, 0.7, 0.7)
+        GameTooltip:AddLine("Click for " .. ns.KillingBlow(k) .. "'s player card.", 0.6, 0.6, 0.6)
         if ns.IsAddonOfficer() then GameTooltip:AddLine("Right-click to remove this kill for the guild.", 1, 0.5, 0.5) end
         GameTooltip:Show()
       end)
@@ -420,7 +434,11 @@ local function BuildSide(page)
       GameTooltip:SetText(e.name)
       GameTooltip:AddLine(("%d killing blow%s, %d assist%s"):format(e.count, e.count == 1 and "" or "s",
         e.assists, e.assists == 1 and "" or "s"), 1, 1, 1)
+      GameTooltip:AddLine("Click for their player card.", 0.6, 0.6, 0.6)
       GameTooltip:Show()
+    end)
+    row:SetScript("OnMouseUp", function(self, button)
+      if button == "LeftButton" and self.entry then ns.ShowPlayerCard(self.entry.name) end
     end)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     P.board[i] = row
@@ -429,10 +447,18 @@ local function BuildSide(page)
   P.boardEmpty:SetPoint("TOPLEFT", 14, -38)
 
   local rule = board:CreateTexture(nil, "BORDER")
-  rule:SetPoint("BOTTOMLEFT", 14, 36)
-  rule:SetPoint("BOTTOMRIGHT", -14, 36)
+  rule:SetPoint("BOTTOMLEFT", 14, 58)
+  rule:SetPoint("BOTTOMRIGHT", -14, 58)
   rule:SetHeight(1)
   rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  P.streak = UI.Label(board, "", "MutedSmall")
+  P.streak:SetPoint("BOTTOMLEFT", 14, 36)
+  P.streak:SetWidth(SIDE_W - 30)
+  P.streak:SetWordWrap(false)
+  local streakHover = CreateFrame("Frame", nil, board)
+  streakHover:SetPoint("BOTTOMLEFT", 10, 32)
+  streakHover:SetSize(SIDE_W - 22, 18)
+  UI.Tooltip(streakHover, "Kill streaks", "Killing blows in a row without dying to an enemy player, each within an hour of the last. The guild hears about streaks of 3, 5, 10 and more, and when a streak of 5 or more is ended.")
   P.champion = UI.Label(board, "", "MutedSmall")
   P.champion:SetPoint("BOTTOMLEFT", 14, 14)
   P.champion:SetWidth(SIDE_W - 30)

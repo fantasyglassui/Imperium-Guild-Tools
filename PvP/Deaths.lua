@@ -28,7 +28,7 @@ local lastDeathSent = 0
 local personalDefaults = { sound = true, warning = true, mapPins = true, pinHours = 24,
   quietInstances = true, quietCombat = false, wantedThreshold = 3 }
 local showDefaults = { pvp = true, environment = true, kill_world = true, kill_bg = false, kill_honor = true,
-  wanted = true, level_ten = true, level_all = false }
+  wanted = true, level_ten = true, level_all = false, kill_streak = true, kill_revenge = true }
 
 ns.OnLoad(function()
   local db = ns.db
@@ -319,6 +319,7 @@ end
 local function record(e)
   if not ns.MergeDeath(e) then return end
   ns.ShowAlert(e)
+  if ns.OnLiveDeath then ns.OnLiveDeath(e) end -- a streak ended?
   if ns.RefreshPanel then ns.RefreshPanel() end
   if ns.RefreshMapPins then ns.RefreshMapPins() end
 end

@@ -90,7 +90,7 @@ class Renderer:
 
     def text_lines(self, w):
         text = w["_GetText"]
-        if not text:
+        if text is None or text == "":
             return None
         font, size, color = self.font_of(w)
         segs = self.segments(str(text), color)
@@ -333,6 +333,9 @@ def demo_guild():
     for i, (victim, killers) in enumerate(kills):
         me.ns.MergeKill(me.lua.eval('{ t = %d, kind = "kill_world", victim = "%s", zone = "Stranglethorn Vale", killers = { %s } }'
                                     % (t - i * 3000, victim, ",".join('"%s"' % k for k in killers))))
+    for i in range(2):
+        me.ns.MergeDeath(me.lua.eval('{ t = %d, who = "Lyra", kind = "pvp", sub = "world", zone = "Stranglethorn Vale", killer = "Ganker-Stormrage" }'
+                                     % (t - 20000 - i * 4000)))
     ev = me.ns.CreateRaid("Molten Core", t + 3 * 86400, "")
     guild.run(2)
     for n, role in [("Lyra", "dps"), ("Mira", "healer"), ("Brakk", "dps")]:
@@ -358,3 +361,5 @@ if __name__ == "__main__":
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     me.ns.ShowAltsWindow()
     print(rd.render(me.lua.eval("TheImperiumAlts"), os.path.join(out, "window-alts.png")))
+    me.ns.ShowPlayerCard("Lyra")
+    print(rd.render(me.lua.eval("TheImperiumPlayerCard"), os.path.join(out, "window-player-card.png")))

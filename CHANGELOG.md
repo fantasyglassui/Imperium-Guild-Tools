@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.13.0
+- New: player cards. Click a guild member's name to see everything about them in one place: kills this month and all time, assists, deaths to enemy players, their current and best kill streak, their nemesis (the enemy player who has killed them most) and who they've killed most, plus their DKP, raid attendance, no-shows, items won and recent loot, with their alts or main. A Whisper button starts a whisper. Open one from the Roster (View player card, or double-click a name), by clicking a killer on the Kills tab or a name on Top Head Hunters, a name in the DKP standings, or a sign-up on the Raids tab. Or type /imperium card Name (/imperium card on its own shows yours).
+- New: kill streaks. Killing blows in a row without dying to an enemy player, each within an hour of the last, make a streak. The guild hears when someone reaches 3, 5, 10, 15, 20, 25 and 30 kills, and when a streak of 5 or more is ended (and by whom). The Kills tab shows the best streak of the period under Top Head Hunters.
+- New: revenge. When a guild member kills an enemy player who killed a guildmate in the last 30 minutes, the guild hears about it.
+- Streaks and revenge are a new alert group in Settings ("Streaks and revenge"), on by default; officers can turn them off for the guild, and anyone can turn them off for themselves.
+- The DKP tab is redesigned in the new look: standings, loot and changes are one table with a switch at the top, and a search box that works on all three. Officers get cards beside it for awarding DKP, running a loot auction, and the DKP rules (decay, hidden bids, export, import and new season). Members see their own DKP and their recent changes.
+- The Raids tab is redesigned: upcoming raids are cards on the left with your answer and a warning for makeup gaps, and the raid night controls sit under them. The selected raid shows its date, notes, sign-up counts, the classes coming, the makeup banner, a Tank / Healer / DPS switch (in place of the role button you clicked through) and your Accept / Tentative / Decline buttons, then the sign-up list. A switch at the top shows your raid group instead.
+- The Roster tab is redesigned: a member table with level, rank and where they are, a member card for notes and rank changes, and a Guild card for invites and the Message of the Day.
+
 ## 2.12.0
 - New look: the guild panel and every window have been redesigned. It's dark and flat with Imperium gold accents, in a clean new font (Inter), with a side menu with icons in place of the tabs along the bottom, and a header naming the tab you're on. Buttons, inputs, checkboxes and lists all match, and each screen's main action (Add DKP, Start raid, Bid, Save for whole guild...) is in gold. Your own sign-up answer on the Raids tab is shown in gold too.
 - The loot auction, Alts, Import, Export and What's new windows use the new look.

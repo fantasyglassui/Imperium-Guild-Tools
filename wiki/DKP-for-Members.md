@@ -11,8 +11,9 @@ Some guilds take a small percentage off everyone's DKP each week (**decay**) so 
 ## Checking
 
 - The **DKP** tab lists everyone's DKP and their raid attendance over the last 30 days. Hover a name for their recent changes and any no-shows.
-- Switch the view to **Loot history** to see every item won, by whom, for how much, and on which raid night.
-- **All changes** lists every DKP change this season.
+- Click a name for their **player card**: DKP, attendance, no-shows and recent loot, plus their PvP record.
+- Switch the view at the top to **Loot history** to see every item won, by whom, for how much, and on which raid night.
+- **All changes** lists every DKP change this season. The search box works on all three views.
 
 ## Bidding
 

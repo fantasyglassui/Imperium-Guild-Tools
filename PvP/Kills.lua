@@ -532,6 +532,7 @@ ns.OnMessage("K", function(parts, sender)
       if ns.ClaimBounty then ns.ClaimBounty(done.victim, done.t) end
       done.bounty = wasWanted and ns.db.wantedRemoveOnKill or nil
       ns.ShowKill(done)
+      if ns.OnLiveKill then ns.OnLiveKill(done) end -- streaks and revenge
       if ns.RefreshPanel then ns.RefreshPanel() end
     end
   end)
