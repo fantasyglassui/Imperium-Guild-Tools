@@ -13,11 +13,20 @@ UI.tabs = {} -- registered by each tab file: { id, title, build(page), refresh(p
 
 function UI.AddTab(tab) UI.tabs[#UI.tabs + 1] = tab end
 
+-- Text set on a label or button shows translated (Core/Locale.lua) when the
+-- whole text is a known piece of English.
+function UI.Translated(w)
+  local set = w.SetText
+  w.SetText = function(self, s) return set(self, ns.T(s)) end
+  return w
+end
+
 -- Text. template: one of the game's text styles (GameFontHighlight, ...) or an
 -- Imperium style name (Body, Heading, ...); either way the Imperium font is used.
 function UI.Label(parent, text, template)
   local fs = parent:CreateFontString(nil, "OVERLAY")
   fs:SetFontObject(UI.Font(template or "Body"))
+  UI.Translated(fs)
   fs:SetText(text or "")
   fs:SetJustifyH("LEFT")
   return fs
@@ -55,6 +64,7 @@ local function skinButton(b, text, width, style)
     self:SetDisabledFontObject(UI.Fonts.ButtonDisabled)
   end
   b:SetStyle(style)
+  UI.Translated(b)
   -- Greyed out: dim the fill so it reads as unavailable.
   b:HookScript("OnDisable", function(self) self.bg:SetAlpha(0.45) end)
   b:HookScript("OnEnable", function(self) self.bg:SetAlpha(1) end)
@@ -259,10 +269,11 @@ end
 function UI.Tooltip(w, title, text)
   if w.SetMotionScriptsWhileDisabled then w:SetMotionScriptsWhileDisabled(true) end
   w.hasTooltip = true
+  if ns.localeSeen then ns.T(type(title) == "string" and title); ns.T(type(text) == "string" and text) end
   w:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(type(title) == "function" and title() or title)
-    local body = type(text) == "function" and text() or text
+    GameTooltip:SetText(ns.T(type(title) == "function" and title() or title))
+    local body = ns.T(type(text) == "function" and text() or text)
     if body then GameTooltip:AddLine(body, 1, 1, 1, true) end
     GameTooltip:Show()
   end)
@@ -559,7 +570,7 @@ end
 
 -- A small capitals label over a field.
 function UI.FieldLabel(parent, text, x, y)
-  local fs = UI.Label(parent, text:upper(), "Label")
+  local fs = UI.Label(parent, ns.Upper(ns.T(text)), "Label")
   fs:SetPoint("TOPLEFT", x, y)
   return fs
 end
@@ -636,7 +647,7 @@ function UI.StatTile(parent, x, y, w, h, label)
   t.number:SetPoint("TOPLEFT", 14, -12)
   t.number:SetWidth(w - 28)
   t.number:SetWordWrap(false)
-  t.label = UI.Label(t, label:upper(), "Label")
+  t.label = UI.Label(t, ns.Upper(ns.T(label)), "Label")
   t.label:SetPoint("BOTTOMLEFT", 14, 11)
   t.label:SetWidth(w - 28)
   t.label:SetWordWrap(false)

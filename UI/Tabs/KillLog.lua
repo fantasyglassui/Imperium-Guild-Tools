@@ -131,7 +131,7 @@ end
 -- The header's subtitle: how many kills the table shows.
 local function Subtitle()
   local kills, period = shownKills()
-  return ("PvP kills by guild members · %d %s"):format(#kills, PERIOD_TEXT[period][2])
+  return ns.TF("PvP kills by guild members · %d %s", #kills, ns.T(PERIOD_TEXT[period][2]))
 end
 
 local function Column(parent, text, x, right)

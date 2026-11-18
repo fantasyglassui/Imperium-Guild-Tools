@@ -87,6 +87,7 @@ local function RefreshGeneral()
   P.quietInstances:SetChecked(db.quietInstances)
   P.quietCombat:SetChecked(db.quietCombat)
   P.recap:SetChecked(db.weeklyRecap)
+  P.lang:Sync()
   local pct = math.floor((db.panelScale or 1) * 100 + 0.5)
   P.scaleSlider:SetQuietly(pct)
   P.scaleValue:SetText(pct .. "%")
@@ -339,9 +340,25 @@ local function BuildGeneral(page)
   P.scaleValue = UI.Label(w, "", "Small")
   P.scaleValue:SetPoint("LEFT", P.scaleSlider, "RIGHT", 12, 0)
   UI.Tooltip(P.scaleSlider, "Window size", "Makes this window and its pop-ups bigger or smaller, text and all. Drag, or use the mouse wheel. To show more rows instead, drag the window's bottom-right corner.")
-  local reset = UI.Button(w, "Reset size and position", inner)
+  local reset = UI.Button(w, "Reset size and position", inner - 136)
   reset:SetHeight(26)
   reset:SetPoint("BOTTOMLEFT", 14, 14)
+  -- Language: takes effect after /reload (windows are built once).
+  local langs = {}
+  for _, l in ipairs(ns.LANGUAGES) do langs[#langs + 1] = { l[1], ns.T(l[2]) } end
+  P.lang = UI.Cycle(w, 130, langs, function(v)
+    ns.db.locale = v
+    ns.Say("Language changed. Type /reload to see it everywhere.")
+  end)
+  P.lang:SetHeight(26)
+  P.lang:SetPoint("LEFT", reset, "RIGHT", 6, 0)
+  UI.Tooltip(P.lang, "Language", "The language for Warcrest's windows and messages. Game language follows your game client. "
+    .. "Help and the changelog stay in English.")
+  P.lang.Sync = function(self)
+    for i, l in ipairs(self.options) do
+      if l[1] == (ns.db.locale or "auto") then self.index = i; self.value = l[1]; self:SetText(l[2]) end
+    end
+  end
   reset:SetScript("OnClick", function() ns.ResetPanelSize(); ns.RefreshPanel() end)
   UI.Tooltip(reset, "Reset size and position", "Puts the window back to its normal size, in the middle of the screen.")
 

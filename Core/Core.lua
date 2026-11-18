@@ -115,7 +115,7 @@ end
 -- Helpers
 ------------------------------------------------------------------------
 function ns.Say(msg)
-  print(ns.ICON_TEXT .. " " .. ns.COLOR .. "[" .. ns.BRAND .. "]|r " .. msg)
+  print(ns.ICON_TEXT .. " " .. ns.COLOR .. "[" .. ns.BRAND .. "]|r " .. (ns.T and ns.T(msg) or msg))
 end
 
 -- Midnight-era clients can hand back "secret" values; never use those.

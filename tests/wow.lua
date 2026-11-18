@@ -378,3 +378,7 @@ function GetInstanceInfo()
   if INSTANCE then return INSTANCE[1], INSTANCE[2], 9, "", 20, 0, false, INSTANCE[3] or 2000 end
   return "Eastern Kingdoms", "none", 0, "", 0, 0, false, 0
 end
+
+-- The game's language (tests can change it).
+gameLocale = "enUS"
+function GetLocale() return gameLocale end

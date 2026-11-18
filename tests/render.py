@@ -45,6 +45,7 @@ class Renderer:
     def __init__(self, client, scale=2):
         self.c, self.scale = client, scale
         self.rects = {}
+        self.truncated = set()  # one-line text cut short with "..."
         self.fonts = {}
         L = client.lua
         self.ui = L.eval("UIParent")
@@ -103,6 +104,7 @@ class Renderer:
             # One line, cut short with an ellipsis like the game does.
             flat = "".join(s for s, _ in segs).replace("\n", " ")
             if font.getlength(flat) > limit:
+                self.truncated.add(flat)
                 while flat and font.getlength(flat + "...") > limit:
                     flat = flat[:-1]
                 flat = flat.rstrip() + "..."
@@ -320,13 +322,14 @@ class Renderer:
         return path
 
 
-def demo_guild(guild_name=None):
+def demo_guild(guild_name=None, locale=None):
     """A small guild with some history, so every tab has something to show.
     guild_name: another guild than The Imperium (to show Warcrest's own look)."""
     from harness import Guild
     members = [("Thorne", 1, "WARRIOR"), ("Lyra", 3, "MAGE"), ("Mira", 3, "PRIEST"), ("Brakk", 3, "ROGUE"),
                ("Aldric", 3, "PALADIN"), ("Seren", 3, "DRUID", 58)]
-    setup = (lambda c: c.run('GUILD_NAME = "%s"' % guild_name)) if guild_name else None
+    code = ('GUILD_NAME = "%s"; ' % guild_name if guild_name else "") + ('gameLocale = "%s"' % locale if locale else "")
+    setup = (lambda c: c.run(code)) if code else None
     guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"], setup=setup)
     me = guild["Thorne"]
     me.fire("GUILD_ROSTER_UPDATE")
@@ -411,7 +414,7 @@ def demo_guild(guild_name=None):
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "render"
     os.makedirs(out, exist_ok=True)
-    guild, me = demo_guild()
+    guild, me = demo_guild(locale=os.environ.get("WARCREST_LOCALE"))
     rd = Renderer(me)
     panel = None
     for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):

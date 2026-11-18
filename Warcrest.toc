@@ -18,6 +18,10 @@
 
 # 1. Foundations: namespace, events and messages; the release reset; guild roster and settings
 Core\Core.lua
+Core\Locale.lua
+Locales\deDE.lua
+Locales\frFR.lua
+Locales\esES.lua
 Core\Release.lua
 Guild\Guild.lua
 

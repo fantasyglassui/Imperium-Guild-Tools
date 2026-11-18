@@ -65,6 +65,8 @@ def test_tab_fits_in_panel(tab, tmp_path):
     sticking_out(rd, panel, rd.rect(panel), found)
     outside_parent(rd, panel, found)
     assert found == [], found
+    # One-line text cut short with "...": only item names may be.
+    assert [t for t in rd.truncated if "Thunderfury" not in t] == []
     assert me.errors() == []
 
 
@@ -82,6 +84,8 @@ def test_tab_fits_in_a_bigger_window(tab, tmp_path):
     sticking_out(rd, panel, (l, t, r, b), found)
     outside_parent(rd, panel, found)
     assert found == [], found
+    # One-line text cut short with "...": only item names may be.
+    assert [t for t in rd.truncated if "Thunderfury" not in t] == []
     assert me.errors() == []
 
 
@@ -136,4 +140,22 @@ def test_kill_columns_can_be_resized():
     found = []
     sticking_out(rd, panel, rd.rect(panel), found)
     assert found == [], found
+    assert me.errors() == []
+
+
+@pytest.mark.parametrize("locale", ("deDE", "frFR", "esES"))
+@pytest.mark.parametrize("tab", TABS)
+def test_tab_fits_translated(tab, locale, tmp_path):
+    """German, French and Spanish text is longer; it still has to fit."""
+    guild, me = demo_guild(locale=locale)
+    me.ns.OpenPanel(*tab.split(":"))
+    rd = Renderer(me)
+    panel = me.lua.eval("WarcrestPanel")
+    rd.render(panel, os.path.join(tmp_path, tab.replace(":", "-") + ".png"))
+    found = []
+    sticking_out(rd, panel, rd.rect(panel), found)
+    outside_parent(rd, panel, found)
+    assert found == [], found
+    # One-line text cut short with "...": only item names may be.
+    assert [t for t in rd.truncated if "Thunderfury" not in t] == []
     assert me.errors() == []

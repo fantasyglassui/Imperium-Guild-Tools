@@ -40,7 +40,7 @@ local SCROLL_ROOM = 26            -- rows end this much left of their box, for t
 
 -- Statuses in words, colored.
 local function statusText(status)
-  if status == "accept" then return UI.Code("good") .. "Accepted|r" end
+  if status == "accept" then return UI.Code("good") .. ns.T("Accepted") .. "|r" end
   if status == "tentative" then return UI.Code("accent") .. "Tentative|r" end
   return UI.Code("muted") .. "Declined|r"
 end

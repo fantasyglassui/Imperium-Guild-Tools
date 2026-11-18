@@ -40,7 +40,7 @@ local function refreshPicker(c)
   local _, current = ns.TitleOf(UnitName("player"))
   current = current or ""
   for i, opt in ipairs(options) do
-    if opt[1] == current then c.index, c.value = i, opt[1]; c:SetText("Title: " .. opt[2]) end
+    if opt[1] == current then c.index, c.value = i, opt[1]; c:SetText(ns.TF("Title: %s", ns.T(opt[2]))) end
   end
   UI.SetEnabled(c, #titles > 0)
 end
@@ -51,7 +51,7 @@ local function makePicker(parent, width)
   -- UI.Cycle steps through c.options; show "Title: ..." on the button.
   c:HookScript("OnClick", function(self)
     local opt = self.options[self.index]
-    if opt then self:SetText("Title: " .. opt[2]) end
+    if opt then self:SetText(ns.TF("Title: %s", ns.T(opt[2]))) end
   end)
   UI.Tooltip(c, "Your title", function()
     return #ns.MyTitles() > 0 and "Click to change the title shown after your name on your player card and in the guild window. Guildmates see it too."
@@ -83,9 +83,10 @@ local function Tile(parent, i)
   t.icon:SetPoint("TOPLEFT", 12, -12)
   t.name = UI.Label(t, "", "Subheading")
   t.name:SetPoint("TOPLEFT", 34, -12)
-  t.name:SetWidth(TILE_W - 90)
+  t.name:SetWidth(TILE_W - 46)
+  -- "TITLE" for achievements that give one: bottom right, so the name has the width.
   t.tag = UI.Label(t, "TITLE", "Label")
-  t.tag:SetPoint("TOPRIGHT", -12, -14)
+  t.tag:SetPoint("BOTTOMRIGHT", -12, 11)
   t.tag:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
   t.name:SetWordWrap(false)
   t.desc = UI.Label(t, "", "MutedSmall")
@@ -99,7 +100,7 @@ local function Tile(parent, i)
   -- Progress: a bar to the right of the count.
   t.track = t:CreateTexture(nil, "BORDER")
   t.track:SetPoint("BOTTOMLEFT", 82, 15)
-  t.track:SetPoint("BOTTOMRIGHT", -12, 15)
+  t.track:SetPoint("BOTTOMRIGHT", -12, 15) -- moved left of the tag in fillTile
   t.track:SetHeight(3)
   t.track:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
   t.fill = t:CreateTexture(nil, "ARTWORK")
@@ -129,18 +130,21 @@ local function fillTile(t, a, e)
   t.desc:SetText(a.desc)
   t.edge:SetColor(C.accent[1], C.accent[2], C.accent[3], earned and 0.5 or 0)
   t.tag:SetShown(a.title ~= nil)
+  local tagRoom = a.title and (t.tag:GetStringWidth() + 10) or 0
+  t.track:SetPoint("BOTTOMRIGHT", -12 - tagRoom, 15)
+  t.status:SetWidth(TILE_W - 24 - tagRoom)
   local titleTag = ""
   if earned then
-    t.status:SetText(UI.Code("good") .. (e.t > 0 and ("Earned " .. date("%b %d, %Y", e.t)) or "Earned") .. "|r" .. titleTag)
+    t.status:SetText(UI.Code("good") .. (e.t > 0 and ns.TF("Earned %s", date(ns.T("%b %d, %Y"), e.t)) or ns.T("Earned")) .. "|r" .. titleTag)
     t.track:Hide()
     t.fill:Hide()
   else
     local n = math.min(e and e.progress or 0, a.goal)
     t.status:SetText(a.goal > 1 and (UI.Code("muted") .. n .. " / " .. a.goal .. "|r" .. titleTag)
-      or (UI.Code("faint") .. "Not yet|r" .. titleTag))
+      or (UI.Code("faint") .. ns.T("Not yet") .. "|r" .. titleTag))
     t.track:SetShown(a.goal > 1)
     t.fill:SetShown(a.goal > 1 and n > 0)
-    t.fill:SetWidth(math.max(1, (TILE_W - 94) * n / a.goal))
+    t.fill:SetWidth(math.max(1, (TILE_W - 94 - tagRoom) * n / a.goal))
   end
 end
 
@@ -314,7 +318,7 @@ local function relayoutTiles(width)
     t:ClearAllPoints()
     t:SetPoint("TOPLEFT", P.tilesView, "TOPLEFT", col * (TILE_W + GAP) + 1, -TOP - row * (TILE_H + GAP) - 1)
     t:SetWidth(TILE_W - 2)
-    t.name:SetWidth(TILE_W - 90)
+    t.name:SetWidth(TILE_W - 46)
     t.desc:SetWidth(TILE_W - 24)
     t.status:SetWidth(TILE_W - 24)
   end
@@ -351,8 +355,8 @@ local function Subtitle()
     return #feed == 0 and "Achievements earned across the guild" or (#feed .. " earned across the guild")
   end
   local name = who()
-  return (isMe() and "Yours: " or (Ambiguate(name, "short") .. ": ")) .. ns.AchievementCount(name) .. " of "
-    .. #ns.ACHIEVEMENTS .. " earned"
+  if isMe() then return ns.TF("Yours: %d of %d earned", ns.AchievementCount(name), #ns.ACHIEVEMENTS) end
+  return ns.TF("%s: %d of %d earned", Ambiguate(name, "short"), ns.AchievementCount(name), #ns.ACHIEVEMENTS)
 end
 
 TAB = { id = "achievements", title = "Achievements", build = Build, refresh = Refresh, subtitle = Subtitle }
