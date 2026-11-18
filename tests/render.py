@@ -99,6 +99,15 @@ class Renderer:
         # Word-wrap pieces into lines of (text, color) runs.
         lines, line, used = [], [], 0
         limit = width * self.scale if width else None
+        if lay is not None and lay["nowrap"] and limit:
+            # One line, cut short with an ellipsis like the game does.
+            flat = "".join(s for s, _ in segs).replace("\n", " ")
+            if font.getlength(flat) > limit:
+                while flat and font.getlength(flat + "...") > limit:
+                    flat = flat[:-1]
+                flat = flat.rstrip() + "..."
+            # Keep the first piece's color for the whole line.
+            return font, size, [[(flat, segs[0][1] if segs else color)]]
         for seg, col in segs:
             for i, chunk in enumerate(seg.split("\n")):
                 if i > 0:

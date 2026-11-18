@@ -1,13 +1,20 @@
 --[[
   The Imperium
-  Kills tab: PvP kills by guild members, and the Top Head Hunters board.
+  Kills tab: PvP kills by guild members as a table, this period's leader,
+  and the Top Head Hunters board. The period and kill type are picked in
+  the panel's header.
 ]]
 
 local _, ns = ...
 local UI = ns.UI
+local C = UI.C
 
 local P = {}
-local TOP_N = 18
+local TOP_N = 8          -- places on the board
+local TABLE_W = 480      -- the kill table; the cards on the right fill the rest
+local ROW_H = 34
+local SIDE_X = TABLE_W + 14
+local SIDE_W = 740 - SIDE_X
 
 StaticPopupDialogs["IMPERIUM_REMOVE_KILL"] = {
   text = "Remove this kill for the whole guild?\n\n%s",
@@ -31,79 +38,148 @@ StaticPopupDialogs["IMPERIUM_CLEAR_KILLS"] = {
   preferredIndex = 3,
 }
 
-local function Refresh()
-  P.clear:SetShown(ns.IsGuildMaster()) -- only the Guild Master can clear logs
-  local fromT, toT, monthName
-  if P.period.value == "month" then
-    fromT, toT, monthName = ns.MonthRange(0)
-  elseif P.period.value == "lastmonth" then
-    fromT, toT, monthName = ns.MonthRange(-1)
-  elseif P.period.value == "week" then
+-- How each period is described: { leader card label, subtitle suffix }.
+local PERIOD_TEXT = {
+  month = { "Leading this month", "this month" },
+  lastmonth = { "Leading last month", "last month" },
+  week = { "Leading this week", "in the last 7 days" },
+  all = { "Leading of all time", "in all" },
+}
+
+-- The kills for the picked period and type.
+local function shownKills()
+  local period = P.period and P.period.value or "month"
+  local fromT, toT
+  if period == "month" then
+    fromT, toT = ns.MonthRange(0)
+  elseif period == "lastmonth" then
+    fromT, toT = ns.MonthRange(-1)
+  elseif period == "week" then
     fromT = time() - 7 * 86400
   end
-  local kills = ns.QueryKills(P.filter.value, fromT, toT)
-  P.boardTitle:SetText("Top Head Hunters" .. (monthName and (" - " .. monthName) or ""))
+  return ns.QueryKills(P.filter and P.filter.value or "all", fromT, toT), period
+end
 
-  -- Last month's winner, under the board.
-  local lastFrom, lastTo, lastName = ns.MonthRange(-1)
-  local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
-  P.champion:SetText(champ and ("|cffe0b94c%s champion:|r %s (%d)"):format(lastName, champ.name, champ.count) or "")
-  P.list:SetEmptyText(fromT and "No kills yet this month." or "No kills recorded yet.")
+-- The second line under a kill's zone.
+local function detail(k)
+  local assists = ns.Assists(k)
+  if #assists > 0 then return "Assist: " .. table.concat(assists, ", ") end
+  if k.bounty then return "Wanted bounty claimed" end
+  if k.kind == "kill_bg" then return "Battleground" end
+  return "World PvP"
+end
+
+local function Refresh()
+  local kills, period = shownKills()
+  P.clear:SetShown(ns.IsGuildMaster()) -- only the Guild Master can clear logs
+  P.list:SetEmptyText(period == "all" and "No kills recorded yet." or "No kills in this period yet.")
   P.list:SetItems(kills)
-  P.total:SetText(("%d kills shown"):format(#kills))
 
+  -- This period's leader.
   local top = ns.KillStats(kills, TOP_N)
-  for i, fs in ipairs(P.hunters) do
-    local e = top[i]
-    if e then
-      local name = i <= 3 and ("|cffe0b94c" .. e.name .. "|r") or e.name -- gold for the top three
-      local assists = e.assists > 0 and ("  |cff8b95a7+%d assist%s|r"):format(e.assists, e.assists == 1 and "" or "s") or ""
-      fs:SetText(("%d.  %s  |cffffffff%d|r%s"):format(i, name, e.count, assists))
+  P.leaderLabel:SetText(PERIOD_TEXT[period][1]:upper())
+  local first, second = top[1], top[2]
+  if first then
+    P.leaderName:SetText(first.name)
+    P.leaderCount:SetText(first.count)
+    if not second then
+      P.leaderSub:SetText("The only head hunter so far")
+    elseif second.count == first.count then
+      P.leaderSub:SetText("Tied with " .. second.name)
     else
-      fs:SetText(i == 1 and (P.period.value == "month" and "|cff8b95a7No kills yet this month|r"
-        or "|cff8b95a7No kills yet|r") or "")
+      P.leaderSub:SetText(("%d ahead of %s"):format(first.count - second.count, second.name))
+    end
+  else
+    P.leaderName:SetText("Nobody yet")
+    P.leaderCount:SetText("")
+    P.leaderSub:SetText("The first kill takes the lead")
+  end
+
+  -- The board, with a bar for each place against the leader.
+  local most = first and first.count or 1
+  for i, row in ipairs(P.board) do
+    local e = top[i]
+    row.entry = e
+    row:SetShown(e ~= nil)
+    if e then
+      row.rank:SetText(i)
+      row.name:SetText(e.name)
+      row.count:SetText(e.count)
+      local c = i == 1 and C.accent or { 0.29, 0.33, 0.40 }
+      row.fill:SetColorTexture(c[1], c[2], c[3], 1)
+      row.fill:SetWidth(math.max(2, (SIDE_W - 62) * e.count / most))
     end
   end
+  P.boardEmpty:SetShown(first == nil)
+
+  -- Last month's winner.
+  local lastFrom, lastTo, lastName = ns.MonthRange(-1)
+  local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
+  P.champion:SetText(champ and ("%s champion: %s%s|r · %d kill%s"):format(lastName, UI.Code("text"), champ.name,
+    champ.count, champ.count == 1 and "" or "s") or ("No champion for " .. lastName))
 end
 
-local function Board(page, title, y)
-  P.boardTitle = UI.Label(page, title, "GameFontNormalLarge")
-  P.boardTitle:SetPoint("TOPLEFT", 444, y)
-  local lines = {}
-  for i = 1, TOP_N do
-    local fs = UI.Label(page, "", "GameFontHighlightSmall")
-    fs:SetPoint("TOPLEFT", 450, y - 8 - i * 16)
-    fs:SetWidth(220)
-    lines[i] = fs
-  end
-  return lines
+-- The header's subtitle: how many kills the table shows.
+local function Subtitle()
+  local kills, period = shownKills()
+  return ("PvP kills by guild members · %d %s"):format(#kills, PERIOD_TEXT[period][2])
 end
 
-local function Build(page)
-  P.filter = UI.Cycle(page, 150, {
-    { "all", "All kills" }, { "kill_world", "World PvP" }, { "kill_bg", "Battlegrounds & arenas" },
-  }, ns.RefreshPanel)
-  P.filter:SetPoint("TOPLEFT", 6, -2)
-  UI.Tooltip(P.filter, "Which kills", "Click to switch between all kills, world PvP only, and battlegrounds and arenas only.")
+local function Column(parent, text, x, right)
+  local fs = UI.Label(parent, text, "Label")
+  if right then fs:SetPoint("RIGHT", parent, "RIGHT", x, 0) else fs:SetPoint("LEFT", x, 0) end
+  return fs
+end
 
-  P.period = UI.Cycle(page, 130, {
-    { "month", "This month" }, { "lastmonth", "Last month" }, { "week", "Last 7 days" }, { "all", "All time" },
-  }, ns.RefreshPanel)
-  P.period:SetPoint("LEFT", P.filter, "RIGHT", 6, 0)
-  UI.Tooltip(P.period, "Time period", "Click to switch between this month, last month, the last 7 days and all time. Top Head Hunters follows the same period.")
+local function BuildTable(page)
+  local card = CreateFrame("Frame", nil, page)
+  card:SetPoint("TOPLEFT", 1, -1)
+  card:SetSize(TABLE_W - 2, 420)
+  UI.Card(card, 1)
 
-  local clear = UI.Button(page, "Clear log", 90)
-  P.clear = clear
-  clear:SetPoint("TOPRIGHT", -4, -2)
-  clear:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_CLEAR_KILLS") end)
-  UI.Tooltip(clear, "Clear the kill log", "Clears the kill log and the leaderboard for the whole guild. Only the Guild Master can do this, and you'll be asked to confirm.")
+  local head = CreateFrame("Frame", nil, card)
+  head:SetPoint("TOPLEFT")
+  head:SetPoint("TOPRIGHT")
+  head:SetHeight(28)
+  Column(head, "KILLER", 12)
+  Column(head, "VICTIM", 104)
+  Column(head, "WHERE", 208)
+  Column(head, "WHEN", -32, true) -- lines up with the times, left of the scroll bar
+  local rule = head:CreateTexture(nil, "BORDER")
+  rule:SetPoint("BOTTOMLEFT")
+  rule:SetPoint("BOTTOMRIGHT")
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
 
-  P.list = UI.List(page, 400, 320, 18,
+  -- The rows scroll; the scroll bar sits inside the card's right edge.
+  P.list = UI.List(card, TABLE_W - 24, 390, ROW_H,
     function(row)
-      row.text = UI.Label(row, "", "GameFontHighlightSmall")
-      row.text:SetPoint("LEFT", 4, 0)
-      row.text:SetPoint("RIGHT", -4, 0)
-      row.text:SetWordWrap(false)
+      row.killer = UI.Label(row, "", "Subheading")
+      row.killer:SetPoint("LEFT", 12, 0)
+      row.killer:SetWidth(86)
+      row.killer:SetWordWrap(false)
+      row.killer:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
+      row.victim = UI.Label(row, "", "Subheading")
+      row.victim:SetPoint("LEFT", 104, 0)
+      row.victim:SetWidth(96)
+      row.victim:SetWordWrap(false)
+      row.zone = UI.Label(row, "", "Small")
+      row.zone:SetPoint("TOPLEFT", 208, -5)
+      row.zone:SetWidth(140)
+      row.zone:SetWordWrap(false)
+      row.detail = UI.Label(row, "", "MutedSmall")
+      row.detail:SetPoint("TOPLEFT", 208, -19)
+      row.detail:SetWidth(140)
+      row.detail:SetWordWrap(false)
+      row.when = UI.Label(row, "", "MutedSmall")
+      row.when:SetPoint("RIGHT", -6, 0)
+      row.when:SetJustifyH("RIGHT")
+      local line = row:CreateTexture(nil, "BORDER")
+      line:SetPoint("BOTTOMLEFT")
+      line:SetPoint("BOTTOMRIGHT")
+      line:SetHeight(1)
+      line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+
       row:RegisterForClicks("RightButtonUp")
       row:SetScript("OnClick", function(self, button)
         if button == "RightButton" and ns.IsAddonOfficer() then
@@ -114,7 +190,7 @@ local function Build(page)
         local k = self.item
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(k.victim .. (k.level and k.level > 0 and ("  (level " .. k.level .. ")") or ""), 1, 1, 1)
-        GameTooltip:AddLine("Killing blow: " .. ns.KillingBlow(k), 0.25, 1, 0.25)
+        GameTooltip:AddLine("Killing blow: " .. ns.KillingBlow(k), C.accent[1], C.accent[2], C.accent[3])
         local assists = ns.Assists(k)
         if #assists > 0 then GameTooltip:AddLine("Assists: " .. table.concat(assists, ", "), 0.8, 0.8, 0.8, true) end
         GameTooltip:AddLine(k.zone .. ", " .. UI.FormatTime(k.t), 0.7, 0.7, 0.7)
@@ -124,24 +200,127 @@ local function Build(page)
       row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     end,
     function(row, k)
-      -- The killing blow's name in gold, the rest in the body color.
-      local text, kb = ns.DescribeKill(k), ns.KillingBlow(k)
-      if kb and text:sub(1, #kb) == kb then text = UI.Code("accent") .. kb .. "|r" .. text:sub(#kb + 1) end
-      row.text:SetText(("%s%s|r  %s%s|r"):format(UI.Code("muted"), date("%b %d %H:%M", k.t), UI.Code("textSoft"), text))
-    end)
-  P.list.frame:SetPoint("TOPLEFT", 4, -32)
+      row.killer:SetText(ns.KillingBlow(k))
+      row.victim:SetText(k.victim)
+      row.zone:SetText(k.zone)
+      row.detail:SetText(detail(k))
+      row.when:SetText(date("%b %d · %H:%M", k.t))
+    end, true)
+  P.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, -29)
 
-  P.total = UI.Label(page, "", "GameFontDisableSmall")
-  P.total:SetPoint("TOPLEFT", 8, -360)
-
-  P.hunters = Board(page, "Top Head Hunters", -34)
-  P.champion = UI.Label(page, "", "GameFontHighlightSmall")
-  P.champion:SetPoint("TOPLEFT", 450, -346)
-  P.champion:SetWidth(220)
-
-  local note = UI.Label(page, "Ranked by killing blows (whoever hit last, a best guess). "
-    .. "The board starts fresh on the 1st of each month.", "GameFontDisableSmall")
-  note:SetPoint("TOPLEFT", 8, -378)
+  -- Under the table: how kills are credited, and the Guild Master's Clear log.
+  local note = UI.Label(page, "Killer: whoever hit closest to the death (a best guess).", "MutedSmall")
+  note:SetPoint("TOPLEFT", 4, -431)
+  note:SetWidth(TABLE_W - 100)
+  note:SetWordWrap(false)
+  P.clear = UI.Button(page, "Clear log", 80)
+  P.clear:SetHeight(20)
+  P.clear:SetPoint("TOPRIGHT", page, "TOPLEFT", TABLE_W, -426)
+  P.clear:SetScript("OnClick", function() StaticPopup_Show("IMPERIUM_CLEAR_KILLS") end)
+  UI.Tooltip(P.clear, "Clear the kill log", "Clears the kill log and the leaderboard for the whole guild. Only the Guild Master can do this, and you'll be asked to confirm.")
 end
 
-UI.AddTab({ id = "kills", title = "Kills", build = Build, refresh = Refresh })
+local function BuildSide(page)
+  -- Who's leading.
+  local lead = CreateFrame("Frame", nil, page)
+  lead:SetPoint("TOPLEFT", SIDE_X + 1, -1)
+  lead:SetSize(SIDE_W - 2, 82)
+  UI.Card(lead, 1)
+  P.leaderLabel = UI.Label(lead, "", "Label")
+  P.leaderLabel:SetPoint("TOPLEFT", 14, -13)
+  P.leaderName = UI.Label(lead, "", "Display")
+  P.leaderName:SetPoint("TOPLEFT", 14, -30)
+  P.leaderName:SetWidth(SIDE_W - 80)
+  P.leaderName:SetWordWrap(false)
+  P.leaderCount = UI.Label(lead, "", "Display")
+  P.leaderCount:SetPoint("TOPRIGHT", -14, -30)
+  P.leaderCount:SetJustifyH("RIGHT")
+  P.leaderCount:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
+  P.leaderSub = UI.Label(lead, "", "MutedSmall")
+  P.leaderSub:SetPoint("TOPLEFT", 14, -60)
+
+  -- Top Head Hunters.
+  local board = CreateFrame("Frame", nil, page)
+  board:SetPoint("TOPLEFT", SIDE_X + 1, -95)
+  board:SetSize(SIDE_W - 2, 354)
+  UI.Card(board, 1)
+  local title = UI.Label(board, "TOP HEAD HUNTERS", "Label")
+  title:SetPoint("TOPLEFT", 14, -13)
+  -- Hover the title for how the board works.
+  local why = CreateFrame("Frame", nil, board)
+  why:SetPoint("TOPLEFT", 10, -8)
+  why:SetSize(130, 18)
+  UI.Tooltip(why, "Top Head Hunters", "Ranked by killing blows in the period picked above. The board starts fresh on the 1st of each month, and the winner is announced to the guild.")
+
+  P.board = {}
+  for i = 1, TOP_N do
+    local row = CreateFrame("Frame", nil, board)
+    row:SetPoint("TOPLEFT", 0, -34 - (i - 1) * 30)
+    row:SetSize(SIDE_W - 2, 30)
+    row.rank = UI.Label(row, "", "Muted")
+    row.rank:SetPoint("TOPLEFT", 14, -2)
+    row.rank:SetWidth(14)
+    row.rank:SetJustifyH("RIGHT")
+    row.name = UI.Label(row, "", "Subheading")
+    row.name:SetPoint("TOPLEFT", 36, -2)
+    row.name:SetWidth(SIDE_W - 100)
+    row.name:SetWordWrap(false)
+    row.count = UI.Label(row, "", "Number")
+    row.count:SetPoint("TOPRIGHT", -14, -2)
+    row.count:SetJustifyH("RIGHT")
+    local track = row:CreateTexture(nil, "BORDER")
+    track:SetPoint("TOPLEFT", 36, -19)
+    track:SetPoint("TOPRIGHT", -14, -19)
+    track:SetHeight(3)
+    track:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+    row.fill = row:CreateTexture(nil, "ARTWORK")
+    row.fill:SetPoint("TOPLEFT", 36, -19)
+    row.fill:SetHeight(3)
+    -- Hover a name for their assists too.
+    row:EnableMouse(true)
+    row:SetScript("OnEnter", function(self)
+      local e = self.entry
+      if not e then return end
+      GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+      GameTooltip:SetText(e.name)
+      GameTooltip:AddLine(("%d killing blow%s, %d assist%s"):format(e.count, e.count == 1 and "" or "s",
+        e.assists, e.assists == 1 and "" or "s"), 1, 1, 1)
+      GameTooltip:Show()
+    end)
+    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    P.board[i] = row
+  end
+  P.boardEmpty = UI.Label(board, "No kills in this period yet.", "Muted")
+  P.boardEmpty:SetPoint("TOPLEFT", 14, -38)
+
+  local rule = board:CreateTexture(nil, "BORDER")
+  rule:SetPoint("BOTTOMLEFT", 14, 36)
+  rule:SetPoint("BOTTOMRIGHT", -14, 36)
+  rule:SetHeight(1)
+  rule:SetColorTexture(C.cardEdge[1], C.cardEdge[2], C.cardEdge[3], 1)
+  P.champion = UI.Label(board, "", "MutedSmall")
+  P.champion:SetPoint("BOTTOMLEFT", 14, 14)
+  P.champion:SetWidth(SIDE_W - 30)
+  P.champion:SetWordWrap(false)
+end
+
+local function BuildHeader(bar)
+  P.period = UI.Segmented(bar, {
+    { "month", "This month" }, { "lastmonth", "Last month" }, { "week", "7 days" }, { "all", "All time" },
+  }, ns.RefreshPanel)
+  P.period:SetPoint("RIGHT")
+  P.filter = UI.Cycle(bar, 112, {
+    { "all", "All kills" }, { "kill_world", "World PvP" }, { "kill_bg", "Battlegrounds" },
+  }, ns.RefreshPanel)
+  P.filter:SetHeight(26)
+  P.filter:SetPoint("RIGHT", P.period, "LEFT", -8, 0)
+  UI.Tooltip(P.filter, "Which kills", "Click to switch between all kills, world PvP only, and battlegrounds and arenas only.")
+end
+
+local function Build(page)
+  BuildHeader(page.headerBar)
+  BuildTable(page)
+  BuildSide(page)
+end
+
+UI.AddTab({ id = "kills", title = "Kills", build = Build, refresh = Refresh, subtitle = Subtitle })

@@ -71,6 +71,7 @@ local function makeFont(key, weight, size, color)
 end
 
 makeFont("Title", "bold", 17, UI.C.text)        -- the header of the panel
+makeFont("Display", "bold", 22, UI.C.text)      -- big figures, like this month's leader
 makeFont("Brand", "bold", 13, UI.C.text)        -- "The Imperium" in the side menu
 makeFont("Heading", "bold", 13, UI.C.text)      -- section headings
 makeFont("Subheading", "semibold", 12, UI.C.text)

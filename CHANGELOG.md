@@ -3,7 +3,7 @@
 ## 2.12.0
 - New look: the guild panel and every window have been redesigned. It's dark and flat with Imperium gold accents, in a clean new font (Inter), with a side menu with icons in place of the tabs along the bottom, and a header naming the tab you're on. Buttons, inputs, checkboxes and lists all match, and each screen's main action (Add DKP, Start raid, Bid, Save for whole guild...) is in gold. Your own sign-up answer on the Raids tab is shown in gold too.
 - The loot auction, Alts, Import, Export and What's new windows use the new look.
-- Kill lines on the Kills tab show the killer's name in gold instead of all in green.
+- The Kills tab is redesigned: kills are a table (killer, victim, where with assists or battleground underneath, and when), with a "Leading this month" card showing the leader, their count and how far ahead they are, and Top Head Hunters with a bar for each place. Pick the period (this month, last month, 7 days, all time) and kill type at the top; the header shows how many kills that is. Hover a hunter for their assists.
 - Lists have a dark card background, and every other row is shaded, so it's easier to follow a row across.
 - Every list says something when it's empty or nothing matches your search, including ones that used to be blank: the roster, DKP standings and changes, raid sign-ups, your raid group and the Addon tab.
 - The guild panel opens on the tab you used last.

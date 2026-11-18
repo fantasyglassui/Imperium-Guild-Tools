@@ -125,6 +125,7 @@ local METHODS = {
   SetVertexColor = function(w, r, g, b, a) layout(w).tint = { r, g, b, a or 1 } end,
   SetAlpha = function(w, a) layout(w).alpha = a end,
   SetJustifyH = function(w, j) layout(w).justify = j end,
+  SetWordWrap = function(w, on) layout(w).nowrap = not on end,
   SetFontObject = function(w, f) layout(w).font = f end,
   SetFont = function(w, path, size) layout(w).path, layout(w).size = path, size; return true end,
   SetTextColor = function(w, r, g, b) layout(w).textColor = { r, g, b } end,

@@ -102,6 +102,50 @@ function UI.Cycle(parent, width, options, onChange)
   return b
 end
 
+-- A row of options where one is picked, like "This month | Last month | ...":
+-- options { { value, label }, ... }. seg.value is the picked one; seg:SetValue(v)
+-- picks one without calling onChange.
+function UI.Segmented(parent, options, onChange, height)
+  height = height or 26
+  local seg = CreateFrame("Frame", nil, parent)
+  UI.Fill(seg, C.control)
+  UI.Border(seg, C.edge[1], C.edge[2], C.edge[3], 1)
+  seg.buttons = {}
+  local x = 3
+  for i, opt in ipairs(options) do
+    local b = CreateFrame("Button", nil, seg)
+    b.bg = UI.Fill(b, C.edge)
+    local hover = b:CreateTexture(nil, "HIGHLIGHT")
+    hover:SetAllPoints()
+    hover:SetColorTexture(1, 1, 1, 0.05)
+    b.text = UI.Label(b, opt[2], "Small")
+    b.text:SetPoint("CENTER")
+    local w = math.floor(b.text:GetStringWidth() + 22)
+    b:SetSize(w, height - 6)
+    b:SetPoint("TOPLEFT", x, -3)
+    x = x + w
+    b.value = opt[1]
+    b:SetScript("OnClick", function()
+      seg:SetValue(opt[1])
+      if onChange then onChange(opt[1]) end
+    end)
+    seg.buttons[i] = b
+  end
+  seg:SetSize(x + 3, height)
+  function seg:SetValue(v)
+    self.value = v
+    for _, b in ipairs(self.buttons) do
+      local on = b.value == v
+      b.bg:SetShown(on)
+      b.text:SetFontObject(on and UI.Fonts.Button or UI.Fonts.Small)
+      local c = on and C.text or C.muted
+      b.text:SetTextColor(c[1], c[2], c[3])
+    end
+  end
+  seg:SetValue(options[1][1])
+  return seg
+end
+
 ------------------------------------------------------------------------
 -- Inputs
 ------------------------------------------------------------------------
@@ -273,13 +317,14 @@ end
 ------------------------------------------------------------------------
 -- A scrolling list on a dark card. makeRow(row) sets up a new row; fill(row,
 -- item) shows an item. list:SetEmptyText(text) sets what it says when empty.
-function UI.List(parent, width, height, rowHeight, makeRow, fill)
+-- plain: no card of its own (for a list inside a card the caller draws).
+function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   local sf = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
   sf:SetSize(width, height)
   local content = CreateFrame("Frame", nil, sf)
   content:SetSize(width - 4, 1)
   sf:SetScrollChild(content)
-  UI.Card(sf, 2)
+  if not plain then UI.Card(sf, 2) end
 
   local empty = sf:CreateFontString(nil, "OVERLAY")
   empty:SetFontObject(UI.Fonts.Muted)

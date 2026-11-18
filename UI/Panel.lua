@@ -164,6 +164,11 @@ local function CreatePanel()
     page:SetPoint("TOPLEFT", SIDEBAR + 10, -HEADER - 8)
     page:SetPoint("BOTTOMRIGHT", -10, 10)
     page:Hide()
+    -- Room in the header, left of the close button, for the tab's own controls
+    -- (shown and hidden with the tab). Anchor them to its right edge.
+    page.headerBar = CreateFrame("Frame", nil, page)
+    page.headerBar:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -46, -13)
+    page.headerBar:SetSize(520, 26)
     t.page = page
     t.build(page)
   end
