@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Ledger: the guild's shared record of raids, sign-ups and DKP.
 
   Every change is an entry that is never edited or deleted (a mistake is

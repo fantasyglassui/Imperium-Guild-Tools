@@ -69,7 +69,7 @@ def test_recap_after_the_reset():
     guild.run(200, step=1)
     assert cara.said("Last week in the guild") == []
     # But it can be shown on demand.
-    cara.run('SlashCmdList.THEIMPERIUM("recap")')
+    cara.run('SlashCmdList.BANNERHOLD("recap")')
     assert cara.said("Last week in the guild")
     for c in guild.clients.values():
         assert c.errors() == []

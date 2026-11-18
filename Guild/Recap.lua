@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Weekly recap: after the Tuesday reset, a short summary of the guild's
   last week in chat. PvP kills and the top hunters, guild members killed by
   enemy players, raid nights, bosses and loot.

@@ -38,7 +38,7 @@ def test_empty_profile():
 def test_card_shows_and_fits(tmp_path):
     guild, me = demo_guild()
     me.ns.ShowPlayerCard("Lyra")
-    card = me.lua.eval("TheImperiumPlayerCard")
+    card = me.lua.eval("BannerholdPlayerCard")
     assert card.IsShown(card)
     rd = Renderer(me)
     rd.render(card, str(tmp_path / "card.png"))
@@ -52,8 +52,8 @@ def test_card_shows_and_fits(tmp_path):
 
 def test_clicking_a_roster_name_opens_the_card():
     guild, me = demo_guild()
-    me.run('SlashCmdList.THEIMPERIUM("card Mira")')
-    card = me.lua.eval("TheImperiumPlayerCard")
+    me.run('SlashCmdList.BANNERHOLD("card Mira")')
+    card = me.lua.eval("BannerholdPlayerCard")
     assert card.IsShown(card)
     assert "Mira" in card.name.GetText(card.name)
     assert not me.errors()
@@ -62,11 +62,11 @@ def test_clicking_a_roster_name_opens_the_card():
 def test_clicking_names_on_tabs_opens_the_card():
     guild, me = demo_guild()
     rd = Renderer(me)
-    card = lambda: me.lua.eval("TheImperiumPlayerCard")
+    card = lambda: me.lua.eval("BannerholdPlayerCard")
     for tab, name in (("kills", "Lyra"), ("dkp", "Mira"), ("raids", "Brakk")):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
-        panel = me.lua.eval("TheImperiumPanel")
+        panel = me.lua.eval("BannerholdPanel")
         hits = [fs for fs in walk_text(rd, panel) if fs["_GetText"] == name and fs["_parent"]["script_OnClick"]]
         assert hits, tab
         row = hits[0]["_parent"]

@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   UI widgets: shared helpers for building the guild tools window, drawn in
   the Nightwatch theme (UI/Theme.lua).
 ]]
@@ -485,7 +485,7 @@ function UI.Window(name, width, height, title, keepOnEscape)
   rule:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
   local emblem = f:CreateTexture(nil, "ARTWORK")
-  emblem:SetTexture(ns.PORTRAIT)
+  ns.Emblem(emblem, "PORTRAIT")
   emblem:SetSize(18, 18)
   emblem:SetPoint("TOPLEFT", 8, -5)
   f.title = UI.Label(f, title or "", "Subheading")

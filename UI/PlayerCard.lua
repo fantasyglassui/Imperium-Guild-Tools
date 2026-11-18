@@ -1,8 +1,8 @@
 --[[
-  The Imperium
+  Bannerhold
   Player card: one guild member at a glance. PvP this month and overall,
   streaks, nemesis, DKP, attendance and recent loot. Opened by clicking a
-  name on the Roster, Kills, DKP or Raids tabs, or with /imperium card Name.
+  name on the Roster, Kills, DKP or Raids tabs, or with /bannerhold card Name.
 ]]
 
 local _, ns = ...
@@ -35,7 +35,7 @@ local function Section(parent, text, y)
 end
 
 local function Build()
-  local f = UI.Window("TheImperiumPlayerCard", WIDTH, HEIGHT, "Player card")
+  local f = UI.Window("BannerholdPlayerCard", WIDTH, HEIGHT, "Player card")
   card = f
   local inner = WIDTH - 32
   local tileW = (inner - 3 * 8) / 4

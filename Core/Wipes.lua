@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Wipes: the guild leader can clear the Kills and Officer logs for the
   whole guild.
 

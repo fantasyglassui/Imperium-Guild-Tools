@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Raids tab: scheduled raids with sign-ups, the current raid group, and
   (for officers) creating raids and running raid sessions for attendance DKP.
 ]]

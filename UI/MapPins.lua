@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Map pins: marks guild deaths on the world map with an X (a skull for PvP),
   for as long as the "Keep marks for" setting says (1 hour to 7 days), and
   wanted player sightings with a purple diamond for 30 minutes.
@@ -11,7 +11,7 @@
 
 local _, ns = ...
 
-local TEMPLATE = "TheImperiumDeathPinTemplate"
+local TEMPLATE = "BannerholdDeathPinTemplate"
 local MAX_PINS = 100
 local SIGHTING_AGE = 30 * 60 -- wanted sightings stay on the map for 30 minutes
 local X_ICON = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_7"
@@ -20,7 +20,7 @@ local SIGHTING_ICON = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_3"
 
 -- The pin template (UI\MapPins.xml) names this mixin. Blizzard's base pin
 -- code is mixed in once the world map has loaded.
-TheImperiumDeathPinMixin = TheImperiumDeathPinMixin or {}
+BannerholdDeathPinMixin = BannerholdDeathPinMixin or {}
 local pinMethods = {}
 local provider
 
@@ -61,7 +61,7 @@ function pinMethods:OnMouseEnter()
   local e = self.entry
   if not e then return end
   GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-  GameTooltip:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. "The Imperium|r")
+  GameTooltip:SetText(ns.ICON_TEXT .. " " .. ns.COLOR .. ns.BRAND .. "|r")
   if e.by then
     GameTooltip:AddLine(ns.DescribeSighting(e), 1, 0.4, 1, true)
   else
@@ -84,7 +84,7 @@ function pinMethods:OnMouseUp(button)
   if e and TomTom and TomTom.AddWaypoint then
     local title = e.by and ns.DescribeSighting(e) or ns.DescribeDeath(e)
     pcall(TomTom.AddWaypoint, TomTom, e.mapID, e.x, e.y, {
-      title = "The Imperium: " .. title, persistent = false, minimap = true, world = true,
+      title = ns.BRAND .. ": " .. title, persistent = false, minimap = true, world = true,
     })
   end
 end
@@ -94,7 +94,7 @@ end
 ------------------------------------------------------------------------
 local function setUp()
   if provider or not (WorldMapFrame and MapCanvasPinMixin and MapCanvasDataProviderMixin) then return end
-  Mixin(TheImperiumDeathPinMixin, MapCanvasPinMixin, pinMethods)
+  Mixin(BannerholdDeathPinMixin, MapCanvasPinMixin, pinMethods)
 
   provider = CreateFromMixins(MapCanvasDataProviderMixin)
 

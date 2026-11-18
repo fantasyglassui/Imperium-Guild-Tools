@@ -77,7 +77,7 @@ def test_earned_achievements_stay_after_the_log_is_cleared():
     guild.run(3)
     bob = guild["Bob"]
     assert "kill1" in earned(bob, "Alice")
-    bob.run("TheImperiumDB_killLog_backup = nil")
+    bob.run("BannerholdDB_killLog_backup = nil")
     bob.lua.eval("function(ns) wipe(ns.db.killLog); ns.OnHistoryChanged() end")(bob.ns)
     guild.run(3)
     assert "kill1" in earned(bob, "Alice")

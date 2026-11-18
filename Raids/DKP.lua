@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   DKP: balances, officer awards, and loot auctions.
 
   Balances add up every DKP entry in the ledger. Officers award or deduct
@@ -342,7 +342,7 @@ end
 function ns.ExportDKP()
   local lines = {}
   local function add(s) lines[#lines + 1] = s end
-  add("The Imperium - DKP export, " .. date("%Y-%m-%d %H:%M"))
+  add((ns.GuildName() or "Guild") .. " - Bannerhold DKP export, " .. date("%Y-%m-%d %H:%M"))
   add("")
   add("STANDINGS")
   add("Name,DKP")

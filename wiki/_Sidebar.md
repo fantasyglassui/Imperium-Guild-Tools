@@ -1,4 +1,4 @@
-**[The Imperium](Home)**
+**[Bannerhold](Home)**
 
 **Members**
 - [Getting Started](Getting-Started)

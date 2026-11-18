@@ -1,7 +1,7 @@
 --[[
-  The Imperium
+  Bannerhold
   Updates panel: after the addon is updated, shows what changed since the
-  version you last used. Reopen it any time with /imperium updates.
+  version you last used. Reopen it any time with /bannerhold updates.
 
   To add a release: put a new entry at the TOP of CHANGES.
 ]]
@@ -11,14 +11,18 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.0.0", date = "Nov 18, 2026", items = {
+    "The Imperium is now Bannerhold, guild tools for any guild. Members of <The Imperium> keep the Imperium emblem; your settings and history came with you.",
+    "Commands start with /bannerhold, or /bh for short. /imperium still works.",
+  } },
   { version = "2.14.0", date = "Nov 18, 2026", items = {
     "Loot wishlists: mark the items you Need or Want on the new Wishlist tab. When one is auctioned, you're told, and the auction window shows who wants it.",
     "Achievements and titles: 21 achievements for kills, streaks, revenge, bounties, raids and loot on the new Achievements tab. Some come with a title to show after your name.",
     "The Wanted, Settings, Officers and Addon tabs are redesigned in the new look.",
-    "New commands: /imperium wishlist and /imperium achievements.",
+    "New commands: /bannerhold wishlist and /bannerhold achievements.",
   } },
   { version = "2.13.0", date = "Nov 18, 2026", items = {
-    "Player cards: click a guild member's name on the Roster, Kills, DKP or Raids tab to see their kills, deaths, nemesis, best streak, DKP, attendance and loot in one place. Or type /imperium card Name.",
+    "Player cards: click a guild member's name on the Roster, Kills, DKP or Raids tab to see their kills, deaths, nemesis, best streak, DKP, attendance and loot in one place. Or type /bannerhold card Name.",
     "Kill streaks: the guild hears when someone gets 3, 5, 10 or more kills in a row, and when a big streak is ended. The Kills tab shows the period's best streak.",
     "Revenge: the guild hears when someone kills an enemy player who just killed a guildmate.",
     "The DKP, Raids and Roster tabs are redesigned in the new look.",
@@ -36,7 +40,7 @@ local CHANGES = {
   { version = "2.11.0", date = "Nov 17, 2026", items = {
     "Raid makeup: the Raids tab shows who's coming by class and warns when a raid is short of tanks or healers, or has a class nobody signed up with. Raids with gaps get an orange ! in the list.",
     "Officers get a heads-up an hour before a raid if its makeup has gaps.",
-    "Weekly recap: after the Tuesday reset you get a summary of the guild's week in chat: kills, top head hunters, raids, bosses and loot. Turn it off in Settings, or type /imperium recap to see it again.",
+    "Weekly recap: after the Tuesday reset you get a summary of the guild's week in chat: kills, top head hunters, raids, bosses and loot. Turn it off in Settings, or type /bannerhold recap to see it again.",
   } },
   { version = "2.10.0", date = "Nov 16, 2026", items = {
     "Top Head Hunters now starts fresh on the 1st of each month. Switch to Last month or All time on the Kills tab to see earlier standings.",
@@ -78,7 +82,7 @@ local CHANGES = {
   } },
   { version = "2.4.0", date = "Nov 15, 2026", items = {
     "New Addon tab: see which guild members have The Imperium installed, which version, and when their addon was last seen. Filter by who has it, who doesn't, or who needs to update.",
-    "Click Check now to ask everyone online. Open it with /imperium addon.",
+    "Click Check now to ask everyone online. Open it with /bannerhold addon.",
   } },
   { version = "2.3.0", date = "Nov 15, 2026", items = {
     "New: when a guild member kills a wanted player, the bounty is claimed and they drop off the Wanted list. Their count starts over, so they come back if they keep ganking.",
@@ -86,7 +90,7 @@ local CHANGES = {
     "You can turn this off with the new checkbox at the bottom of the Wanted tab.",
   } },
   { version = "2.2.0", date = "Nov 14, 2026", items = {
-    "New: this Updates panel. It appears after each update with what changed. Reopen it with /imperium updates.",
+    "New: this Updates panel. It appears after each update with what changed. Reopen it with /bannerhold updates.",
   } },
   { version = "2.1.1", date = "Nov 14, 2026", items = {
     "Fixed: deaths to damage over time were announced as falling to death. A death now only counts as a fall if you dropped for at least a second, died as you landed, and weren't in combat.",
@@ -122,7 +126,7 @@ local function buildText(entries)
 end
 
 local function create()
-  local f = UI.Window("TheImperiumUpdates", 460, 380, "What's new")
+  local f = UI.Window("BannerholdUpdates", 460, 380, "What's new")
   win = f
   f:ClearAllPoints()
   f:SetPoint("CENTER", 0, 40)
@@ -130,7 +134,7 @@ local function create()
   local icon = f:CreateTexture(nil, "ARTWORK")
   icon:SetSize(48, 48)
   icon:SetPoint("TOPLEFT", 16, -32)
-  icon:SetTexture(ns.PORTRAIT)
+  ns.Emblem(icon, "PORTRAIT")
 
   f.heading = UI.Label(f, "", "GameFontNormalLarge")
   f.heading:SetPoint("TOPLEFT", icon, "TOPRIGHT", 12, -4)
@@ -167,7 +171,7 @@ function ns.ShowUpdates(since)
   if #entries == 0 then entries = changesSince(nil) end
   if not win then create() end
   win.heading:SetText(since and ("Updated to version " .. ns.version) or ("Version " .. ns.version))
-  win.sub:SetText(since and ("Here's what changed since version " .. since .. ".") or "Recent changes to The Imperium.")
+  win.sub:SetText(since and ("Here's what changed since version " .. since .. ".") or "Recent changes to Bannerhold.")
   win.body:SetText(buildText(entries))
   win.content:SetHeight(math.max(10, win.body:GetStringHeight() + 10))
   win:Show()

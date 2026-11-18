@@ -1,22 +1,72 @@
 --[[
-  The Imperium
-  Official guild addon of <The Imperium>.
+  Bannerhold
+  Guild tools for World of Warcraft: Forever. Formerly The Imperium, the
+  guild addon of <The Imperium>.
 
   Core: shared helpers, saved data, event and message routing, slash commands.
 ]]
 
 local ADDON_NAME, ns = ...
 
-ns.PREFIX = "TheImperium" -- hidden addon channel used to talk to guildmates
+-- Hidden addon channel used to talk to guildmates. It keeps the addon's old
+-- name so Bannerhold and The Imperium (2.x) understand each other while a
+-- guild updates. Players never see it.
+ns.PREFIX = "TheImperium"
 ns.SEP = "^"
-ns.COLOR = "|cffd4af37"   -- Imperium gold
+ns.COLOR = "|cffd4af37"   -- Bannerhold gold
+ns.NAME = "Bannerhold"
 
--- Guild artwork (Media folder). Paths are given without the .tga extension.
-ns.MEDIA = "Interface\\AddOns\\TheImperium\\Media\\"
-ns.ICON = ns.MEDIA .. "Icon"         -- 64x64 guild emblem: chat, addon list, minimap menu
-ns.PORTRAIT = ns.MEDIA .. "Portrait" -- 128x128 guild emblem on navy: window portrait
-ns.ARTWORK = ns.MEDIA .. "Artwork"   -- 512x512 full guild artwork: Options page
-ns.ICON_TEXT = "|T" .. ns.ICON .. ":14:14|t"
+-- Artwork (Media folder). Paths are given without the .tga extension.
+ns.MEDIA = "Interface\\AddOns\\Bannerhold\\Media\\"
+
+-- The look: Bannerhold's banner for every guild, except <The Imperium>, the
+-- guild it was made for, which keeps its own emblem and name.
+--   Icon     64x64 emblem: chat, addon list, minimap menu
+--   Portrait 128x128 emblem on navy: window portraits
+--   Artwork  512x512 artwork: Options page
+ns.IMPERIUM_GUILD = "The Imperium"
+local LOOKS = {
+  bannerhold = { folder = ns.MEDIA, brand = "Bannerhold" },
+  imperium = { folder = ns.MEDIA .. "Imperium\\", brand = "The Imperium" },
+}
+local lookHooks = {}
+
+local function setLook(name)
+  local look = LOOKS[name]
+  ns.look = name
+  ns.BRAND = look.brand
+  ns.ICON = look.folder .. "Icon"
+  ns.PORTRAIT = look.folder .. "Portrait"
+  ns.ARTWORK = look.folder .. "Artwork"
+  ns.ICON_TEXT = "|T" .. ns.ICON .. ":14:14|t"
+end
+setLook("bannerhold")
+
+-- Your guild's name, or nil.
+function ns.GuildName()
+  if not (IsInGuild and IsInGuild()) then return end
+  local name = GetGuildInfo("player")
+  if type(name) == "string" and name ~= "" then return name end
+end
+
+-- fn() runs now and whenever the look changes (to update a texture or label).
+function ns.OnLook(fn)
+  lookHooks[#lookHooks + 1] = fn
+  fn()
+end
+
+-- A texture showing the emblem: kind is "ICON", "PORTRAIT" or "ARTWORK".
+function ns.Emblem(texture, kind)
+  ns.OnLook(function() texture:SetTexture(ns[kind]) end)
+end
+
+-- Picks the look for the guild you're in; called when the guild is known.
+function ns.ApplyGuildLook()
+  local name = ns.GuildName() == ns.IMPERIUM_GUILD and "imperium" or "bannerhold"
+  if name == ns.look then return end
+  setLook(name)
+  for _, fn in ipairs(lookHooks) do pcall(fn) end
+end
 
 -- Alert types members can announce and filter. Order is the display order.
 ns.TYPES = {
@@ -50,7 +100,7 @@ local function safely(where, fn, ...)
   if #ns.loadErrors < 20 then ns.loadErrors[#ns.loadErrors + 1] = where .. ": " .. tostring(err) end
   if ns.db and ns.db.debug and GetTime() - lastErrorShown > 2 then
     lastErrorShown = GetTime()
-    print("|cffff6060[The Imperium] error in " .. where .. ": " .. tostring(err) .. "|r")
+    print("|cffff6060[" .. ns.BRAND .. "] error in " .. where .. ": " .. tostring(err) .. "|r")
   end
 end
 
@@ -58,7 +108,7 @@ end
 -- Helpers
 ------------------------------------------------------------------------
 function ns.Say(msg)
-  print(ns.ICON_TEXT .. " " .. ns.COLOR .. "[The Imperium]|r " .. msg)
+  print(ns.ICON_TEXT .. " " .. ns.COLOR .. "[" .. ns.BRAND .. "]|r " .. msg)
 end
 
 -- Midnight-era clients can hand back "secret" values; never use those.
@@ -294,9 +344,21 @@ frame:SetScript("OnEvent", function(_, event, ...)
       if list then for _, fn in ipairs(list) do safely("ADDON_LOADED", fn, ...) end end
       return
     end
-    ns.isNewInstall = TheImperiumDB == nil
-    TheImperiumDB = TheImperiumDB or {}
-    ns.db = TheImperiumDB
+    -- Coming from The Imperium (2.x): its saved data is handed over once, by the
+    -- small TheImperium folder that comes with Bannerhold (see Compat/).
+    if BannerholdDB == nil and type(TheImperiumDB) == "table" and next(TheImperiumDB) ~= nil
+        and not TheImperiumDB.movedToBannerhold then
+      BannerholdDB = TheImperiumDB
+      ns.movedFromImperium = true
+      local getMetaOld = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+      -- Only empty the old file when it's the hand-over folder, not an old copy of the full addon.
+      if getMetaOld and getMetaOld("TheImperium", "X-Bannerhold-Handover") == "1" then
+        TheImperiumDB = { movedToBannerhold = time() }
+      end
+    end
+    ns.isNewInstall = BannerholdDB == nil
+    BannerholdDB = BannerholdDB or {}
+    ns.db = BannerholdDB
     local getMeta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
     ns.version = (getMeta and getMeta(ADDON_NAME, "Version")) or "0"
     C_ChatInfo.RegisterAddonMessagePrefix(ns.PREFIX)
@@ -392,7 +454,7 @@ end
 -- Login greeting, then let modules sync once the guild roster is ready.
 ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
   if isLogin then
-    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/imperium|r to open guild tools.")
+    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/bannerhold|r to open guild tools.")
   end
   if isLogin or isReload then
     C_Timer.After(8, function()
@@ -424,9 +486,11 @@ end)
 ------------------------------------------------------------------------
 -- Slash commands
 ------------------------------------------------------------------------
-SLASH_THEIMPERIUM1 = "/imperium"
-SLASH_THEIMPERIUM2 = "/imp"
-SlashCmdList.THEIMPERIUM = function(input)
+SLASH_BANNERHOLD1 = "/bannerhold"
+SLASH_BANNERHOLD2 = "/bh"
+SLASH_BANNERHOLD3 = "/imperium" -- the addon's old name, so old habits still work
+SLASH_BANNERHOLD4 = "/imp"
+SlashCmdList.BANNERHOLD = function(input)
   input = input or ""
   local msg = input:lower():match("^%s*(.-)%s*$")
   local function toggle(key, label)
@@ -441,7 +505,7 @@ SlashCmdList.THEIMPERIUM = function(input)
   elseif msg == "dkp" then
     if ns.OpenPanel then ns.OpenPanel("dkp") end
   elseif msg:find("^auction") then
-    -- /imperium auction [item link] [minimum bid]
+    -- /bannerhold auction [item link] [minimum bid]
     local raw = input:gsub("^%s*[Aa][Uu][Cc][Tt][Ii][Oo][Nn]%s*", "")
     local link = raw:match("(|c.-|r)") or raw:match("(|H.-|h.-|h)")
     local min = tonumber(raw:match("(%d+)%s*$"))
@@ -465,7 +529,7 @@ SlashCmdList.THEIMPERIUM = function(input)
     if ns.SetMinimapButtonShown then
       local show = not ns.IsMinimapButtonShown()
       ns.SetMinimapButtonShown(show)
-      ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /imperium minimap to bring it back."))
+      ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /bannerhold minimap to bring it back."))
     end
   elseif msg == "debug" then
     ns.db.debug = not ns.db.debug
@@ -483,7 +547,7 @@ SlashCmdList.THEIMPERIUM = function(input)
   elseif msg == "wishlist" or msg == "wish" then
     ns.OpenPanel("wishlist")
   elseif msg:find("^card") then
-    -- /imperium card [name]: a guild member's player card (yours if no name).
+    -- /bannerhold card [name]: a guild member's player card (yours if no name).
     local who = input:match("^%s*%S+%s+(%S+)") or UnitName("player")
     if ns.ShowPlayerCard then ns.ShowPlayerCard(who) end
   elseif msg == "version" then
@@ -496,45 +560,45 @@ SlashCmdList.THEIMPERIUM = function(input)
     end
   else
     ns.Say("Commands:")
-    print("  /imperium - open guild tools")
-    print("  /imperium raids - open raid sign-ups")
-    print("  /imperium dkp - open DKP")
-    print("  /imperium auction [item] [min bid] - auction an item to your raid (officers)")
-    print("  /imperium kills - open the kill log")
-    print("  /imperium wanted - open the wanted list")
-    print("  /imperium card [name] - a guild member's player card")
-    print("  /imperium wishlist - the guild's loot wishlist, and yours")
-    print("  /imperium achievements - your achievements and title")
-    print("  /imperium quiet - hold alerts during combat on or off")
-    print("  /imperium sync - fetch recent guild history from guildmates")
-    print("  /imperium test - show a test alert")
-    print("  /imperium sound | warn - toggle alert sound or center-screen warning")
-    print("  /imperium minimap - show or hide the minimap button")
-    print("  /imperium addon - see who has the addon installed")
-    print("  /imperium versions - check which version guildmates have")
-    print("  /imperium debug - show error details in chat (troubleshooting)")
-    print("  /imperium recap - last week's guild recap (/imperium recap now: this week so far)")
-    print("  /imperium updates - show what changed in recent versions")
-    print("  /imperium version - show your installed version")
+    print("  /bannerhold - open guild tools")
+    print("  /bannerhold raids - open raid sign-ups")
+    print("  /bannerhold dkp - open DKP")
+    print("  /bannerhold auction [item] [min bid] - auction an item to your raid (officers)")
+    print("  /bannerhold kills - open the kill log")
+    print("  /bannerhold wanted - open the wanted list")
+    print("  /bannerhold card [name] - a guild member's player card")
+    print("  /bannerhold wishlist - the guild's loot wishlist, and yours")
+    print("  /bannerhold achievements - your achievements and title")
+    print("  /bannerhold quiet - hold alerts during combat on or off")
+    print("  /bannerhold sync - fetch recent guild history from guildmates")
+    print("  /bannerhold test - show a test alert")
+    print("  /bannerhold sound | warn - toggle alert sound or center-screen warning")
+    print("  /bannerhold minimap - show or hide the minimap button")
+    print("  /bannerhold addon - see who has the addon installed")
+    print("  /bannerhold versions - check which version guildmates have")
+    print("  /bannerhold debug - show error details in chat (troubleshooting)")
+    print("  /bannerhold recap - last week's guild recap (/bannerhold recap now: this week so far)")
+    print("  /bannerhold updates - show what changed in recent versions")
+    print("  /bannerhold version - show your installed version")
   end
 end
 
 ------------------------------------------------------------------------
 -- Addon compartment (the addons button by the minimap)
 ------------------------------------------------------------------------
-function TheImperium_OnAddonCompartmentClick()
+function Bannerhold_OnAddonCompartmentClick()
   if ns.TogglePanel then ns.TogglePanel() end
 end
 
-function TheImperium_OnAddonCompartmentEnter(_, button)
+function Bannerhold_OnAddonCompartmentEnter(_, button)
   GameTooltip:SetOwner(button, "ANCHOR_LEFT")
-  GameTooltip:SetText("|T" .. ns.ICON .. ":20:20|t " .. ns.COLOR .. "The Imperium|r")
+  GameTooltip:SetText("|T" .. ns.ICON .. ":20:20|t " .. ns.COLOR .. ns.BRAND .. "|r")
   GameTooltip:AddLine("Click to open guild tools.", 1, 1, 1)
   GameTooltip:AddLine("Version " .. (ns.version or "?"), 0.6, 0.6, 0.6)
   GameTooltip:Show()
 end
 
-function TheImperium_OnAddonCompartmentLeave()
+function Bannerhold_OnAddonCompartmentLeave()
   GameTooltip:Hide()
 end
 

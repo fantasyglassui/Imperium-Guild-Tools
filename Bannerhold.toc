@@ -1,15 +1,15 @@
 ## Interface: 16001
-## Title: |cffd4af37The Imperium|r
-## Notes: Official addon of <The Imperium>. Guild kill and level-up alerts, shared logs and leaderboards, a wanted list of gankers, raid sign-ups, DKP with loot auctions and wishlists, achievements and titles, and officer guild tools.
-## Author: The Imperium
-## Version: 2.14.0
+## Title: |cffd4af37Bannerhold|r
+## Notes: Guild tools for WoW Forever: raid sign-ups, DKP with loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements and titles, player cards and officer tools. Formerly The Imperium.
+## Author: Fantasy Glass UI
+## Version: 3.0.0
 ## Category: Guild
-## IconTexture: Interface\AddOns\TheImperium\Media\Icon
-## AddonCompartmentFunc: TheImperium_OnAddonCompartmentClick
-## AddonCompartmentFuncOnEnter: TheImperium_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: TheImperium_OnAddonCompartmentLeave
-## OptionalDeps: TomTom, OpenMap
-## SavedVariables: TheImperiumDB
+## IconTexture: Interface\AddOns\Bannerhold\Media\Icon
+## AddonCompartmentFunc: Bannerhold_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: Bannerhold_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: Bannerhold_OnAddonCompartmentLeave
+## OptionalDeps: TomTom, OpenMap, TheImperium
+## SavedVariables: BannerholdDB
 ## X-Curse-Project-ID: 1803056
 
 # Files load in this order, and each one may use what loaded before it.

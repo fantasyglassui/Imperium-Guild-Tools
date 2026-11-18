@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Roster tab: member list, notes, rank changes, invites, MOTD, addon versions.
 ]]
 
@@ -384,7 +384,7 @@ local function Build(page)
   check:SetHeight(26)
   check:SetPoint("RIGHT")
   check:SetScript("OnClick", ns.CheckVersions)
-  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of The Imperium they have. The list and the Addon tab update as they answer.")
+  UI.Tooltip(check, "Check addon versions", "Asks every online guildmate which version of Bannerhold they have. The list and the Addon tab update as they answer.")
 
   BuildTable(page)
   local side = CreateFrame("Frame", nil, page)

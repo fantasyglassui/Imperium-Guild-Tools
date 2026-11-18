@@ -1,8 +1,10 @@
-# The Imperium
+# Bannerhold
 
 [![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
 
-The official addon of The Imperium for World of Warcraft: Forever.
+Guild tools for World of Warcraft: Forever. Raid sign-ups, DKP with live loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements, player cards and officer tools, shared automatically between everyone in your guild who has it.
+
+Bannerhold started life as **The Imperium**, the guild addon of <The Imperium>, and is now for any guild. Members of <The Imperium> still see their own emblem and name.
 
 ## Features
 
@@ -27,50 +29,50 @@ The official addon of The Imperium for World of Warcraft: Forever.
 - **Guild-wide settings.** Officers can turn death alerts on or off, or choose which death types are announced, for the entire guild at once.
 - **Officer Log.** A record of promotions, demotions, removals, joins, leaves, note edits, Message of the Day changes and settings changes.
 
-## A fresh start at release
+## Coming from The Imperium
 
-Version 2.1.0 is the release version. The first time you load it, any test data from before launch (kills, PvP deaths, Wanted sightings, raids, sign-ups, DKP and the Officer log) is cleared automatically, and nothing from before launch can come back from players still on older versions. Your personal settings are kept.
+Version 3.0.0 renamed the addon to Bannerhold. Update as usual (it's the same CurseForge project): your settings, DKP, logs and history move over by themselves the first time you log in. The zip includes a small `TheImperium` folder that does the hand-over; leave it installed. Guildmates still on The Imperium 2.x keep working with you while everyone updates.
 
 ## Installation
 
-1. Download the latest `TheImperium-x.y.z.zip`.
-2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/TheImperium/TheImperium.toc`.
+1. Download the latest `Bannerhold-x.y.z.zip`.
+2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/Bannerhold/Bannerhold.toc` (and a small `Interface/AddOns/TheImperium` folder next to it).
 3. Restart the game, or type `/reload` if you're already logged in.
-4. Make sure **The Imperium** is enabled in the AddOns list on the character select screen.
+4. Make sure **Bannerhold** is enabled in the AddOns list on the character select screen.
 
-When updating, delete the old `TheImperium` folder first so no old files are left behind.
+When updating by hand, delete the old `Bannerhold` and `TheImperium` folders first so no old files are left behind.
 
 ## Opening the addon
 
-- Click the guild emblem on the edge of your minimap. Left-click opens guild tools, right-click opens Settings, and Shift-click opens Kills. Drag it to move it.
-- Type `/imperium` (or `/imp`).
-- Click **The Imperium** in the addons menu by the minimap.
-- Press Esc, open **Options > AddOns > The Imperium**, and click **Open Guild Tools**.
+- Click the banner on the edge of your minimap. Left-click opens guild tools, right-click opens Settings, and Shift-click opens Kills. Drag it to move it.
+- Type `/bannerhold` (or `/bh`; the old `/imperium` works too).
+- Click **Bannerhold** in the addons menu by the minimap.
+- Press Esc, open **Options > AddOns > Bannerhold**, and click **Open Guild Tools**.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `/imperium` | Open or close the guild tools window |
-| `/imperium raids` | Open raid sign-ups |
-| `/imperium dkp` | Open DKP |
-| `/imperium auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
-| `/imperium kills` | Open the kill log |
-| `/imperium wanted` | Open the wanted list |
-| `/imperium card [name]` | Show a guild member's player card (yours if no name) |
-| `/imperium wishlist` | Open the loot wishlist |
-| `/imperium achievements` | Open your achievements |
-| `/imperium quiet` | Turn holding alerts during combat on or off |
-| `/imperium sync` | Fetch the last two days of guild history from guildmates |
-| `/imperium test` | Show a test alert (a different death type each time) |
-| `/imperium sound` | Turn alert sounds on or off for you |
-| `/imperium warn` | Turn the center-screen alert on or off for you |
-| `/imperium minimap` | Show or hide the minimap button |
-| `/imperium debug` | Show error details in chat, for troubleshooting |
-| `/imperium updates` | Show what changed in recent versions |
-| `/imperium addon` | See who has the addon installed |
-| `/imperium versions` | Ask guildmates which version they have |
-| `/imperium version` | Show your installed version |
+| `/bannerhold` | Open or close the guild tools window |
+| `/bannerhold raids` | Open raid sign-ups |
+| `/bannerhold dkp` | Open DKP |
+| `/bannerhold auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
+| `/bannerhold kills` | Open the kill log |
+| `/bannerhold wanted` | Open the wanted list |
+| `/bannerhold card [name]` | Show a guild member's player card (yours if no name) |
+| `/bannerhold wishlist` | Open the loot wishlist |
+| `/bannerhold achievements` | Open your achievements |
+| `/bannerhold quiet` | Turn holding alerts during combat on or off |
+| `/bannerhold sync` | Fetch the last two days of guild history from guildmates |
+| `/bannerhold test` | Show a test alert (a different death type each time) |
+| `/bannerhold sound` | Turn alert sounds on or off for you |
+| `/bannerhold warn` | Turn the center-screen alert on or off for you |
+| `/bannerhold minimap` | Show or hide the minimap button |
+| `/bannerhold debug` | Show error details in chat, for troubleshooting |
+| `/bannerhold updates` | Show what changed in recent versions |
+| `/bannerhold addon` | See who has the addon installed |
+| `/bannerhold versions` | Ask guildmates which version they have |
+| `/bannerhold version` | Show your installed version |
 
 ## How deaths are detected
 
@@ -182,7 +184,7 @@ Every change is checked automatically by luacheck and a test suite that runs the
 
 ## License
 
-The Imperium is released under the [MIT License](LICENSE).
+Bannerhold is released under the [MIT License](LICENSE).
 
 ## Credits
 

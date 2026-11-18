@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Guild: roster, permissions, management actions, guild-wide settings
   and addon version checks.
 ]]
@@ -142,11 +142,15 @@ local function syncGuildConfig()
   ns.cfg = db.cfg
 end
 ns.OnLoad(syncGuildConfig)
+ns.OnLoad(ns.ApplyGuildLook)
+table.insert(ns.OnGuildReady, ns.ApplyGuildLook)
 ns.OnEvent("PLAYER_GUILD_UPDATE", function()
+  ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
 ns.OnEvent("GUILD_ROSTER_UPDATE", function()
+  ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
@@ -281,7 +285,7 @@ local function noteVersion(sender, v)
   ns.NoteAddonUser(sender, v)
   if not warnedNewer and ns.CompareVersions(v, ns.version) > 0 then
     warnedNewer = true
-    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update The Imperium.|r")
+    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update Bannerhold.|r")
       :format(v, ns.version))
   end
   if ns.RefreshPanel then ns.RefreshPanel() end

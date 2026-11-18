@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Achievements tab. Three views, switched at the top:
     PvP, Raids & more: a member's achievements as tiles (yours, or whoever's
                        you opened from their player card), with progress.

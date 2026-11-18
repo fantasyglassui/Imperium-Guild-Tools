@@ -1,28 +1,28 @@
 # Commands
 
-All commands start with `/imperium` (or the short `/imp`).
+All commands start with `/bannerhold`, or the short `/bh`. The old `/imperium` and `/imp` still work.
 
 | Command | What it does |
 | --- | --- |
-| `/imperium` | Open or close the addon |
-| `/imperium raids` | Raids tab |
-| `/imperium dkp` | DKP tab |
-| `/imperium kills` | Kills and Top Head Hunters |
-| `/imperium wanted` | Wanted list |
-| `/imperium card [name]` | A guild member's player card (yours if no name) |
-| `/imperium wishlist` | The guild's loot wishlist, and yours |
-| `/imperium achievements` | Your achievements and title |
-| `/imperium addon` | Who has the addon, and who's out of date |
-| `/imperium auction [item] [min bid]` | Auction an item to your raid (officers) |
-| `/imperium test` | Show a test alert (a different kind each time) |
-| `/imperium sound` | Turn alert sounds on or off |
-| `/imperium warn` | Turn the center-screen alert on or off |
-| `/imperium quiet` | Hold alerts during combat, on or off |
-| `/imperium minimap` | Show or hide the minimap button |
-| `/imperium sync` | Catch up on guild history now |
-| `/imperium recap` | Last week's guild recap |
-| `/imperium recap now` | This week's recap so far |
-| `/imperium updates` | What changed in recent versions |
-| `/imperium versions` | Ask guildmates which version they have |
-| `/imperium version` | Your version, plus any problems the addon has hit |
-| `/imperium debug` | Show error details in chat |
+| `/bannerhold` | Open or close the addon |
+| `/bannerhold raids` | Raids tab |
+| `/bannerhold dkp` | DKP tab |
+| `/bannerhold kills` | Kills and Top Head Hunters |
+| `/bannerhold wanted` | Wanted list |
+| `/bannerhold card [name]` | A guild member's player card (yours if no name) |
+| `/bannerhold wishlist` | The guild's loot wishlist, and yours |
+| `/bannerhold achievements` | Your achievements and title |
+| `/bannerhold addon` | Who has the addon, and who's out of date |
+| `/bannerhold auction [item] [min bid]` | Auction an item to your raid (officers) |
+| `/bannerhold test` | Show a test alert (a different kind each time) |
+| `/bannerhold sound` | Turn alert sounds on or off |
+| `/bannerhold warn` | Turn the center-screen alert on or off |
+| `/bannerhold quiet` | Hold alerts during combat, on or off |
+| `/bannerhold minimap` | Show or hide the minimap button |
+| `/bannerhold sync` | Catch up on guild history now |
+| `/bannerhold recap` | Last week's guild recap |
+| `/bannerhold recap now` | This week's recap so far |
+| `/bannerhold updates` | What changed in recent versions |
+| `/bannerhold versions` | Ask guildmates which version they have |
+| `/bannerhold version` | Your version, plus any problems the addon has hit |
+| `/bannerhold debug` | Show error details in chat |

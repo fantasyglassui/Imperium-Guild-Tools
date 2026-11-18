@@ -1,6 +1,8 @@
-# The Imperium
+# Bannerhold
 
-The official guild addon of **<The Imperium>** for World of Warcraft: Forever: PvP kill alerts, a wanted list of gankers, raid sign-ups, and a full DKP system with live loot auctions, all shared automatically between guildmates.
+Guild tools for World of Warcraft: Forever: raid sign-ups, a full DKP system with live loot auctions and wishlists, PvP kill alerts, a wanted list of gankers, achievements and player cards, all shared automatically between guildmates.
+
+Bannerhold was made for **<The Imperium>** and used to carry its name. It now works for any guild; members of <The Imperium> still see their own emblem. Coming from The Imperium? Just update: your settings and history move over by themselves.
 
 ## Start here
 

@@ -1,0 +1,11 @@
+## Interface: 16001
+## Title: |cffd4af37Bannerhold|r: data from The Imperium
+## Notes: The Imperium is now Bannerhold. This small helper hands your settings and history over to Bannerhold, and replaces the old The Imperium files. It does nothing else.
+## Author: Fantasy Glass UI
+## Version: 3.0.0
+## Category: Guild
+## IconTexture: Interface\AddOns\Bannerhold\Media\Icon
+## SavedVariables: TheImperiumDB
+## X-Bannerhold-Handover: 1
+
+Handover.lua

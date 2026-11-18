@@ -1,5 +1,5 @@
 --[[
-  The Imperium
+  Bannerhold
   Achievements and titles.
 
   Achievements are worked out from the guild's shared history (the kill log,

@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0
+- The Imperium is now **Bannerhold**, guild tools for any guild on WoW Forever. Members of <The Imperium> still see the Imperium emblem and name; every other guild gets the Bannerhold banner, with their own guild's name under it.
+- Updating keeps everything: your settings, DKP, raids, logs and history move over by themselves the first time you log in. The download includes a small TheImperium folder that does the hand-over; leave it installed.
+- Guildmates still on The Imperium 2.x keep working with you while everyone updates, and they're told a newer version is out.
+- Commands start with /bannerhold, or /bh for short. /imperium and /imp still work.
+- Level-up celebrations, the DKP export and the guild window use your own guild's name.
+- Everything from 2.12.0, 2.13.0 and 2.14.0 below is included.
+
 ## 2.14.0
 - New: loot wishlists. The new Wishlist tab is where you mark the items you're after: Shift-click an item into the box, pick Need (a big upgrade) or Want (nice to have), and click Add. Your list is shared with the guild. The table shows every item guildmates want, Need first, with who wants it; "In my raid" narrows it to the people in your raid. Click one of your items to switch Need and Want, or the X to remove it.
 - When an item is auctioned, everyone who has it on their wishlist gets a message, the auction window shows who wished for it (Need in gold), and the officer running the auction gets the list with each person's DKP in chat. Once you win an item, it's marked Won on your list and you no longer count as wanting it. Player cards show what's on someone's wishlist.

@@ -1,4 +1,9 @@
-package-as: TheImperium
+package-as: Bannerhold
+
+# The small TheImperium folder hands over saved data from The Imperium (2.x),
+# the addon's old name. It ships next to Bannerhold in the same zip.
+move-folders:
+  Bannerhold/Compat/TheImperium: TheImperium
 
 # Release notes on GitHub and CurseForge come from the changelog, not commit messages.
 manual-changelog:

@@ -31,9 +31,9 @@ def split_point(p):
 
 def media_path(path):
     """A game texture path inside our addon, as a file here."""
-    if not isinstance(path, str) or "TheImperium" not in path:
+    if not isinstance(path, str) or "Bannerhold" not in path:
         return None
-    rel = path.split("TheImperium\\", 1)[1].replace("\\", "/")
+    rel = path.split("Bannerhold\\", 1)[1].replace("\\", "/")
     for ext in ("", ".tga", ".png"):
         f = os.path.join(ROOT, rel + ext)
         if os.path.isfile(f):
@@ -383,13 +383,13 @@ if __name__ == "__main__":
     for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
-        panel = me.lua.eval("TheImperiumPanel")
+        panel = me.lua.eval("BannerholdPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     for tab, view in (("settings", "general"), ("achievements", "raid"), ("achievements", "guild")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")
     me.ns.ShowAltsWindow()
-    print(rd.render(me.lua.eval("TheImperiumAlts"), os.path.join(out, "window-alts.png")))
+    print(rd.render(me.lua.eval("BannerholdAlts"), os.path.join(out, "window-alts.png")))
     me.ns.ShowPlayerCard("Lyra")
-    print(rd.render(me.lua.eval("TheImperiumPlayerCard"), os.path.join(out, "window-player-card.png")))
+    print(rd.render(me.lua.eval("BannerholdPlayerCard"), os.path.join(out, "window-player-card.png")))
