@@ -12,32 +12,49 @@
 ## SavedVariables: TheImperiumDB
 ## X-Curse-Project-ID: 1803056
 
-Core.lua
-Release.lua
-Guild.lua
-Deaths.lua
-Kills.lua
-Wanted.lua
-Celebrations.lua
-Sync.lua
-Wipes.lua
-Ledger.lua
-Raids.lua
-DKP.lua
-OfficerLog.lua
-Recap.lua
+# Files load in this order, and each one may use what loaded before it.
+# Keep the order when moving or adding files.
 
+# 1. Foundations: namespace, events and messages; the release reset; guild roster and settings
+Core\Core.lua
+Core\Release.lua
+Guild\Guild.lua
+
+# 2. Alerts: PvP kills, deaths (for the Wanted list), the Wanted list, level-ups
+PvP\Deaths.lua
+PvP\Kills.lua
+PvP\Wanted.lua
+Guild\Celebrations.lua
+
+# 3. Shared history: syncing logs, clearing logs, the shared ledger
+Core\Sync.lua
+Core\Wipes.lua
+Core\Ledger.lua
+
+# 4. Raids and DKP (kept in the ledger)
+Raids\Raids.lua
+Raids\DKP.lua
+
+# 5. Officer log and the weekly recap
+Guild\OfficerLog.lua
+Guild\Recap.lua
+
+# 6. Interface: shared widgets and the guild panel
 UI\Widgets.lua
 UI\Panel.lua
-UI\Roster.lua
-UI\Raids.lua
-UI\DKP.lua
-UI\DKPTools.lua
-UI\KillLog.lua
-UI\Wanted.lua
-UI\Settings.lua
-UI\OfficerLog.lua
-UI\AddonUsers.lua
+
+# 7. The panel's tabs
+UI\Tabs\Roster.lua
+UI\Tabs\Raids.lua
+UI\Tabs\DKP.lua
+UI\Tabs\DKPTools.lua
+UI\Tabs\KillLog.lua
+UI\Tabs\Wanted.lua
+UI\Tabs\Settings.lua
+UI\Tabs\OfficerLog.lua
+UI\Tabs\AddonUsers.lua
+
+# 8. Map pins, minimap button, loot auction window, updates panel
 UI\MapPins.lua
 UI\MapPins.xml
 UI\MinimapButton.lua

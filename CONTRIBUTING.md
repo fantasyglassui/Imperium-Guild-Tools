@@ -1,13 +1,31 @@
-# Publishing The Imperium
+# Working on The Imperium
 
-This repository ([fantasyglassui/Imperium-Guild-Tools](https://github.com/fantasyglassui/Imperium-Guild-Tools)) holds the addon. When you push a version tag, GitHub builds the zip automatically, attaches it to a GitHub release, and can also upload it to CurseForge.
+This repository ([fantasyglassui/Imperium-Guild-Tools](https://github.com/fantasyglassui/Imperium-Guild-Tools)) holds the addon. When you publish a version tag, GitHub builds the zip automatically, attaches it to a GitHub release, and uploads it to CurseForge.
 
-The addon's files sit at the top level of the repository, with `TheImperium.toc` at the root. `.pkgmeta` packages them into a `TheImperium` folder, and `.github/workflows/release.yml` runs the packager.
+## Where things live
+
+| Folder | What's in it |
+| --- | --- |
+| `TheImperium.toc` | The addon's info and the list of files, in the order the game loads them |
+| `Core/` | The shared namespace, events and addon messages (`Core.lua`), the release reset, syncing logs between guildmates, clearing logs, and the shared ledger that raids and DKP are kept in |
+| `Guild/` | Roster, permissions and guild-wide settings (`Guild.lua`), level-up celebrations, the officer log, the weekly recap |
+| `PvP/` | Kill alerts and the kill log, deaths (used by the Wanted list), the Wanted list |
+| `Raids/` | Raid sign-ups and raid nights (`Raids.lua`), DKP and loot auctions (`DKP.lua`) |
+| `UI/` | Shared widgets, the guild panel, map pins, the minimap button, the loot auction window, the updates panel |
+| `UI/Tabs/` | One file per tab of the guild panel |
+| `Media/` | The icon and artwork |
+| `tests/` | Tests that run the addon outside the game (not shipped) |
+| `wiki/` | The wiki's pages (not shipped) |
+| `.github/` | The build, test and wiki workflows, and the issue forms (not shipped) |
+
+Each file starts with a comment saying what it does. Logic lives in the feature folders and the screens that show it live in `UI/`, so for example the Kills tab is `UI/Tabs/KillLog.lua` and the kills themselves are `PvP/Kills.lua`.
+
+Files share one table, `ns`, and the game runs them in the order `TheImperium.toc` lists them, so a file can only use what loaded before it. When adding a file, add it to the TOC in the right place; the tests load the TOC too, so a missing or misplaced file shows up there.
 
 ## 1. Release a version
 
 1. Update `## Version:` in `TheImperium.toc`, add an entry to `CHANGELOG.md`, and add the notes to `UI/Updates.lua` so players see them in the in-game Updates panel.
-2. Merge it to `main`, then create a tag for the version. Either:
+2. Push it to `main`, then create a tag for the version. Either:
    - on GitHub: **Releases > Draft a new release > Choose a tag**, type `v2.11.0`, pick "Create new tag on publish", and press **Publish release**; or
    - from a terminal: `git tag v2.11.0` then `git push origin v2.11.0`.
 3. Within a few minutes the "Package and release" workflow attaches `TheImperium-v2.11.0.zip` to the release, and uploads it to CurseForge.
@@ -46,4 +64,4 @@ The wiki's pages live in the `wiki/` folder. When changes to them reach `main`, 
 
 ## What's in the release zip
 
-The packager leaves out `DISTRIBUTION.md`, `.gitignore`, `.luacheckrc`, and the `wiki`, `tests` and `.github` folders, so players only get the addon itself.
+The packager leaves out `CONTRIBUTING.md`, `.gitignore`, `.luacheckrc`, and the `wiki`, `tests` and `.github` folders, so players only get the addon itself.

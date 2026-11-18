@@ -171,7 +171,7 @@ The [wiki](https://github.com/fantasyglassui/Imperium-Guild-Tools/wiki) has step
 
 ## Contributing
 
-Pull requests are checked automatically by luacheck and a test suite that runs the addon outside the game. See [DISTRIBUTION.md](DISTRIBUTION.md#3-tests-and-the-code-checker) for how to run them yourself and how releases work.
+Every change is checked automatically by luacheck and a test suite that runs the addon outside the game. See [CONTRIBUTING.md](CONTRIBUTING.md) for where things live in the code, how to run the tests yourself, and how releases work.
 
 ## License
 

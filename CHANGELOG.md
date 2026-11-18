@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Behind the scenes: the addon's files are organized into folders by feature (Core, Guild, PvP, Raids, and the panel's tabs under UI/Tabs). Nothing changes in game. If you install by hand, delete the old TheImperium folder before unzipping the new one, so the old loose files don't stay behind (they're unused, but it keeps things tidy).
+
 ## 2.11.1
 - Fixed: kills of grey-level players (far below the killer's level) were still logged and announced, for two reasons: when the game gave an honor message the kill counted whatever the victim's level, and officers could switch "Honor kills only" off. Now the victim's level decides (the honor message only counts when the level couldn't be seen), and grey kills are never reported, announced or logged.
 - Guildmates' reports are checked against the killers' levels from the guild roster, so grey kills sent by older versions, live or through kill-log sync, are dropped too. Grey kills already in your log are cleared out shortly after you log in, so the Kills tab, Top Head Hunters and the weekly recap no longer count them.

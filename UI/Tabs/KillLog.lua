@@ -115,7 +115,6 @@ local function Build(page)
         local assists = ns.Assists(k)
         if #assists > 0 then GameTooltip:AddLine("Assists: " .. table.concat(assists, ", "), 0.8, 0.8, 0.8, true) end
         GameTooltip:AddLine(k.zone .. ", " .. UI.FormatTime(k.t), 0.7, 0.7, 0.7)
-        if k.honor == false then GameTooltip:AddLine("No honor (grey kill)", 0.6, 0.6, 0.6) end
         if ns.IsAddonOfficer() then GameTooltip:AddLine("Right-click to remove this kill for the guild.", 1, 0.5, 0.5) end
         GameTooltip:Show()
       end)

@@ -279,7 +279,6 @@ function ns.DescribeKill(k)
   local assists = ns.Assists(k)
   if #assists > 0 then line = line .. " (assist: " .. joinNames(assists) .. ")" end
   if k.kind == "kill_bg" then line = line .. " (battleground)" end
-  if k.honor == false then line = line .. " |cff999999(no honor)|r" end
   if k.bounty then line = line .. " - Wanted bounty claimed!" end
   return line
 end
@@ -395,7 +394,6 @@ function ns.MergeKill(k)
   return true
 end
 
--- filter: "all", "kill_world" or "kill_bg". period: seconds back, or nil.
 -- filter: "all", "kill_world" or "kill_bg". fromT/toT: a time range, or nil for all time.
 function ns.QueryKills(filter, fromT, toT)
   local out = {}
