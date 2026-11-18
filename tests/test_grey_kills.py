@@ -49,7 +49,7 @@ def test_older_versions_grey_reports_are_dropped():
     t = int(guild.clock)
     # An older version reports a level 40 kill as honorable. From a level 60 it's grey...
     bob.fire("CHAT_MSG_ADDON", "TheImperium", "K^kill_world^Lowbie^STV^%d^0.5^40^1" % t, "GUILD", "Alice-Realm")
-    # ...but from a level 45 it isn't (grey for 45 is 36 and below).
+    # ...but from a level 45 it isn't (grey for 45 is 35 and below).
     bob.fire("CHAT_MSG_ADDON", "TheImperium", "K^kill_world^Fair^STV^%d^0.5^40^1" % t, "GUILD", "Twink-Realm")
     # Through kill-log sync, too.
     bob.fire("CHAT_MSG_ADDON", "TheImperiumB", "KX^%d^kill_world^Synced^STV^Alice^0.5^41^1" % (t - 3600), "WHISPER", "Alice-Realm")
