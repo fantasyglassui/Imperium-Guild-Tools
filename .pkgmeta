@@ -1,5 +1,10 @@
 package-as: TheImperium
 
+# Release notes on GitHub and CurseForge come from the changelog, not commit messages.
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
 ignore:
   - CONTRIBUTING.md
   - .github
