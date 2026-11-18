@@ -156,7 +156,8 @@ local function fill(p)
   if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
   for _, l in ipairs(p.loot) do
     loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), date("%b %d", l.t), l.item,
-      l.roll and (UI.Code("muted") .. "free roll|r") or (UI.Code("text") .. l.amount .. " DKP|r"))
+      l.roll and (UI.Code("muted") .. "free roll|r") or (l.council and (UI.Code("muted") .. "loot council|r")
+        or (UI.Code("text") .. l.amount .. " DKP|r")))
   end
   if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
   f.lootLines:SetText(table.concat(loot, "\n"))

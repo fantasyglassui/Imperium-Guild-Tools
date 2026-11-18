@@ -43,6 +43,7 @@ local function raidKeys()
 end
 
 local function Refresh()
+  P.council:SetShown(ns.IsAddonOfficer() or (ns.council ~= nil and not ns.council.done))
   local filter = P.filter.value
   local only = filter == "raid" and raidKeys() or nil
   local q = query:lower()
@@ -212,6 +213,12 @@ end
 local function Build(page)
   P.filter = UI.Segmented(page.headerBar, { { "all", "Everyone" }, { "raid", "In my raid" } }, ns.RefreshPanel)
   P.filter:SetPoint("RIGHT")
+  P.council = UI.Button(page.headerBar, "Loot council", 120)
+  P.council:SetHeight(26)
+  P.council:SetPoint("RIGHT", P.filter, "LEFT", -8, 0)
+  P.council:SetScript("OnClick", function() ns.OpenCouncil() end)
+  UI.Tooltip(P.council, "Loot council", "Start a vote on who gets an item: everyone in the raid says Need, Greed or Pass, "
+    .. "officers vote with each person's wishlist, attendance and recent loot in front of them, and you award it.")
   UI.Tooltip(P.filter, "Whose wishes", "Everyone in the guild, or only the people in your raid right now: handy when loot drops.")
 
   BuildTable(page)

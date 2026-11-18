@@ -309,7 +309,7 @@ function ns.LootHistory()
   local undone = undoneSet()
   for _, e in ipairs(ns.LedgerEntries("DK")) do
     local item = e.reason:match("^Won (.+)$")
-    if item then item = item:gsub(" %(free roll%)$", "") end
+    if item then item = item:gsub(" %(free roll%)$", ""):gsub(" %(council%)$", "") end
     local sn = ns.CurrentSeason()
     if item and e.amount <= 0 and not undone[e.id] and not (sn and e.t < sn.t) then
       local raid
@@ -318,7 +318,8 @@ function ns.LootHistory()
       end
       for name in e.names:gmatch("[^,]+") do
         out[#out + 1] = { t = e.t, item = item, winner = Ambiguate(name, "short"), amount = -e.amount,
-          by = e.a, raid = raid, id = e.id, roll = e.reason:find("%(free roll%)$") ~= nil }
+          by = e.a, raid = raid, id = e.id, roll = e.reason:find("%(free roll%)$") ~= nil,
+          council = e.reason:find("%(council%)$") ~= nil }
       end
     end
   end

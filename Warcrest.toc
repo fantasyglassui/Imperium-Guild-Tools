@@ -39,6 +39,7 @@ Raids\Raids.lua
 Raids\Bosses.lua
 Raids\DKP.lua
 Raids\Wishlist.lua
+Raids\Council.lua
 
 # 5. Officer log, the weekly recap, player profiles and achievements
 Guild\OfficerLog.lua
@@ -72,6 +73,7 @@ UI\MapPins.lua
 UI\MapPins.xml
 UI\MinimapButton.lua
 UI\Auction.lua
+UI\Council.lua
 UI\PlayerCard.lua
 UI\Updates.lua
 UI\Welcome.lua

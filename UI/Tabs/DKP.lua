@@ -565,7 +565,7 @@ local function Build(page)
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(("Won by %s for %d DKP"):format(l.winner, l.amount), C.accent[1], C.accent[2], C.accent[3])
         GameTooltip:AddLine(date("%A %b %d, %H:%M", l.t) .. (l.raid and (" - " .. l.raid) or ""), 0.8, 0.8, 0.8)
-        GameTooltip:AddLine((l.roll and "Free roll" or "Auction") .. " run by " .. l.by, 0.6, 0.6, 0.6)
+        GameTooltip:AddLine((l.roll and "Free roll" or (l.council and "Loot council" or "Auction")) .. " run by " .. l.by, 0.6, 0.6, 0.6)
         if ns.IsAddonOfficer() then
           GameTooltip:AddLine("Right-click to refund it or give it to someone else.", 1, 0.5, 0.5)
         end
@@ -577,7 +577,7 @@ local function Build(page)
       row.date:SetText(date("%b %d", l.t))
       row.item:SetText(l.item)
       row.winner:SetText(l.winner)
-      row.dkp:SetText(l.roll and (UI.Code("muted") .. "roll|r") or l.amount)
+      row.dkp:SetText(l.roll and (UI.Code("muted") .. "roll|r") or (l.council and (UI.Code("muted") .. "council|r") or l.amount))
     end, true)
   P.lootList.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, -27)
 

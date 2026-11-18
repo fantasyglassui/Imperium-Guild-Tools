@@ -153,7 +153,7 @@ ns.PREFIX_BULK = "TheImperiumB"
 local BURST, REFILL = 8, 0.9            -- messages, and messages per second, per prefix
 local MAX_BULK = 600                    -- bulk messages waiting before new ones are dropped
 local URGENT = { B1 = true, B2 = true, B3 = true, B4 = true, B5 = true, K = true, D2 = true,
-  S = true, L = true, W = true }
+  S = true, L = true, W = true, L1 = true, L2 = true, L3 = true, L4 = true }
 local queues = { {}, {}, {} }           -- 1 urgent, 2 normal, 3 bulk
 local tokens = {}
 local lastRefill
@@ -538,6 +538,8 @@ SlashCmdList.WARCREST = function(input)
       ns.SetMinimapButtonShown(show)
       ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /warcrest minimap to bring it back."))
     end
+  elseif msg == "council" or msg == "lc" then
+    ns.OpenCouncil()
   elseif msg == "bosses" or msg == "boss" then
     ns.ShowBossChecks()
   elseif msg == "debug" then
