@@ -43,6 +43,14 @@ Enemy players who keep killing guild members in world PvP (3 times in 30 days by
 - **Kill a wanted player and the bounty is claimed:** they come off the list until they gank enough again.
 - Right-click someone to hide them from your own list.
 
+## Bounties
+
+Bounties are **off** until a guild leader or officer turns them on (Settings > Alerts > Bounties, then Save for whole guild). Once they're on:
+
+- Officers put a reward on an enemy player's head from the Wanted tab's **Bounties** view (up to 1000 DKP, or no reward if the guild doesn't use DKP), with an optional note.
+- The whole guild hears about it. The first guild member to land the killing blow on that player in the next 30 days claims it and is paid automatically. Kills count the same way as on the Kills tab.
+- Officers can withdraw a bounty that hasn't been claimed. Claiming a bounty earns the **Collector** achievement.
+
 ## Deaths on the map
 
 When a guild member dies in world PvP, an X (or a skull) marks the spot on the world map, including inside OpenMap. Hover a mark for details; click it to set a TomTom waypoint if you use TomTom.

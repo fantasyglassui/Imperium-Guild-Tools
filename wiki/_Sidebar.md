@@ -10,6 +10,7 @@
 **Officers**
 - [Officer Raid Night Guide](Officer-Raid-Night-Guide)
 - [Officer DKP Management](Officer-DKP-Management)
+- [Loot Council](Loot-Council)
 
 **Reference**
 - [Commands](Commands)

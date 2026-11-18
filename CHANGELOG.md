@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.2.0
+- New: **alert banners.** Guild alerts now drop in at the top of the screen as a card in the Warcrest look, with a colour, icon and heading for each kind: a guild kill, a wanted ganker spotted, a boss down, a bounty, a kill streak, an achievement. Up to three stack, and each fades after a few seconds. Click one to open the matching tab, right-click to dismiss it, Shift-drag to move them. Each kind also has its own sound. Prefer the old look? Settings > Alerts > On screen switches to the game's raid warning text, or chat only.
+- New: **loot council.** Hand out loot by vote instead of DKP (it works whether or not the guild uses DKP). An officer starts a vote with /warcrest council or the Loot council button on the Wishlist tab; everyone in the raid gets a small window to say Need, Greed or Pass. Officers see everyone who wants it with their wishlist, raid attendance, items won in the last 30 days and DKP, and vote with a click. The officer who started it awards the item, and it goes in the loot history.
+- New: **raid groups planner.** The Raids tab's new Plan view lets officers put the sign-ups into groups 1 to 8 or on the bench: click a name, then a group. Auto-fill does it for you (tanks in group 1, a healer in each group, then everyone else, up to the raid size you pick). Everyone can see the plan. At raid time, Invite sign-ups invites only the planned groups, and Arrange raid moves everyone into their planned group.
+- New: **bounties**, off until a guild leader or officer turns them on (Settings > Alerts > Bounties). Officers put a reward on an enemy player's head on the Wanted tab's Bounties view; the first guild member to kill them in the next 30 days claims it and is paid automatically (in DKP, if the guild uses it). The guild hears when a bounty is placed and when it's claimed.
+- New: **German, French and Spanish.** Warcrest follows your game's language. Pick another in Settings > General (Language), then /reload. Help and the changelog stay in English for now.
+- New achievement: Collector (claim a bounty), 44 in all.
+- Polish: achievement tiles give long names the full width (the TITLE tag moved to the bottom), a single-boss raid's clear is announced without "all 1 bosses", the Achievements header no longer repeats your count, and the help covers the new features.
+
 ## 3.1.1
 - Ready for raid launch: Warcrest now notes every raid boss that dies and whether it counted for the guild, and why not if it didn't (not a raid instance, not in a raid group, fewer than 5 guild members, or guild members under half the raid). Type /warcrest bosses to see the last few. With /warcrest debug on, each check also shows in chat as it happens.
 - Boss kills are also picked up from the game's boss-kill event, in case the encounter event doesn't come, and a boss the game gives no ID for still counts (by its name).

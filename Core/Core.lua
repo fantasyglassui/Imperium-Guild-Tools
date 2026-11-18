@@ -558,7 +558,12 @@ SlashCmdList.WARCREST = function(input)
   elseif msg == "test" then
     if ns.TestAlert then ns.TestAlert() end
   elseif msg == "sound" then toggle("sound", "Sound")
-  elseif msg == "warn" then toggle("warning", "Center-screen warning")
+  elseif msg == "warn" then
+    -- On-screen alerts on (as a banner) or off (chat only).
+    local on = ns.AlertStyle() == "off"
+    ns.db.alertStyle = on and "banner" or "off"
+    ns.db.warning = on
+    ns.Say(on and "On-screen alerts on." or "On-screen alerts off: chat only.")
   elseif msg == "minimap" then
     if ns.SetMinimapButtonShown then
       local show = not ns.IsMinimapButtonShown()

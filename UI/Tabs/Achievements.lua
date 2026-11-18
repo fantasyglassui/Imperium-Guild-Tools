@@ -355,7 +355,8 @@ local function Subtitle()
     return #feed == 0 and "Achievements earned across the guild" or (#feed .. " earned across the guild")
   end
   local name = who()
-  if isMe() then return ns.TF("Yours: %d of %d earned", ns.AchievementCount(name), #ns.ACHIEVEMENTS) end
+  -- Your count is shown under your name already.
+  if isMe() then return ns.T("Earn achievements and titles; click any name to see someone's record.") end
   return ns.TF("%s: %d of %d earned", Ambiguate(name, "short"), ns.AchievementCount(name), #ns.ACHIEVEMENTS)
 end
 

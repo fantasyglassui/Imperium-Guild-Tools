@@ -11,14 +11,19 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Raid sign-ups.** Officers schedule raids; members sign up by role and get a reminder before the raid. The Raids tab shows who's coming by class and warns when a raid is short of tanks, healers or a class.
 - **Weekly recap.** After the Tuesday reset, a summary of the guild's week: kills and top head hunters, raids, bosses and loot.
 - **DKP.** Earned on time and every hour of a raid, or awarded by officers. Spent by bidding on loot in live auctions.
-- **Death alerts.** When a guild member dies, everyone in the guild running the addon gets an alert in chat and in the middle of the screen, with a sound. Two kinds of death are covered: world PvP, and falling, drowning or fatigue. Deaths to monsters, and deaths in battlegrounds and arenas, are not announced.
+- **Death alerts.** When a guild member dies, everyone in the guild running the addon gets an alert in chat and as a banner at the top of the screen, with a sound. Two kinds of death are covered: world PvP, and falling, drowning or fatigue. Deaths to monsters, and deaths in battlegrounds and arenas, are not announced.
 - **PvP kill alerts.** When a guild member kills an enemy player, the guild hears about it. Guildmates who take down the same player together share one alert.
 - **Choose what you see.** Turn each alert type on or off for yourself.
 - **Deaths on the map.** Recent guild deaths (24 hours by default, adjustable from 1 hour to 7 days) are marked on the world map with an X (a skull for PvP), including inside OpenMap. Click a mark to set a TomTom waypoint.
 - **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
 - **Loot wishlists.** Mark the items you Need or Want; officers and bidders see who wants an item when it's auctioned.
 - **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid and guild-first announcements, and a month calendar of raids and raid nights.
-- **Achievements and titles.** 43 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
+- **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open the matching tab.
+- **Loot council.** Vote on who gets an item, with each candidate's wishlist, attendance and recent loot in front of the officers. Works with or without DKP.
+- **Raid groups planner.** Put sign-ups into groups and on the bench before the raid; Arrange raid moves everyone into place.
+- **Bounties.** Officers can put a reward on a ganker's head; the guild member who kills them claims it. Off until an officer turns it on.
+- **German, French and Spanish.** Follows your game's language, or pick one in Settings.
+- **Achievements and titles.** 44 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
 - **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
 - **Kill log and Top Head Hunters.** Every PvP kill by guild members, with killing blows and assists, and a monthly board of the guild's top PvP killers.
 - **Wanted list.** Enemy players who keep killing guild members. When a guildmate sees one, the whole guild is alerted and the sighting goes on the map.
@@ -58,6 +63,7 @@ When updating by hand, delete the old `Warcrest` and `TheImperium` folders first
 | `/warcrest raids` | Open raid sign-ups |
 | `/warcrest dkp` | Open DKP |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
+| `/warcrest council` | The loot council vote, or start one (officers) |
 | `/warcrest kills` | Open the kill log |
 | `/warcrest wanted` | Open the wanted list |
 | `/warcrest card [name]` | Show a guild member's player card (yours if no name) |
@@ -67,7 +73,7 @@ When updating by hand, delete the old `Warcrest` and `TheImperium` folders first
 | `/warcrest sync` | Fetch the last two days of guild history from guildmates |
 | `/warcrest test` | Show a test alert (a different death type each time) |
 | `/warcrest sound` | Turn alert sounds on or off for you |
-| `/warcrest warn` | Turn the center-screen alert on or off for you |
+| `/warcrest warn` | Turn on-screen alert banners on or off for you |
 | `/warcrest minimap` | Show or hide the minimap button |
 | `/warcrest debug` | Show error details in chat, for troubleshooting |
 | `/warcrest updates` | Show what changed in recent versions |

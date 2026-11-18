@@ -22,6 +22,12 @@ Click a name in the sign-up list to open their **player card** (their attendance
 
 Hover the warning for the full breakdown, including tentative sign-ups by role. Raids with gaps have an orange **!** in the Upcoming raids list. If you can play a role the raid is missing, now's the time to say so.
 
+## Plan
+
+Switch the Raids tab to **Plan** to see the selected raid's groups. Officers put people into groups 1 to 8 or on the bench: click a name, then a group (or the bench). **Auto-fill** places everyone who accepted and isn't placed yet: tanks in group 1, a healer in each group, then everyone else, up to the raid size you pick. Tentative sign-ups and anyone over the size go on the bench. **Clear** starts over. The arrows step between upcoming raids.
+
+Everyone can see the plan, with their own name picked out. At raid time, **Invite sign-ups** invites only the people in groups 1 to 8, and **Arrange raid** moves everyone in the raid into their planned group (you need to be raid leader or assistant, and out of combat).
+
 ## Calendar
 
 Switch the Raids tab to **Calendar** to see a month at a glance: raids scheduled (gold), raid nights held (green, with how many bosses died) and past raids. Hover a day for the details, or click a raid to open it. The arrows move between months; **Today** comes back.

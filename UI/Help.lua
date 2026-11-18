@@ -28,7 +28,14 @@ local TOPICS = {
     B("Reminders:") .. " you're reminded before raids you signed up for. Officers are warned when a raid is short of tanks or healers.",
     B("Calendar:") .. " the month's raids (gold), raid nights held (green) and bosses killed. Click a raid to open it.",
     B("Progress:") .. " the bosses the guild has killed in each raid, with first kills. A kill counts when 5 or more guild members, at least half the raid, kill a raid boss. The first kill of each boss is announced.",
+    B("Plan:") .. " officers put the sign-ups into groups 1 to 8 or on the bench, by clicking a name and then a group, or with Auto-fill (tanks in group 1, a healer in each group). Everyone can see the plan. At raid time, Invite sign-ups invites only the planned groups, and Arrange raid moves everyone into their group (raid leader or assistant).",
     B("Officers:") .. " New raid schedules one. Start raid on raid night records who's there (and gives DKP, if the guild uses it). Invite sign-ups invites everyone who accepted.",
+  }, "\n\n") end },
+  { "Loot council", function() return table.concat({
+    "A way to hand out loot by vote instead of DKP, and it works whether or not the guild uses DKP.",
+    B("Starting a vote:") .. " an officer in the raid opens " .. B("/warcrest council") .. " (or the Loot council button on the Wishlist tab), Shift-clicks the item in, and clicks Start vote.",
+    B("Everyone in the raid:") .. " a small window asks Need, Greed or Pass. You can change your answer until time runs out.",
+    B("Officers:") .. " see everyone who said Need or Greed, with their wishlist, raid attendance, items won lately and DKP, and click a name to vote. The officer who started it awards the item; it's recorded in the loot history, free of charge.",
   }, "\n\n") end },
   { "DKP and loot", function()
     if not ns.UsesDKP() then
@@ -52,6 +59,7 @@ local TOPICS = {
     B("Top Head Hunters:") .. " the monthly leaderboard on the Kills tab. The champion is announced on the 1st.",
     B("Streaks and revenge:") .. " the guild hears about kill streaks, when a big streak is ended, and when someone kills a guildmate's killer.",
     B("Wanted:") .. " enemy players who keep killing guild members. When anyone spots one, everyone is alerted and the spot is marked on the map.",
+    B("Bounties:") .. " off until an officer turns them on (Settings > Alerts > Bounties). Then officers can put a reward on an enemy player's head on the Wanted tab, and the first guild member to kill them in 30 days claims it, paid in DKP if the guild uses it.",
   }, "\n\n") end },
   { "Achievements and titles", function() return table.concat({
     "The Achievements tab shows what you've earned and your progress on the rest, for PvP, raids, bosses and loot. They come from the guild's shared history, so they count what you did before you installed Warcrest.",
@@ -60,7 +68,9 @@ local TOPICS = {
   }, "\n\n") end },
   { "Alerts and settings", function() return table.concat({
     B("Alerts:") .. " the Settings tab lists every alert. The Guild column is set by officers for everyone; the You column is just for you.",
+    B("On screen:") .. " alerts drop in as a banner at the top of the screen, with a colour and icon for each kind. Click one to open its tab, right-click to dismiss it, Shift-drag to move them. Settings > Alerts can switch to the game's raid warning text, or chat only.",
     B("Quiet mode:") .. " hold alerts in dungeons, raids or combat. Held alerts are listed in chat once you're out.",
+    B("Language:") .. " Warcrest follows your game's language (English, German, French or Spanish). Pick another in Settings > General, then /reload.",
     B("The window:") .. " drag the bottom-right corner to make it bigger, or use the Size slider in Settings > General.",
   }, "\n\n") end },
   { "For officers", function() return table.concat({
@@ -74,6 +84,7 @@ local TOPICS = {
     B("/warcrest raids") .. ", " .. B("dkp") .. ", " .. B("kills") .. ", " .. B("wanted") .. ", " .. B("wishlist") .. ", " .. B("achievements") .. "  open that tab",
     B("/warcrest card Name") .. "  a guild member's player card",
     B("/warcrest auction [item] [min bid]") .. "  auction an item to your raid (officers)",
+    B("/warcrest council") .. " (or " .. B("lc") .. ")  the loot council vote",
     B("/warcrest recap") .. "  last week's guild recap",
     B("/warcrest quiet") .. "  hold alerts during combat on or off",
     B("/warcrest test") .. "  show a test alert",

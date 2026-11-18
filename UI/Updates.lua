@@ -11,6 +11,13 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.2.0", date = "Nov 18, 2026", items = {
+    "Alert banners: guild alerts drop in at the top of the screen, with a colour, icon and sound for each kind. Click one to open its tab.",
+    "Loot council: vote on who gets an item (/warcrest council, or the button on the Wishlist tab).",
+    "Raid groups planner: the Raids tab's Plan view puts sign-ups into groups, and Arrange raid moves everyone into place.",
+    "Bounties: officers can turn them on in Settings, then put a reward on a ganker's head.",
+    "Warcrest now speaks German, French and Spanish (Settings > General > Language).",
+  } },
   { version = "3.1.1", date = "Nov 18, 2026", items = {
     "Ready for raid launch: /warcrest bosses shows the last raid bosses that died and whether each counted for the guild (and why not).",
   } },

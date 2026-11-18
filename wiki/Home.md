@@ -24,7 +24,10 @@ Warcrest was made for **<The Imperium>** and used to carry its name. It now work
 - A **Wanted list** of enemy players who keep killing guild members, with guild-wide sighting alerts.
 - **Raid sign-ups** by role, reminders, one-click invites, standby and no-show tracking.
 - **DKP** for attendance, hourly play and boss kills, spent in **live loot auctions** (open or hidden bids), with free rolls, decay, alts, corrections and seasons.
-- **Loot wishlists** (Need or Want), shown to officers and bidders when an item is auctioned.
+- **Loot wishlists** (Need or Want), shown to officers and bidders when an item is auctioned, and a **loot council** for guilds that vote on loot.
+- **Raid groups planner:** groups and bench planned from the sign-ups, and the raid arranged in one click.
+- **Bounties** on gankers (officers turn them on), and **alert banners** with a look and sound for each kind of alert.
+- In **English, German, French and Spanish**.
 - **Achievements and titles** earned from kills, streaks, raids and loot, and **player cards** for every guild member.
 - **Guild tools:** roster management for officers, level-up celebrations, death marks on the map, and an Officer Log.
 
