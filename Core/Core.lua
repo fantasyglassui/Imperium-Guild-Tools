@@ -477,6 +477,10 @@ SlashCmdList.THEIMPERIUM = function(input)
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
   elseif msg == "recap" or msg == "recap now" or msg == "recap week" then
     if ns.ShowRecap then ns.ShowRecap(msg == "recap" and -1 or 0) end
+  elseif msg:find("^card") then
+    -- /imperium card [name]: a guild member's player card (yours if no name).
+    local who = input:match("^%s*%S+%s+(%S+)") or UnitName("player")
+    if ns.ShowPlayerCard then ns.ShowPlayerCard(who) end
   elseif msg == "version" then
     ns.Say("Version " .. ns.version .. (ns.QueueSize() > 0 and (" (" .. ns.QueueSize() .. " messages waiting to send)") or ""))
     if #ns.loadErrors > 0 then
@@ -493,6 +497,7 @@ SlashCmdList.THEIMPERIUM = function(input)
     print("  /imperium auction [item] [min bid] - auction an item to your raid (officers)")
     print("  /imperium kills - open the kill log")
     print("  /imperium wanted - open the wanted list")
+    print("  /imperium card [name] - a guild member's player card")
     print("  /imperium quiet - hold alerts during combat on or off")
     print("  /imperium sync - fetch recent guild history from guildmates")
     print("  /imperium test - show a test alert")

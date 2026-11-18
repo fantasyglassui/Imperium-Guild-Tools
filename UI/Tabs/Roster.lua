@@ -48,6 +48,7 @@ local function UpdateDetail()
   for _, w in ipairs({ d.pub, d.off, d.save, d.promote, d.demote, d.remove }) do
     UI.SetEnabled(w, false)
   end
+  UI.SetEnabled(d.card, m ~= nil)
 
   if not m then
     hideRemoveConfirm()
@@ -216,6 +217,7 @@ local function BuildTable(page)
         hideRemoveConfirm()
         ns.RefreshPanel()
       end)
+      row:SetScript("OnDoubleClick", function(self) ns.ShowPlayerCard(self.item.name) end)
     end,
     function(row, m)
       local r, g, b = UI.ClassColor(m.classFile)
@@ -323,6 +325,12 @@ local function BuildMember(side)
   d.cancel:SetPoint("LEFT", d.confirm, "RIGHT", 6, 0)
   d.cancel:Hide()
   d.cancel:SetScript("OnClick", hideRemoveConfirm)
+
+  d.card = UI.Button(d, "View player card", INNER)
+  d.card:SetHeight(24)
+  d.card:SetPoint("BOTTOMLEFT", 14, 12)
+  d.card:SetScript("OnClick", function() if selected then ns.ShowPlayerCard(selected.name) end end)
+  UI.Tooltip(d.card, "Player card", "Their kills, deaths, nemesis, best streak, DKP, attendance and loot in one place. Double-click a name in the list to open it too.")
 end
 
 local function BuildGuild(side)

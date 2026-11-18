@@ -39,6 +39,7 @@ Raids\DKP.lua
 # 5. Officer log and the weekly recap
 Guild\OfficerLog.lua
 Guild\Recap.lua
+Guild\Profile.lua
 
 # 6. Interface: the theme, shared widgets and the guild panel
 UI\Theme.lua
@@ -61,4 +62,5 @@ UI\MapPins.lua
 UI\MapPins.xml
 UI\MinimapButton.lua
 UI\Auction.lua
+UI\PlayerCard.lua
 UI\Updates.lua

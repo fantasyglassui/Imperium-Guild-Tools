@@ -404,6 +404,8 @@ local function BuildEventView(parent)
       row.status = UI.Label(row, "", "Small")
       row.status:SetPoint("LEFT", 280, 0)
       RowLine(row)
+      row:SetScript("OnClick", function(self) ns.ShowPlayerCard(self.item.name) end)
+      UI.Tooltip(row, function() return Ambiguate(row.item.name, "short") end, "Click for their player card.")
     end,
     function(row, s)
       row.name:SetText(Ambiguate(s.name, "short"))

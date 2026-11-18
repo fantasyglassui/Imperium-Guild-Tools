@@ -317,10 +317,14 @@ local function BuildTable(page)
       line:SetHeight(1)
       line:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
 
-      row:RegisterForClicks("RightButtonUp")
+      row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
       row:SetScript("OnClick", function(self, button)
-        if button == "RightButton" and ns.IsAddonOfficer() then
-          StaticPopup_Show("IMPERIUM_REMOVE_KILL", ns.DescribeKill(self.item), nil, self.item)
+        if button == "RightButton" then
+          if ns.IsAddonOfficer() then
+            StaticPopup_Show("IMPERIUM_REMOVE_KILL", ns.DescribeKill(self.item), nil, self.item)
+          end
+        else
+          ns.ShowPlayerCard(ns.KillingBlow(self.item))
         end
       end)
       row:SetScript("OnEnter", function(self)
@@ -331,6 +335,7 @@ local function BuildTable(page)
         local assists = ns.Assists(k)
         if #assists > 0 then GameTooltip:AddLine("Assists: " .. table.concat(assists, ", "), 0.8, 0.8, 0.8, true) end
         GameTooltip:AddLine(k.zone .. ", " .. UI.FormatTime(k.t), 0.7, 0.7, 0.7)
+        GameTooltip:AddLine("Click for " .. ns.KillingBlow(k) .. "'s player card.", 0.6, 0.6, 0.6)
         if ns.IsAddonOfficer() then GameTooltip:AddLine("Right-click to remove this kill for the guild.", 1, 0.5, 0.5) end
         GameTooltip:Show()
       end)
@@ -429,7 +434,11 @@ local function BuildSide(page)
       GameTooltip:SetText(e.name)
       GameTooltip:AddLine(("%d killing blow%s, %d assist%s"):format(e.count, e.count == 1 and "" or "s",
         e.assists, e.assists == 1 and "" or "s"), 1, 1, 1)
+      GameTooltip:AddLine("Click for their player card.", 0.6, 0.6, 0.6)
       GameTooltip:Show()
+    end)
+    row:SetScript("OnMouseUp", function(self, button)
+      if button == "LeftButton" and self.entry then ns.ShowPlayerCard(self.entry.name) end
     end)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     P.board[i] = row

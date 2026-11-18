@@ -477,6 +477,7 @@ local function Build(page)
       row.dkp:SetPoint("RIGHT", -10, 0)
       row.dkp:SetJustifyH("RIGHT")
       RowLine(row)
+      row:SetScript("OnClick", function(self) ns.ShowPlayerCard(self.item.name) end)
       row:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(self.item.name .. ": " .. self.item.dkp .. " DKP")
@@ -491,6 +492,7 @@ local function Build(page)
         if #noShows > 0 then
           GameTooltip:AddLine(("No-shows: %d (%s)"):format(#noShows, table.concat(noShows, ", ")), 1, 0.4, 0.4, true)
         end
+        GameTooltip:AddLine("Click for their player card.", 0.6, 0.6, 0.6)
         GameTooltip:AddLine(" ")
         for i, e in ipairs(ns.DKPHistory(self.item.name)) do
           if i > 10 then break end

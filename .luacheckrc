@@ -37,7 +37,7 @@ read_globals = {
   "GetMinimapShape", "GetPVPLifetimeStats", "GetRealZoneText", "GetServerTime", "GetTime", "GetZoneText",
   "InCombatLockdown", "IsFalling", "IsHarmfulSpell", "IsShiftKeyDown", "PlaySound", "RandomRoll",
   -- Interface
-  "ChatEdit_InsertLink", "ChatFontNormal", "ChatFrameUtil", "ChatTypeInfo", "CreateFont", "CreateFrame", "CreateFromMixins", "STANDARD_TEXT_FONT",
+  "ChatEdit_InsertLink", "ChatFontNormal", "ChatFrameUtil", "ChatFrame_SendTell", "ChatTypeInfo", "CreateFont", "CreateFrame", "CreateFromMixins", "STANDARD_TEXT_FONT",
   "CreateVector2D", "GameTooltip", "HideUIPanel", "MapCanvasDataProviderMixin", "MapCanvasPinMixin",
   "Minimap", "Mixin", "OpenWorldMap", "PanelTemplates_SetNumTabs", "PanelTemplates_SetTab",
   "PanelTemplates_TabResize", "RaidNotice_AddMessage", "RaidWarningFrame", "Settings", "SettingsPanel",
