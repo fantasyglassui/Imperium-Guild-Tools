@@ -56,8 +56,11 @@ local function RefreshEvent(event)
   d.when:SetText(when(event.start) .. "   |cff8b95a7scheduled by " .. event.a .. "|r")
   d.notes:SetText(event.notes ~= "" and event.notes or "|cff8b95a7No notes.|r")
   local c = ns.SignupCounts(event.id)
-  d.counts:SetText(("|cff6fd08c%d accepted|r  (%d tank, %d healer, %d DPS)   |cffe0b94c%d tentative|r   |cffff6b6b%d declined|r")
-    :format(c.accept, c.tank, c.healer, c.dps, c.tentative, c.decline))
+  -- Counts in color only when there are some, so a row of zeros stays quiet.
+  local function count(n, word, color) return (n > 0 and color or UI.Code("muted")) .. n .. " " .. word .. "|r" end
+  d.counts:SetText(("%s  %s(%d tank, %d healer, %d DPS)|r   %s   %s"):format(
+    count(c.accept, "accepted", UI.Code("good")), UI.Code("muted"), c.tank, c.healer, c.dps,
+    count(c.tentative, "tentative", UI.Code("accent")), count(c.decline, "declined", UI.Code("bad"))))
   -- Who's coming by class, and what the raid is short of.
   local mk = ns.RaidMakeup(event.id)
   local parts = {}
@@ -524,4 +527,12 @@ local function Build(page)
     P.bossLabel, P.boss, P.sessionButton }, 0, 1)
 end
 
-UI.AddTab({ id = "raids", title = "Raids", build = Build, refresh = Refresh })
+-- The header's subtitle: how many raids are coming up, and whether one is on.
+local function Subtitle()
+  local n = #ns.RaidEvents()
+  local text = n == 0 and "No raids scheduled" or (n == 1 and "1 raid scheduled" or (n .. " raids scheduled"))
+  if ns.ActiveSession() then text = text .. " · raid night in progress" end
+  return text
+end
+
+UI.AddTab({ id = "raids", title = "Raids", build = Build, refresh = Refresh, subtitle = Subtitle })

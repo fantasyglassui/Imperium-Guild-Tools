@@ -555,6 +555,7 @@ function ns.ShowExport(text)
     local hint = UI.Label(f, "Press Ctrl+C to copy, then paste it into a text file or spreadsheet.", "GameFontHighlightSmall")
     hint:SetPoint("TOPLEFT", 16, -32)
     local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+    UI.SkinScrollBar(sf)
     UI.Card(sf, 4)
     sf:SetPoint("TOPLEFT", 16, -52)
     sf:SetPoint("BOTTOMRIGHT", -34, 16)
@@ -578,4 +579,12 @@ function ns.ShowExport(text)
   exportWin.box:HighlightText()
 end
 
-UI.AddTab({ id = "dkp", title = "DKP", build = Build, refresh = Refresh })
+-- The header's subtitle: your own DKP, and whether a raid night is earning more.
+local function Subtitle()
+  local text = "Your DKP: " .. ns.Balance(UnitName("player"))
+  local s = ns.ActiveSession()
+  if s then text = text .. " · " .. s.title .. " raid night in progress" end
+  return text
+end
+
+UI.AddTab({ id = "dkp", title = "DKP", build = Build, refresh = Refresh, subtitle = Subtitle })

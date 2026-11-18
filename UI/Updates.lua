@@ -11,7 +11,7 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
-  { version = "2.12.0", date = "Nov 18, 2026", items = {
+  { version = "2.12.0", date = "Nov 17, 2026", items = {
     "A new look: the guild panel and its windows are redesigned, dark and flat with Imperium gold, a new font, and a side menu with icons.",
     "The Kills tab is redesigned: a kill table, this month's leader, and Top Head Hunters with bars. Pick the period at the top, and drag the borders between column headings to see long names in full.",
     "Resize the window: drag its bottom-right corner to show more rows, or set its size in Settings > Guild window.",
@@ -126,6 +126,8 @@ local function create()
   f.sub:SetPoint("TOPLEFT", f.heading, "BOTTOMLEFT", 0, -6)
 
   local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+
+  UI.SkinScrollBar(sf)
   sf:SetPoint("TOPLEFT", 16, -92)
   sf:SetPoint("BOTTOMRIGHT", -34, 50)
   local content = CreateFrame("Frame", nil, sf)

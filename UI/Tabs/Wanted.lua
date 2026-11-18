@@ -120,4 +120,11 @@ local function Build(page)
   UI.FollowAll(page, { P.removeOnKill, note }, 0, 1)
 end
 
-UI.AddTab({ id = "wanted", title = "Wanted", build = Build, refresh = Refresh })
+-- The header's subtitle: how many are on the list.
+local function Subtitle()
+  local n = #ns.WantedList()
+  if n == 0 then return "Nobody is wanted right now" end
+  return n == 1 and "1 enemy player wanted" or (n .. " enemy players wanted")
+end
+
+UI.AddTab({ id = "wanted", title = "Wanted", build = Build, refresh = Refresh, subtitle = Subtitle })

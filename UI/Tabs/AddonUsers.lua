@@ -132,4 +132,13 @@ local function Build(page)
   UI.Follow(page, note, 0, 1)
 end
 
-UI.AddTab({ id = "addon", title = "Addon", build = Build, refresh = Refresh })
+-- The header's subtitle: how many members have it (the same count as the tab).
+local function Subtitle()
+  local all = rows()
+  if #all == 0 then return "Who has The Imperium installed" end
+  local with = 0
+  for _, r in ipairs(all) do if r.status ~= "no" then with = with + 1 end end
+  return ("%d of %d members have The Imperium"):format(with, #all)
+end
+
+UI.AddTab({ id = "addon", title = "Addon", build = Build, refresh = Refresh, subtitle = Subtitle })

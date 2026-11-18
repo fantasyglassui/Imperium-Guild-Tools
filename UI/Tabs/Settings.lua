@@ -100,6 +100,7 @@ end
 local function Build(page)
   -- Scrolling content
   local sf = CreateFrame("ScrollFrame", nil, page, "UIPanelScrollFrameTemplate")
+  UI.SkinScrollBar(sf)
   sf:SetPoint("TOPLEFT", 0, 0)
   sf:SetPoint("BOTTOMRIGHT", -24, 0)
   local content = CreateFrame("Frame", nil, sf)

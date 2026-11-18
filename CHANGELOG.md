@@ -3,12 +3,15 @@
 ## 2.12.0
 - New look: the guild panel and every window have been redesigned. It's dark and flat with Imperium gold accents, in a clean new font (Inter), with a side menu with icons in place of the tabs along the bottom, and a header naming the tab you're on. Buttons, inputs, checkboxes and lists all match, and each screen's main action (Add DKP, Start raid, Bid, Save for whole guild...) is in gold. Your own sign-up answer on the Raids tab is shown in gold too.
 - The loot auction, Alts, Import, Export and What's new windows use the new look.
+- The header under each tab's name shows something useful at a glance: guild size and how many are online, raids scheduled and whether a raid night is on, your own DKP, how many are wanted, and how many members have the addon.
+- Slimmer scroll bars in the theme's colors.
 - The Kills tab is redesigned: kills are a table (killer, victim, where with assists or battleground underneath, and when), with a "Leading this month" card showing the leader, their count and how far ahead they are, and Top Head Hunters with a bar for each place. Pick the period (this month, last month, 7 days, all time) and kill type at the top; the header shows how many kills that is. Hover a hunter for their assists. Drag the borders between the Killer, Victim and Where headings to resize those columns and see long names in full, or double-click a border to fit the column to its longest name; your widths are remembered.
 - Lists have a dark card background, and every other row is shaded, so it's easier to follow a row across.
 - Every list says something when it's empty or nothing matches your search, including ones that used to be blank: the roster, DKP standings and changes, raid sign-ups, your raid group and the Addon tab.
 - Resizable: drag the bottom-right corner of the guild window to make it bigger, and the lists stretch to show more rows (the kill table, roster, DKP standings, loot and changes, raids and sign-ups, the Wanted list, the officer log and the Addon tab). Settings > Guild window has a Size slider (70% to 150%) that scales the window and its pop-ups, text and all, and a button to reset the size and position. Both are remembered.
 - The guild panel opens on the tab you used last.
 - Tooltips on 30 buttons that didn't explain themselves, such as Promote, Start raid, Add DKP, Decay now, Import balances and the kill log filters. They show even when a button is greyed out, so you can see what it does.
+- On the Raids tab, sign-up counts are only in color when there are some, so "0 declined" no longer shows in red.
 - Fixed: on the Raids tab, the raid night details could run into the On time / Per hour / Per boss boxes below them.
 - Behind the scenes: the addon's files are organized into folders by feature (Core, Guild, PvP, Raids, and the panel's tabs under UI/Tabs). Nothing changes in game. If you install by hand, delete the old TheImperium folder before unzipping the new one, so the old loose files don't stay behind (they're unused, but it keeps things tidy).
 

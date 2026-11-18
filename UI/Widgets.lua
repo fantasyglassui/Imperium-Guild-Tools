@@ -315,6 +315,31 @@ end
 ------------------------------------------------------------------------
 -- Lists
 ------------------------------------------------------------------------
+-- A slim scroll bar in the theme's colors, for the game's scroll frame
+-- template. Only the parts that are there get restyled, so if a game version
+-- builds its scroll bar differently it just keeps its usual look.
+function UI.SkinScrollBar(sf)
+  local bar = sf.ScrollBar
+  if type(bar) ~= "table" then return end
+  for _, key in ipairs({ "ScrollUpButton", "ScrollDownButton" }) do
+    local b = bar[key]
+    if type(b) == "table" and b.SetAlpha then
+      b:SetAlpha(0)
+      b:EnableMouse(false)
+    end
+  end
+  local thumb = bar.GetThumbTexture and bar:GetThumbTexture()
+  if type(thumb) == "table" and thumb.SetTexture then
+    thumb:SetTexture("Interface\\Buttons\\WHITE8X8")
+    thumb:SetVertexColor(0.29, 0.33, 0.40, 1)
+    thumb:SetWidth(5)
+    local track = bar:CreateTexture(nil, "BACKGROUND")
+    track:SetPoint("TOP", 0, 0)
+    track:SetPoint("BOTTOM", 0, 0)
+    track:SetWidth(5)
+    track:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+  end
+end
 -- A scrolling list on a dark card. makeRow(row) sets up a new row; fill(row,
 -- item) shows an item. list:SetEmptyText(text) sets what it says when empty.
 -- plain: no card of its own (for a list inside a card the caller draws).
@@ -324,6 +349,7 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   local content = CreateFrame("Frame", nil, sf)
   content:SetSize(width - 4, 1)
   sf:SetScrollChild(content)
+  UI.SkinScrollBar(sf)
   if not plain then UI.Card(sf, 2) end
 
   local empty = sf:CreateFontString(nil, "OVERLAY")

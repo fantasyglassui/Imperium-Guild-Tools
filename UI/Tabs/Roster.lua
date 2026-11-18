@@ -301,4 +301,12 @@ local function Build(page)
   UI.Grow(page, P.motdBox, 1, 0)
 end
 
-UI.AddTab({ id = "roster", title = "Roster", build = Build, refresh = Refresh })
+-- The header's subtitle: guild size and who's online.
+local function Subtitle()
+  local roster, online = ns.GetRoster(), 0
+  for _, m in ipairs(roster) do if m.online then online = online + 1 end end
+  if #roster == 0 then return "Members, notes and ranks" end
+  return ("%d members · %d online"):format(#roster, online)
+end
+
+UI.AddTab({ id = "roster", title = "Roster", build = Build, refresh = Refresh, subtitle = Subtitle })
