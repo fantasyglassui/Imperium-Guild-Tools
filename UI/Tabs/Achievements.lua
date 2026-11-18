@@ -19,7 +19,7 @@ local viewing -- whose achievements; nil = yours
 local COLS = 4
 local GAP = 10
 local TOP = 66              -- the strip with the member's name above the tiles
-local TILE_W = (740 - (COLS - 1) * GAP) / COLS
+local TILE_W = (740 - (COLS - 1) * GAP) / COLS -- changes when the window is resized
 local TILE_H = 86
 local MAX_TILES = 16
 
@@ -306,6 +306,20 @@ local function BuildGuild(page)
   P.leadersEmpty:SetPoint("TOPLEFT", 14, -38)
 end
 
+-- A wider window: wider tiles, four to a row.
+local function relayoutTiles(width)
+  TILE_W = (width - (COLS - 1) * GAP) / COLS
+  for i, t in ipairs(P.tiles) do
+    local col, row = (i - 1) % COLS, math.floor((i - 1) / COLS)
+    t:ClearAllPoints()
+    t:SetPoint("TOPLEFT", P.tilesView, "TOPLEFT", col * (TILE_W + GAP) + 1, -TOP - row * (TILE_H + GAP) - 1)
+    t:SetWidth(TILE_W - 2)
+    t.name:SetWidth(TILE_W - 90)
+    t.desc:SetWidth(TILE_W - 24)
+    t.status:SetWidth(TILE_W - 24)
+  end
+end
+
 local function Build(page)
   P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "raid", "Raids & more" }, { "guild", "Guild" } },
     ns.RefreshPanel)
@@ -319,6 +333,7 @@ local function Build(page)
   UI.Follow(page, P.leadCard, 1, 0)
   UI.Grow(page, P.leadCard, 0, 1)
   UI.Grow(page, P.tilesView, 1, 0)
+  table.insert(page.growth, function(dw) relayoutTiles(740 + dw) end)
 end
 
 -- Open the tab on someone's achievements (nil: yours).
