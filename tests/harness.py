@@ -23,7 +23,7 @@ START = 1800000000
 def addon_files():
     """The addon's Lua files and version, in the order the TOC loads them."""
     files, version = [], None
-    for line in open(os.path.join(ROOT, "Bannerhold.toc")):
+    for line in open(os.path.join(ROOT, "Warcrest.toc")):
         line = line.strip()
         m = re.match(r"## Version:\s*(\S+)", line)
         if m:
@@ -57,8 +57,8 @@ class Client:
         load = L.eval("function(src, name) return assert(loadstring(src, '@' .. name)) end")
         for f in FILES:
             # The same as the game: each file gets the addon's name and its shared table.
-            load(SOURCES[f], f)("Bannerhold", self.ns)
-        self.fire("ADDON_LOADED", "Bannerhold")
+            load(SOURCES[f], f)("Warcrest", self.ns)
+        self.fire("ADDON_LOADED", "Warcrest")
 
     # --- helpers -----------------------------------------------------------
     def set_roster(self):

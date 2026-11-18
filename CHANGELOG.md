@@ -1,10 +1,10 @@
 # Changelog
 
 ## 3.0.0
-- The Imperium is now **Bannerhold**, guild tools for any guild on WoW Forever. Members of <The Imperium> still see the Imperium emblem and name; every other guild gets the Bannerhold banner, with their own guild's name under it.
+- The Imperium is now **Warcrest**, guild tools for any guild on WoW Forever. Members of <The Imperium> still see the Imperium emblem and name; every other guild gets the Warcrest crest, with their own guild's name under it.
 - Updating keeps everything: your settings, DKP, raids, logs and history move over by themselves the first time you log in. The download includes a small TheImperium folder that does the hand-over; leave it installed.
 - Guildmates still on The Imperium 2.x keep working with you while everyone updates, and they're told a newer version is out.
-- Commands start with /bannerhold, or /bh for short. /imperium and /imp still work.
+- Commands start with /warcrest, or /bh for short. /imperium and /imp still work.
 - Level-up celebrations, the DKP export and the guild window use your own guild's name.
 - Everything from 2.12.0, 2.13.0 and 2.14.0 below is included.
 

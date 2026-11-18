@@ -1,10 +1,10 @@
 --[[
-  Bannerhold
+  Warcrest
   Theme: the "Nightwatch" look. Colors, fonts and icons shared by every
   window. Dark and flat, with one gold accent.
 
   Text styles: labels ask for the game's usual styles (GameFontNormalLarge
-  and so on) and get the matching Bannerhold style instead, so tabs don't
+  and so on) and get the matching Warcrest style instead, so tabs don't
   need to know about the theme.
 ]]
 
@@ -12,7 +12,7 @@ local _, ns = ...
 local UI = ns.UI or {}
 ns.UI = UI
 
-local MEDIA = "Interface\\AddOns\\Bannerhold\\Media\\"
+local MEDIA = "Interface\\AddOns\\Warcrest\\Media\\"
 
 local function hex(h)
   return tonumber(h:sub(1, 2), 16) / 255, tonumber(h:sub(3, 4), 16) / 255, tonumber(h:sub(5, 6), 16) / 255
@@ -33,7 +33,7 @@ UI.C = {
   muted     = { hex("8b95a7") }, -- secondary text
   faint     = { hex("6b7587") }, -- labels and hints
   navText   = { hex("a3acbc") }, -- side menu items
-  accent    = { hex("e0b94c") }, -- Bannerhold gold
+  accent    = { hex("e0b94c") }, -- Warcrest gold
   onAccent  = { hex("14110a") }, -- text on gold
   good      = { hex("6fd08c") },
   warn      = { hex("ffad33") },
@@ -58,7 +58,7 @@ local FONT = {
 
 UI.Fonts = {}
 local function makeFont(key, weight, size, color)
-  local f = CreateFont("BannerholdFont_" .. key)
+  local f = CreateFont("WarcrestFont_" .. key)
   -- If the font file can't be loaded, fall back to the game's font. (Newer
   -- clients return false on failure; older ones return nothing either way.)
   if f:SetFont(FONT[weight], size, "") == false then
@@ -87,7 +87,7 @@ makeFont("Nav", "semibold", 12, UI.C.navText)
 makeFont("NavActive", "semibold", 12, UI.C.accent)
 makeFont("Number", "bold", 12, UI.C.text)
 
--- The game's text styles, and the Bannerhold style each one becomes.
+-- The game's text styles, and the Warcrest style each one becomes.
 UI.FONT_FOR = {
   GameFontNormalHuge = "Title",
   GameFontNormalLarge = "Heading",
@@ -103,7 +103,7 @@ UI.FONT_FOR = {
   GameFontDisableLarge = "Muted",
 }
 
--- A font object for a style name (Bannerhold or game).
+-- A font object for a style name (Warcrest or game).
 function UI.Font(name)
   return UI.Fonts[name] or UI.Fonts[UI.FONT_FOR[name] or ""] or UI.Fonts.Body
 end

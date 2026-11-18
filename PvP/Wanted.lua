@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Wanted: enemy players who keep killing guild members.
 
   Anyone who has killed guild members in world PvP at least a set number of

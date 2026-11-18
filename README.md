@@ -1,10 +1,10 @@
-# Bannerhold
+# Warcrest
 
 [![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
 
 Guild tools for World of Warcraft: Forever. Raid sign-ups, DKP with live loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements, player cards and officer tools, shared automatically between everyone in your guild who has it.
 
-Bannerhold started life as **The Imperium**, the guild addon of <The Imperium>, and is now for any guild. Members of <The Imperium> still see their own emblem and name.
+Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, and is now for any guild. Members of <The Imperium> still see their own emblem and name.
 
 ## Features
 
@@ -31,48 +31,48 @@ Bannerhold started life as **The Imperium**, the guild addon of <The Imperium>, 
 
 ## Coming from The Imperium
 
-Version 3.0.0 renamed the addon to Bannerhold. Update as usual (it's the same CurseForge project): your settings, DKP, logs and history move over by themselves the first time you log in. The zip includes a small `TheImperium` folder that does the hand-over; leave it installed. Guildmates still on The Imperium 2.x keep working with you while everyone updates.
+Version 3.0.0 renamed the addon to Warcrest. Update as usual (it's the same CurseForge project): your settings, DKP, logs and history move over by themselves the first time you log in. The zip includes a small `TheImperium` folder that does the hand-over; leave it installed. Guildmates still on The Imperium 2.x keep working with you while everyone updates.
 
 ## Installation
 
-1. Download the latest `Bannerhold-x.y.z.zip`.
-2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/Bannerhold/Bannerhold.toc` (and a small `Interface/AddOns/TheImperium` folder next to it).
+1. Download the latest `Warcrest-x.y.z.zip`.
+2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/Warcrest/Warcrest.toc` (and a small `Interface/AddOns/TheImperium` folder next to it).
 3. Restart the game, or type `/reload` if you're already logged in.
-4. Make sure **Bannerhold** is enabled in the AddOns list on the character select screen.
+4. Make sure **Warcrest** is enabled in the AddOns list on the character select screen.
 
-When updating by hand, delete the old `Bannerhold` and `TheImperium` folders first so no old files are left behind.
+When updating by hand, delete the old `Warcrest` and `TheImperium` folders first so no old files are left behind.
 
 ## Opening the addon
 
-- Click the banner on the edge of your minimap. Left-click opens guild tools, right-click opens Settings, and Shift-click opens Kills. Drag it to move it.
-- Type `/bannerhold` (or `/bh`; the old `/imperium` works too).
-- Click **Bannerhold** in the addons menu by the minimap.
-- Press Esc, open **Options > AddOns > Bannerhold**, and click **Open Guild Tools**.
+- Click the crest on the edge of your minimap. Left-click opens guild tools, right-click opens Settings, and Shift-click opens Kills. Drag it to move it.
+- Type `/warcrest` (or `/wc`; the old `/imperium` works too).
+- Click **Warcrest** in the addons menu by the minimap.
+- Press Esc, open **Options > AddOns > Warcrest**, and click **Open Guild Tools**.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `/bannerhold` | Open or close the guild tools window |
-| `/bannerhold raids` | Open raid sign-ups |
-| `/bannerhold dkp` | Open DKP |
-| `/bannerhold auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
-| `/bannerhold kills` | Open the kill log |
-| `/bannerhold wanted` | Open the wanted list |
-| `/bannerhold card [name]` | Show a guild member's player card (yours if no name) |
-| `/bannerhold wishlist` | Open the loot wishlist |
-| `/bannerhold achievements` | Open your achievements |
-| `/bannerhold quiet` | Turn holding alerts during combat on or off |
-| `/bannerhold sync` | Fetch the last two days of guild history from guildmates |
-| `/bannerhold test` | Show a test alert (a different death type each time) |
-| `/bannerhold sound` | Turn alert sounds on or off for you |
-| `/bannerhold warn` | Turn the center-screen alert on or off for you |
-| `/bannerhold minimap` | Show or hide the minimap button |
-| `/bannerhold debug` | Show error details in chat, for troubleshooting |
-| `/bannerhold updates` | Show what changed in recent versions |
-| `/bannerhold addon` | See who has the addon installed |
-| `/bannerhold versions` | Ask guildmates which version they have |
-| `/bannerhold version` | Show your installed version |
+| `/warcrest` | Open or close the guild tools window |
+| `/warcrest raids` | Open raid sign-ups |
+| `/warcrest dkp` | Open DKP |
+| `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
+| `/warcrest kills` | Open the kill log |
+| `/warcrest wanted` | Open the wanted list |
+| `/warcrest card [name]` | Show a guild member's player card (yours if no name) |
+| `/warcrest wishlist` | Open the loot wishlist |
+| `/warcrest achievements` | Open your achievements |
+| `/warcrest quiet` | Turn holding alerts during combat on or off |
+| `/warcrest sync` | Fetch the last two days of guild history from guildmates |
+| `/warcrest test` | Show a test alert (a different death type each time) |
+| `/warcrest sound` | Turn alert sounds on or off for you |
+| `/warcrest warn` | Turn the center-screen alert on or off for you |
+| `/warcrest minimap` | Show or hide the minimap button |
+| `/warcrest debug` | Show error details in chat, for troubleshooting |
+| `/warcrest updates` | Show what changed in recent versions |
+| `/warcrest addon` | See who has the addon installed |
+| `/warcrest versions` | Ask guildmates which version they have |
+| `/warcrest version` | Show your installed version |
 
 ## How deaths are detected
 
@@ -184,7 +184,11 @@ Every change is checked automatically by luacheck and a test suite that runs the
 
 ## License
 
-Bannerhold is released under the [MIT License](LICENSE).
+Copyright (c) 2026 Fantasy Glass UI.
+
+The code is released under the [MIT License](LICENSE).
+
+The **Warcrest** name and crest emblem, and the emblem and artwork of **<The Imperium>** (in `Media/` and `Media/Imperium/`), are not covered by the MIT License. Please don't use them for your own addons or projects, or to suggest that a project is Warcrest or made by its authors.
 
 ## Credits
 

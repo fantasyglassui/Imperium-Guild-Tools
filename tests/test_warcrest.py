@@ -1,4 +1,4 @@
-"""The rename to Bannerhold: data handed over from The Imperium, and each guild's look."""
+"""The rename to Warcrest: data handed over from The Imperium, and each guild's look."""
 from harness import Guild
 
 MEMBERS = [("Alice", 1), ("Bob", 3)]
@@ -12,19 +12,19 @@ def old_install(handover):
                                           kind = "kill_world", level = 60 } } }
         ''')
         if handover:
-            client.run('OLD_ADDON_META = { ["X-Bannerhold-Handover"] = "1" }')
+            client.run('OLD_ADDON_META = { ["X-Warcrest-Handover"] = "1" }')
     return setup
 
 
 def test_data_from_the_imperium_is_handed_over_once():
     guild = Guild(MEMBERS, setup=old_install(True))
     bob = guild["Bob"]
-    db = bob.lua.eval("BannerholdDB")
+    db = bob.lua.eval("WarcrestDB")
     assert db.minimap.hide
     assert len(bob.ns.db.killLog) == 1
     assert not bob.ns.isNewInstall
     old = bob.lua.eval("TheImperiumDB")
-    assert old.movedToBannerhold and old.killLog is None      # the old file is emptied
+    assert old.movedToWarcrest and old.killLog is None      # the old file is emptied
 
 
 def test_an_old_full_copy_keeps_its_data():
@@ -43,11 +43,11 @@ def test_each_guild_gets_its_look():
     other = Guild(MEMBERS, setup=lambda c: c.run('GUILD_NAME = "Night Watch"'))
     o = other["Bob"]
     o.fire("GUILD_ROSTER_UPDATE")
-    assert o.ns.BRAND == "Bannerhold" and o.ns.PORTRAIT.endswith("Media\\Portrait")
+    assert o.ns.BRAND == "Warcrest" and o.ns.PORTRAIT.endswith("Media\\Portrait")
     o.ns.OpenPanel("roster")
-    panel = o.lua.eval("BannerholdPanel")
-    assert panel.brand.GetText(panel.brand) == "Bannerhold"
+    panel = o.lua.eval("WarcrestPanel")
+    assert panel.brand.GetText(panel.brand) == "Warcrest"
     assert panel.brandSub.GetText(panel.brandSub) == "Night Watch"
     o.ns.Say("hello")
-    assert o.said("[Bannerhold]")
+    assert o.said("[Warcrest]")
     assert not o.errors()

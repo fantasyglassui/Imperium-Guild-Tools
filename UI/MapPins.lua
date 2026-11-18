@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Map pins: marks guild deaths on the world map with an X (a skull for PvP),
   for as long as the "Keep marks for" setting says (1 hour to 7 days), and
   wanted player sightings with a purple diamond for 30 minutes.
@@ -11,7 +11,7 @@
 
 local _, ns = ...
 
-local TEMPLATE = "BannerholdDeathPinTemplate"
+local TEMPLATE = "WarcrestDeathPinTemplate"
 local MAX_PINS = 100
 local SIGHTING_AGE = 30 * 60 -- wanted sightings stay on the map for 30 minutes
 local X_ICON = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_7"
@@ -20,7 +20,7 @@ local SIGHTING_ICON = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_3"
 
 -- The pin template (UI\MapPins.xml) names this mixin. Blizzard's base pin
 -- code is mixed in once the world map has loaded.
-BannerholdDeathPinMixin = BannerholdDeathPinMixin or {}
+WarcrestDeathPinMixin = WarcrestDeathPinMixin or {}
 local pinMethods = {}
 local provider
 
@@ -94,7 +94,7 @@ end
 ------------------------------------------------------------------------
 local function setUp()
   if provider or not (WorldMapFrame and MapCanvasPinMixin and MapCanvasDataProviderMixin) then return end
-  Mixin(BannerholdDeathPinMixin, MapCanvasPinMixin, pinMethods)
+  Mixin(WarcrestDeathPinMixin, MapCanvasPinMixin, pinMethods)
 
   provider = CreateFromMixins(MapCanvasDataProviderMixin)
 

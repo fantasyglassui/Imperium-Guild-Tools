@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Celebrations: tells the guild when a member levels up.
   Members choose between every level, or only every 10 levels and max level.
 ]]

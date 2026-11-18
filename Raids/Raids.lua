@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Raids: scheduled raids and sign-ups, the current raid group, reminders,
   and raid sessions that award attendance DKP.
 

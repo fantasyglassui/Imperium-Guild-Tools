@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Wanted tab: enemy players who keep killing guild members. A table of the
   wanted on the left; on the right, the one you picked (or the most wanted)
   and how the list works.

@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Player profiles: everything the guild's shared history says about one
   member, for their player card. PvP (kills, assists, deaths, streaks,
   nemesis), DKP, attendance and loot.

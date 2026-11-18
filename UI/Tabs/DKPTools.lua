@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   DKP tools: the Alts window (linking alts to a main) and the Import window
   (officers setting starting balances).
 ]]
@@ -50,7 +50,7 @@ ns.OnLedgerChanged(function() C_Timer.After(0.6, RefreshAlts) end)
 
 function ns.ShowAltsWindow()
   if not alts then
-    local f = Window("BannerholdAlts", "Alts", 420, 330)
+    local f = Window("WarcrestAlts", "Alts", 420, 330)
     alts = f
 
     f.status = UI.Label(f, "", "GameFontHighlight")
@@ -147,7 +147,7 @@ StaticPopupDialogs["IMPERIUM_IMPORT"] = {
 
 function ns.ShowImportWindow()
   if not import then
-    local f = Window("BannerholdImport", "Import balances", 460, 400)
+    local f = Window("WarcrestImport", "Import balances", 460, 400)
     import = f
     local hint = UI.Label(f, "Paste one member per line: a name, then their DKP. For example \"Alice, 120\" or "
       .. "\"Alice 120\". Each member's balance is set to that number.", "GameFontHighlightSmall")

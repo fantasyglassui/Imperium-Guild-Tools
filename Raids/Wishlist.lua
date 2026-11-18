@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Loot wishlists: each guild member marks the items they want from raids,
   as Need (a big upgrade) or Want (nice to have).
 

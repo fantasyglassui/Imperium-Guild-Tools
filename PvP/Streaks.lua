@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Kill streaks and revenge.
 
   A streak is a guild member's killing blows in a row without dying to an

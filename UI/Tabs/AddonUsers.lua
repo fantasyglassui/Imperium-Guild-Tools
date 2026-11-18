@@ -1,6 +1,6 @@
 --[[
-  Bannerhold
-  Addon tab: which guild members have Bannerhold installed, and which
+  Warcrest
+  Addon tab: which guild members have Warcrest installed, and which
   version. Built from every message their addon has sent while you were
   online, remembered between sessions. "Check now" asks everyone online.
 ]]
@@ -82,7 +82,7 @@ local function Build(page)
   local check = UI.Button(page.headerBar, "Check now", 110)
   check:SetHeight(26)
   check:SetPoint("RIGHT")
-  UI.Tooltip(check, "Check now", "Asks every online guildmate which version of Bannerhold they have.")
+  UI.Tooltip(check, "Check now", "Asks every online guildmate which version of Warcrest they have.")
   check:SetScript("OnClick", function()
     ns.CheckVersions()
     C_Timer.After(8, ns.RefreshPanel)
@@ -169,10 +169,10 @@ end
 -- The header's subtitle: how many members have it (the same count as the tab).
 local function Subtitle()
   local all = rows()
-  if #all == 0 then return "Who has Bannerhold installed" end
+  if #all == 0 then return "Who has Warcrest installed" end
   local with = 0
   for _, r in ipairs(all) do if r.status ~= "no" then with = with + 1 end end
-  return ("%d of %d members have Bannerhold"):format(with, #all)
+  return ("%d of %d members have Warcrest"):format(with, #all)
 end
 
 UI.AddTab({ id = "addon", title = "Addon", build = Build, refresh = Refresh, subtitle = Subtitle })

@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Auction window: pops up for raid members when an officer auctions loot.
 ]]
 
@@ -18,7 +18,7 @@ end
 
 local function create()
   -- Escape doesn't close it: bidding shouldn't vanish by accident mid-raid.
-  local f = UI.Window("BannerholdAuction", 340, 256, "Loot auction", true)
+  local f = UI.Window("WarcrestAuction", 340, 256, "Loot auction", true)
   win = f
   f:ClearAllPoints()
   f:SetPoint("TOP", 0, -140)
@@ -124,7 +124,7 @@ local function create()
       self.time:SetText(("Time left: %ds"):format(math.max(0, math.ceil(a.ends - GetTime()))))
     end
   end)
-  tinsert(UISpecialFrames, "BannerholdAuction")
+  tinsert(UISpecialFrames, "WarcrestAuction")
 end
 
 StaticPopupDialogs["IMPERIUM_BID_UNUSABLE"] = {

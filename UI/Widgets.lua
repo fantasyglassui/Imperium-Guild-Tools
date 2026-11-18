@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   UI widgets: shared helpers for building the guild tools window, drawn in
   the Nightwatch theme (UI/Theme.lua).
 ]]

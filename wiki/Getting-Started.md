@@ -1,18 +1,18 @@
 # Getting Started
 
-Install **Bannerhold** from CurseForge, and everything else is shared with the guild automatically.
+Install **Warcrest** from CurseForge, and everything else is shared with the guild automatically.
 
 ## Install
 
-1. In the CurseForge app, search for **Bannerhold** and click **Install**.
-2. Start the game and make sure **Bannerhold** is ticked in the **AddOns** list on the character screen.
-3. Keep it updated. You'll get a reminder in game when a newer version is out, and a **What's new** window after each update (reopen it with `/bannerhold updates`).
+1. In the CurseForge app, search for **Warcrest** and click **Install**.
+2. Start the game and make sure **Warcrest** is ticked in the **AddOns** list on the character screen.
+3. Keep it updated. You'll get a reminder in game when a newer version is out, and a **What's new** window after each update (reopen it with `/warcrest updates`).
 
 ## Open it
 
 - Click the **guild emblem** on the edge of your minimap. Left-click opens the addon, right-click opens Settings, Shift-click opens Kills. Drag it to move it around the minimap.
-- Type `/bannerhold` (or `/bh`).
-- Press **Esc**, then **Options > AddOns > Bannerhold**.
+- Type `/warcrest` (or `/wc`).
+- Press **Esc**, then **Options > AddOns > Warcrest**.
 
 ## The tabs
 
@@ -35,7 +35,7 @@ To make the window bigger, drag its **bottom-right corner**: the lists stretch t
 
 ## Player cards
 
-Click a guild member's name almost anywhere in the window (the Roster, a killer on the Kills tab, Top Head Hunters, the DKP standings or a raid's sign-ups) to open their **player card**: their PvP record and streaks, nemesis, DKP, attendance and recent loot, all in one place. On the Roster, pick someone and click **View player card**, or double-click their name. You can also type `/bannerhold card Name`.
+Click a guild member's name almost anywhere in the window (the Roster, a killer on the Kills tab, Top Head Hunters, the DKP standings or a raid's sign-ups) to open their **player card**: their PvP record and streaks, nemesis, DKP, attendance and recent loot, all in one place. On the Roster, pick someone and click **View player card**, or double-click their name. You can also type `/warcrest card Name`.
 
 ## The weekly recap
 

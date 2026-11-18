@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Settings tab. Two views, switched at the top:
     Alerts:  every alert type with a Guild column (set by officers for
              everyone) and a You column (your own choice), plus how alerts
@@ -334,9 +334,9 @@ local function BuildGeneral(page)
 
   -- Commands
   local h = UI.Box(f, x2, -296, COL_W, 154, "Good to know")
-  local tips = UI.Label(h, "/bannerhold card Name opens a guild member's player card. /bannerhold wishlist and "
-    .. "/bannerhold achievements open those tabs, and /bannerhold updates shows what's new. "
-    .. "/bannerhold help lists every command in chat.", "Small")
+  local tips = UI.Label(h, "/warcrest card Name opens a guild member's player card. /warcrest wishlist and "
+    .. "/warcrest achievements open those tabs, and /warcrest updates shows what's new. "
+    .. "/warcrest help lists every command in chat.", "Small")
   tips:SetPoint("TOPLEFT", 14, -38)
   tips:SetWidth(inner)
   tips:SetSpacing(3)

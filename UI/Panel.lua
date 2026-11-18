@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Panel: the guild tools window and its Options entry.
 ]]
 
@@ -26,7 +26,7 @@ local TAB_INFO = {
   wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
   settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },
   officers = { icon = "officers", text = "Guild changes seen while you're online" },
-  addon = { icon = "addon", text = "Who has Bannerhold installed" },
+  addon = { icon = "addon", text = "Who has Warcrest installed" },
 }
 
 local function tabVisible(i)
@@ -102,7 +102,7 @@ local function MakeNavButton(parent, id, tab)
 end
 
 local function CreatePanel()
-  panel = CreateFrame("Frame", "BannerholdPanel", UIParent)
+  panel = CreateFrame("Frame", "WarcrestPanel", UIParent)
   panel:SetSize(WIDTH, HEIGHT)
   panel:SetPoint("CENTER")
   panel:SetFrameStrata("HIGH")
@@ -125,7 +125,7 @@ local function CreatePanel()
     math.max(HEIGHT, math.min(MAX_HEIGHT, ns.db.panelHeight or HEIGHT)))
   panel:SetScale(ns.db.panelScale or 1)
   panel:Hide()
-  tinsert(UISpecialFrames, "BannerholdPanel") -- Escape closes it
+  tinsert(UISpecialFrames, "WarcrestPanel") -- Escape closes it
   UI.Fill(panel, C.window)
   UI.Border(panel, C.edge[1], C.edge[2], C.edge[3], 1)
 
@@ -154,7 +154,7 @@ local function CreatePanel()
   sub:SetWidth(100)
   sub:SetWordWrap(false)
   panel.brand, panel.brandSub = brand, sub
-  -- The Imperium: its own name, as before. Other guilds: Bannerhold, with the guild's name under it.
+  -- The Imperium: its own name, as before. Other guilds: Warcrest, with the guild's name under it.
   ns.OnLook(function()
     brand:SetText(ns.BRAND)
     sub:SetText(ns.look == "imperium" and "Guild Tools" or (ns.GuildName() or "Guild tools"))
@@ -344,7 +344,7 @@ ns.OnLoad(function()
     ns.OpenPanel("roster")
   end)
 
-  local hint = UI.Label(canvas, "You can also type /bannerhold (or /bh) or click Bannerhold in the addons menu by the minimap.",
+  local hint = UI.Label(canvas, "You can also type /warcrest (or /wc) or click Warcrest in the addons menu by the minimap.",
     "GameFontDisableSmall")
   hint:SetPoint("TOPLEFT", open, "BOTTOMLEFT", 0, -10)
 
@@ -372,7 +372,7 @@ ns.OnLoad(function()
   art:SetSize(320, 320)
   ns.Emblem(art, "ARTWORK")
 
-  local category = Settings.RegisterCanvasLayoutCategory(canvas, "Bannerhold")
+  local category = Settings.RegisterCanvasLayoutCategory(canvas, "Warcrest")
   Settings.RegisterAddOnCategory(category)
   ns.optionsCategory = category
 end)

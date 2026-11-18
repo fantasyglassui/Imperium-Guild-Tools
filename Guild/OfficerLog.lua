@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Officer Log: records guild changes seen while you're online.
   Promotions, demotions, removals, joins and leaves come from the game's own
   system messages, so they're logged no matter how they were done.

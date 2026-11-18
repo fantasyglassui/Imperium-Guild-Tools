@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Guild: roster, permissions, management actions, guild-wide settings
   and addon version checks.
 ]]
@@ -285,7 +285,7 @@ local function noteVersion(sender, v)
   ns.NoteAddonUser(sender, v)
   if not warnedNewer and ns.CompareVersions(v, ns.version) > 0 then
     warnedNewer = true
-    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update Bannerhold.|r")
+    ns.Say(("|cffff8800A newer version (v%s) is out. You have v%s. Please update Warcrest.|r")
       :format(v, ns.version))
   end
   if ns.RefreshPanel then ns.RefreshPanel() end

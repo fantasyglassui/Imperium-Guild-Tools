@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Kills tab: PvP kills by guild members as a table, this period's leader,
   and the Top Head Hunters board. The period and kill type are picked in
   the panel's header.

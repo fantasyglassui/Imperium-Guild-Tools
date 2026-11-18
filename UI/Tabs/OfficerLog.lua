@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Officers tab: guild changes recorded while you're online. A searchable
   table with a filter at the top, and the last 7 days at a glance.
   Only shown to addon officers and ranks that can promote, demote or remove.

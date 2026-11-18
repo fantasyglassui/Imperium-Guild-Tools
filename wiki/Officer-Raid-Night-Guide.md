@@ -29,7 +29,7 @@ Only officers can schedule raids, change DKP or run auctions. The Guild Master c
 
 ## Running loot auctions
 
-1. On the **DKP** tab, click in the **Item** box and Shift-click the item from the loot window or your bags. (Or type `/bannerhold auction`, Shift-click the item onto the end, add a minimum bid, and press Enter.)
+1. On the **DKP** tab, click in the **Item** box and Shift-click the item from the loot window or your bags. (Or type `/warcrest auction`, Shift-click the item onto the end, add a minimum bid, and press Enter.)
 2. Set the **Minimum bid** and the time (20 to 60 seconds), then click **Start auction**.
 3. When time runs out, the winner is announced and charged. **Cancel auction** stops it with nobody charged.
 

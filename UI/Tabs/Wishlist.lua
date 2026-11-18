@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Wishlist tab: the guild's loot wishlist (who wants which item, Need before
   Want) on the left; your own wishlist on the right, where you add items by
   Shift-clicking them.

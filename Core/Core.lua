@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Guild tools for World of Warcraft: Forever. Formerly The Imperium, the
   guild addon of <The Imperium>.
 
@@ -9,24 +9,24 @@
 local ADDON_NAME, ns = ...
 
 -- Hidden addon channel used to talk to guildmates. It keeps the addon's old
--- name so Bannerhold and The Imperium (2.x) understand each other while a
+-- name so Warcrest and The Imperium (2.x) understand each other while a
 -- guild updates. Players never see it.
 ns.PREFIX = "TheImperium"
 ns.SEP = "^"
-ns.COLOR = "|cffd4af37"   -- Bannerhold gold
-ns.NAME = "Bannerhold"
+ns.COLOR = "|cffd4af37"   -- Warcrest gold
+ns.NAME = "Warcrest"
 
 -- Artwork (Media folder). Paths are given without the .tga extension.
-ns.MEDIA = "Interface\\AddOns\\Bannerhold\\Media\\"
+ns.MEDIA = "Interface\\AddOns\\Warcrest\\Media\\"
 
--- The look: Bannerhold's banner for every guild, except <The Imperium>, the
+-- The look: Warcrest's crest for every guild, except <The Imperium>, the
 -- guild it was made for, which keeps its own emblem and name.
 --   Icon     64x64 emblem: chat, addon list, minimap menu
 --   Portrait 128x128 emblem on navy: window portraits
 --   Artwork  512x512 artwork: Options page
 ns.IMPERIUM_GUILD = "The Imperium"
 local LOOKS = {
-  bannerhold = { folder = ns.MEDIA, brand = "Bannerhold" },
+  warcrest = { folder = ns.MEDIA, brand = "Warcrest" },
   imperium = { folder = ns.MEDIA .. "Imperium\\", brand = "The Imperium" },
 }
 local lookHooks = {}
@@ -40,7 +40,7 @@ local function setLook(name)
   ns.ARTWORK = look.folder .. "Artwork"
   ns.ICON_TEXT = "|T" .. ns.ICON .. ":14:14|t"
 end
-setLook("bannerhold")
+setLook("warcrest")
 
 -- Your guild's name, or nil.
 function ns.GuildName()
@@ -62,7 +62,7 @@ end
 
 -- Picks the look for the guild you're in; called when the guild is known.
 function ns.ApplyGuildLook()
-  local name = ns.GuildName() == ns.IMPERIUM_GUILD and "imperium" or "bannerhold"
+  local name = ns.GuildName() == ns.IMPERIUM_GUILD and "imperium" or "warcrest"
   if name == ns.look then return end
   setLook(name)
   for _, fn in ipairs(lookHooks) do pcall(fn) end
@@ -345,20 +345,20 @@ frame:SetScript("OnEvent", function(_, event, ...)
       return
     end
     -- Coming from The Imperium (2.x): its saved data is handed over once, by the
-    -- small TheImperium folder that comes with Bannerhold (see Compat/).
-    if BannerholdDB == nil and type(TheImperiumDB) == "table" and next(TheImperiumDB) ~= nil
-        and not TheImperiumDB.movedToBannerhold then
-      BannerholdDB = TheImperiumDB
+    -- small TheImperium folder that comes with Warcrest (see Compat/).
+    if WarcrestDB == nil and type(TheImperiumDB) == "table" and next(TheImperiumDB) ~= nil
+        and not TheImperiumDB.movedToWarcrest then
+      WarcrestDB = TheImperiumDB
       ns.movedFromImperium = true
       local getMetaOld = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
       -- Only empty the old file when it's the hand-over folder, not an old copy of the full addon.
-      if getMetaOld and getMetaOld("TheImperium", "X-Bannerhold-Handover") == "1" then
-        TheImperiumDB = { movedToBannerhold = time() }
+      if getMetaOld and getMetaOld("TheImperium", "X-Warcrest-Handover") == "1" then
+        TheImperiumDB = { movedToWarcrest = time() }
       end
     end
-    ns.isNewInstall = BannerholdDB == nil
-    BannerholdDB = BannerholdDB or {}
-    ns.db = BannerholdDB
+    ns.isNewInstall = WarcrestDB == nil
+    WarcrestDB = WarcrestDB or {}
+    ns.db = WarcrestDB
     local getMeta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
     ns.version = (getMeta and getMeta(ADDON_NAME, "Version")) or "0"
     C_ChatInfo.RegisterAddonMessagePrefix(ns.PREFIX)
@@ -454,7 +454,7 @@ end
 -- Login greeting, then let modules sync once the guild roster is ready.
 ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
   if isLogin then
-    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/bannerhold|r to open guild tools.")
+    ns.Say("v" .. ns.version .. " loaded. Type |cffffffff/warcrest|r to open guild tools.")
   end
   if isLogin or isReload then
     C_Timer.After(8, function()
@@ -486,11 +486,11 @@ end)
 ------------------------------------------------------------------------
 -- Slash commands
 ------------------------------------------------------------------------
-SLASH_BANNERHOLD1 = "/bannerhold"
-SLASH_BANNERHOLD2 = "/bh"
-SLASH_BANNERHOLD3 = "/imperium" -- the addon's old name, so old habits still work
-SLASH_BANNERHOLD4 = "/imp"
-SlashCmdList.BANNERHOLD = function(input)
+SLASH_WARCREST1 = "/warcrest"
+SLASH_WARCREST2 = "/wc"
+SLASH_WARCREST3 = "/imperium" -- the addon's old name, so old habits still work
+SLASH_WARCREST4 = "/imp"
+SlashCmdList.WARCREST = function(input)
   input = input or ""
   local msg = input:lower():match("^%s*(.-)%s*$")
   local function toggle(key, label)
@@ -505,7 +505,7 @@ SlashCmdList.BANNERHOLD = function(input)
   elseif msg == "dkp" then
     if ns.OpenPanel then ns.OpenPanel("dkp") end
   elseif msg:find("^auction") then
-    -- /bannerhold auction [item link] [minimum bid]
+    -- /warcrest auction [item link] [minimum bid]
     local raw = input:gsub("^%s*[Aa][Uu][Cc][Tt][Ii][Oo][Nn]%s*", "")
     local link = raw:match("(|c.-|r)") or raw:match("(|H.-|h.-|h)")
     local min = tonumber(raw:match("(%d+)%s*$"))
@@ -529,7 +529,7 @@ SlashCmdList.BANNERHOLD = function(input)
     if ns.SetMinimapButtonShown then
       local show = not ns.IsMinimapButtonShown()
       ns.SetMinimapButtonShown(show)
-      ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /bannerhold minimap to bring it back."))
+      ns.Say("Minimap button " .. (show and "shown." or "hidden. Type /warcrest minimap to bring it back."))
     end
   elseif msg == "debug" then
     ns.db.debug = not ns.db.debug
@@ -547,7 +547,7 @@ SlashCmdList.BANNERHOLD = function(input)
   elseif msg == "wishlist" or msg == "wish" then
     ns.OpenPanel("wishlist")
   elseif msg:find("^card") then
-    -- /bannerhold card [name]: a guild member's player card (yours if no name).
+    -- /warcrest card [name]: a guild member's player card (yours if no name).
     local who = input:match("^%s*%S+%s+(%S+)") or UnitName("player")
     if ns.ShowPlayerCard then ns.ShowPlayerCard(who) end
   elseif msg == "version" then
@@ -560,37 +560,37 @@ SlashCmdList.BANNERHOLD = function(input)
     end
   else
     ns.Say("Commands:")
-    print("  /bannerhold - open guild tools")
-    print("  /bannerhold raids - open raid sign-ups")
-    print("  /bannerhold dkp - open DKP")
-    print("  /bannerhold auction [item] [min bid] - auction an item to your raid (officers)")
-    print("  /bannerhold kills - open the kill log")
-    print("  /bannerhold wanted - open the wanted list")
-    print("  /bannerhold card [name] - a guild member's player card")
-    print("  /bannerhold wishlist - the guild's loot wishlist, and yours")
-    print("  /bannerhold achievements - your achievements and title")
-    print("  /bannerhold quiet - hold alerts during combat on or off")
-    print("  /bannerhold sync - fetch recent guild history from guildmates")
-    print("  /bannerhold test - show a test alert")
-    print("  /bannerhold sound | warn - toggle alert sound or center-screen warning")
-    print("  /bannerhold minimap - show or hide the minimap button")
-    print("  /bannerhold addon - see who has the addon installed")
-    print("  /bannerhold versions - check which version guildmates have")
-    print("  /bannerhold debug - show error details in chat (troubleshooting)")
-    print("  /bannerhold recap - last week's guild recap (/bannerhold recap now: this week so far)")
-    print("  /bannerhold updates - show what changed in recent versions")
-    print("  /bannerhold version - show your installed version")
+    print("  /warcrest - open guild tools")
+    print("  /warcrest raids - open raid sign-ups")
+    print("  /warcrest dkp - open DKP")
+    print("  /warcrest auction [item] [min bid] - auction an item to your raid (officers)")
+    print("  /warcrest kills - open the kill log")
+    print("  /warcrest wanted - open the wanted list")
+    print("  /warcrest card [name] - a guild member's player card")
+    print("  /warcrest wishlist - the guild's loot wishlist, and yours")
+    print("  /warcrest achievements - your achievements and title")
+    print("  /warcrest quiet - hold alerts during combat on or off")
+    print("  /warcrest sync - fetch recent guild history from guildmates")
+    print("  /warcrest test - show a test alert")
+    print("  /warcrest sound | warn - toggle alert sound or center-screen warning")
+    print("  /warcrest minimap - show or hide the minimap button")
+    print("  /warcrest addon - see who has the addon installed")
+    print("  /warcrest versions - check which version guildmates have")
+    print("  /warcrest debug - show error details in chat (troubleshooting)")
+    print("  /warcrest recap - last week's guild recap (/warcrest recap now: this week so far)")
+    print("  /warcrest updates - show what changed in recent versions")
+    print("  /warcrest version - show your installed version")
   end
 end
 
 ------------------------------------------------------------------------
 -- Addon compartment (the addons button by the minimap)
 ------------------------------------------------------------------------
-function Bannerhold_OnAddonCompartmentClick()
+function Warcrest_OnAddonCompartmentClick()
   if ns.TogglePanel then ns.TogglePanel() end
 end
 
-function Bannerhold_OnAddonCompartmentEnter(_, button)
+function Warcrest_OnAddonCompartmentEnter(_, button)
   GameTooltip:SetOwner(button, "ANCHOR_LEFT")
   GameTooltip:SetText("|T" .. ns.ICON .. ":20:20|t " .. ns.COLOR .. ns.BRAND .. "|r")
   GameTooltip:AddLine("Click to open guild tools.", 1, 1, 1)
@@ -598,7 +598,7 @@ function Bannerhold_OnAddonCompartmentEnter(_, button)
   GameTooltip:Show()
 end
 
-function Bannerhold_OnAddonCompartmentLeave()
+function Warcrest_OnAddonCompartmentLeave()
   GameTooltip:Hide()
 end
 

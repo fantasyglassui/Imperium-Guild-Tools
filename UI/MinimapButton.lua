@@ -1,11 +1,11 @@
 --[[
-  Bannerhold
+  Warcrest
   Minimap button: the guild emblem on the edge of the minimap.
     Left-click   open or close guild tools
     Right-click  open Settings
     Shift-click  open Kills
     Drag         move it around the minimap
-  Hide it with /bannerhold minimap or on the Options page.
+  Hide it with /warcrest minimap or on the Options page.
 ]]
 
 local _, ns = ...
@@ -60,7 +60,7 @@ end
 
 local function create()
   if button or not Minimap then return end
-  button = CreateFrame("Button", "BannerholdMinimapButton", Minimap)
+  button = CreateFrame("Button", "WarcrestMinimapButton", Minimap)
   button:SetSize(31, 31)
   button:SetFrameStrata("MEDIUM")
   button:SetFrameLevel(8)

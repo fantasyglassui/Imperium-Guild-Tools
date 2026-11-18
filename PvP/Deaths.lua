@@ -1,5 +1,5 @@
 --[[
-  Bannerhold
+  Warcrest
   Deaths: works out how you died, tells the guild and shows guildmates' deaths.
   There is no death log tab or leaderboard; deaths are kept only for the map
   marks and the Wanted list. Only world PvP deaths and
