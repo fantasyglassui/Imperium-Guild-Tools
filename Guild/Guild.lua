@@ -15,7 +15,12 @@ function ns.RequestRoster()
   if f then pcall(f) end
 end
 
-function ns.GetRoster()
+-- The roster is read from the game once and kept until it changes, so
+-- tabs and lookups don't walk hundreds of members over and over.
+local rosterCache, rosterByKey, rosterAt
+local ROSTER_FRESH = 10 -- seconds; the game also tells us when it changes
+
+local function readRoster()
   local list = {}
   for i = 1, (GetNumGuildMembers() or 0) do
     local name, rankName, rankIndex, level, className, zone, publicNote, officerNote,
@@ -30,6 +35,33 @@ function ns.GetRoster()
     end
   end
   return list
+end
+
+local function loadRoster()
+  if not rosterCache or #rosterCache ~= (GetNumGuildMembers() or 0) or GetTime() - rosterAt > ROSTER_FRESH then
+    rosterCache, rosterAt = readRoster(), GetTime()
+    rosterByKey = {}
+    for _, m in ipairs(rosterCache) do rosterByKey[ns.Key(m.name)] = m end
+  end
+end
+
+-- Forget the cached roster (the game says it changed).
+function ns.RosterChanged() rosterCache, rosterByKey = nil, nil end
+
+-- Every guild member: { index, name, rankName, rankIndex, level, classFile, ... }.
+-- A new list each time (callers may sort it); the members themselves are shared.
+function ns.GetRoster()
+  loadRoster()
+  local copy = {}
+  for i, m in ipairs(rosterCache) do copy[i] = m end
+  return copy
+end
+
+-- One guild member by name (with or without realm), or nil.
+function ns.Member(name)
+  if not name then return end
+  loadRoster()
+  return rosterByKey[ns.Key(name)]
 end
 
 function ns.RankOf(name)
@@ -145,11 +177,13 @@ ns.OnLoad(syncGuildConfig)
 ns.OnLoad(ns.ApplyGuildLook)
 table.insert(ns.OnGuildReady, ns.ApplyGuildLook)
 ns.OnEvent("PLAYER_GUILD_UPDATE", function()
+  ns.RosterChanged()
   ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
 ns.OnEvent("GUILD_ROSTER_UPDATE", function()
+  ns.RosterChanged()
   ns.ApplyGuildLook()
   syncGuildConfig()
   if ns.RefreshPanel then ns.RefreshPanel() end

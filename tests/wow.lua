@@ -81,6 +81,7 @@ local VALUES = {
   GetWidth = 140, GetHeight = 140, GetEffectiveScale = 1, GetStringHeight = 12, GetStringWidth = 60, GetText = "",
   GetChecked = false, IsShown = false, HasFocus = false, IsEnabled = true, IsProtected = false,
   GetObjectType = "Frame", GetValue = 0, GetNumPoints = 0, GetID = 1, GetMapID = 0, GetFrameLevel = 1,
+  GetVerticalScroll = 0,
 }
 -- Where things are placed, so tests/render.py can draw the interface.
 local function layout(w)
@@ -177,6 +178,7 @@ widgetMeta = { __index = function(self, key)
   if key == "GetCenter" then return function() return 0, 0 end end
   if key == "GetMinMaxValues" then return function() return 0, 100 end end
   if key == "SetChecked" then return function(w, v) rawset(w, "_GetChecked", v and true or false) end end
+  if key == "SetVerticalScroll" then return function(w, v) rawset(w, "_GetVerticalScroll", v) end end
   if key == "Show" then return function(w) rawset(w, "_IsShown", true) end end
   if key == "Hide" then return function(w) rawset(w, "_IsShown", false) end end
   if key == "SetShown" then return function(w, v) rawset(w, "_IsShown", v and true or false) end end

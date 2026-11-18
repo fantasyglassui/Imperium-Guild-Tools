@@ -162,10 +162,7 @@ local function RefreshTiles(cat)
   end
 
   -- The strip at the top.
-  local m
-  for _, r in ipairs(ns.GetRoster()) do
-    if ns.Key(r.name) == ns.Key(name) then m = r break end
-  end
+  local m = ns.Member(name)
   P.who:SetText(ns.TitledName(name))
   P.who:SetTextColor(UI.ClassColor(m and m.classFile))
   local count, total = ns.AchievementCount(name), #ns.ACHIEVEMENTS

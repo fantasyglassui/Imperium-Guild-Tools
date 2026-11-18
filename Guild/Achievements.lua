@@ -172,9 +172,8 @@ local function statTimes(name, stat)
     return out
   end
   if stat == "maxLevel" then
-    for _, m in ipairs(ns.GetRoster()) do
-      if ns.Key(m.name) == k and m.level >= MAX_LEVEL then return { 0 } end -- 0: earned, when unknown
-    end
+    local m = ns.Member(name)
+    if m and m.level >= MAX_LEVEL then return { 0 } end -- 0: earned, when unknown
     return {}
   end
   return {}

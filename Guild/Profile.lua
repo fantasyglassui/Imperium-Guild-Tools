@@ -21,9 +21,7 @@ function ns.PlayerProfile(name)
   local p = { name = name }
 
   -- Roster details.
-  for _, m in ipairs(ns.GetRoster()) do
-    if ns.Key(m.name) == key then p.member = m break end
-  end
+  p.member = ns.Member(name)
 
   -- PvP: this month and all time.
   local monthFrom, monthTo = ns.MonthRange(0)
