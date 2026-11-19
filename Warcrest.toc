@@ -92,6 +92,7 @@ UI\MinimapButton.lua
 UI\Auction.lua
 UI\Council.lua
 UI\PlayerCard.lua
+UI\Profiles.lua
 UI\Updates.lua
 UI\Welcome.lua
 UI\Help.lua

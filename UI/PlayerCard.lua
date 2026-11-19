@@ -1,7 +1,8 @@
 --[[
   Warcrest
-  Player card: one guild member at a glance. PvP this month and overall,
-  streaks, nemesis, DKP, attendance and recent loot. Opened by clicking a
+  Player card: one guild member at a glance. Their profile (spec, when they
+  play, birthday), PvP this month and overall, streaks, nemesis, DKP,
+  attendance and recent loot. Opened by clicking a
   name on the Roster, Kills, DKP or Raids tabs, or with /warcrest card Name.
 ]]
 
@@ -9,7 +10,8 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 
-local WIDTH, HEIGHT = 420, 486
+local WIDTH, HEIGHT = 420, 550
+local DOWN = 64 -- room for the profile under the name
 local card -- the window
 local shownName
 
@@ -53,26 +55,36 @@ local function Build()
   f.status:SetWidth(inner - 130)
   f.status:SetWordWrap(false)
 
+  -- What they've told the guild about themselves.
+  f.profile = {}
+  for i = 1, 3 do
+    local fs = UI.Label(f, "", "Small")
+    fs:SetPoint("TOPLEFT", 16, -104 - (i - 1) * 18)
+    fs:SetWidth(inner)
+    fs:SetWordWrap(false)
+    f.profile[i] = fs
+  end
+
   -- PvP
-  Section(f, "PvP", -104)
-  f.monthKills = Tile(f, 16, -124, tileW, "This month")
-  f.kills = Tile(f, 16 + (tileW + 8), -124, tileW, "All time")
-  f.assists = Tile(f, 16 + 2 * (tileW + 8), -124, tileW, "Assists")
-  f.deaths = Tile(f, 16 + 3 * (tileW + 8), -124, tileW, "Deaths")
+  Section(f, "PvP", -104 - DOWN)
+  f.monthKills = Tile(f, 16, -124 - DOWN, tileW, "This month")
+  f.kills = Tile(f, 16 + (tileW + 8), -124 - DOWN, tileW, "All time")
+  f.assists = Tile(f, 16 + 2 * (tileW + 8), -124 - DOWN, tileW, "Assists")
+  f.deaths = Tile(f, 16 + 3 * (tileW + 8), -124 - DOWN, tileW, "Deaths")
   f.pvpLines = UI.Label(f, "", "Small")
-  f.pvpLines:SetPoint("TOPLEFT", 16, -190)
+  f.pvpLines:SetPoint("TOPLEFT", 16, -190 - DOWN)
   f.pvpLines:SetWidth(inner)
   f.pvpLines:SetSpacing(4)
 
   -- Raids and DKP
-  Section(f, "Raids and DKP", -256)
-  f.dkp = Tile(f, 16, -276, tileW, "DKP")
-  f.attendance = Tile(f, 16 + (tileW + 8), -276, tileW, "Attended")
-  f.noShows = Tile(f, 16 + 2 * (tileW + 8), -276, tileW, "No-shows")
-  f.items = Tile(f, 16 + 3 * (tileW + 8), -276, tileW, "Items won")
+  Section(f, "Raids and DKP", -256 - DOWN)
+  f.dkp = Tile(f, 16, -276 - DOWN, tileW, "DKP")
+  f.attendance = Tile(f, 16 + (tileW + 8), -276 - DOWN, tileW, "Attended")
+  f.noShows = Tile(f, 16 + 2 * (tileW + 8), -276 - DOWN, tileW, "No-shows")
+  f.items = Tile(f, 16 + 3 * (tileW + 8), -276 - DOWN, tileW, "Items won")
   f.dkp.number:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
   f.lootLines = UI.Label(f, "", "Small")
-  f.lootLines:SetPoint("TOPLEFT", 16, -342)
+  f.lootLines:SetPoint("TOPLEFT", 16, -342 - DOWN)
   f.lootLines:SetWidth(inner)
   f.lootLines:SetSpacing(4)
 
@@ -81,13 +93,20 @@ local function Build()
   f.whisper:SetPoint("TOPRIGHT", -16, -46)
   f.whisper:SetScript("OnClick", function()
     if not shownName then return end
+    if ns.IsMe(shownName) then
+      if ns.ShowProfileEditor then ns.ShowProfileEditor() end
+      return
+    end
     if ChatFrameUtil and ChatFrameUtil.SendTell then
       ChatFrameUtil.SendTell(shownName)
     elseif ChatFrame_SendTell then
       ChatFrame_SendTell(shownName)
     end
   end)
-  UI.Tooltip(f.whisper, "Whisper", "Starts a whisper to them in chat.")
+  UI.Tooltip(f.whisper, function() return shownName and ns.IsMe(shownName) and "Edit profile" or "Whisper" end,
+    function() return shownName and ns.IsMe(shownName)
+      and "Tell the guild your main spec, when you play, your birthday and a short note."
+      or "Starts a whisper to them in chat." end)
 
   f.achievements = UI.Button(f, "", 120)
   f.achievements:SetHeight(22)
@@ -144,6 +163,36 @@ local function fill(p)
     f.status:SetText(f.status:GetText() .. "  ·  alts: " .. table.concat(p.alts, ", "))
   end
 
+  -- Their profile.
+  local me = ns.IsMe(p.name)
+  f.whisper:SetText(ns.T(me and "Edit profile" or "Whisper"))
+  local pf = ns.MemberProfile and ns.MemberProfile(p.name)
+  local plines = {}
+  if pf then
+    local top = {}
+    if pf.spec ~= "" then top[#top + 1] = UI.Code("text") .. pf.spec .. "|r" end
+    if pf.role ~= "" then top[#top + 1] = ns.T(({ tank = "Tank", healer = "Healer", dps = "DPS" })[pf.role]) end
+    if pf.ilvl > 0 then top[#top + 1] = ns.TF("item level %d", pf.ilvl) end
+    if #top > 0 then plines[#plines + 1] = table.concat(top, "  ·  ") end
+    local second = {}
+    local avail = ns.AvailabilityText(pf)
+    if avail ~= "" then second[#second + 1] = ns.T("Plays") .. " " .. UI.Code("text") .. avail .. "|r" end
+    local bday = ns.BirthdayText(pf.bday)
+    if bday ~= "" then second[#second + 1] = ns.T("Birthday") .. " " .. UI.Code("text") .. bday .. "|r" end
+    if #second > 0 then plines[#plines + 1] = table.concat(second, "  ·  ") end
+    if pf.note ~= "" then plines[#plines + 1] = UI.Code("muted") .. "\"" .. pf.note .. "\"|r" end
+  else
+    plines[#plines + 1] = UI.Code("muted") .. ns.T(me and "You haven't shared a profile yet. Click Edit profile to tell the guild about you."
+      or "No profile shared yet.") .. "|r"
+  end
+  local extra = {}
+  local since = m and ns.MemberSince and ns.MemberSince(p.name)
+  if since then extra[#extra + 1] = ns.T("Member since") .. " " .. date("%b %Y", since) end
+  local events = ns.EventsAttended and ns.EventsAttended(p.name, 30) or 0
+  if events > 0 then extra[#extra + 1] = ns.TF(events == 1 and "%d guild event in 30 days" or "%d guild events in 30 days", events) end
+  if #extra > 0 and #plines < 3 then plines[#plines + 1] = UI.Code("muted") .. table.concat(extra, "  ·  ") .. "|r" end
+  for i, fs in ipairs(f.profile) do fs:SetText(plines[i] or "") end
+
   f.monthKills.number:SetText(p.monthKills)
   f.kills.number:SetText(p.kills)
   f.assists.number:SetText(p.assists)
@@ -188,7 +237,7 @@ local function fill(p)
   if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
   f.lootLines:SetText(table.concat(loot, "\n"))
   -- As tall as what's on it: no empty space under a short record.
-  f:SetHeight(math.min(HEIGHT, math.max(400, 342 + math.ceil(f.lootLines:GetStringHeight()) + 30)))
+  f:SetHeight(math.min(HEIGHT, math.max(400 + DOWN, 342 + DOWN + math.ceil(f.lootLines:GetStringHeight()) + 30)))
 end
 
 -- Open a guild member's card.

@@ -268,6 +268,7 @@ end
 
 function ns.RefreshPanel()
   if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
+  if ns.RefreshProfiles then ns.RefreshProfiles() end
   if not (panel and panel:IsShown()) then return end
   UpdateTabVisibility()
   setHeader()

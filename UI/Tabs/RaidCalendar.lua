@@ -128,8 +128,8 @@ local function Cell(parent, i, w, h)
         local e = item.gevent
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(item.code .. ns.T(ns.EventType(e.etype).label) .. "|r: " .. e.title .. "  " .. date("%H:%M", e.start), 1, 1, 1)
-        local c = ns.EventCounts(e.id)
-        GameTooltip:AddLine(ns.T("%d going, %d maybe"):format(c.going, c.maybe), 0.8, 0.8, 0.8)
+        local n = ns.EventCounts(e.id)
+        GameTooltip:AddLine(ns.T("%d going, %d maybe"):format(n.going, n.maybe), 0.8, 0.8, 0.8)
         if e.notes and e.notes ~= "" then GameTooltip:AddLine(e.notes, 0.7, 0.7, 0.7, true) end
         GameTooltip:AddLine(ns.T("Click to open this event."), 0.6, 0.6, 0.6)
       else
