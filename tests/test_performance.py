@@ -70,3 +70,32 @@ def test_achievements_for_the_whole_guild_are_quick():
     took = time.perf_counter() - start
     assert len(feed) > 0 and len(leaders) == 8
     assert took < 2.0, took
+
+
+def test_a_big_catch_up_is_quick():
+    """Thousands of ledger entries arriving (a catch-up after a week away) are
+    added one by one without sorting the whole record again each time."""
+    guild = Guild([("Alice", 0), ("Bob", 3)])
+    alice = guild["Alice"]
+    start = time.perf_counter()
+    made = alice.lua.eval("""function(ns)
+      for i = 1, 4000 do ns.LedgerAdd("DK", { amount = 1, names = "Bob", reason = "Test " .. i }) end
+      return #ns.LedgerEntries("DK")
+    end""")(alice.ns)
+    took = time.perf_counter() - start
+    assert made == 4000
+    assert took < 3.0, took
+    guild.run(1)
+    assert alice.ns.Balance("Bob") == 4000
+
+
+def test_a_dkp_award_doesnt_rebuild_boss_kills():
+    guild = Guild([("Alice", 0), ("Bob", 3)])
+    lua = guild["Alice"].lua
+    ns = guild["Alice"].ns
+    lua.execute("FIRST_KILLS = nil")
+    lua.eval("function(ns) FIRST_KILLS = ns.BossKills() end")(ns)
+    ns.AwardDKP(lua.table_from(["Bob"]), 5, "Test")
+    guild.run(1)
+    assert lua.eval("function(ns) return rawequal(ns.BossKills(), FIRST_KILLS) end")(ns)  # the same cached list
+    assert ns.Balance("Bob") == 5        # while the balances did catch up

@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.3.1", date = "Nov 19, 2026", items = {
+    "Faster, especially in big guilds: catching up after time away, DKP awards and achievements no longer cause a hitch.",
+    "The Alts window is redesigned, and the player card fits its contents.",
+  } },
   { version = "3.3.0", date = "Nov 19, 2026", items = {
     "Raid night recap: when an officer ends the raid night, the whole guild gets a summary of the bosses, loot, attendance and the DKP you earned. /warcrest raidrecap shows the last one again.",
     "Help and What's new are now in German, French and Spanish too.",

@@ -40,9 +40,14 @@ ns.RAID_BOSSES = {
 -- Reading the kills
 ------------------------------------------------------------------------
 local cache
+local cacheStamp
 
 ns.OnLoad(function()
-  ns.OnLedgerChanged(function() cache = nil end)
+  -- Only boss kill entries change the kills.
+  ns.OnLedgerChanged(function()
+    local stamp = ns.LedgerStamp("BK")
+    if stamp ~= cacheStamp then cache, cacheStamp = nil, stamp end
+  end)
 end)
 
 local function splitNames(text)
@@ -84,7 +89,20 @@ local function build()
   -- Newest first.
   local out = {}
   for i = #kills, 1, -1 do out[#out + 1] = kills[i] end
-  cache = { kills = out }
+  -- Each member's kills, oldest first, so achievements and player cards don't
+  -- search every kill for every member.
+  local byMember = {}
+  for _, k in ipairs(kills) do
+    for key in pairs(k.set) do
+      local m = byMember[key]
+      if not m then m = { kills = {}, times = {}, firsts = {} }; byMember[key] = m end
+      m.kills[#m.kills + 1] = k
+      m.times[#m.times + 1] = k.t
+      if k.first then m.firsts[#m.firsts + 1] = k.t end
+    end
+  end
+  cache = { kills = out, byMember = byMember }
+  cacheStamp = ns.LedgerStamp("BK")
   return cache
 end
 
@@ -131,13 +149,18 @@ function ns.RaidProgress()
 end
 
 -- How many boss kills a guild member was at, and the times: sorted list.
+-- (A shared list: read it, don't change it.)
+local NONE = {}
 function ns.BossKillTimes(name, firstsOnly)
-  local key, out = ns.Key(name), {}
-  for _, k in ipairs(ns.BossKills()) do
-    if k.set[key] and (not firstsOnly or k.first) then out[#out + 1] = k.t end
-  end
-  table.sort(out)
-  return out
+  local m = (cache or build()).byMember[ns.Key(name)]
+  if not m then return NONE end
+  return firstsOnly and m.firsts or m.times
+end
+
+-- The boss kills a guild member was at, oldest first (shared: read only).
+function ns.MemberBossKills(name)
+  local m = (cache or build()).byMember[ns.Key(name)]
+  return m and m.kills or NONE
 end
 
 ------------------------------------------------------------------------

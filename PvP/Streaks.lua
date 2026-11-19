@@ -26,14 +26,10 @@ local REVENGE_COLOR = "|cffff6b6b"
 -- Every guild member's killing blows and deaths to enemy players, oldest
 -- first, built in one pass over the logs and kept until they change.
 local byKey, builtFor
-local ledgerVersion = 0
-ns.OnLoad(function() -- (the ledger loads after this file)
-  ns.OnLedgerChanged(function() ledgerVersion = ledgerVersion + 1 end) -- removed kills
-end)
-
 local function signature()
   local kl, dl = ns.db.killLog or {}, ns.db.deathLog or {}
-  return #kl .. ":" .. (kl[1] and kl[1].t or 0) .. ":" .. #dl .. ":" .. (dl[1] and dl[1].t or 0) .. ":" .. ledgerVersion
+  return #kl .. ":" .. (kl[1] and kl[1].t or 0) .. ":" .. #dl .. ":" .. (dl[1] and dl[1].t or 0) .. ":"
+    .. (ns.LedgerStamp and ns.LedgerStamp("KD") or "") -- removed kills
 end
 
 local function byTime(a, b)

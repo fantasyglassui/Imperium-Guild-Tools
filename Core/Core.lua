@@ -138,8 +138,16 @@ function ns.Clean(s)
 end
 
 -- Lowercase name without realm, for matching the same player across messages.
+-- Called constantly on the same few hundred names, so the answers are kept.
+local keys, keyCount = {}, 0
 function ns.Key(name)
-  return (tostring(name or ""):gsub("%-.*", "")):lower()
+  local k = keys[name or ""]
+  if k then return k end
+  k = (tostring(name or ""):gsub("%-.*", "")):lower()
+  if keyCount > 20000 then keys, keyCount = {}, 0 end
+  keys[name or ""] = k
+  keyCount = keyCount + 1
+  return k
 end
 
 ------------------------------------------------------------------------
@@ -202,6 +210,9 @@ local function pump()
     local q = queues[level]
     local i = 1
     while q[i] do
+      -- Nothing more can go out this tick: stop, rather than look through a long queue.
+      -- (Only bulk data, level 3, ever uses the second prefix.)
+      if tokens[ns.PREFIX] < 1 and (level < 3 or tokens[ns.PREFIX_BULK] < 1) then break end
       local m = q[i]
       -- Bulk data on the main prefix always leaves room for alerts and bids.
       local need = (level == 3 and m.prefix == ns.PREFIX) and 4 or 1

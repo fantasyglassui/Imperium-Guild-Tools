@@ -52,5 +52,9 @@ def test_help_and_whats_new_fit_translated():
             rd.render(me.lua.eval("WarcrestHelp"), "/tmp/help.png")
         me.ns.ShowUpdates(None)
         rd.render(me.lua.eval("WarcrestUpdates"), "/tmp/updates.png")
+        me.ns.ShowAltsWindow()
+        rd.render(me.lua.eval("WarcrestAlts"), "/tmp/alts.png")
+        me.ns.ShowPlayerCard("Lyra")
+        rd.render(me.lua.eval("WarcrestPlayerCard"), "/tmp/card.png")
         assert sorted(rd.truncated) == [], loc
         assert me.ns.T("Raid night recap") != "Raid night recap"

@@ -103,7 +103,12 @@ local function sortAll(t)
   for _, list in pairs(t) do table.sort(list) end
 end
 
-local function buildIndex()
+-- The PvP half comes only from the kill and death logs (and kills officers
+-- removed), so it's kept until one of those changes.
+local pvpIndex, pvpStamp
+local historyVersion = 0
+
+local function buildPvP()
   local kills, assists = {}, {}
   local deathsByKiller = {} -- enemy key -> times they killed a guild member
   local deathsOf = {}       -- member key -> { enemy key -> sorted times }
@@ -119,21 +124,32 @@ local function buildIndex()
   sortAll(deathsByKiller)
   for _, byEnemy in pairs(deathsOf) do sortAll(byEnemy) end
 
-  local function countIn(list, fromT, toT)
-    local n = 0
-    for _, t in ipairs(list or {}) do
-      if t >= fromT and t < toT then n = n + 1 end
+  -- How many times in a sorted list fall in [fromT, toT): two binary searches.
+  local function firstAtOrAfter(list, t)
+    local lo, hi = 1, #list + 1
+    while lo < hi do
+      local mid = math.floor((lo + hi) / 2)
+      if list[mid] < t then lo = mid + 1 else hi = mid end
     end
-    return n
+    return lo
+  end
+  local function countIn(list, fromT, toT)
+    if not list then return 0 end
+    return firstAtOrAfter(list, toT) - firstAtOrAfter(list, fromT)
   end
 
   local revenge, bounty, nemesis = {}, {}, {}
   local double, night, zones, grudge = {}, {}, {}, {}
   local zoneSeen, victimCount, lastKill = {}, {}, {}
   -- Oldest first, so "the 10th zone" and "the 5th time" happen in order.
-  local log = {}
-  for _, k in ipairs(ns.db.killLog or {}) do log[#log + 1] = k end
-  table.sort(log, function(a, b) return a.t < b.t end)
+  -- (The kill log is kept newest first, so reading it backwards is enough; sort
+  -- only if something put it out of order.)
+  local log, src, sorted = {}, ns.db.killLog or {}, true
+  for i = #src, 1, -1 do
+    log[#log + 1] = src[i]
+    if #log > 1 and log[#log].t < log[#log - 1].t then sorted = false end
+  end
+  if not sorted then table.sort(log, function(a, b) return a.t < b.t end) end
   for _, k in ipairs(log) do
     if not ns.KillHidden(k) then
       local kb = ns.KillingBlow(k)
@@ -183,6 +199,14 @@ local function buildIndex()
     end
   end
   sortAll(champion)
+  return { kills = kills, assists = assists, revenge = revenge, bounty = bounty, nemesis = nemesis,
+    double = double, night = night, zones = zones, grudge = grudge, champion = champion }
+end
+
+local function buildIndex()
+  local stamp = historyVersion .. "/" .. ns.LedgerStamp("KD")
+  if not pvpIndex or pvpStamp ~= stamp then pvpIndex, pvpStamp = buildPvP(), stamp end
+  local p = pvpIndex
 
   -- Loot.
   local loot, bigBuy, wonItem, rolls = {}, {}, {}, {}
@@ -199,10 +223,25 @@ local function buildIndex()
   end
   sortAll(loot); sortAll(bigBuy); sortAll(rolls)
 
-  index = { kills = kills, assists = assists, revenge = revenge, bounty = bounty, nemesis = nemesis,
-    double = double, night = night, zones = zones, grudge = grudge,
-    champion = champion, loot = loot, bigBuy = bigBuy, rolls = rolls, wonItem = wonItem }
+  index = { kills = p.kills, assists = p.assists, revenge = p.revenge, bounty = p.bounty, nemesis = p.nemesis,
+    double = p.double, night = p.night, zones = p.zones, grudge = p.grudge,
+    champion = p.champion, loot = loot, bigBuy = bigBuy, rolls = rolls, wonItem = wonItem }
   return index
+end
+
+-- Raid nights per month: "YYYY-MM" -> { total, last }, kept until the record changes.
+local monthsCache, monthsVersion
+local function raidMonths()
+  if monthsCache and monthsVersion == ns.LedgerVersion() then return monthsCache end
+  local months = {}
+  for _, s in ipairs(ns.LedgerEntries("RS")) do
+    local m = date("%Y-%m", s.t)
+    months[m] = months[m] or { total = 0, last = 0 }
+    months[m].total = months[m].total + 1
+    months[m].last = math.max(months[m].last, s.t)
+  end
+  monthsCache, monthsVersion = months, ns.LedgerVersion()
+  return months
 end
 
 -- One member's stat: a sorted list of times.
@@ -228,45 +267,43 @@ local function statTimes(name, stat)
   end
   if stat == "perfect" then
     -- Months (finished ones) with at least PERFECT_MIN raid nights, all attended.
-    local mine = {}
-    for _, t in ipairs(ns.RaidNightsAttended(name)) do mine[t] = true end
-    local months = {}
-    for _, s in ipairs(ns.LedgerEntries("RS")) do
-      local m = date("%Y-%m", s.t)
-      months[m] = months[m] or { total = 0, here = 0, last = 0 }
-      months[m].total = months[m].total + 1
-      if mine[s.t] then months[m].here = months[m].here + 1 end
-      months[m].last = math.max(months[m].last, s.t)
+    local months = raidMonths()
+    local here = {}
+    for _, t in ipairs(ns.RaidNightsAttended(name)) do
+      local m = date("%Y-%m", t)
+      here[m] = (here[m] or 0) + 1
     end
     local current, out = date("%Y-%m"), {}
-    for m, v in pairs(months) do
-      if m ~= current and v.total >= PERFECT_MIN and v.here == v.total then out[#out + 1] = v.last end
+    for m, n in pairs(here) do
+      local v = months[m]
+      if v and m ~= current and v.total >= PERFECT_MIN and n >= v.total then out[#out + 1] = v.last end
     end
     table.sort(out)
     return out
   end
   if stat == "fullClear" then
     -- Every boss of a raid (where the count is known) within 7 days, with you there for each.
-    local key, byRaid, out = k, {}, {}
-    for _, kill in ipairs(ns.BossKills and ns.BossKills() or {}) do
-      if kill.set[key] and ns.RAID_BOSSES[kill.raid] then
+    local byRaid, out = {}, {}
+    for _, kill in ipairs(ns.MemberBossKills and ns.MemberBossKills(name) or {}) do -- oldest first
+      if ns.RAID_BOSSES[kill.raid] then
         byRaid[kill.raid] = byRaid[kill.raid] or {}
-        table.insert(byRaid[kill.raid], 1, kill) -- oldest first
+        table.insert(byRaid[kill.raid], kill)
       end
     end
     for raid, kills in pairs(byRaid) do
-      local need = ns.RAID_BOSSES[raid]
-      for i = 1, #kills do
-        local seen, n = {}, 0
-        for j = i, #kills do
-          if kills[j].t - kills[i].t > WEEK then break end
-          if not seen[kills[j].boss] then
-            seen[kills[j].boss] = true
-            n = n + 1
-            if n >= need then out[#out + 1] = kills[j].t break end
-          end
+      -- A week-long window sliding over the kills, counting different bosses in it.
+      local need, count, n, first = ns.RAID_BOSSES[raid], {}, 0, 1
+      for j = 1, #kills do
+        local b = kills[j].boss
+        count[b] = (count[b] or 0) + 1
+        if count[b] == 1 then n = n + 1 end
+        while kills[j].t - kills[first].t > WEEK do
+          local old = kills[first].boss
+          count[old] = count[old] - 1
+          if count[old] == 0 then n = n - 1 end
+          first = first + 1
         end
-        if n >= need then break end
+        if n >= need then out[#out + 1] = kills[j].t break end
       end
     end
     table.sort(out)
@@ -436,29 +473,49 @@ local function wanted()
   return c and c.enabled and c.types.achievement and show.achievement
 end
 
+-- Working everyone's achievements out again takes a moment in a big guild, so
+-- it's done a few dozen members at a time instead of all in one frame.
+local CHUNK = 40
+local run = 0     -- which recheck is current (a newer one stops an older one)
+local base        -- what was earned before the recheck in progress started
+
 local function recheck()
   pending = false
-  local before = earnedCache
+  run = run + 1
+  local mine = run
+  if not base then base = earnedCache end -- an unfinished recheck keeps its starting point
+  local before = base
   index, earnedCache = nil, {}
+  local roster = ns.GetRoster()
   local now = GetServerTime()
-  for _, m in ipairs(ns.GetRoster()) do
-    local short = Ambiguate(m.name, "short")
-    local was = before[ns.Key(short)]
-    local is = ns.MemberAchievements(short)
-    if ready and was then
-      for _, a in ipairs(LIST) do
-        local e = is[a.id]
-        if e.t and not (was[a.id] and was[a.id].t) and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
-          local text = ("%s earned %s!"):format(short, a.name)
-          if a.title then text = text .. (" New title: %s %s."):format(short, a.title) end
-          ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
+  local i = 0
+  local function step()
+    if mine ~= run then return end
+    for _ = 1, CHUNK do
+      i = i + 1
+      local m = roster[i]
+      if not m then break end
+      local short = Ambiguate(m.name, "short")
+      local was = before[ns.Key(short)]
+      local is = ns.MemberAchievements(short)
+      if ready and was then
+        for _, a in ipairs(LIST) do
+          local e = is[a.id]
+          if e.t and not (was[a.id] and was[a.id].t) and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
+            local text = ("%s earned %s!"):format(short, a.name)
+            if a.title then text = text .. (" New title: %s %s."):format(short, a.title) end
+            ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
+          end
         end
       end
     end
+    if roster[i + 1] then C_Timer.After(0.01, step) return end
+    base = nil
+    if #roster > 0 then ready = true end
+    if ns.RefreshPanel then ns.RefreshPanel() end
+    if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
   end
-  if #ns.GetRoster() > 0 then ready = true end
-  if ns.RefreshPanel then ns.RefreshPanel() end
-  if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
+  step()
 end
 
 local function changed()
@@ -469,6 +526,7 @@ end
 
 local previousHook = ns.OnHistoryChanged
 function ns.OnHistoryChanged()
+  historyVersion = historyVersion + 1
   changed()
   if previousHook then previousHook() end
 end

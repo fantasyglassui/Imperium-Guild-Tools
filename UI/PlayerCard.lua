@@ -161,6 +161,8 @@ local function fill(p)
   end
   if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
   f.lootLines:SetText(table.concat(loot, "\n"))
+  -- As tall as what's on it: no empty space under a short record.
+  f:SetHeight(math.min(HEIGHT, math.max(400, 342 + math.ceil(f.lootLines:GetStringHeight()) + 30)))
 end
 
 -- Open a guild member's card.

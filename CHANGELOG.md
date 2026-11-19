@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.3.1
+- **Faster, especially in big guilds with a long history.**
+  - Catching up after time away no longer slows down as the record grows. Taking in thousands of guild changes (raids, DKP, sign-ups) used to re-sort the whole record for each one; it now files each change in place. In a test guild with 10,000 changes, that went from over a minute and a half to a third of a second.
+  - A DKP award, a sign-up or a won item no longer makes Warcrest work out everything again: DKP balances add just the new change, and boss kills, PvP stats and the kill log are only rebuilt when they actually change.
+  - Achievements for the whole guild are checked a few dozen members at a time instead of all in one go, so there's no hitch when something changes in a big guild.
+  - The kill log, loot history and achievements look things up instead of searching every entry, and a long queue of outgoing messages no longer costs time on every tick.
+- **Polish.**
+  - The Alts window is redesigned in the Warcrest look, and only shows what applies to you (an alt sees Unlink, a main sees the request to link).
+  - The player card fits its contents, without empty space at the bottom.
+
 ## 3.3.0
 - New: **raid night recap.** When an officer clicks End raid, the whole guild gets a short summary in chat, with a banner to say it's there: how long the raid night ran, the bosses killed (guild firsts marked), the loot and who won it, how many attended and who was on standby, and the DKP you earned. /warcrest raidrecap shows the last one again. Officers can turn it off for the guild in Settings > Alerts (Raid night recaps), and anyone can turn it off for themselves.
 - **Help and What's new in German, French and Spanish**, so the whole addon now follows your language (Settings > General > Language).

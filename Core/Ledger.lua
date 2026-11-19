@@ -41,11 +41,11 @@ local FIELDS = {
   SN = { "name", "parts" },                    -- a new DKP season starts; history before it is archived
   SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
-  TI = { "title" },
+  TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)
   BX = { "ref" },                              -- a bounty withdrawn
-  BC = { "ref", "killer", "when" },            -- a bounty claimed: who killed the target, and when                            -- the title a member shows: an achievement's id, or "" for none
+  BC = { "ref", "killer", "when" },            -- a bounty claimed: who killed the target, and when
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
@@ -53,6 +53,20 @@ local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, dec
 local CLAIM_WINDOW = 30
 
 local counter = 0
+local version = 0 -- goes up with every change, so caches can tell they're stale
+local kindVersion = {} -- kind -> its own count of changes
+local epoch = 0        -- goes up when everything may have changed (archiving)
+
+-- Bumped whenever the record changes. Caches keep the version they were built at.
+function ns.LedgerVersion() return version end
+
+-- A stamp for some kinds of entry: the same until one of them changes, so a
+-- cache of boss kills isn't rebuilt because someone was given DKP.
+function ns.LedgerStamp(...)
+  local s = tostring(epoch)
+  for i = 1, select("#", ...) do s = s .. ":" .. (kindVersion[(select(i, ...))] or 0) end
+  return s
+end
 local listeners = {}
 local changePending = false
 
@@ -116,18 +130,12 @@ local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX
 local byKind     -- kind -> sorted list of entries, rebuilt after any change
 local season     -- the current season, once all its starting balances are here
 
-local function index()
-  byKind = {}
-  for _, e in pairs(ns.db.ledger) do
-    byKind[e.k] = byKind[e.k] or {}
-    table.insert(byKind[e.k], e)
-  end
-  for _, list in pairs(byKind) do
-    table.sort(list, function(a, b)
-      if a.t ~= b.t then return a.t < b.t end
-      return a.id < b.id
-    end)
-  end
+local function before(a, b)
+  if a.t ~= b.t then return a.t < b.t end
+  return a.id < b.id
+end
+
+local function findSeason()
   -- The newest season whose starting balances have all arrived.
   season = nil
   local seasons = byKind.SN or {}
@@ -138,6 +146,27 @@ local function index()
     end
     if parts >= sn.parts then season = sn break end
   end
+end
+
+-- Put a new entry into its kind's sorted list. New entries are nearly always
+-- the newest, so this walks back only a step or two; it saves sorting the
+-- whole record again for every entry that arrives during a catch-up.
+local function indexOne(e)
+  local list = byKind[e.k]
+  if not list then list = {}; byKind[e.k] = list end
+  local i = #list
+  while i > 0 and before(e, list[i]) do i = i - 1 end
+  table.insert(list, i + 1, e)
+end
+
+local function index()
+  byKind = {}
+  for _, e in pairs(ns.db.ledger) do
+    byKind[e.k] = byKind[e.k] or {}
+    table.insert(byKind[e.k], e)
+  end
+  for _, list in pairs(byKind) do table.sort(list, before) end
+  findSeason()
 end
 
 -- The current DKP season (complete), if any.
@@ -161,7 +190,7 @@ local function prune()
   for id, e in pairs(ns.db.ledger) do
     if archived(e) then ns.db.ledger[id] = nil; removed = removed + 1 end
   end
-  if removed > 0 then byKind = nil end
+  if removed > 0 then byKind = nil; version = version + 1; epoch = epoch + 1 end
   return removed
 end
 
@@ -169,7 +198,9 @@ local function store(e)
   if ns.db.ledger[e.id] then return false end
   if archived(e) then return false end -- history from before the season stays archived
   ns.db.ledger[e.id] = e
-  byKind = nil
+  version = version + 1
+  kindVersion[e.k] = (kindVersion[e.k] or 0) + 1
+  if byKind then indexOne(e) end
   if e.k == "SN" or e.k == "SS" then
     index()
     if season and prune() > 0 then index() end
@@ -202,6 +233,9 @@ ns.OnLoad(function()
   index()
   if season and prune() > 0 then index() end
 end)
+
+-- Sort everything again (tests that rewrite entries' times use it).
+function ns.ReindexLedger() byKind = nil; version = version + 1; epoch = epoch + 1 end
 
 -- All entries of one kind, oldest first. The list is shared: read it, don't change it.
 local EMPTY = {}

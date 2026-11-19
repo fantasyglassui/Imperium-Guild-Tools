@@ -16,8 +16,9 @@ local _, ns = ...
 local NAMES_PER_ENTRY_CHARS = 170
 local SNIPE_GUARD = 5
 local cache
-
-ns.OnLedgerChanged(function() cache = nil end)
+local catchUp -- (below)
+-- Balances only change with DKP changes, undos, alt links and seasons.
+ns.OnLedgerChanged(function() catchUp() end)
 
 ------------------------------------------------------------------------
 -- Balances
@@ -29,9 +30,10 @@ ns.OnLedgerChanged(function() cache = nil end)
 -- confirms ("ok"), which proves the same person plays both. Officers can
 -- also link or unlink directly.
 local links, pending
+local mains = {} -- name -> main, kept until the links change (ns.MainOf)
 
 local function loadLinks()
-  links, pending = {}, {}
+  links, pending, mains = {}, {}, {}
   for _, e in ipairs(ns.LedgerEntries("AL")) do
     local alt, main, author = ns.Key(e.alt), ns.Key(e.main), ns.Key(e.a)
     if alt ~= "" and alt ~= main then
@@ -52,11 +54,15 @@ end
 -- The main a character belongs to (or the character itself).
 function ns.MainOf(name)
   if not links then loadLinks() end
-  local current, seen = Ambiguate(name or "", "short"), 0
+  name = name or ""
+  local known = mains[name]
+  if known then return known end
+  local current, seen = Ambiguate(name, "short"), 0
   while links[ns.Key(current)] and seen < 3 do -- follow at most a short chain
     current = links[ns.Key(current)]
     seen = seen + 1
   end
+  mains[name] = current
   return current
 end
 
@@ -148,8 +154,9 @@ ns.UndoneSet = undoneSet
 
 -- Balances from the DKP record. fromT/toT limit which changes count; base is
 -- a set of starting balances (a season's) to add them to.
-local function tally(fromT, toT, base)
+local function newTally(fromT, toT, base)
   local balances, history = {}, {}
+  local decayed = {} -- name key .. week -> true, so a week's decay only counts once
   local function add(name, amount, entry)
     local main = ns.MainOf(name) -- alts count toward their main
     local k = ns.Key(main)
@@ -163,10 +170,8 @@ local function tally(fromT, toT, base)
     if entry then table.insert(history[k], 1, entry) end -- newest first
   end
   for _, b in ipairs(base or {}) do add(b.name, b.amount) end
-
-  local decayed = {} -- name key .. week -> true, so a week's decay only counts once
-  local undone = undoneSet()
-  for _, e in ipairs(ns.LedgerEntries("DK")) do
+  -- Count one DKP change (oldest first).
+  local function apply(e, undone)
     local inRange = not (fromT and e.t < fromT) and not (toT and e.t >= toT)
     if inRange and not undone[e.id] then
       local week = e.reason:match("^Decay %d+%% %(week (%d+)%)$")
@@ -180,7 +185,14 @@ local function tally(fromT, toT, base)
       end
     end
   end
-  return balances, history
+  return { balances = balances, history = history, apply = apply }
+end
+
+local function tally(fromT, toT, base)
+  local t = newTally(fromT, toT, base)
+  local undone = undoneSet()
+  for _, e in ipairs(ns.LedgerEntries("DK")) do t.apply(e, undone) end
+  return t.balances, t.history
 end
 
 -- A season's starting balances: { name, amount } per member.
@@ -196,14 +208,24 @@ end
 
 local function build()
   local sn = ns.CurrentSeason()
-  local balances, history
-  if sn then
-    balances, history = tally(sn.t, nil, seasonBase(sn))
-  else
-    balances, history = tally()
-  end
-  cache = { balances = balances, history = history }
+  local t = sn and newTally(sn.t, nil, seasonBase(sn)) or newTally()
+  local undone = undoneSet()
+  local list = ns.LedgerEntries("DK")
+  for _, e in ipairs(list) do t.apply(e, undone) end
+  cache = { balances = t.balances, history = t.history, tally = t, count = #list, last = list[#list],
+    undone = undone, otherStamp = ns.LedgerStamp("UN", "AL", "SN", "SS") }
   return cache
+end
+
+-- New DKP changes (the usual case: an award or a won item just now) are added
+-- to the balances instead of working everything out again. Anything else (an
+-- undo, an alt link, a season, or a change older than the newest) starts over.
+function catchUp()
+  if not cache or cache.otherStamp ~= ns.LedgerStamp("UN", "AL", "SN", "SS") then cache = nil return end
+  local list = ns.LedgerEntries("DK")
+  if #list < cache.count or list[cache.count] ~= cache.last then cache = nil return end
+  for i = cache.count + 1, #list do cache.tally.apply(list[i], cache.undone) end
+  cache.count, cache.last = #list, list[#list]
 end
 
 -- Officers: start a new season. Everyone keeps their DKP; older history is archived.
@@ -297,13 +319,27 @@ end
 ------------------------------------------------------------------------
 -- Every item won in an auction, newest first: { t, item, winner, amount, by, raid }.
 -- Built from the DKP record, so it's the same for everyone.
+-- Kept until the record changes: the list is shared, so read it, don't change it.
+local lootCache, lootVersion, lootSeason
 function ns.LootHistory()
-  -- Raid nights, to say which raid each item dropped in.
+  if lootCache and lootVersion == ns.LedgerVersion() and lootSeason == ns.CurrentSeason() then return lootCache end
+  -- Raid nights (oldest first), to say which raid each item dropped in.
   local sessions = {}
   local ends = {}
   for _, e in ipairs(ns.LedgerEntries("RE")) do ends[e.ref] = e.t end
   for _, s in ipairs(ns.LedgerEntries("RS")) do
     sessions[#sessions + 1] = { from = s.t, to = ends[s.id] or (s.t + 12 * 3600), title = s.title }
+  end
+  -- The newest raid night that started at or before t, if t falls inside it.
+  local function raidAt(t)
+    local lo, hi, found = 1, #sessions, nil
+    while lo <= hi do
+      local mid = math.floor((lo + hi) / 2)
+      if sessions[mid].from <= t then found = mid; lo = mid + 1 else hi = mid - 1 end
+    end
+    for i = found or 0, math.max(1, (found or 0) - 3), -1 do -- overlapping nights: check a few back
+      if sessions[i] and t <= sessions[i].to then return sessions[i].title end
+    end
   end
   local out = {}
   local undone = undoneSet()
@@ -312,10 +348,7 @@ function ns.LootHistory()
     if item then item = item:gsub(" %(free roll%)$", ""):gsub(" %(council%)$", "") end
     local sn = ns.CurrentSeason()
     if item and e.amount <= 0 and not undone[e.id] and not (sn and e.t < sn.t) then
-      local raid
-      for _, s in ipairs(sessions) do
-        if e.t >= s.from and e.t <= s.to then raid = s.title end
-      end
+      local raid = raidAt(e.t)
       for name in e.names:gmatch("[^,]+") do
         out[#out + 1] = { t = e.t, item = item, winner = Ambiguate(name, "short"), amount = -e.amount,
           by = e.a, raid = raid, id = e.id, roll = e.reason:find("%(free roll%)$") ~= nil,
@@ -324,6 +357,7 @@ function ns.LootHistory()
     end
   end
   table.sort(out, function(a, b) return a.t > b.t end)
+  lootCache, lootVersion, lootSeason = out, ns.LedgerVersion(), ns.CurrentSeason()
   return out
 end
 

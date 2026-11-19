@@ -15,98 +15,145 @@ end
 -- Alts
 ------------------------------------------------------------------------
 local alts
+local W = 440
+local INNER = W - 32
 
 local function RefreshAlts()
   if not (alts and alts:IsShown()) then return end
   local me = UnitName("player")
   local main = ns.MainOf(me)
+  local isAlt = ns.Key(main) ~= ns.Key(me)
   local lines = {}
 
-  if ns.Key(main) ~= ns.Key(me) then
-    lines[#lines + 1] = ("This character is an alt of %s%s|r. Its DKP and attendance count toward %s."):format(ns.COLOR, main, main)
+  if isAlt then
+    lines[#lines + 1] = ns.TF("This character is an alt of %s. Its DKP and attendance count toward %s.",
+      ns.COLOR .. main .. "|r", main)
   else
     local mine = ns.AltsOf(me)
-    lines[#lines + 1] = #mine > 0 and ("Your alts: " .. table.concat(mine, ", "))
-      or "|cff8b95a7This character has no alts linked.|r"
+    lines[#lines + 1] = #mine > 0 and ns.TF("Your alts: %s", table.concat(mine, ", "))
+      or (UI.Code("muted") .. ns.T("This character has no alts linked.") .. "|r")
   end
   local asked = ns.MyAltRequest()
   if asked then
-    lines[#lines + 1] = ("|cffe0b94cWaiting for %s to confirm. Log in on %s and open this window.|r"):format(asked, asked)
+    lines[#lines + 1] = UI.Code("accent") .. ns.TF("Waiting for %s to confirm. Log in on %s and open this window.", asked, asked) .. "|r"
   end
-  alts.status:SetText(table.concat(lines, "\n\n"))
+  alts.status:SetText(table.concat(lines, "\n"))
+
+  -- An alt can unlink itself; a main (or unlinked character) can ask to link.
+  alts.mainLabel:SetShown(not isAlt)
+  alts.mainBox:SetShown(not isAlt)
+  alts.ask:SetShown(not isAlt)
+  alts.how:SetShown(not isAlt)
+  alts.unlink:SetShown(isAlt)
 
   local requests = ns.PendingAltRequests()
-  alts.requestText:SetText(#requests > 0 and ("|cffe0b94c%s asked to be linked as your alt.|r"):format(requests[1]) or "")
-  alts.confirm:SetShown(#requests > 0)
-  alts.decline:SetShown(#requests > 0)
-  alts.confirm.alt = requests[1]
-
-  local isAlt = ns.Key(main) ~= ns.Key(me)
-  alts.unlink:SetShown(isAlt)
-  alts.officer:SetShown(ns.IsAddonOfficer())
+  local y = -186
+  alts.request:SetShown(#requests > 0)
+  if #requests > 0 then
+    alts.requestText:SetText(ns.TF("%s asked to be linked as your alt.", requests[1]))
+    alts.confirm.alt = requests[1]
+    alts.request:ClearAllPoints()
+    alts.request:SetPoint("TOPLEFT", 16, y)
+    y = y - 76
+  end
+  local officer = ns.IsAddonOfficer()
+  alts.officer:SetShown(officer)
+  if officer then
+    alts.officer:ClearAllPoints()
+    alts.officer:SetPoint("TOPLEFT", 16, y)
+    y = y - 96
+  end
+  alts:SetHeight(-y + 4)
 end
 
 ns.OnLedgerChanged(function() C_Timer.After(0.6, RefreshAlts) end)
 
 function ns.ShowAltsWindow()
   if not alts then
-    local f = Window("WarcrestAlts", "Alts", 420, 330)
+    local f = Window("WarcrestAlts", "Alts", W, 300)
     alts = f
 
-    f.status = UI.Label(f, "", "GameFontHighlight")
-    f.status:SetPoint("TOPLEFT", 16, -34)
-    f.status:SetWidth(388)
+    local intro = UI.Label(f, "Link your alts to your main so they share its DKP and attendance.", "MutedSmall")
+    intro:SetPoint("TOPLEFT", 16, -42)
+    intro:SetWidth(INNER)
+    f.status = UI.Label(f, "", "Body")
+    f.status:SetPoint("TOPLEFT", 16, -64)
+    f.status:SetWidth(INNER)
+    f.status:SetSpacing(3)
 
-    UI.Label(f, "Link this character as an alt of:", "GameFontNormalSmall"):SetPoint("TOPLEFT", 16, -104)
-    f.mainBox = UI.EditBox(f, 140, 40)
-    f.mainBox:SetPoint("TOPLEFT", 22, -118)
-    local ask = UI.Button(f, "Ask to link", 100)
-    ask:SetPoint("LEFT", f.mainBox, "RIGHT", 8, 0)
-    ask:SetScript("OnClick", function()
+    f.mainLabel = UI.FieldLabel(f, "Link this character as an alt of", 16, -104)
+    f.mainBox = UI.EditBox(f, INNER - 128, 40)
+    f.mainBox:SetHeight(28)
+    f.mainBox:SetPoint("TOPLEFT", 16, -120)
+    f.mainBox.hint = UI.Label(f.mainBox, "Your main's name", "MutedSmall")
+    f.mainBox.hint:SetPoint("LEFT", 8, 0)
+    f.mainBox:HookScript("OnTextChanged", function(self) self.hint:SetShown((self:GetText() or "") == "") end)
+    f.ask = UI.Button(f, "Ask to link", 120, "primary")
+    f.ask:SetHeight(28)
+    f.ask:SetPoint("LEFT", f.mainBox, "RIGHT", 8, 0)
+    f.ask:SetScript("OnClick", function()
       ns.RequestAltLink(f.mainBox:GetText())
       f.mainBox:SetText("")
       f.mainBox:ClearFocus()
     end)
-    local how = UI.Label(f, "Then log in on your main and confirm it here. Linking needs both characters, so only "
-      .. "you can link your own alts.", "GameFontDisableSmall")
-    how:SetPoint("TOPLEFT", 16, -142)
-    how:SetWidth(388)
+    f.how = UI.Label(f, "Then log in on your main and confirm it here. Linking needs both characters, so only "
+      .. "you can link your own alts.", "MutedSmall")
+    f.how:SetPoint("TOPLEFT", 16, -154)
+    f.how:SetWidth(INNER)
 
-    f.requestText = UI.Label(f, "", "GameFontHighlight")
-    f.requestText:SetPoint("TOPLEFT", 16, -174)
-    f.confirm = UI.Button(f, "Confirm", 90, "primary")
-    f.confirm:SetPoint("TOPLEFT", 16, -192)
+    f.unlink = UI.Button(f, "Unlink this alt", 160)
+    f.unlink:SetHeight(28)
+    f.unlink:SetPoint("TOPLEFT", 16, -110)
+    f.unlink:SetScript("OnClick", function() ns.UnlinkAlt(UnitName("player")) end)
+
+    -- Someone asked to be this character's alt.
+    local r = CreateFrame("Frame", nil, f)
+    r:SetSize(INNER, 66)
+    UI.Card(r, 1)
+    f.request = r
+    f.requestText = UI.Label(r, "", "Subheading")
+    f.requestText:SetPoint("TOPLEFT", 12, -10)
+    f.requestText:SetWidth(INNER - 24)
+    f.confirm = UI.Button(r, "Confirm", 100, "primary")
+    f.confirm:SetHeight(26)
+    f.confirm:SetPoint("TOPLEFT", 12, -30)
     f.confirm:SetScript("OnClick", function(self) if self.alt then ns.ConfirmAlt(self.alt) end end)
-    f.decline = UI.Button(f, "Decline", 90)
-    f.decline:SetPoint("LEFT", f.confirm, "RIGHT", 6, 0)
+    f.decline = UI.Button(r, "Decline", 100)
+    f.decline:SetHeight(26)
+    f.decline:SetPoint("LEFT", f.confirm, "RIGHT", 8, 0)
     f.decline:SetScript("OnClick", function()
       if f.confirm.alt then ns.UnlinkAlt(f.confirm.alt) end
     end)
 
-    f.unlink = UI.Button(f, "Unlink this alt", 120)
-    f.unlink:SetPoint("TOPRIGHT", -16, -100)
-    f.unlink:SetScript("OnClick", function() ns.UnlinkAlt(UnitName("player")) end)
-
     -- Officers can link or unlink any alt directly.
     local o = CreateFrame("Frame", nil, f)
-    o:SetPoint("TOPLEFT", 0, -226)
-    o:SetPoint("BOTTOMRIGHT")
+    o:SetSize(INNER, 86)
     f.officer = o
-    UI.Label(o, "Officers: link any alt", "GameFontNormalSmall"):SetPoint("TOPLEFT", 16, 0)
-    UI.Label(o, "Alt", "GameFontDisableSmall"):SetPoint("TOPLEFT", 16, -18)
-    local altBox = UI.EditBox(o, 110, 40)
-    altBox:SetPoint("TOPLEFT", 22, -32)
-    UI.Label(o, "Main", "GameFontDisableSmall"):SetPoint("TOPLEFT", 144, -18)
-    local mainBox = UI.EditBox(o, 110, 40)
-    mainBox:SetPoint("TOPLEFT", 150, -32)
-    local link = UI.Button(o, "Link", 60)
+    local line = o:CreateTexture(nil, "ARTWORK")
+    line:SetPoint("TOPLEFT")
+    line:SetSize(INNER, 1)
+    line:SetColorTexture(UI.C.edge[1], UI.C.edge[2], UI.C.edge[3], 1)
+    local head = UI.Label(o, "Officers: link any alt", "Subheading")
+    head:SetPoint("TOPLEFT", 0, -14)
+    local boxW = math.floor((INNER - 16 - 150) / 2)
+    UI.FieldLabel(o, "Alt", 0, -38)
+    local altBox = UI.EditBox(o, boxW, 40)
+    altBox:SetHeight(28)
+    altBox:SetPoint("TOPLEFT", 0, -54)
+    UI.FieldLabel(o, "Main", boxW + 8, -38)
+    local mainBox = UI.EditBox(o, boxW, 40)
+    mainBox:SetHeight(28)
+    mainBox:SetPoint("TOPLEFT", boxW + 8, -54)
+    local link = UI.Button(o, "Link", 70)
+    link:SetHeight(28)
     link:SetPoint("LEFT", mainBox, "RIGHT", 8, 0)
     link:SetScript("OnClick", function()
       ns.OfficerLinkAlt(altBox:GetText(), mainBox:GetText())
       altBox:SetText(""); mainBox:SetText("")
     end)
-    local unlink = UI.Button(o, "Unlink", 64)
-    unlink:SetPoint("LEFT", link, "RIGHT", 4, 0)
+    local unlink = UI.Button(o, "Unlink", 70)
+    unlink:SetHeight(28)
+    unlink:SetPoint("LEFT", link, "RIGHT", 8, 0)
     unlink:SetScript("OnClick", function()
       local alt = strtrim(altBox:GetText() or "")
       if alt ~= "" then ns.UnlinkAlt(alt) end

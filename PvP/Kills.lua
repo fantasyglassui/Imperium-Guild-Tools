@@ -42,9 +42,7 @@ local pending = {}        -- victim key -> alert being gathered from guildmates
 local KILL_ICON = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:0|t"
 local KILL_COLOR = "|cff40ff40"
 
-local function key(name)
-  return (tostring(name or ""):gsub("%-.*", "")):lower()
-end
+local function key(name) return ns.Key(name) end
 
 local function alive()
   local ok, dead = pcall(UnitIsDeadOrGhost, "player")
@@ -239,22 +237,24 @@ end
 
 -- Guild members' levels, to check guildmates' reports for grey kills.
 local levels, levelsAt = {}, nil
-local function memberLevel(name)
+local greyMemo = setmetatable({}, { __mode = "k" }) -- kill -> grey or not, until levels are looked up again
+local function refreshLevels()
   local now = GetTime()
   if not levelsAt or now - levelsAt > 30 or (next(levels) == nil and now - levelsAt > 2) then
     levels, levelsAt = {}, now
+    greyMemo = setmetatable({}, { __mode = "k" })
     for _, m in ipairs(ns.GetRoster()) do
       local lv = tonumber(ns.Usable(m.level))
       if lv and lv > 0 then levels[key(m.name)] = lv end
     end
   end
-  return levels[key(name)]
 end
+local function memberLevel(name) return levels[key(name)] end
 
 -- A grey kill: the victim's level is grey to every killer whose level is
 -- known, or, without levels to go on, the report said there was no honor.
 -- (Kills from older versions with no honor information still count.)
-function ns.IsGreyKill(k)
+local function isGrey(k)
   local victim = tonumber(k.level)
   if victim and victim >= 0 then
     local judged = false
@@ -268,6 +268,16 @@ function ns.IsGreyKill(k)
     if judged then return true end
   end
   return k.honor == false
+end
+
+function ns.IsGreyKill(k)
+  refreshLevels()
+  local grey = greyMemo[k]
+  if grey == nil then
+    grey = isGrey(k)
+    greyMemo[k] = grey
+  end
+  return grey
 end
 
 -- Grey kills always are left out now. (Kept for anything that still asks.)
@@ -328,7 +338,12 @@ end
 
 ns.OnLoad(function()
   if not ns.OnLedgerChanged then return end
+  local seenStamp
   ns.OnLedgerChanged(function()
+    -- Only kill removals matter here; other changes (DKP, sign-ups...) leave the log alone.
+    local stamp = ns.LedgerStamp("KD")
+    if stamp == seenStamp then return end
+    seenStamp = stamp
     loadRemoved()
     local log = ns.db.killLog
     for i = #log, 1, -1 do
