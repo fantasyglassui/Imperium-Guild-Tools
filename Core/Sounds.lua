@@ -103,6 +103,7 @@ ns.SOUND_KINDS = {
   { key = "champion",    label = "Top head hunters",      default = "wc:VictoryFanfare" },
   { key = "boss",        label = "Boss down",             default = "wc:GuildFirst" },
   { key = "raid",        label = "Raid",                  default = "wc:WarHorn" },
+  { key = "event",       label = "Guild event",           default = "wc:HandBell" },
   { key = "loot",        label = "Loot auction",          default = "wc:TripleChime" },
   { key = "achievement", label = "Achievement",           default = "wc:AchievementChime" },
   { key = "celebrate",   label = "Guild news",            default = "wc:LevelUp" },

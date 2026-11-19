@@ -511,9 +511,9 @@ ns.OnEvent("GROUP_ROSTER_UPDATE", function()
   if IsInRaid() then inviteMore() end
 end)
 
--- Invite every online guild member who accepted (or is tentative) and isn't in your group.
-function ns.InviteSignups(eventId)
-  if not ns.IsAddonOfficer() then ns.Say("Only officers can send raid invites.") return end
+-- Invite these guild members: the online ones not already in your group.
+-- `what` says who they are, for the message ("who signed up").
+function ns.InviteNames(names, what)
   local inGroup = {}
   for _, m in ipairs(ns.CurrentRaidMembers()) do inGroup[ns.Key(m.name)] = true end
   if IsInGroup() and not IsInRaid() then
@@ -528,22 +528,35 @@ function ns.InviteSignups(eventId)
   end
   wipe(inviteQueue)
   local offline = 0
-  -- With a raid plan, only the planned groups are invited (not the bench).
-  local plan = ns.HasRaidPlan and ns.HasRaidPlan(eventId) and ns.RaidPlan(eventId)
-  for _, su in ipairs((ns.Signups(eventId))) do
-    local k = ns.Key(su.name)
-    local planned = not plan or (plan[k] and plan[k].group >= 1)
-    if su.status ~= "decline" and planned and not ns.IsMe(su.name) and not inGroup[k] then
+  for _, name in ipairs(names) do
+    local k = ns.Key(name)
+    if not ns.IsMe(name) and not inGroup[k] then
       if online[k] then inviteQueue[#inviteQueue + 1] = Ambiguate(online[k], "none") else offline = offline + 1 end
     end
   end
   if #inviteQueue == 0 then
-    ns.Say("Everyone who signed up and is online is already in your group.")
-    return
+    ns.Say("Everyone " .. what .. " who is online is already in your group.")
+    return 0
   end
-  ns.Say(("Inviting %d member%s who signed up%s."):format(#inviteQueue, #inviteQueue == 1 and "" or "s",
+  ns.Say(("Inviting %d member%s %s%s."):format(#inviteQueue, #inviteQueue == 1 and "" or "s", what,
     offline > 0 and (" (" .. offline .. " offline)") or ""))
+  local n = #inviteQueue
   inviteMore()
+  return n
+end
+
+-- Invite every online guild member who accepted (or is tentative) and isn't in your group.
+function ns.InviteSignups(eventId)
+  if not ns.IsAddonOfficer() then ns.Say("Only officers can send raid invites.") return end
+  -- With a raid plan, only the planned groups are invited (not the bench).
+  local plan = ns.HasRaidPlan and ns.HasRaidPlan(eventId) and ns.RaidPlan(eventId)
+  local names = {}
+  for _, su in ipairs((ns.Signups(eventId))) do
+    local k = ns.Key(su.name)
+    local planned = not plan or (plan[k] and plan[k].group >= 1)
+    if su.status ~= "decline" and planned then names[#names + 1] = su.name end
+  end
+  ns.InviteNames(names, "who signed up")
 end
 
 ------------------------------------------------------------------------

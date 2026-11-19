@@ -14,6 +14,9 @@ Most problems come down to an old version. Check `/warcrest version` first, and 
 | Alerts went quiet in a dungeon | That's quiet mode. Held alerts are listed in chat when you leave. Change it in **Settings**. |
 | Something's broken | Turn on `/warcrest debug`, install BugSack, and send the errors to an officer or open an issue on this repository. |
 
+## An achievement didn't show up
+Type **/warcrest check** (or `/warcrest check Name` for someone else). It lists the kills in your log with your name (killing blows, assists, and any that didn't count because they gave no honor), whether your last kill was sent to the guild and came back, and how many of your achievements are recorded with the guild. First Blood needs a killing blow on an enemy that gives honor.
+
 ## Reporting a problem
 
 Open an issue on the [GitHub repository](https://github.com/fantasyglassui/Imperium-Guild-Tools/issues) with your version (`/warcrest version`), what you did, what you expected, and any errors from BugSack or `/warcrest debug`.

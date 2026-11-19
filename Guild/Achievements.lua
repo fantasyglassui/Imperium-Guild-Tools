@@ -704,3 +704,62 @@ ns.OnLevelsChanged = changed -- someone levelled up (Max Level)
 table.insert(ns.OnGuildReady, changed)
 -- Until the roster has loaded once, keep looking (that first look is the baseline).
 ns.OnEvent("GUILD_ROSTER_UPDATE", function() if not ready then changed() end end)
+
+------------------------------------------------------------------------
+-- /warcrest check: why an achievement has or hasn't counted
+------------------------------------------------------------------------
+function ns.AchievementCheck(name)
+  name = Ambiguate(name or UnitName("player"), "short")
+  local k = ns.Key(name)
+  local function line(text) print("  " .. text) end
+  ns.Say(("Achievement check for %s (version %s):"):format(name, ns.version or "?"))
+  local blows, assists, hidden, greys = 0, 0, 0, {}
+  local latest
+  for _, kill in ipairs(ns.db.killLog or {}) do
+    local mine = false
+    for _, n in ipairs(kill.killers or {}) do if ns.Key(n) == k then mine = true end end
+    if mine then
+      latest = latest or kill
+      if ns.KillHidden(kill) then
+        hidden = hidden + 1
+        if #greys < 3 then greys[#greys + 1] = kill end
+      elseif ns.Key(ns.KillingBlow(kill)) == k then
+        blows = blows + 1
+      else
+        assists = assists + 1
+      end
+    end
+  end
+  line(("Kills in your log with %s: %d killing blow%s, %d assist%s, %d not counted (no honor)."):format(name,
+    blows, blows == 1 and "" or "s", assists, assists == 1 and "" or "s", hidden))
+  for _, kill in ipairs(greys) do
+    local m = ns.Member(name)
+    line(("  Not counted: %s (level %s), %s; %s is level %s now; honor reported: %s."):format(kill.victim,
+      tostring(kill.level or "?"), date("%b %d %H:%M", kill.t), name, tostring(m and m.level or "?"), tostring(kill.honor)))
+  end
+  if latest then
+    line(("Latest kill: %s at %s, by %s."):format(latest.victim, date("%H:%M %b %d", latest.t),
+      table.concat(latest.killers or {}, ", ")))
+  end
+  if ns.IsMe(name) then
+    local r = ns.lastReport
+    if r then
+      line(("Your last kill this session: %s (level %s, you %s) at %s: %s."):format(r.victim, tostring(r.level or "?"),
+        tostring(r.mine or "?"), date("%H:%M", r.at), r.honor and "honorable, sent to the guild" or "grey, not sent"))
+    else
+      line("No kill seen yet this session.")
+    end
+    local heard = ns.lastOwnKillHeard
+    line(heard and ("The guild got your last kill report (%s) at %s."):format(heard.victim, date("%H:%M:%S", heard.at))
+      or "No kill report of yours has come back from the guild this session.")
+    line(("Messages waiting to send: %d."):format(ns.QueueSize and ns.QueueSize() or 0))
+  end
+  local e = ns.MemberAchievements(name).kill1
+  line(e and e.t and ("First Blood: earned %s."):format(e.t > 0 and date("%b %d %H:%M", e.t) or "")
+    or "First Blood: not yet.")
+  line(("Achievements earned: %d of %d. Recorded with the guild: %d."):format(ns.AchievementCount(name), #LIST,
+    (function() local n = 0 for _ in pairs(guildRecorded()[k] or {}) do n = n + 1 end return n end)()))
+  if #ns.loadErrors > 0 then line(("|cffff6060%d error%s this session; the first: %s|r"):format(#ns.loadErrors,
+    #ns.loadErrors == 1 and "" or "s", ns.loadErrors[1])) end
+end
+

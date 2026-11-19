@@ -3,7 +3,7 @@
 ## Notes: Guild tools for WoW Forever: raid sign-ups, DKP with loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements and titles, player cards and officer tools. Formerly The Imperium.
 ## Author: Fantasy Glass UI
 ## X-Copyright: Copyright (c) 2026 Fantasy Glass UI
-## Version: 3.5.5
+## Version: 3.6.0
 ## Category: Guild
 ## IconTexture: Interface\AddOns\Warcrest\Media\Icon
 ## AddonCompartmentFunc: Warcrest_OnAddonCompartmentClick
@@ -49,6 +49,11 @@ Raids\Wishlist.lua
 Raids\Council.lua
 Raids\RaidRecap.lua
 
+# 4b. Guild events, member profiles and recruiting (kept in the ledger)
+Guild\Events.lua
+Guild\Members.lua
+Guild\Recruit.lua
+
 # 5. Officer log, the weekly recap, player profiles and achievements
 Guild\OfficerLog.lua
 Guild\Recap.lua
@@ -67,6 +72,7 @@ UI\Tabs\RaidPlanView.lua
 UI\Tabs\RaidCalendar.lua
 UI\Tabs\RaidProgress.lua
 UI\Tabs\Raids.lua
+UI\Tabs\Events.lua
 UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
 UI\Tabs\Wishlist.lua
@@ -77,6 +83,7 @@ UI\Tabs\Achievements.lua
 UI\Tabs\SoundsView.lua
 UI\Tabs\Settings.lua
 UI\Tabs\OfficerLog.lua
+UI\Tabs\Recruit.lua
 UI\Tabs\AddonUsers.lua
 
 # 8. Map pins, minimap button, loot auction window, updates panel
@@ -86,6 +93,7 @@ UI\MinimapButton.lua
 UI\Auction.lua
 UI\Council.lua
 UI\PlayerCard.lua
+UI\Profiles.lua
 UI\Updates.lua
 UI\Welcome.lua
 UI\Help.lua

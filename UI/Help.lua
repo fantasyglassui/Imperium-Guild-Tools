@@ -89,8 +89,10 @@ local TOPICS = {
   }) end },
   { "Commands", function() return join({
     CMD("/warcrest  /wc", "open Warcrest"),
-    B("/warcrest raids") .. ", " .. B("dkp") .. ", " .. B("kills") .. ", " .. B("wanted") .. ", " .. B("wishlist") .. ", " .. B("achievements") .. "  " .. T("open that tab"),
+    B("/warcrest raids") .. ", " .. B("dkp") .. ", " .. B("kills") .. ", " .. B("wanted") .. ", " .. B("wishlist") .. ", " .. B("achievements") .. ", " .. B("events") .. ", " .. B("recruit") .. "  " .. T("open that tab"),
     CMD("/warcrest card Name", "a guild member's player card"),
+    CMD("/warcrest profile", "your profile: spec, when you play, birthday"),
+    CMD("/warcrest profiles", "everyone's profiles, with item levels"),
     CMD("/warcrest auction [item] [min bid]", "auction an item to your raid (officers)"),
     CMD("/warcrest council  /warcrest lc", "the loot council vote"),
     CMD("/warcrest raidrecap", "the last raid night's recap"),
@@ -102,6 +104,7 @@ local TOPICS = {
     CMD("/warcrest welcome", "the welcome and guild setup again"),
     CMD("/warcrest updates", "what's new"),
     CMD("/warcrest bosses", "the last raid bosses that died, and whether each counted"),
+    CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),
     CMD("/warcrest debug", "show error details (and boss checks) in chat"),
   }, "\n") end },
 }

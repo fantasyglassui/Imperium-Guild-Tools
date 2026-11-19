@@ -581,6 +581,17 @@ SlashCmdList.WARCREST = function(input)
     if ns.ShowLastRaidNight then ns.ShowLastRaidNight() end
   elseif msg == "bosses" or msg == "boss" then
     ns.ShowBossChecks()
+  elseif msg == "profile" or msg == "me" then
+    if ns.ShowProfileEditor then ns.ShowProfileEditor() end
+  elseif msg == "profiles" then
+    if ns.ShowProfiles then ns.ShowProfiles() end
+  elseif msg == "events" or msg == "event" then
+    if ns.OpenPanel then ns.OpenPanel("events") end
+  elseif msg == "recruit" or msg == "recruits" then
+    if ns.OpenPanel then ns.OpenPanel("recruit") end
+  elseif msg:find("^check") then
+    -- /warcrest check [name]: why achievements have or haven't counted.
+    if ns.AchievementCheck then ns.AchievementCheck(input:match("^%s*%S+%s+(%S+)")) end
   elseif msg == "debug" then
     ns.db.debug = not ns.db.debug
     ns.Say("Debug messages " .. (ns.db.debug and "on. Error details will show in chat." or "off."))

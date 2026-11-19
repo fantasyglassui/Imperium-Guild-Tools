@@ -85,6 +85,7 @@ local function report(e)
     else
       honor = honorSeen[k] and math.abs(honorSeen[k] - diedAt) <= 5 -- level unknown: go by the game
     end
+    ns.lastReport = { victim = e.name, level = e.level, mine = mine, honor = honor and true or false, at = stamp }
     if not honor then -- grey kills aren't reported at all
       if ns.db.debug then
         ns.Say(("Kill check: %s (level %s) is grey to you, so it doesn't count."):format(e.name, tostring(e.level or "?")))
@@ -523,6 +524,7 @@ ns.OnMessage("K", function(parts, sender)
   if parts[8] == "1" then honor = true elseif parts[8] == "0" then honor = false end
   local k = key(victim)
   local who = Ambiguate(sender, "short")
+  if ns.IsMe(sender) then ns.lastOwnKillHeard = { victim = victim, at = GetServerTime() } end
   local thisReport = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor }
   local p = pending[k]
   if p then
