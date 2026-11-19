@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.5
+- **Lost achievements come back for everyone, not only through officers.** Every guildmate's Warcrest remembers what each guildmate has earned. Now members' addons vouch for achievements a guildmate has lost too, a few minutes after they log in. An achievement comes back once **one officer, or two different guildmates**, have seen it earned, so nobody can hand out achievements on their own. The more of the guild logs in on 3.5.5, the more comes back.
+- **History saved under Warcrest's older names is found and added back.** For a short while Warcrest was called Bannerhold and kept its history under that name. A small **Warcrest: data from Bannerhold** helper now comes in the zip (like the one for The Imperium). If any of that history is still on your computer, Warcrest adds what's missing (kills, deaths, the guild record and achievements) once, and tells you.
+
 ## 3.5.4
 - Fix: **kills were being deleted after the killer levelled up**, and with them the achievements that came from them. Each time you logged in, Warcrest cleared out kills it thought were "grey" (no honor), judged by the killers' levels *now* instead of at the time of the kill. Once someone had levelled, many of their earlier kills looked grey and were removed, from every guildmate's copy. Since 3.4.1 (when offline members' levels became known) this hit the whole guild. Kills are now only checked for grey when they happen; nothing in the log is ever removed for it later, and older kills from guildmates' logs are taken as recorded.
 - **Achievements members lost are put back.** Every officer's Warcrest remembers what each guildmate has earned. Any of those that aren't in the guild's record yet are now added to it by officers' addons a minute or two after they log in, and whenever someone comes back with their history missing, so the member gets them back.

@@ -366,7 +366,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
     -- Coming from The Imperium (2.x): its saved data is handed over once, by the
     -- small TheImperium folder that comes with Warcrest (see Compat/).
     if WarcrestDB == nil and type(TheImperiumDB) == "table" and next(TheImperiumDB) ~= nil
-        and not TheImperiumDB.movedToWarcrest then
+        and not TheImperiumDB.movedToWarcrest and not TheImperiumDB.movedToBannerhold then
       WarcrestDB = TheImperiumDB
       ns.movedFromImperium = true
       local getMetaOld = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata

@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.5.5", date = "Nov 19, 2026", items = {
+    "Lost achievements come back once one officer, or two guildmates, have seen them earned.",
+    "History saved under the older name Bannerhold is found and added back.",
+  } },
   { version = "3.5.4", date = "Nov 19, 2026", items = {
     "Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped.",
     "Achievements members lost are put back from what officers' addons remember.",

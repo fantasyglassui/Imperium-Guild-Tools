@@ -1056,4 +1056,7 @@ ns.LOCALES.esES = {
   ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Si el historial guardado de Warcrest no se carga, te avisa y pide a la hermandad que lo envíe de nuevo.",
   ["Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped."] = "Corrección: se borraban muertes después de que el asesino subiera de nivel, y los logros que venían de ellas también desaparecían. Ya no pasa.",
   ["Achievements members lost are put back from what officers' addons remember."] = "Los logros que perdieron los miembros se recuperan a partir de lo que recuerdan los addons de los oficiales.",
+  ["Lost achievements come back once one officer, or two guildmates, have seen them earned."] = "Los logros perdidos vuelven en cuanto un oficial, o dos miembros de la hermandad, los han visto conseguidos.",
+  ["History saved under the older name Bannerhold is found and added back."] = "El historial guardado con el nombre anterior Bannerhold se encuentra y se vuelve a añadir.",
+  ["Found history Warcrest had saved under an older name, and added it back."] = "Se encontró historial que Warcrest había guardado con un nombre anterior, y se volvió a añadir.",
 }

@@ -51,3 +51,31 @@ def test_each_guild_gets_its_look():
     o.ns.Say("hello")
     assert o.said("[Warcrest]")
     assert not o.errors()
+
+
+def test_history_saved_as_bannerhold_is_added_back():
+    # For a short while the addon was called Bannerhold. That history (and an
+    # emptied The Imperium file) is found and added to Warcrest's, once.
+    def setup(client):
+        client.run('''
+          TheImperiumDB = { movedToBannerhold = 1799990000 }
+          WarcrestDB = { releaseReset = "2.1.0", killLog = { { t = 1800000000 - 30, victim = "New", killers = { "Bob" },
+                         zone = "STV", kind = "kill_world", level = 60 } } }
+          BannerholdDB = { releaseReset = "2.1.0", minimap = { hide = true },
+                           achievements = { bob = { kill1 = 1799999000 } },
+                           killLog = { { t = 1800000000 - 60, victim = "Grim", killers = { "Bob" }, zone = "STV",
+                                         kind = "kill_world", level = 60 },
+                                       { t = 1800000000 - 30, victim = "New", killers = { "Bob" }, zone = "STV",
+                                         kind = "kill_world", level = 60 } } }
+          OLD_ADDON_META = { ["X-Warcrest-Handover"] = "1" }
+        ''')
+    guild = Guild(MEMBERS, setup=setup)
+    bob = guild["Bob"]
+    guild.run(15)
+    log = bob.ns.db.killLog
+    assert sorted(log[i].victim for i in range(1, len(log) + 1)) == ["Grim", "New"]
+    assert bob.ns.db.minimap.hide
+    assert bob.ns.MemberAchievements("Bob")["kill1"]["t"]
+    assert bob.lua.eval("BannerholdDB").movedToWarcrest and bob.lua.eval("BannerholdDB").killLog is None
+    assert bob.said("older name")
+    assert bob.errors() == []

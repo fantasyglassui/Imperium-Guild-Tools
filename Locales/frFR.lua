@@ -1056,4 +1056,7 @@ ns.LOCALES.frFR = {
   ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Si l'historique enregistré de Warcrest ne se charge pas, il te le signale et demande à la guilde de le renvoyer.",
   ["Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped."] = "Correctif : des victimes étaient supprimées après que le tueur avait pris des niveaux, et les hauts faits qui en venaient disparaissaient aussi. C'est réglé.",
   ["Achievements members lost are put back from what officers' addons remember."] = "Les hauts faits perdus par des membres sont rétablis à partir de ce dont se souviennent les addons des officiers.",
+  ["Lost achievements come back once one officer, or two guildmates, have seen them earned."] = "Les hauts faits perdus reviennent dès qu'un officier, ou deux membres de la guilde, les ont vus obtenus.",
+  ["History saved under the older name Bannerhold is found and added back."] = "L'historique enregistré sous l'ancien nom Bannerhold est retrouvé et rajouté.",
+  ["Found history Warcrest had saved under an older name, and added it back."] = "Historique retrouvé que Warcrest avait enregistré sous un ancien nom, et rajouté.",
 }

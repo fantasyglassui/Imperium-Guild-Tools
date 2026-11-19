@@ -255,7 +255,7 @@ C_ChatInfo = {
   SendAddonMessage = function(prefix, text, channel, target) return send_py(prefix, text, channel, target) end,
 }
 C_AddOns = { GetAddOnMetadata = function(addon, field)
-  if addon == "TheImperium" then return OLD_ADDON_META and OLD_ADDON_META[field] end
+  if addon == "TheImperium" or addon == "Bannerhold" then return OLD_ADDON_META and OLD_ADDON_META[field] end
   if field == "Version" then return ADDON_VERSION end
 end }
 

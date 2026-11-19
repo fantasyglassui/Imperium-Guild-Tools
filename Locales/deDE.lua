@@ -1056,4 +1056,7 @@ ns.LOCALES.deDE = {
   ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Wenn Warcrests gespeicherter Verlauf nicht geladen wird, sagt es dir das und bittet die Gilde, ihn zurückzuschicken.",
   ["Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped."] = "Fehler behoben: Kills wurden gelöscht, nachdem der Killer aufgestiegen war, und die Erfolge daraus verschwanden mit. Das passiert nicht mehr.",
   ["Achievements members lost are put back from what officers' addons remember."] = "Verlorene Erfolge von Mitgliedern werden aus dem zurückgeholt, was die Addons der Offiziere sich gemerkt haben.",
+  ["Lost achievements come back once one officer, or two guildmates, have seen them earned."] = "Verlorene Erfolge kommen zurück, sobald ein Offizier oder zwei Gildenmitglieder gesehen haben, dass sie verdient wurden.",
+  ["History saved under the older name Bannerhold is found and added back."] = "Verlauf, der unter dem älteren Namen Bannerhold gespeichert wurde, wird gefunden und wieder hinzugefügt.",
+  ["Found history Warcrest had saved under an older name, and added it back."] = "Verlauf gefunden, den Warcrest unter einem älteren Namen gespeichert hatte, und wieder hinzugefügt.",
 }

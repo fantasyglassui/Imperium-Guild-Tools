@@ -105,3 +105,26 @@ def test_officers_put_back_achievements_a_member_lost():
     put_back = [e for e in bob.ns.LedgerEntries("AG").values()]
     assert put_back and all(e.a == "Alice" for e in put_back)
     assert bob.errors() == [] and guild["Alice"].errors() == []
+
+
+def test_guildmates_vouch_for_lost_achievements_when_no_officer_can():
+    # No officer remembers Bob's achievements; two guildmates do. One alone isn't enough.
+    guild = Guild(M, raid=[m[0] for m in M])
+    earn(guild)
+    for c in guild.clients.values():
+        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" then WarcrestDB.ledger[id] = nil end end '
+              'wipe(WarcrestDB.killLog)')
+        c.ns.ReindexLedger()
+    for c in guild.clients.values():
+        if c.name not in ("Cara", "Dan"):
+            c.run('wipe(WarcrestDB.achievements)')
+    bob = relog(guild, "Bob", lose_data=True)
+    guild["Cara"].ns.RestoreGuildAchievements()
+    guild.run(30)
+    assert bob.ns.MemberAchievements("Bob")["kill1"]["t"] is None    # one guildmate: not yet
+    guild["Dan"].ns.RestoreGuildAchievements()
+    guild.run(30)
+    assert bob.ns.MemberAchievements("Bob")["kill1"]["t"]                # two agree: it's back
+    vouched = {(e.a, e.who) for e in bob.ns.LedgerEntries("AW").values()}
+    assert ("Cara", "Bob") in vouched and ("Dan", "Bob") in vouched
+    assert all(c.errors() == [] for c in guild.clients.values())
