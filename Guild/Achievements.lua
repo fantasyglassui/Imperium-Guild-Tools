@@ -325,6 +325,15 @@ end
 -- Earned achievements
 ------------------------------------------------------------------------
 local earnedCache = {} -- key -> { id -> { t = time or 0, progress = n } }
+local cacheStamp      -- what the cache was worked out from
+
+-- Changes to anything achievements come from: the guild record, the kill and
+-- death logs, and members' levels. When it differs from the cache's, the
+-- cache is out of date and is worked out again the next time it's read, so
+-- the Achievements tab, titles and player cards are right straight away.
+local function freshness()
+  return ns.LedgerVersion() .. ":" .. historyVersion .. ":" .. (ns.RosterLevelsVersion and ns.RosterLevelsVersion() or 0)
+end
 
 ns.OnLoad(function() ns.db.achievements = ns.db.achievements or {} end)
 
@@ -372,6 +381,8 @@ end
 
 -- A member's achievements: id -> { t = when earned (0 if unknown) or nil, progress = n }.
 function ns.MemberAchievements(name)
+  local stamp = freshness()
+  if stamp ~= cacheStamp then earnedCache, index, cacheStamp = {}, nil, stamp end
   return earnedCache[ns.Key(name)] or compute(name)
 end
 
@@ -474,18 +485,17 @@ local function wanted()
 end
 
 -- Working everyone's achievements out again takes a moment in a big guild, so
--- it's done a few dozen members at a time instead of all in one frame.
+-- it's done a few dozen members at a time instead of all in one frame. It's
+-- only for announcing what's new: what each member had earned the last time
+-- it looked is kept, and anything earned since is announced.
 local CHUNK = 40
-local run = 0     -- which recheck is current (a newer one stops an older one)
-local base        -- what was earned before the recheck in progress started
+local run = 0          -- which recheck is current (a newer one stops an older one)
+local seenEarned = {}  -- key -> { id -> true }, as of the last look
 
 local function recheck()
   pending = false
   run = run + 1
   local mine = run
-  if not base then base = earnedCache end -- an unfinished recheck keeps its starting point
-  local before = base
-  index, earnedCache = nil, {}
   local roster = ns.GetRoster()
   local now = GetServerTime()
   local i = 0
@@ -496,21 +506,24 @@ local function recheck()
       local m = roster[i]
       if not m then break end
       local short = Ambiguate(m.name, "short")
-      local was = before[ns.Key(short)]
+      local k = ns.Key(short)
+      local was = seenEarned[k]
       local is = ns.MemberAchievements(short)
-      if ready and was then
-        for _, a in ipairs(LIST) do
-          local e = is[a.id]
-          if e.t and not (was[a.id] and was[a.id].t) and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
+      local now_ = {}
+      for _, a in ipairs(LIST) do
+        local e = is[a.id]
+        if e.t then
+          now_[a.id] = true
+          if ready and was and not was[a.id] and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
             local text = ("%s earned %s!"):format(short, a.name)
             if a.title then text = text .. (" New title: %s %s."):format(short, a.title) end
             ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
           end
         end
       end
+      seenEarned[k] = now_
     end
     if roster[i + 1] then C_Timer.After(0.01, step) return end
-    base = nil
     if #roster > 0 then ready = true end
     if ns.RefreshPanel then ns.RefreshPanel() end
     if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
@@ -531,6 +544,7 @@ function ns.OnHistoryChanged()
   if previousHook then previousHook() end
 end
 ns.OnLedgerChanged(changed)
+ns.OnLevelsChanged = changed -- someone levelled up (Max Level)
 table.insert(ns.OnGuildReady, changed)
 -- Until the roster has loaded once, keep looking (that first look is the baseline).
 ns.OnEvent("GUILD_ROSTER_UPDATE", function() if not ready then changed() end end)

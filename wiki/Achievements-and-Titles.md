@@ -78,7 +78,7 @@ Streaks are killing blows in a row without dying to an enemy player, each within
 
 ## Titles
 
-Achievements marked with a title let you show it after your name, like **Lyra the Avenger**. Pick yours at the top of the Achievements tab or in **Settings > General > Your title**. Guildmates see it on your player card and on the Roster. You can only pick titles you've earned, and **No title** turns it off.
+Achievements marked with a title let you show it after your name, like **Lyra the Avenger**. Click the **Title** button at the top right of the Achievements tab: it lists every title, with the ones you've earned ready to pick and the rest showing which achievement gives them. Guildmates see it on your player card and on the Roster. You can only pick titles you've earned, and **No title** turns it off.
 
 ## Good to know
 

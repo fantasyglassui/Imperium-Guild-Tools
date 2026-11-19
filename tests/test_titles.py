@@ -1,0 +1,82 @@
+"""Titles and achievements update straight away, and titles are chosen on the
+Achievements tab from a list of every title."""
+from harness import Guild
+
+M = [("Alice", 1), ("Bob", 3), ("Cara", 3), ("Dan", 3), ("Eve", 3), ("Finn", 3)]
+
+
+def boss_kill(guild):
+    for c in guild.clients.values():
+        c.run('INSTANCE = { "Hyjal Summit", "raid" }')
+    for n in ("Alice", "Bob", "Cara"):
+        guild[n].fire("ENCOUNTER_END", 2001, "Rage Winterchill", 9, 20, 1)
+
+
+def setup():
+    guild = Guild(M, raid=[m[0] for m in M])
+    for c in guild.clients.values():
+        c.login()
+    guild.run(12)
+    return guild
+
+
+def test_achievements_update_as_soon_as_the_kill_lands():
+    guild = setup()
+    a = guild["Alice"]
+    assert not a.ns.HasAchievement("Bob", "kill1")
+    guild["Bob"].ns.Send("K", "kill_world", "Ganker", "STV", int(guild.clock), "0.5", "60", "1")
+    # The kill is merged after a short wait; read it the moment it's in the log.
+    for _ in range(40):
+        guild.run(0.1)
+        if len(list(a.ns.db.killLog.values())) > 0:
+            break
+    assert a.ns.HasAchievement("Bob", "kill1")       # no waiting for the next check, no reload
+
+
+def test_choose_a_title_from_the_list():
+    guild = setup()
+    a = guild["Alice"]
+    boss_kill(guild)
+    guild.run(8)
+    a.ns.OpenPanel("achievements")
+    a.ns.ShowTitleChooser()
+    rows = a.lua.eval("WarcrestTitles").list
+    items = list(rows["items"].values())
+    assert items[0].id == ""                          # No title first
+    pioneer = [r for r in items if r.id == "pioneer"][0]
+    assert pioneer.earned
+    locked = [r for r in items if not r.earned]
+    assert locked                                     # titles still to earn are listed too
+    # Click the earned one.
+    a.lua.eval("""function(list, id)
+      for i, r in ipairs(list.items) do
+        if r.id == id then
+          for _, row in ipairs(list.rows) do
+            if row.item == r then row:GetScript("OnClick")(row) return end
+          end
+        end
+      end
+    end""")(rows, "pioneer")
+    assert a.ns.TitleOf("Alice")[0] == "the Pioneer"
+    guild.run(2)
+    assert guild["Bob"].ns.TitleOf("Alice")[0] == "the Pioneer"
+    a.said()
+    # A locked one says how to earn it.
+    a.lua.eval("""function(list)
+      for _, row in ipairs(list.rows) do
+        if row.item and not row.item.earned then row:GetScript("OnClick")(row) return end
+      end
+    end""")(rows)
+    assert a.said("to use this title")
+    assert a.ns.TitleOf("Alice")[0] == "the Pioneer"
+
+
+def test_level_up_updates_max_level_achievement():
+    guild = Guild([("Alice", 1, "MAGE", 59), ("Bob", 3)])
+    a = guild["Alice"]
+    assert not a.ns.HasAchievement("Alice", "maxlevel") if a.ns.Achievement("maxlevel") else True
+    guild.members[0] = ("Alice", 1, True, "MAGE", 60)
+    a.set_roster()
+    a.ns.GetRoster()
+    ids = [x.id for x in a.ns.ACHIEVEMENTS.values() if x.stat == "maxLevel"]
+    assert ids and a.ns.HasAchievement("Alice", ids[0])

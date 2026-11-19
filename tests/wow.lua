@@ -183,7 +183,11 @@ widgetMeta = { __index = function(self, key)
   if key == "Hide" then return function(w) rawset(w, "_IsShown", false) end end
   if key == "SetShown" then return function(w, v) rawset(w, "_IsShown", v and true or false) end end
   if key == "SetScript" then return function(w, name, fn) rawset(w, "script_" .. name, fn) end end
-  if key == "HookScript" then return function(w, name, fn) rawset(w, "script_" .. name, fn) end end
+  -- HookScript runs after the script that's there, as in the game.
+  if key == "HookScript" then return function(w, name, fn)
+    local old = rawget(w, "script_" .. name)
+    rawset(w, "script_" .. name, old and function(...) old(...); fn(...) end or fn)
+  end end
   if key == "GetScript" then return function(w, name) return rawget(w, "script_" .. name) end end
   if key == "RegisterEvent" then return function(w, ev) w.events[ev] = true end end
   return function() return NewWidget() end

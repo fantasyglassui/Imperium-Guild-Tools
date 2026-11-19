@@ -70,7 +70,7 @@ local TOPICS = {
   }) end },
   { "Achievements and titles", function() return join({
     T("The Achievements tab shows what you've earned and your progress on the rest, for PvP, raids, bosses and loot. They come from the guild's shared history, so they count what you did before you installed Warcrest."),
-    TF("Some achievements come with a %s. Pick yours at the top of the Achievements tab or in Settings > General. It shows after your name on your player card.", B(T("title"))),
+    TF("Some achievements come with a %s. Click the Title button at the top right of the Achievements tab to see every title and pick one you've earned. It shows after your name on your player card.", B(T("title"))),
     T("The Guild view shows what's been earned lately and who has the most."),
   }) end },
   { "Alerts and settings", function() return join({

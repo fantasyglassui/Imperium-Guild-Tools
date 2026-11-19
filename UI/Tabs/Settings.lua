@@ -4,8 +4,8 @@
     Alerts:  every alert type with a Guild column (set by officers for
              everyone) and a You column (your own choice), plus how alerts
              appear.
-    General: quiet mode, the world map, the weekly recap, your title and the
-             guild window's size.
+    General: quiet mode, the world map, the weekly recap and the guild
+             window's size. (Your title is chosen on the Achievements tab.)
 ]]
 
 local _, ns = ...
@@ -97,7 +97,6 @@ local function RefreshGeneral()
   UI.SetEnabled(P.pinSlider, db.mapPins)
   P.pinLabel:SetAlpha(db.mapPins and 1 or 0.5)
   P.pinValue:SetAlpha(db.mapPins and 1 or 0.5)
-  if P.refreshTitle then P.refreshTitle() end
 end
 
 local function Refresh()
@@ -337,12 +336,8 @@ local function BuildGeneral(page)
   this:SetPoint("LEFT", last, "RIGHT", 6, 0)
   this:SetScript("OnClick", function() ns.ShowRecap(0) end)
 
-  -- Your title (filled in by Achievements, if loaded)
-  local t = UI.Box(f, x2, 0, COL_W, 138, "Your title")
-  P.titleCard = t
-
   -- Guild window
-  local w = UI.Box(f, x2, -152, COL_W, 130, "Guild window")
+  local w = UI.Box(f, x2, 0, COL_W, 130, "Guild window")
   UI.FieldLabel(w, "Size", 14, -38)
   -- The new size applies when you let go, so the window doesn't shift under the mouse while dragging.
   local pending
@@ -381,19 +376,19 @@ local function BuildGeneral(page)
   UI.Tooltip(reset, "Reset size and position", "Puts the window back to its normal size, in the middle of the screen.")
 
   -- Commands
-  local h = UI.Box(f, x2, -296, COL_W, 154, "Good to know")
+  local h = UI.Box(f, x2, -144, COL_W, 306, "Good to know")
   local tips = UI.Label(h, "/warcrest card Name opens a guild member's player card. /warcrest wishlist and "
     .. "/warcrest achievements open those tabs, and /warcrest updates shows what's new. "
     .. "/warcrest help lists every command in chat.", "Small")
+  local titles = UI.Label(h, "Your title is chosen on the Achievements tab, at the top right.", "Small")
+  titles:SetPoint("TOPLEFT", 14, -116)
+  titles:SetWidth(inner)
   tips:SetPoint("TOPLEFT", 14, -38)
   tips:SetWidth(inner)
   tips:SetSpacing(3)
   return f
 end
 
--- Lets the Achievements file put its title picker on the General view.
-function ns.SettingsTitleCard() return P.titleCard end
-function ns.SetSettingsTitleRefresh(fn) P.refreshTitle = fn end
 
 local function Build(page)
   P.view = UI.Segmented(page.headerBar, { { "alerts", "Alerts" }, { "sounds", "Sounds" }, { "general", "General" } },
@@ -404,7 +399,6 @@ local function Build(page)
   local general = BuildGeneral(page)
   local sounds = UI.SoundsView.Build(page)
   P.views.sounds = sounds
-  if ns.BuildTitlePicker then ns.BuildTitlePicker(P.titleCard) end
 
   -- A bigger window: the alert table gets the room; the side cards move right.
   UI.Grow(page, alerts, 1, 1)
@@ -416,7 +410,7 @@ end
 
 TAB = { id = "settings", title = "Settings", build = Build, refresh = Refresh,
   subtitle = function()
-    if P.view and P.view.value == "general" then return "Quiet mode, the map, the weekly recap, your title and the window" end
+    if P.view and P.view.value == "general" then return "Quiet mode, the map, the weekly recap and the window" end
     if P.view and P.view.value == "sounds" then return "A sound for each kind of alert, and your own sounds" end
     return "Alerts for the whole guild, and just for you"
   end }

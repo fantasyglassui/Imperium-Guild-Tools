@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.2
+- Fix: **achievements and titles now update straight away**, without a /reload. Warcrest used to work achievements out again a moment after a change, and anything that read them in between (the Achievements tab, titles, player cards) could show the old ones until a reload. They're now worked out fresh whenever something they come from has changed: a kill, a death, a boss, loot, raid attendance or a level-up.
+- Fix: **reaching max level now counts at once** (it used to wait for a reload).
+- **Choosing your title has moved to the Achievements tab, and works properly.** The Title button at the top right opens a list of every title: the ones you've earned (click one to use it), and the ones you haven't yet, with the achievement that gives each. The title picker in Settings is gone.
+
 ## 3.5.1
 - **Sounds shared by your other add-ons are no longer added to the sound picker on their own.** Warcrest was listing every sound other add-ons share through SharedMedia, named however those add-ons' makers named them. They're now off unless you tick **Sounds from other add-ons** in Settings > Sounds, and they're marked "Other add-on" in the picker. An alert that was set to one of them goes back to its own sound.
 

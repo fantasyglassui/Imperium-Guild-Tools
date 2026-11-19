@@ -5,7 +5,7 @@
                        you opened from their player card), with progress.
     Guild:             achievements earned across the guild, newest first,
                        and who has the most.
-  Also the title picker, used here and on the Settings tab.
+  Also where you choose your title (the button at the top right).
 ]]
 
 local _, ns = ...
@@ -27,50 +27,127 @@ local function who() return viewing or UnitName("player") end
 local function isMe() return ns.Key(who()) == ns.Key(UnitName("player")) end
 
 ------------------------------------------------------------------------
--- Title picker: a Cycle of your earned titles. Several can exist (this tab
--- and Settings); each refreshes itself.
+-- Your title: a button at the top of the tab ("Title: the Pioneer") that
+-- opens a list of every title. The ones you've earned can be picked; the
+-- rest show which achievement gives them.
 ------------------------------------------------------------------------
-local pickers = {}
+local chooser
 
-local function refreshPicker(c)
-  local titles = ns.MyTitles()
-  local options = { { "", "No title" } }
-  for _, t in ipairs(titles) do options[#options + 1] = { t.id, t.title } end
-  c.options = options
-  local _, current = ns.TitleOf(UnitName("player"))
-  current = current or ""
-  for i, opt in ipairs(options) do
-    if opt[1] == current then c.index, c.value = i, opt[1]; c:SetText(ns.TF("Title: %s", ns.T(opt[2]))) end
+local function titleRows()
+  local me = UnitName("player")
+  local rows = { { id = "", title = ns.T("No title"), earned = true } }
+  local earned, locked = {}, {}
+  for _, a in ipairs(ns.ACHIEVEMENTS) do
+    if a.title then
+      local row = { id = a.id, title = a.title, achievement = a, earned = ns.HasAchievement(me, a.id) }
+      if row.earned then earned[#earned + 1] = row else locked[#locked + 1] = row end
+    end
   end
-  UI.SetEnabled(c, #titles > 0)
+  for _, r in ipairs(earned) do rows[#rows + 1] = r end
+  for _, r in ipairs(locked) do rows[#rows + 1] = r end
+  return rows, #earned
 end
 
-local function makePicker(parent, width)
-  local c = UI.Cycle(parent, width, { { "", "No title" } }, function(v) ns.SetTitle(v) end)
-  c:SetHeight(26)
-  -- UI.Cycle steps through c.options; show "Title: ..." on the button.
-  c:HookScript("OnClick", function(self)
-    local opt = self.options[self.index]
-    if opt then self:SetText(ns.TF("Title: %s", ns.T(opt[2]))) end
-  end)
-  UI.Tooltip(c, "Your title", function()
-    return #ns.MyTitles() > 0 and "Click to change the title shown after your name on your player card and in the guild window. Guildmates see it too."
-      or "Earn an achievement that comes with a title (like Executioner, Avenger or Iron Raider) to pick one here."
-  end)
-  pickers[#pickers + 1] = c
-  refreshPicker(c)
-  return c
+local function currentTitle()
+  local _, id = ns.TitleOf(UnitName("player"))
+  return id or ""
 end
 
--- The Settings tab's General view puts a picker in its "Your title" card.
-function ns.BuildTitlePicker(card)
-  local c = makePicker(card, card:GetWidth() - 28)
-  c:SetPoint("TOPLEFT", 14, -40)
-  local hint = UI.Label(card, "Shown after your name on your player card and around the guild window. "
-    .. "Earn more on the Achievements tab.", "MutedSmall")
-  hint:SetPoint("TOPLEFT", 14, -76)
-  hint:SetWidth(card:GetWidth() - 28)
-  ns.SetSettingsTitleRefresh(function() refreshPicker(c) end)
+local function refreshChooser()
+  if not (chooser and chooser:IsShown()) then return end
+  local rows, n = titleRows()
+  chooser.count:SetText(ns.TF("%d of %d titles earned", n, #rows - 1))
+  chooser.list:SetItems(rows)
+end
+
+local function BuildChooser()
+  chooser = UI.Window("WarcrestTitles", 420, 470, "Your title")
+  local intro = UI.Label(chooser, "Shown after your name on your player card and around the guild window. "
+    .. "Guildmates see it too.", "MutedSmall")
+  intro:SetPoint("TOPLEFT", 16, -42)
+  intro:SetWidth(388)
+  chooser.count = UI.Label(chooser, "", "Subheading")
+  chooser.count:SetPoint("TOPLEFT", 16, -76)
+  local box = UI.Box(chooser, 15, -100, 390, 310)
+  chooser.list = UI.List(box, 380, 304, 40,
+    function(row)
+      UI.RowSelection(row)
+      row.check = UI.Icon(row, "check", 12, C.accent)
+      row.check:SetPoint("LEFT", 12, 0)
+      row.title = UI.Label(row, "", "Body")
+      row.title:SetPoint("TOPLEFT", 32, -5)
+      row.title:SetWidth(330)
+      row.title:SetWordWrap(false)
+      row.how = UI.Label(row, "", "MutedSmall")
+      row.how:SetPoint("TOPLEFT", 32, -22)
+      row.how:SetWidth(330)
+      row.how:SetWordWrap(false)
+      row:SetScript("OnClick", function(self)
+        local r = self.item
+        if not r.earned then
+          ns.Say(ns.TF("Earn %s to use this title.", ns.T(r.achievement.name)))
+          return
+        end
+        ns.SetTitle(r.id)
+        -- Show it straight away (the guild hears about it in a moment).
+        chooser.pendingId = r.id
+        refreshChooser()
+        if ns.RefreshPanel then ns.RefreshPanel() end
+      end)
+    end,
+    function(row, r)
+      local current = chooser.pendingId or currentTitle()
+      local me = Ambiguate(UnitName("player"), "short")
+      if r.id == "" then
+        row.title:SetText(r.title)
+        row.how:SetText(ns.T("Just your name."))
+      else
+        row.title:SetText(me .. " " .. (r.earned and UI.Code("accent") or UI.Code("faint")) .. ns.T(r.title) .. "|r")
+        row.how:SetText(r.earned and ns.TF("From %s", ns.T(r.achievement.name))
+          or ns.TF("Earn %s: %s", ns.T(r.achievement.name), ns.T(r.achievement.desc)))
+      end
+      row.title:SetAlpha(r.earned and 1 or 0.6)
+      row.check:SetShown(r.id == current)
+      UI.SetRowSelected(row, r.id == current)
+    end, true)
+  chooser.list.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 4, -3)
+  local hint = UI.Label(chooser, "Click an earned title to use it.", "MutedSmall")
+  hint:SetPoint("BOTTOMLEFT", 16, 24)
+  hint:SetWidth(250)
+  local done = UI.Button(chooser, "Done", 100, "primary")
+  done:SetHeight(28)
+  done:SetPoint("BOTTOMRIGHT", -16, 14)
+  done:SetScript("OnClick", function() chooser:Hide() end)
+end
+
+function ns.ShowTitleChooser()
+  if not chooser then BuildChooser() end
+  chooser.pendingId = nil
+  chooser:Show()
+  refreshChooser()
+end
+
+local function refreshTitleButton(b)
+  local _, id = ns.TitleOf(UnitName("player"))
+  local title = id and ns.Achievement(id) and ns.Achievement(id).title
+  if chooser and chooser.pendingId then
+    local a = ns.Achievement(chooser.pendingId)
+    title = a and a.title or nil
+    if chooser.pendingId == "" then title = nil end
+    if (id or "") == chooser.pendingId then chooser.pendingId = nil end -- the change has landed
+  end
+  b:SetText(ns.TF("Title: %s", title and ns.T(title) or ns.T("No title")))
+end
+
+local function makeTitleButton(parent, width)
+  local b = UI.Button(parent, "", width)
+  b:SetHeight(26)
+  b:GetFontString():ClearAllPoints()
+  b:GetFontString():SetPoint("CENTER", -6, 0)
+  UI.Icon(b, "chevron", 10, C.accent):SetPoint("RIGHT", -7, 0)
+  b:SetScript("OnClick", ns.ShowTitleChooser)
+  UI.Tooltip(b, "Your title", "Choose the title shown after your name. You can pick from the titles you've earned.")
+  return b
 end
 
 ------------------------------------------------------------------------
@@ -174,7 +251,8 @@ local function RefreshTiles(cat)
   P.bar:SetWidth(math.max(1, P.barW * count / total))
   P.back:SetShown(not isMe())
   P.picker:SetShown(isMe())
-  if isMe() then refreshPicker(P.picker) end
+  if isMe() then refreshTitleButton(P.picker) end
+  refreshChooser()
 end
 
 local function RefreshGuild()
@@ -201,7 +279,6 @@ local function Refresh()
   P.tilesView:SetShown(view ~= "guild")
   P.guildView:SetShown(view == "guild")
   if view == "guild" then RefreshGuild() else RefreshTiles(view) end
-  for _, c in ipairs(pickers) do if c ~= P.picker then refreshPicker(c) end end
 end
 
 local function BuildTiles(page)
@@ -226,7 +303,7 @@ local function BuildTiles(page)
   P.bar:SetHeight(3)
   P.bar:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
 
-  P.picker = makePicker(f, 230)
+  P.picker = makeTitleButton(f, 230)
   P.picker:SetPoint("TOPRIGHT", 0, -6)
   P.back = UI.Button(f, "Back to yours", 130)
   P.back:SetHeight(26)

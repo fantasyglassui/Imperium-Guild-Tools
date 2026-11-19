@@ -32,6 +32,8 @@ end
 -- The roster is read from the game once and kept until it changes, so
 -- tabs and lookups don't walk hundreds of members over and over.
 local rosterCache, rosterByKey, rosterAt
+local levelsVersion = 0
+function ns.RosterLevelsVersion() return levelsVersion end
 local ROSTER_FRESH = 10 -- seconds; the game also tells us when it changes
 
 local function readRoster()
@@ -59,14 +61,25 @@ local function loadRoster()
       local f = ns.First(CG.GuildRoster, GuildRoster)
       if f then pcall(f) end
     end
+    local before = rosterByKey
     rosterCache, rosterAt = readRoster(), GetTime()
     rosterByKey = {}
-    for _, m in ipairs(rosterCache) do rosterByKey[ns.Key(m.name)] = m end
+    local levelled = false
+    for _, m in ipairs(rosterCache) do
+      local k = ns.Key(m.name)
+      rosterByKey[k] = m
+      if before and before[k] and before[k].level ~= m.level then levelled = true end
+    end
+    -- Someone levelled up: achievements that depend on level (Max Level) are due a fresh look.
+    if levelled then
+      levelsVersion = levelsVersion + 1
+      if ns.OnLevelsChanged then C_Timer.After(0, ns.OnLevelsChanged) end
+    end
   end
 end
 
 -- Forget the cached roster (the game says it changed).
-function ns.RosterChanged() rosterCache, rosterByKey = nil, nil end
+function ns.RosterChanged() rosterCache, rosterAt = nil, nil end
 
 -- Every guild member: { index, name, rankName, rankIndex, level, classFile, ... }.
 -- A new list each time (callers may sort it); the members themselves are shared.
