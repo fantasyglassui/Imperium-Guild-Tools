@@ -49,6 +49,11 @@ Raids\Wishlist.lua
 Raids\Council.lua
 Raids\RaidRecap.lua
 
+# 4b. Guild events, member profiles and recruiting (kept in the ledger)
+Guild\Events.lua
+Guild\Members.lua
+Guild\Recruit.lua
+
 # 5. Officer log, the weekly recap, player profiles and achievements
 Guild\OfficerLog.lua
 Guild\Recap.lua

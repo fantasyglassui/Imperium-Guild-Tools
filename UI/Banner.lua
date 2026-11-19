@@ -35,6 +35,7 @@ ns.BANNER_KINDS = {
   bounty      = { title = "Bounty",             color = C.accent,      icon = "wanted",   tab = "wanted" },
   boss        = { title = "Boss down",          color = C.accent,      icon = "progress",    tab = "raids", hold = 7 },
   raid        = { title = "Raid",               color = rgb("66ccff"), icon = "calendar", tab = "raids", hold = 7 },
+  event       = { title = "Guild event",        color = rgb("4fd1c5"), icon = "events",   tab = "events", hold = 7 },
   loot        = { title = "Loot auction",       color = rgb("ffd200"), icon = "dkp",      tab = "dkp" },
   achievement = { title = "Achievement",        color = C.accent,      icon = "trophy",   tab = "achievements", hold = 6 },
   celebrate   = { title = "Guild news",         color = C.good,        icon = "roster",   tab = "roster" },

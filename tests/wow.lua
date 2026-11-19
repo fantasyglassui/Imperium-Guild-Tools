@@ -413,3 +413,20 @@ end
 -- The game's language (tests can change it).
 gameLocale = "enUS"
 function GetLocale() return gameLocale end
+
+-- Gear, chat channels and chat (member profiles and recruiting)
+equipped = {}      -- slot -> item link
+itemLevels = {}    -- item link -> { level, equipLoc }
+function GetInventoryItemLink(unit, slot) if unit == "player" then return equipped[slot] end end
+function GetItemInfo(link)
+  local i = itemLevels[link]
+  if not i then return nil end
+  return link, link, 3, i[1], i[1], "Armor", "Misc", 1, i[2] or "INVTYPE_CHEST"
+end
+chatChannels = { 1, "General", false, 2, "Trade", false }
+function GetChannelList() return unpack(chatChannels) end
+chatSent = {}
+function SendChatMessage(text, chatType, lang, target) table.insert(chatSent, { text, chatType, target }) end
+function UnitIsConnected() return true end
+guildInvites = {}
+function GuildInvite(name) table.insert(guildInvites, name) end

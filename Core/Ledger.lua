@@ -20,10 +20,11 @@ local _, ns = ...
 
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
   AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true,
-  RG = true, AG = true }
+  RG = true, AG = true, RC = true, RM = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
-local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true }
+local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true,
+  GE = true, GX = true, GS = true, GT = true, PF = true }
 -- Fields of each kind, in message order.
 local FIELDS = {
   EV = { "title", "start", "notes" },          -- a scheduled raid
@@ -48,6 +49,13 @@ local FIELDS = {
                                                -- they lost them ("id.when,id.when")
   AW = { "who", "list" },                      -- a guildmate vouching for achievements a member had earned;
                                                -- counts once two different guildmates agree
+  GE = { "title", "start", "etype", "notes", "mins" }, -- a guild event (not a raid): any member can make one
+  GX = { "ref" },                              -- a guild event cancelled (by whoever made it, or an officer)
+  GS = { "ref", "status" },                    -- going to a guild event: "going", "maybe" or "no"
+  GT = { "ref", "names" },                     -- who came to a guild event (taken by whoever made it, or an officer)
+  PF = { "spec", "role", "days", "hours", "bday", "ilvl", "note" }, -- a member's profile (the latest one counts)
+  RC = { "name", "class", "level", "note", "status" }, -- officer: a recruit and where they're up to
+  RM = { "text" },                             -- officer: the guild's recruiting message
   TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)
@@ -56,7 +64,7 @@ local FIELDS = {
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
-  parts = true, size = true, when = true, group = true }
+  parts = true, size = true, when = true, group = true, mins = true, ilvl = true, level = true }
 local CLAIM_WINDOW = 30
 
 local counter = 0
@@ -133,7 +141,8 @@ end
 -- more than 30 days before it. Alt links, DKP rules and kill removals are kept.
 local KEEP_RAIDS = 30 * 86400
 local BEFORE_SEASON = { DK = true, UN = true }                  -- folded into the starting balances
-local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX = true, SU = true, RG = true }
+local RAID_HISTORY = { RS = true, RE = true, AT = true, SB = true, EV = true, EX = true, SU = true, RG = true,
+  GE = true, GX = true, GS = true, GT = true }
 local byKind     -- kind -> sorted list of entries, rebuilt after any change
 local season     -- the current season, once all its starting balances are here
 
