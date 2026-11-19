@@ -76,6 +76,7 @@ local TOPICS = {
   { "Alerts and settings", function() return join({
     P("Alerts:", "the Settings tab lists every alert. The Guild column is set by officers for everyone; the You column is just for you."),
     P("On screen:", "alerts drop in as a banner at the top of the screen, with a colour and icon for each kind. Click one to open its tab, right-click to dismiss it, Shift-drag to move them. Settings > Alerts can switch to the game's raid warning text, or chat only."),
+    P("Sounds:", "each kind of alert has its own sound. Settings > Sounds lets you pick another for any of them, from Warcrest's sounds, the game's, SharedMedia's or your own (put .ogg or .mp3 files in Interface\\AddOns\\WarcrestSounds and restart the game)."),
     P("Quiet mode:", "hold alerts in dungeons, raids or combat. Held alerts are listed in chat once you're out."),
     P("Language:", "Warcrest follows your game's language (English, German, French or Spanish). Pick another in Settings > General, then /reload."),
     P("The window:", "drag the bottom-right corner to make it bigger, or use the Size slider in Settings > General."),

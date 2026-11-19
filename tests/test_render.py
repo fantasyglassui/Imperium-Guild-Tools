@@ -7,7 +7,7 @@ pytest.importorskip("PIL")
 from render import Renderer, demo_guild  # noqa: E402
 
 TABS = ("roster", "raids", "raids:plan", "raids:group", "raids:calendar", "raids:progress", "dkp", "wishlist", "kills", "wanted",
-        "achievements", "achievements:hunt", "achievements:raid", "achievements:loot", "achievements:guild", "settings", "settings:general", "officers", "addon")
+        "achievements", "achievements:hunt", "achievements:raid", "achievements:loot", "achievements:guild", "settings", "settings:sounds", "settings:general", "officers", "addon")
 
 
 def walk_text(rd, node):

@@ -103,7 +103,9 @@ end
 local function Refresh()
   local view = P.view.value
   for id, f in pairs(P.views) do f:SetShown(id == view) end
-  if view == "alerts" then RefreshAlerts() else RefreshGeneral() end
+  if view == "alerts" then RefreshAlerts()
+  elseif view == "sounds" then UI.SoundsView.Refresh()
+  else RefreshGeneral() end
 end
 
 ------------------------------------------------------------------------
@@ -236,6 +238,7 @@ local function BuildAppearCard(parent)
   UI.Label(a, "How alerts appear", "Heading"):SetPoint("TOPLEFT", 14, -12)
   P.sound = UI.Check(a, "Play a sound", 10, -36)
   P.sound:SetScript("OnClick", function(self) ns.db.sound = self:GetChecked() and true or false end)
+  UI.Tooltip(P.sound, "Play a sound", "Each kind of alert has its own sound. Pick them on the Sounds view at the top.")
   local onScreen = UI.Label(a, "On screen", "Body")
   onScreen:SetPoint("TOPLEFT", 14, -70)
   P.warn = UI.Cycle(a, 150, { { "banner", "Banner" }, { "warning", "Raid warning text" }, { "off", "Chat only" } },
@@ -393,16 +396,20 @@ function ns.SettingsTitleCard() return P.titleCard end
 function ns.SetSettingsTitleRefresh(fn) P.refreshTitle = fn end
 
 local function Build(page)
-  P.view = UI.Segmented(page.headerBar, { { "alerts", "Alerts" }, { "general", "General" } }, ns.RefreshPanel)
+  P.view = UI.Segmented(page.headerBar, { { "alerts", "Alerts" }, { "sounds", "Sounds" }, { "general", "General" } },
+    ns.RefreshPanel)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view
   local alerts = BuildAlerts(page)
   local general = BuildGeneral(page)
+  local sounds = UI.SoundsView.Build(page)
+  P.views.sounds = sounds
   if ns.BuildTitlePicker then ns.BuildTitlePicker(P.titleCard) end
 
   -- A bigger window: the alert table gets the room; the side cards move right.
   UI.Grow(page, alerts, 1, 1)
   UI.Grow(page, general, 1, 1)
+  UI.Grow(page, sounds, 1, 1)
   UI.Grow(page, P.table, 1, 0)
   UI.FollowAll(page, { P.guildCard, P.appear }, 1, 0)
 end
@@ -410,6 +417,7 @@ end
 TAB = { id = "settings", title = "Settings", build = Build, refresh = Refresh,
   subtitle = function()
     if P.view and P.view.value == "general" then return "Quiet mode, the map, the weekly recap, your title and the window" end
+    if P.view and P.view.value == "sounds" then return "A sound for each kind of alert, and your own sounds" end
     return "Alerts for the whole guild, and just for you"
   end }
 UI.AddTab(TAB)

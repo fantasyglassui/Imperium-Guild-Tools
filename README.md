@@ -18,6 +18,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
 - **Loot wishlists.** Mark the items you Need or Want; officers and bidders see who wants an item when it's auctioned.
 - **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid and guild-first announcements, and a month calendar of raids and raid nights.
+- **Alert sounds.** A sound for every kind of alert, from 37 sounds made for Warcrest, the game's, SharedMedia's or your own files.
 - **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open the matching tab.
 - **Loot council.** Vote on who gets an item, with each candidate's wishlist, attendance and recent loot in front of the officers. Works with or without DKP.
 - **Raid night recap.** When the raid night ends, the guild gets a summary of the bosses, loot, attendance and the DKP each person earned.

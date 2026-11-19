@@ -218,12 +218,24 @@ STANDARD_TEXT_FONT = "Fonts\\FRIZQT__.TTF"
 UIParent, Minimap, GameTooltip = NewWidget(), NewWidget(), NewWidget()
 UISpecialFrames, StaticPopupDialogs, SlashCmdList = {}, {}, {}
 ChatTypeInfo = { RAID_WARNING = {} }
-SOUNDKIT = { RAID_WARNING = 8959 }
+SOUNDKIT = { RAID_WARNING = 8959, READY_CHECK = 8960, ALARM_CLOCK_WARNING_3 = 12889 }
 RAID_CLASS_COLORS = setmetatable({}, { __index = function() return { r = 1, g = 1, b = 1 } end })
 YES, NO, OKAY, CANCEL = "Yes", "No", "Okay", "Cancel"
 staticPopups = {}
 function StaticPopup_Show(which, a, b, data) staticPopups[#staticPopups + 1] = { which = which, data = data } end
-function PlaySound() end
+-- Sounds played: { "kit", id, channel } or { "file", path, channel }. Files in
+-- MISSING_SOUNDS don't exist (the game won't play them).
+soundsPlayed = {}
+MISSING_SOUNDS = {}
+function PlaySound(kit, channel)
+  soundsPlayed[#soundsPlayed + 1] = { "kit", kit, channel }
+  return true
+end
+function PlaySoundFile(path, channel)
+  if MISSING_SOUNDS[path] then return false end
+  soundsPlayed[#soundsPlayed + 1] = { "file", path, channel }
+  return true, 1
+end
 function RaidNotice_AddMessage() end
 RaidWarningFrame = NewWidget()
 function InCombatLockdown() return false end

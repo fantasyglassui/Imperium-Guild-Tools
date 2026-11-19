@@ -49,8 +49,7 @@ function ns.ShowLevel(who, level, force)
     if not wanted then return end
   end
   local text = CHEER_COLOR .. ns.DescribeLevel(who, level) .. "|r"
-  local sound = SOUNDKIT and (level == maxLevel() and (SOUNDKIT.LEVELUP or SOUNDKIT.UI_LEVELUP) or SOUNDKIT.RAID_WARNING)
-  ns.Notify(STAR .. " " .. text, STAR .. " " .. text .. " " .. STAR, sound, force, "celebrate",
+  ns.Notify(STAR .. " " .. text, STAR .. " " .. text .. " " .. STAR, nil, force, "celebrate",
     level == maxLevel() and "Max level" or "Level up")
 end
 

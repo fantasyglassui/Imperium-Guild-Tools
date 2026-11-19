@@ -429,18 +429,6 @@ function ns.IsQuiet()
   return false
 end
 
-local function playSound(kit)
-  if ns.db.sound and kit then pcall(PlaySound, kit, "Master") end
-end
-
--- A sound for each kind of alert, so you can tell them apart without looking.
--- (Names differ between game versions; anything missing falls back to the raid warning.)
-local KIND_SOUNDS = {
-  kill = "PVP_THROUGH_QUEUE", streak = "PVP_THROUGH_QUEUE", revenge = "PVP_THROUGH_QUEUE",
-  wanted = "ALARM_CLOCK_WARNING_3", death = "ALARM_CLOCK_WARNING_2",
-  boss = "UI_RAID_BOSS_DEFEATED", achievement = "ACHIEVEMENT_MENU_OPEN", champion = "UI_RAID_BOSS_DEFEATED",
-  raid = "READY_CHECK", loot = "RAID_WARNING", bounty = "LOOTWINDOWCOINSOUND",
-}
 
 -- How alerts show on screen: "banner" (Warcrest's own), "warning" (the game's
 -- raid warning text) or "off" (chat only).
@@ -451,8 +439,10 @@ function ns.AlertStyle()
 end
 
 -- chat: the chat line. warning: the on-screen text (defaults to chat).
--- sound: a SOUNDKIT id (defaults to one for the kind). kind: what it is, for the
--- banner's colour, icon and heading (UI/Banner.lua); title overrides the heading.
+-- sound: a SOUNDKIT id to play instead of the kind's sound (rarely needed: each
+-- kind has a sound you can choose in Settings > Sounds, Core/Sounds.lua).
+-- kind: what it is, for the banner's colour, icon and heading (UI/Banner.lua)
+-- and the sound; title overrides the heading.
 function ns.Notify(chat, warning, sound, force, kind, title)
   if not force and ns.IsQuiet() then
     if #held < MAX_HELD then held[#held + 1] = chat end
@@ -470,8 +460,11 @@ function ns.Notify(chat, warning, sound, force, kind, title)
   elseif style ~= "off" and RaidWarningFrame then
     RaidNotice_AddMessage(RaidWarningFrame, warning or chat, ChatTypeInfo["RAID_WARNING"])
   end
-  local kit = sound or (SOUNDKIT and (SOUNDKIT[KIND_SOUNDS[kind or ""] or ""] or SOUNDKIT.RAID_WARNING))
-  playSound(kit)
+  if sound then
+    if ns.db.sound then pcall(PlaySound, sound, ns.db.soundChannel or "Master") end
+  elseif ns.PlayAlertSound then
+    ns.PlayAlertSound(kind)
+  end
 end
 
 local function flushHeld()
@@ -479,7 +472,7 @@ local function flushHeld()
   ns.Say(("While you were busy, %d alert%s came in:"):format(#held, #held == 1 and "" or "s"))
   for _, line in ipairs(held) do print("   " .. line) end
   wipe(held)
-  playSound(SOUNDKIT and SOUNDKIT.RAID_WARNING)
+  if ns.db.sound and ns.PlaySoundID then ns.PlaySoundID("wc:NotifyDing") end
 end
 
 -- Where the player is on the map: mapID, x, y (x and y from 0 to 1).

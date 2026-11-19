@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.4.0
+- New: **a sound for every kind of alert, and you choose them.** Settings has a new **Sounds** view listing each kind of alert (a guild kill, a guild member down, a wanted ganker spotted, a bounty, a kill streak, revenge, Top Head Hunters, a boss down, raids, loot auctions, achievements and guild news) with its sound. Click a sound to pick another, or the play button to hear it.
+- New: **37 sound effects made for Warcrest**: war horn, rally cry, victory fanfare, trumpet call, heroic choir, war drums, drum roll, thunder, sword clash, shield bash, anvil, bells and chimes, a death toll, alarms, coins, sparkles, harp, lute and more. Each alert starts with one that fits it.
+- **Pick from the game's sounds too** (ready check, battleground ready, epic loot and others), and from any **SharedMedia** sounds your other add-ons have.
+- **Add your own sounds.** Make a folder called WarcrestSounds in Interface\AddOns, put .ogg or .mp3 files in it, restart the game, and add each one by its file name in Settings > Sounds. Updates to Warcrest never touch that folder.
+- Choose which **volume channel** alert sounds play on (Master by default, so they play even with game effects turned down), or turn alert sounds off.
+- Fix: the "nothing here" text in lists now shows in your language.
+
 ## 3.3.1
 - **Faster, especially in big guilds with a long history.**
   - Catching up after time away no longer slows down as the record grows. Taking in thousands of guild changes (raids, DKP, sign-ups) used to re-sort the whole record for each one; it now files each change in place. In a test guild with 10,000 changes, that went from over a minute and a half to a third of a second.

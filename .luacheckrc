@@ -35,7 +35,7 @@ read_globals = {
   -- Game state
   "GetAddOnMetadata", "GetCursorPosition", "GetItemIcon", "GetItemInfoInstant", "GetMaxPlayerLevel",
   "GetMinimapShape", "GetPVPLifetimeStats", "GetRealZoneText", "GetServerTime", "GetTime", "GetZoneText",
-  "InCombatLockdown", "IsFalling", "IsHarmfulSpell", "IsShiftKeyDown", "PlaySound", "RandomRoll",
+  "InCombatLockdown", "IsFalling", "IsHarmfulSpell", "IsShiftKeyDown", "PlaySound", "PlaySoundFile", "LibStub", "RandomRoll",
   -- Interface
   "ChatEdit_InsertLink", "ChatFontNormal", "ChatFrameUtil", "ChatFrame_SendTell", "ChatTypeInfo", "CreateFont", "CreateFrame", "CreateFromMixins", "STANDARD_TEXT_FONT",
   "CreateVector2D", "GameTooltip", "HideUIPanel", "MapCanvasDataProviderMixin", "MapCanvasPinMixin",

@@ -371,6 +371,7 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
   empty:SetWidth(width - 24)
   empty:SetJustifyH("LEFT")
   empty:Hide()
+  UI.Translated(empty)
 
   -- Only the rows that fit on screen (plus one) are made. Scrolling moves
   -- them down and fills them with the items now in view, so a list of
@@ -429,6 +430,13 @@ function UI.List(parent, width, height, rowHeight, makeRow, fill, plain)
     content:SetWidth(w - 4)
     empty:SetWidth(w - 24)
     for _, row in ipairs(self.rows) do row:SetWidth(w - 4) end
+    update()
+  end
+
+  -- Scroll so an item is in view (near the middle).
+  function list:ScrollTo(index)
+    local maxScroll = math.max(0, #self.items * rowHeight - self.height)
+    sf:SetVerticalScroll(math.max(0, math.min(maxScroll, (index - 1) * rowHeight - self.height / 2 + rowHeight)))
     update()
   end
 

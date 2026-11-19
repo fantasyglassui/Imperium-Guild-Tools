@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.4.0", date = "Nov 19, 2026", items = {
+    "Choose the sound for each kind of alert in Settings > Sounds: 37 new Warcrest sounds, the game's sounds, SharedMedia sounds or your own files.",
+  } },
   { version = "3.3.1", date = "Nov 19, 2026", items = {
     "Faster, especially in big guilds: catching up after time away, DKP awards and achievements no longer cause a hitch.",
     "The Alts window is redesigned, and the player card fits its contents.",

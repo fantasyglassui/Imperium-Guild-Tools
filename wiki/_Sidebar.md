@@ -11,6 +11,7 @@
 - [Officer Raid Night Guide](Officer-Raid-Night-Guide)
 - [Officer DKP Management](Officer-DKP-Management)
 - [Loot Council](Loot-Council)
+- [Alert Sounds](Alert-Sounds)
 
 **Reference**
 - [Commands](Commands)

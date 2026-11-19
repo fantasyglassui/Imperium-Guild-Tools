@@ -422,7 +422,7 @@ if __name__ == "__main__":
         me.ns.RefreshPanel()
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
-    for tab, view in (("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "guild"),
+    for tab, view in (("settings", "sounds"), ("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "guild"),
                       ("raids", "plan"), ("raids", "calendar"), ("raids", "progress")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
