@@ -14,7 +14,7 @@ The picker has:
 
 - **Warcrest's sounds**: 87 effects made for Warcrest, in eight kinds: horns and fanfares, bells and chimes, drums, combat, magic, alerts, nature and music. The picker shows each sound's kind, and you can search by it (type "drums" or "magic").
 - **Your own sounds** (see below).
-- **SharedMedia** sounds, if you use add-ons that share them.
+- **Sounds from other add-ons** (SharedMedia), only if you tick **Sounds from other add-ons** in Settings > Sounds. They're named by those add-ons' makers.
 - **The game's sounds**, such as the ready check, battleground ready and epic loot.
 - **No sound**, to keep an alert quiet.
 

@@ -86,6 +86,9 @@ def test_sharedmedia_sounds_are_offered():
       function LibStub(name) if name == "LibSharedMedia-3.0" then return lsm end end
     """)
     c.ns.RefreshSoundLibrary()
+    assert c.ns.SoundByID("lsm:Air Horn") is None      # off unless you ask for them
+    c.ns.db.sharedSounds = True
+    c.ns.RefreshSoundLibrary()
     s = c.ns.SoundByID("lsm:Air Horn")
     assert s and s.group == "SharedMedia"
     assert c.ns.SoundByID("lsm:None") is None

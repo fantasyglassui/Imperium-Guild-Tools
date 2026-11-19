@@ -1010,4 +1010,7 @@ ns.LOCALES.esES = {
   ["Magic"] = "Magia",
   ["Nature"] = "Naturaleza",
   ["50 more alert sounds, 87 in all, sorted by kind in the sound picker (Settings > Sounds)."] = "50 sonidos de aviso nuevos, 87 en total, ordenados por tipo en el selector (Ajustes > Sonidos).",
+  ["Sounds from other add-ons"] = "Sonidos de otros addons",
+  ["Also list sounds that your other add-ons share (through SharedMedia). They're named by whoever made those add-ons, not by Warcrest."] = "Muestra también los sonidos que comparten tus otros addons (mediante SharedMedia). Sus nombres los ponen los autores de esos addons, no Warcrest.",
+  ["Other add-on"] = "Otro addon",
 }

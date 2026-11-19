@@ -7,7 +7,8 @@
       kinds: horns and fanfares, bells, drums, combat, magic, alerts,
       nature and music,
     - the game's sounds,
-    - sounds from SharedMedia add-ons (LibSharedMedia), if you have any,
+    - sounds from SharedMedia add-ons (LibSharedMedia), if you turn on
+      "Sounds from other add-ons" (they're named by those add-ons' makers),
     - your own sound files: .ogg or .mp3 files you put in
       Interface\AddOns\WarcrestSounds (a folder of your own, so updates to
       Warcrest never touch it), added by file name in Settings > Sounds.
@@ -154,7 +155,10 @@ function ns.SoundLibrary()
   for _, c in ipairs(ns.db and ns.db.customSounds or {}) do
     add({ id = "custom:" .. c.file, name = c.name or c.file, group = "Yours", file = ns.CustomSoundPath(c.file) })
   end
-  for _, s in ipairs(sharedMedia()) do add(s) end
+  -- Other add-ons' sounds, only if you asked for them (Settings > Sounds).
+  if ns.db and ns.db.sharedSounds then
+    for _, s in ipairs(sharedMedia()) do add(s) end
+  end
   for _, s in ipairs(GAME_SOUNDS) do
     if SOUNDKIT and SOUNDKIT[s[1]] then add({ id = "kit:" .. s[1], name = s[2], group = "Game", kit = s[1] }) end
   end

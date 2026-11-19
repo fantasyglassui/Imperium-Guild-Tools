@@ -21,7 +21,7 @@ local INNER = SIDE_W - 30
 local ROW = 30
 local SOUND_X, SOUND_W = 196, 196
 
-local GROUP_NAMES = { None = "", Warcrest = "Warcrest", Yours = "Yours", SharedMedia = "SharedMedia", Game = "Game" }
+local GROUP_NAMES = { None = "", Warcrest = "Warcrest", Yours = "Yours", SharedMedia = "Other add-on", Game = "Game" }
 
 local function groupTag(s)
   local g = s.category or GROUP_NAMES[s.group] or s.group
@@ -154,15 +154,24 @@ local function BuildTable(f)
 end
 
 local function BuildSettingsCard(f)
-  local c = UI.Box(f, SIDE_X, 0, SIDE_W, 150, "Sound settings")
+  local c = UI.Box(f, SIDE_X, 0, SIDE_W, 176, "Sound settings")
   M.settings = c
   M.on = UI.Check(c, "Play alert sounds", 10, -36)
   M.on:SetScript("OnClick", function(self) ns.db.sound = self:GetChecked() and true or false end)
+  -- Other add-ons can share their sounds (SharedMedia). Off unless you want them.
+  M.shared = UI.Check(c, "Sounds from other add-ons", 10, -62)
+  M.shared:SetScript("OnClick", function(self)
+    ns.db.sharedSounds = self:GetChecked() and true or false
+    ns.RefreshSoundLibrary()
+    ns.RefreshPanel()
+  end)
+  UI.Tooltip(M.shared, "Sounds from other add-ons", "Also list sounds that your other add-ons share (through "
+    .. "SharedMedia). They're named by whoever made those add-ons, not by Warcrest.")
   local ch = UI.Label(c, "Channel", "Body")
-  ch:SetPoint("TOPLEFT", 14, -74)
+  ch:SetPoint("TOPLEFT", 14, -100)
   M.channel = UI.Cycle(c, 120, ns.SOUND_CHANNELS, function(v) ns.db.soundChannel = v end)
   M.channel:SetHeight(24)
-  M.channel:SetPoint("TOPRIGHT", -14, -68)
+  M.channel:SetPoint("TOPRIGHT", -14, -94)
   M.channel.Sync = function(self)
     for i, o in ipairs(self.options) do
       if o[1] == (ns.db.soundChannel or "Master") then self.index, self.value = i, o[1]; self:SetText(o[2]) end
@@ -178,7 +187,7 @@ local function BuildSettingsCard(f)
 end
 
 local function BuildCustomCard(f)
-  local c = UI.Box(f, SIDE_X, -164, SIDE_W, H - 164, "Your own sounds")
+  local c = UI.Box(f, SIDE_X, -190, SIDE_W, H - 190, "Your own sounds")
   M.custom = c
   local how = UI.Label(c, "Make a folder called WarcrestSounds in Interface\\AddOns, put .ogg or .mp3 files in it, "
     .. "and restart the game. Then add each one by its file name.", "MutedSmall")
@@ -200,7 +209,7 @@ local function BuildCustomCard(f)
   end)
   M.file:SetScript("OnEnterPressed", function() add:Click() end)
   UI.Tooltip(add, "Add", "Plays the file to check it's there, then adds it to the sounds you can pick.")
-  M.customList = UI.List(c, INNER + 4, H - 164 - 150, 24,
+  M.customList = UI.List(c, INNER + 4, H - 190 - 150, 24,
     function(row)
       row.name = UI.Label(row, "", "Small")
       row.name:SetPoint("LEFT", 2, 0)
@@ -237,6 +246,7 @@ end
 
 function M.Refresh()
   M.on:SetChecked(ns.db.sound)
+  M.shared:SetChecked(ns.db.sharedSounds)
   M.channel:Sync()
   for _, row in ipairs(M.rows) do
     local s = ns.SoundByID(ns.AlertSound(row.kind))

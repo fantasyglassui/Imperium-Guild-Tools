@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.5.1
+- **Sounds shared by your other add-ons are no longer added to the sound picker on their own.** Warcrest was listing every sound other add-ons share through SharedMedia, named however those add-ons' makers named them. They're now off unless you tick **Sounds from other add-ons** in Settings > Sounds, and they're marked "Other add-on" in the picker. An alert that was set to one of them goes back to its own sound.
+
 ## 3.5.0
 - **50 more alert sounds, 87 in all**, sorted into kinds in the sound picker:
   - **Horns & fanfares:** battle horn, distant horn, hunting horn, royal fanfare, triumph.
