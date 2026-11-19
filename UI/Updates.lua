@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.5.4", date = "Nov 19, 2026", items = {
+    "Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped.",
+    "Achievements members lost are put back from what officers' addons remember.",
+  } },
   { version = "3.5.3", date = "Nov 19, 2026", items = {
     "Your achievements are now kept with the guild too, so they come back even if this computer's saved data is lost.",
     "If Warcrest's saved history doesn't load, it says so and asks the guild to send it back.",

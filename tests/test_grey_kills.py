@@ -58,20 +58,28 @@ def test_older_versions_grey_reports_are_dropped():
     assert bob.said("Lowbie") == []
 
 
-def test_grey_kills_already_logged_are_cleared():
+def test_older_kills_stay_after_the_killer_levels_up():
+    # A kill that gave honor at the time isn't removed or hidden because the
+    # killer has levelled since: their level now says nothing about then.
     guild = Guild(MEMBERS)
     bob = guild["Bob"]
     t = int(guild.clock) - 86400
     for i, (victim, level, killer, honor) in enumerate([
-        ("OldGrey", 30, "Alice", "true"),      # grey to Alice, even though marked honorable
-        ("NoHonor", None, "Alice", "false"),   # level unknown, and no honor
+        ("Earlier", 30, "Alice", "true"),      # honorable when Alice was lower; she's 60 now
+        ("NoHonor", None, "Alice", "false"),   # level unknown, and no honor: left out
         ("Fine", 58, "Alice", "true"),
         ("Unknown", None, "Bob", "nil"),       # from before honor was recorded: kept
-        ("TwinkKill", 40, "Twink", "true"),    # not grey to a level 45
     ]):
-        bob.run('table.insert(ns_log, 1, { t = %d, kind = "kill_world", victim = "%s", zone = "STV", killers = { "%s" }, level = %s, honor = %s })'
-                .replace("ns_log", "WarcrestDB.killLog") % (t - i * 60, victim, killer, level or "nil", honor))
+        bob.run('table.insert(WarcrestDB.killLog, 1, { t = %d, kind = "kill_world", victim = "%s", zone = "STV", killers = { "%s" }, level = %s, honor = %s })'
+                % (t - i * 60, victim, killer, level or "nil", honor))
     bob.login()
     guild.run(40)
-    assert victims(bob) == ["Fine", "TwinkKill", "Unknown"]
+    assert victims(bob) == ["Earlier", "Fine", "NoHonor", "Unknown"]   # nothing deleted
+    L = bob.ns.db.killLog
+    shown = sorted(L[i].victim for i in range(1, len(L) + 1) if not bob.ns.KillHidden(L[i]))
+    assert shown == ["Earlier", "Fine", "Unknown"]
+    # Older history from a guildmate is taken as recorded, too.
+    bob.fire("CHAT_MSG_ADDON", "TheImperiumB", "KX^%d^kill_world^Synced^STV^Alice^0.5^41^1" % (t - 7200), "WHISPER", "Alice-Realm")
+    guild.run(5)
+    assert "Synced" in victims(bob)
     assert bob.errors() == []

@@ -20,7 +20,7 @@ local _, ns = ...
 
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
   AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true,
-  RG = true }
+  RG = true, AG = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
 local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true }
@@ -44,6 +44,8 @@ local FIELDS = {
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
   AE = { "ach", "when" },                       -- an achievement a member earned, and when (kept with the guild,
                                                -- so it isn't lost with one player's saved data)
+  AG = { "who", "list" },                      -- officer: achievements a member had earned, put back after
+                                               -- they lost them ("id.when,id.when")
   TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)
@@ -306,6 +308,8 @@ ns.OnMessage("LQ", function(p, sender)
   if ns.IsMe(sender) or not ns.IsAddonOfficer() then return end
   local theirCount, theirNewest = tonumber(p[2]) or 0, tonumber(p[3]) or 0
   local n, newest = stats()
+  -- Someone far behind may have lost their saved data: put back any achievements they're missing.
+  if theirCount < n / 2 and ns.RestoreAchievementsLater then ns.RestoreAchievementsLater() end
   if n <= theirCount and newest <= theirNewest then return end
   local who = ns.fullName(sender)
   local delay = 0.5 + math.random() * 2

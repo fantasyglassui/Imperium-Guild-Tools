@@ -1054,4 +1054,6 @@ ns.LOCALES.frFR = {
   ["Warcrest's saved history didn't load this time (the game didn't keep it). Asking your guild to send it back; it fills in over the next few minutes."] = "L'historique enregistré de Warcrest ne s'est pas chargé cette fois (le jeu ne l'a pas conservé). Ta guilde est invitée à le renvoyer ; il se remplit dans les prochaines minutes.",
   ["Your achievements are now kept with the guild too, so they come back even if this computer's saved data is lost."] = "Tes hauts faits sont désormais aussi conservés par la guilde : ils reviennent même si les données enregistrées sur cet ordinateur sont perdues.",
   ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Si l'historique enregistré de Warcrest ne se charge pas, il te le signale et demande à la guilde de le renvoyer.",
+  ["Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped."] = "Correctif : des victimes étaient supprimées après que le tueur avait pris des niveaux, et les hauts faits qui en venaient disparaissaient aussi. C'est réglé.",
+  ["Achievements members lost are put back from what officers' addons remember."] = "Les hauts faits perdus par des membres sont rétablis à partir de ce dont se souviennent les addons des officiers.",
 }

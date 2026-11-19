@@ -85,3 +85,23 @@ def test_secret_values_are_taken_out_before_saving():
     assert a.lua.eval("WarcrestDB.killLog[1].victim") is None
     assert a.lua.eval("WarcrestDB.killLog[1].zone") == "STV"
     assert a.lua.eval("WarcrestState.kills") == 1
+
+
+def test_officers_put_back_achievements_a_member_lost():
+    # From before achievements were kept with the guild: Bob's achievements are
+    # only remembered by guildmates' addons, and his kills are gone everywhere.
+    guild = Guild(M, raid=[m[0] for m in M])
+    earn(guild)
+    assert guild["Alice"].ns.db.achievements["bob"]["kill1"]
+    for c in guild.clients.values():
+        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" then WarcrestDB.ledger[id] = nil end end '
+              'wipe(WarcrestDB.killLog)'); c.ns.ReindexLedger()
+    for c in guild.clients.values():
+        if c.name != "Alice":
+            c.run('wipe(WarcrestDB.achievements)')
+    bob = relog(guild, "Bob", lose_data=True)
+    guild.run(400)
+    assert bob.ns.MemberAchievements("Bob")["kill1"]["t"]
+    put_back = [e for e in bob.ns.LedgerEntries("AG").values()]
+    assert put_back and all(e.a == "Alice" for e in put_back)
+    assert bob.errors() == [] and guild["Alice"].errors() == []

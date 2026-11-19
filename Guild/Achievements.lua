@@ -342,13 +342,21 @@ ns.OnLoad(function() ns.db.achievements = ns.db.achievements or {} end)
 -- new computer, or if the game ever fails to keep Warcrest's saved data.
 local aeCache, aeStamp
 local function guildRecorded()
-  local stamp = ns.LedgerStamp("AE")
+  local stamp = ns.LedgerStamp("AE", "AG")
   if aeCache and aeStamp == stamp then return aeCache end
   aeCache, aeStamp = {}, stamp
   for _, e in ipairs(ns.LedgerEntries("AE")) do
     local k = ns.Key(e.a)
     aeCache[k] = aeCache[k] or {}
     if BY_ID[e.ach] then aeCache[k][e.ach] = tonumber(e.when) or 0 end
+  end
+  -- Put back by an officer, from what their addon had seen the member earn.
+  for _, e in ipairs(ns.LedgerEntries("AG")) do
+    local k = ns.Key(e.who)
+    aeCache[k] = aeCache[k] or {}
+    for id, when in tostring(e.list or ""):gmatch("([%w_]+)%.(%d+)") do
+      if BY_ID[id] and not aeCache[k][id] then aeCache[k][id] = tonumber(when) or 0 end
+    end
   end
   return aeCache
 end
@@ -545,6 +553,7 @@ local function recheck()
     if roster[i + 1] then C_Timer.After(0.01, step) return end
     if #roster > 0 then ready = true end
     if ns.RecordMyAchievements then ns.RecordMyAchievements() end
+    if ns.RestoreAchievementsLater then ns.RestoreAchievementsLater() end
     if ns.RefreshPanel then ns.RefreshPanel() end
     if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
   end
@@ -578,6 +587,64 @@ function ns.RecordMyAchievements()
     C_Timer.After(1.5, nextOne)
   end
   nextOne()
+end
+
+-- Officers: put back achievements members have lost. Your addon remembers what
+-- every guildmate has earned; anything it remembers that isn't in the guild's
+-- record yet is added to it, so the member gets it back. A few members at a
+-- time, and officers start at different moments so they don't all send it.
+local restoring, restoreQueued = false, false
+local LIST_MAX = 150 -- characters of "id.when" pairs per entry, to fit one message
+function ns.RestoreGuildAchievements()
+  if restoring or not IsInGuild() or not ns.IsAddonOfficer() then return end
+  local todo = {}
+  for k, mine in pairs(ns.db.achievements) do
+    local member = ns.Member(k)
+    if member then
+      local have = guildRecorded()[k] or {}
+      local parts, len = {}, 0
+      for id, t in pairs(mine) do
+        if BY_ID[id] and not have[id] and BY_ID[id].stat ~= "others" then
+          local item = id .. "." .. math.floor(tonumber(t) or 0)
+          if len + #item + 1 > LIST_MAX then
+            todo[#todo + 1] = { k, table.concat(parts, ","), member.name }
+            parts, len = {}, 0
+          end
+          parts[#parts + 1] = item
+          len = len + #item + 1
+        end
+      end
+      if #parts > 0 then todo[#todo + 1] = { k, table.concat(parts, ","), member.name } end
+    end
+  end
+  if #todo == 0 then return end
+  restoring = true
+  local i = 0
+  local function nextOne()
+    i = i + 1
+    local t = todo[i]
+    if not t then restoring = false return end
+    -- Another officer may have put these back in the meantime.
+    local have = guildRecorded()[t[1]] or {}
+    local missing = false
+    for id in t[2]:gmatch("([%w_]+)%.") do if not have[id] then missing = true break end end
+    if missing then
+      ns.LedgerAdd("AG", { who = Ambiguate(t[3], "short"), list = t[2] })
+      C_Timer.After(2, nextOne)
+    else
+      nextOne()
+    end
+  end
+  nextOne()
+end
+
+function ns.RestoreAchievementsLater()
+  if restoreQueued or restoring or not ns.IsAddonOfficer() then return end
+  restoreQueued = true
+  C_Timer.After(30 + math.random(0, 90), function()
+    restoreQueued = false
+    ns.RestoreGuildAchievements()
+  end)
 end
 
 local function changed()

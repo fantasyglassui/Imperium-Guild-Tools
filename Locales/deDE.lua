@@ -1054,4 +1054,6 @@ ns.LOCALES.deDE = {
   ["Warcrest's saved history didn't load this time (the game didn't keep it). Asking your guild to send it back; it fills in over the next few minutes."] = "Warcrests gespeicherter Verlauf wurde diesmal nicht geladen (das Spiel hat ihn nicht behalten). Deine Gilde wird gebeten, ihn zurückzuschicken; er füllt sich in den nächsten Minuten wieder auf.",
   ["Your achievements are now kept with the guild too, so they come back even if this computer's saved data is lost."] = "Deine Erfolge werden jetzt auch bei der Gilde gespeichert, sodass sie zurückkommen, selbst wenn die gespeicherten Daten auf diesem Computer verloren gehen.",
   ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Wenn Warcrests gespeicherter Verlauf nicht geladen wird, sagt es dir das und bittet die Gilde, ihn zurückzuschicken.",
+  ["Fix: kills were deleted after the killer levelled up, and the achievements that came from them went too. That's stopped."] = "Fehler behoben: Kills wurden gelöscht, nachdem der Killer aufgestiegen war, und die Erfolge daraus verschwanden mit. Das passiert nicht mehr.",
+  ["Achievements members lost are put back from what officers' addons remember."] = "Verlorene Erfolge von Mitgliedern werden aus dem zurückgeholt, was die Addons der Offiziere sich gemerkt haben.",
 }

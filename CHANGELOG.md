@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.4
+- Fix: **kills were being deleted after the killer levelled up**, and with them the achievements that came from them. Each time you logged in, Warcrest cleared out kills it thought were "grey" (no honor), judged by the killers' levels *now* instead of at the time of the kill. Once someone had levelled, many of their earlier kills looked grey and were removed, from every guildmate's copy. Since 3.4.1 (when offline members' levels became known) this hit the whole guild. Kills are now only checked for grey when they happen; nothing in the log is ever removed for it later, and older kills from guildmates' logs are taken as recorded.
+- **Achievements members lost are put back.** Every officer's Warcrest remembers what each guildmate has earned. Any of those that aren't in the guild's record yet are now added to it by officers' addons a minute or two after they log in, and whenever someone comes back with their history missing, so the member gets them back.
+
 ## 3.5.3
 - **Your achievements are now kept with the guild, not only on your computer.** Each one you earn is recorded in the guild's shared record, so if this computer's saved data is ever lost (after an update, a crash, or the game not saving), your achievements come back from your guildmates as soon as you log in.
 - **If Warcrest's saved history doesn't load, it now notices and gets it back.** Warcrest keeps a small note of how much history you had. If it starts with nothing though there was history last time, it tells you and asks the guild to send it back: the guild record (raids, DKP, sign-ups, achievements) from officers, and up to 60 days of kills and deaths from any guildmate.

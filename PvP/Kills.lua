@@ -258,12 +258,16 @@ local function refreshLevels()
 end
 local function memberLevel(name) return levels[key(name)] end
 
--- A grey kill: the victim's level is grey to every killer whose level is
--- known, or, without levels to go on, the report said there was no honor.
+-- Killers' levels now only say what was grey for a fresh kill. Players level
+-- up, and an older kill that gave honor at the time mustn't turn grey later.
+local FRESH = 3 * 3600
+
+-- A grey kill: for a fresh kill, the victim's level is grey to every killer
+-- whose level is known; otherwise the report said there was no honor.
 -- (Kills from older versions with no honor information still count.)
 local function isGrey(k)
   local victim = tonumber(k.level)
-  if victim and victim >= 0 then
+  if victim and victim >= 0 and GetServerTime() - (tonumber(k.t) or 0) < FRESH then
     local judged = false
     for _, name in ipairs(k.killers or {}) do
       local lv = memberLevel(name)
@@ -358,23 +362,6 @@ ns.OnLoad(function()
     end
     if ns.OnHistoryChanged then ns.OnHistoryChanged() end
   end)
-end)
-
--- Clear grey kills out of the log (from older versions, which logged them).
--- Waits for the guild roster, since killers' levels decide.
-function ns.PurgeGreyKills()
-  local log, dropped = ns.db.killLog, 0
-  for i = #log, 1, -1 do
-    if ns.IsGreyKill(log[i]) then
-      table.remove(log, i)
-      dropped = dropped + 1
-    end
-  end
-  if dropped > 0 and ns.OnHistoryChanged then ns.OnHistoryChanged() end
-  return dropped
-end
-table.insert(ns.OnGuildReady, function()
-  C_Timer.After(20, ns.PurgeGreyKills)
 end)
 
 -- Combine another report of the same kill into an entry: every killer,
