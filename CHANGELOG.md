@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.6.3
+- **Titles in chat.** When a guildmate with a title says something (guild, officer, say, yell, party, raid, whispers and chat channels), your chat window shows their title in gold at the start: **[Lyra]: (the Avenger) anyone up for Tarren Mill?** It only changes what your own chat window shows, so players without Warcrest see their messages as normal. Turn it off with **Show titles in chat** in the Title window (Achievements tab).
+- **Titles in kill alerts:** "Lyra the Avenger killed Grim in Stranglethorn Vale".
+- **Titles on the Kills tab:** the head hunter in the lead has their title shown under their name, and kill tooltips show the killer's title.
+
 ## 3.6.2
 - **Achievements are now posted in guild chat.** When you earn one, your addon posts it in /guild ("Blaauurgh earned First Blood!"), so the whole guild sees it, even members without Warcrest. Several earned at once share one line, and each is only posted once. Only the player who earned it posts, so there are no repeats.
   - Officers can turn this off for the whole guild: Settings > Alerts, **Posted in guild chat**, then Save for whole guild. Anyone can turn it off for their own achievements with the box in the You column.

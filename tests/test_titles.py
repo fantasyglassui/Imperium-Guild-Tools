@@ -138,3 +138,39 @@ def test_guild_chat_posts_can_be_turned_off():
     guild.run(12)
     assert guild_chat(bob) == []
     assert bob.said("Bob earned First Blood!")       # the alert still shows
+
+
+def titled_bob():
+    from test_achievements import live_death
+    from test_streaks import live_kill
+    guild = Guild(M)
+    for _ in range(3):
+        live_death(guild, "Alice", "Ganker-Stormrage")
+        guild.jump(600)
+    live_kill(guild, "Bob", "Ganker")
+    guild.run(3)
+    assert guild["Bob"].ns.SetTitle("bounty")
+    guild.run(3)
+    return guild
+
+
+def test_titles_show_in_chat_for_guildmates():
+    guild = titled_bob()
+    cara = guild["Cara"]
+    show = cara.lua.eval("ShowChat")
+    gold = "|cffd4af37(the Bounty Hunter)|r "
+    assert show("CHAT_MSG_GUILD", "anyone for STV?", "Bob-Realm") == gold + "anyone for STV?"
+    assert show("CHAT_MSG_SAY", "hi", "Bob-Realm") == gold + "hi"
+    assert show("CHAT_MSG_GUILD", "hello", "Alice-Realm") == "hello"          # no title
+    assert show("CHAT_MSG_SAY", "hello", "Stranger-Realm") == "hello"         # not a guildmate
+    cara.ns.db.chatTitles = False
+    assert show("CHAT_MSG_GUILD", "hi", "Bob-Realm") == "hi"                  # turned off
+
+
+def test_kill_alerts_show_the_killers_title():
+    from test_streaks import live_kill
+    guild = titled_bob()
+    cara = guild["Cara"]
+    cara.said()
+    live_kill(guild, "Bob", "Enemy")
+    assert cara.said("Bob the Bounty Hunter killed Enemy")

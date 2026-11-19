@@ -296,8 +296,11 @@ end
 function ns.HonorOnly() return true end
 function ns.KillHidden(k) return ns.IsGreyKill(k) end
 
-function ns.DescribeKill(k)
-  local line = ("%s killed %s in %s"):format(ns.KillingBlow(k), k.victim, k.zone)
+-- titled: the killer with their title ("Lyra the Avenger killed ..."), for alerts.
+function ns.DescribeKill(k, titled)
+  local kb = ns.KillingBlow(k)
+  if titled and ns.TitledName then kb = ns.TitledName(kb) end
+  local line = ("%s killed %s in %s"):format(kb, k.victim, k.zone)
   local assists = ns.Assists(k)
   if #assists > 0 then line = line .. " (assist: " .. joinNames(assists) .. ")" end
   if k.kind == "kill_bg" then line = line .. " (battleground)" end
@@ -311,7 +314,7 @@ function ns.ShowKill(k, force)
     if not (c.enabled and c.types[k.kind] and show[k.kind]) then return end
     if ns.KillHidden(k) then return end
   end
-  local text = KILL_COLOR .. ns.DescribeKill(k) .. "|r"
+  local text = KILL_COLOR .. ns.DescribeKill(k, true) .. "|r"
   ns.Notify(KILL_ICON .. " " .. text, KILL_ICON .. " " .. text .. " " .. KILL_ICON, nil, force, "kill")
 end
 

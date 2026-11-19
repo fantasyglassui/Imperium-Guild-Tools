@@ -62,8 +62,8 @@ end
 
 local function BuildChooser()
   chooser = UI.Window("WarcrestTitles", 420, 470, "Your title")
-  local intro = UI.Label(chooser, "Shown after your name on your player card and around the guild window. "
-    .. "Guildmates see it too.", "MutedSmall")
+  local intro = UI.Label(chooser, "Shown after your name on your player card, around the guild window, in kill alerts "
+    .. "and in chat. Guildmates with Warcrest see it. Click an earned title to use it.", "MutedSmall")
   intro:SetPoint("TOPLEFT", 16, -42)
   intro:SetWidth(388)
   chooser.count = UI.Label(chooser, "", "Subheading")
@@ -111,9 +111,10 @@ local function BuildChooser()
       UI.SetRowSelected(row, r.id == current)
     end, true)
   chooser.list.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 4, -3)
-  local hint = UI.Label(chooser, "Click an earned title to use it.", "MutedSmall")
-  hint:SetPoint("BOTTOMLEFT", 16, 24)
-  hint:SetWidth(250)
+  chooser.chat = UI.Check(chooser, "Show titles in chat", 10, -(470 - 46))
+  chooser.chat:SetScript("OnClick", function(self) ns.db.chatTitles = self:GetChecked() and true or false end)
+  UI.Tooltip(chooser.chat, "Titles in chat", "Shows guildmates' titles in gold at the start of their chat messages, in your chat window: "
+    .. "[Lyra]: (the Avenger) hello. Only you see the change; it doesn't alter what they sent.")
   local done = UI.Button(chooser, "Done", 100, "primary")
   done:SetHeight(28)
   done:SetPoint("BOTTOMRIGHT", -16, 14)
@@ -123,6 +124,7 @@ end
 function ns.ShowTitleChooser()
   if not chooser then BuildChooser() end
   chooser.pendingId = nil
+  chooser.chat:SetChecked(ns.db.chatTitles and true or false)
   chooser:Show()
   refreshChooser()
 end

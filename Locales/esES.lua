@@ -1254,4 +1254,11 @@ ns.LOCALES.esES = {
   ["Guild-wide: when someone earns an achievement, their addon posts it in guild chat, so everyone sees it, even without Warcrest. Officers set this and click Save for whole guild."] = "Para toda la hermandad: cuando alguien consigue un logro, su addon lo publica en el chat de hermandad para que todos lo vean, incluso sin Warcrest. Los oficiales lo ajustan y pulsan Guardar para toda la hermandad.",
   ["%s earned %s!"] = "¡%s ha conseguido %s!",
   ["New title: %s %s."] = "Nuevo título: %s %s.",
+  ["Tied with"] = "Empatado con",
+  ["%d ahead of %s"] = "%d por delante de %s",
+  ["Show titles in chat"] = "Mostrar títulos en el chat",
+  ["Titles in chat"] = "Títulos en el chat",
+  ["Shows guildmates' titles in gold at the start of their chat messages, in your chat window: [Lyra]: (the Avenger) hello. Only you see the change; it doesn't alter what they sent."] = "Muestra en dorado el título de los miembros al principio de sus mensajes, en tu chat: [Lyra]: (la Vengadora) hola. Solo tú ves el cambio; su mensaje no se altera.",
+  ["Shown after your name on your player card, around the guild window, in kill alerts and in chat. Guildmates with Warcrest see it. Click an earned title to use it."] = "Se muestra tras tu nombre en tu ficha, en la ventana de hermandad, en los avisos de muertes y en el chat. Lo ven los miembros con Warcrest. Haz clic en un título conseguido para usarlo.",
+  ["Titles show in chat, in kill alerts and on the Kills tab."] = "Los títulos aparecen en el chat, en los avisos de muertes y en la pestaña Muertes.",
 }

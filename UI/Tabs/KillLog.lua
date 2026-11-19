@@ -82,13 +82,17 @@ local function Refresh()
   if first then
     P.leaderName:SetText(first.name)
     P.leaderCount:SetText(first.count)
+    local sub
     if not second then
-      P.leaderSub:SetText("The only head hunter so far")
+      sub = ns.T("The only head hunter so far")
     elseif second.count == first.count then
-      P.leaderSub:SetText("Tied with " .. second.name)
+      sub = ns.T("Tied with") .. " " .. second.name
     else
-      P.leaderSub:SetText(("%d ahead of %s"):format(first.count - second.count, second.name))
+      sub = ns.TF("%d ahead of %s", first.count - second.count, second.name)
     end
+    -- Their title, in gold, ahead of the rest.
+    local title = ns.TitleOf and ns.TitleOf(first.name)
+    P.leaderSub:SetText(title and (UI.Code("accent") .. ns.T(title) .. "|r  ·  " .. sub) or sub)
   else
     P.leaderName:SetText("Nobody yet")
     P.leaderCount:SetText("")
@@ -331,7 +335,7 @@ local function BuildTable(page)
         local k = self.item
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(k.victim .. (k.level and k.level > 0 and ("  (level " .. k.level .. ")") or ""), 1, 1, 1)
-        GameTooltip:AddLine("Killing blow: " .. ns.KillingBlow(k), C.accent[1], C.accent[2], C.accent[3])
+        GameTooltip:AddLine("Killing blow: " .. ns.TitledName(ns.KillingBlow(k)), C.accent[1], C.accent[2], C.accent[3])
         local assists = ns.Assists(k)
         if #assists > 0 then GameTooltip:AddLine("Assists: " .. table.concat(assists, ", "), 0.8, 0.8, 0.8, true) end
         GameTooltip:AddLine(k.zone .. ", " .. UI.FormatTime(k.t), 0.7, 0.7, 0.7)
@@ -431,7 +435,7 @@ local function BuildSide(page)
       local e = self.entry
       if not e then return end
       GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-      GameTooltip:SetText(e.name)
+      GameTooltip:SetText(ns.TitledName(e.name))
       GameTooltip:AddLine(("%d killing blow%s, %d assist%s"):format(e.count, e.count == 1 and "" or "s",
         e.assists, e.assists == 1 and "" or "s"), 1, 1, 1)
       GameTooltip:AddLine("Click for their player card.", 0.6, 0.6, 0.6)

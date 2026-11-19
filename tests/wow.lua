@@ -430,3 +430,17 @@ function SendChatMessage(text, chatType, lang, target) table.insert(chatSent, { 
 function UnitIsConnected() return true end
 guildInvites = {}
 function GuildInvite(name) table.insert(guildInvites, name) end
+chatFilters = {}   -- event -> { filter functions }
+function ChatFrame_AddMessageEventFilter(event, fn)
+  chatFilters[event] = chatFilters[event] or {}
+  table.insert(chatFilters[event], fn)
+end
+-- What the chat window would show for a message: each filter in turn.
+function ShowChat(event, msg, author)
+  for _, fn in ipairs(chatFilters[event] or {}) do
+    local hide, m, a = fn(nil, event, msg, author)
+    if hide then return nil end
+    msg, author = m or msg, a or author
+  end
+  return msg
+end
