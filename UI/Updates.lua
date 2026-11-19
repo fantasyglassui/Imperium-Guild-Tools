@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.4.1", date = "Nov 19, 2026", items = {
+    "Offline guild members count again everywhere, including player cards and achievements, and the player card names the guild.",
+  } },
   { version = "3.4.0", date = "Nov 19, 2026", items = {
     "Choose the sound for each kind of alert in Settings > Sounds: 37 new Warcrest sounds, the game's sounds, SharedMedia sounds or your own files.",
   } },

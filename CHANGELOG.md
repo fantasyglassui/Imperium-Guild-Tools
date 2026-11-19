@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1
+- Fix: **offline guild members were treated as not in the guild** when "Show offline members" was unticked in the game's guild window (the game then lists only who's online). Their player card said "Not in the guild right now", and they could be missed for achievements, the guild's achievement feed, and checking who's an officer. Warcrest now keeps offline members listed, so everyone counts whether they're online or not. (Warcrest's own Roster tab still has its own Show offline box.)
+- The player card now names the guild: "Level 60 Mage · Officer · <Your Guild>". For someone outside your guild it says which guild they're in when the game can tell (they're your target, mouseover, in your group or on a nameplate), or "Not in your guild".
+- Fix: kills and deaths are now always recorded, even when the guild has turned that kind of alert off. The alert settings only decide what's shown; kills still count toward the leaderboard, streaks and achievements like First Blood.
+- /warcrest debug now also says, after a kill, whether it counted, and if not, why (a grey kill: the enemy's level gives no honor, so it doesn't count).
+
 ## 3.4.0
 - New: **a sound for every kind of alert, and you choose them.** Settings has a new **Sounds** view listing each kind of alert (a guild kill, a guild member down, a wanted ganker spotted, a bounty, a kill streak, revenge, Top Head Hunters, a boss down, raids, loot auctions, achievements and guild news) with its sound. Click a sound to pick another, or the play button to hear it.
 - New: **37 sound effects made for Warcrest**: war horn, rally cry, victory fanfare, trumpet call, heroic choir, war drums, drum roll, thunder, sword clash, shield bash, anvil, bells and chimes, a death toll, alarms, coins, sparkles, harp, lute and more. Each alert starts with one that fits it.

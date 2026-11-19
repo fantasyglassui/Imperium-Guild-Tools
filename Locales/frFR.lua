@@ -945,4 +945,13 @@ ns.LOCALES.frFR = {
   ["Sounds:"] = "Sons :",
   ["each kind of alert has its own sound. Settings > Sounds lets you pick another for any of them, from Warcrest's sounds, the game's, SharedMedia's or your own (put .ogg or .mp3 files in Interface\\AddOns\\WarcrestSounds and restart the game)."] = "chaque type d'alerte a son propre son. Paramètres > Sons permet d'en choisir un autre pour chacun : parmi les sons de Warcrest, ceux du jeu, de SharedMedia ou les vôtres (mettez des fichiers .ogg ou .mp3 dans Interface\\AddOns\\WarcrestSounds et redémarrez le jeu).",
   ["Choose the sound for each kind of alert in Settings > Sounds: 37 new Warcrest sounds, the game's sounds, SharedMedia sounds or your own files."] = "Choisissez le son de chaque type d'alerte dans Paramètres > Sons : 37 nouveaux sons Warcrest, ceux du jeu, de SharedMedia ou vos propres fichiers.",
+  ["Level %d %s"] = "Niveau %d, %s",
+  ["Online in %s"] = "En ligne : %s",
+  ["an unknown zone"] = "zone inconnue",
+  ["Offline"] = "Hors ligne",
+  ["In %s"] = "Dans %s",
+  ["Not in a guild"] = "Sans guilde",
+  ["Not in your guild"] = "Pas dans votre guilde",
+  ["Their record here is from your guild's history."] = "Son bilan ici vient de l'historique de votre guilde.",
+  ["Offline guild members count again everywhere, including player cards and achievements, and the player card names the guild."] = "Les membres hors ligne comptent de nouveau partout, cartes de joueur et hauts faits compris, et la carte de joueur indique la guilde.",
 }

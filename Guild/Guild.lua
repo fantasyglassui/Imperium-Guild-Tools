@@ -10,7 +10,21 @@ local CG = C_GuildInfo or {}
 ------------------------------------------------------------------------
 -- Roster and permissions
 ------------------------------------------------------------------------
+-- The game only lists offline members while the guild window's "Show offline
+-- members" is ticked (on Classic-style clients). Warcrest needs everyone, for
+-- player cards, achievements, DKP and checking who's an officer, so it keeps
+-- that on. (Warcrest's own Roster tab has its own Show offline box.)
+local function showEveryone()
+  local get = ns.First(CG.GetShowOffline, GetGuildRosterShowOffline)
+  local set = ns.First(CG.SetShowOffline, SetGuildRosterShowOffline)
+  if not (get and set) then return false end
+  local ok, on = pcall(get)
+  if ok and not ns.Usable(on) then pcall(set, true) return true end
+  return false
+end
+
 function ns.RequestRoster()
+  showEveryone()
   local f = ns.First(CG.GuildRoster, GuildRoster)
   if f then pcall(f) end
 end
@@ -39,6 +53,12 @@ end
 
 local function loadRoster()
   if not rosterCache or #rosterCache ~= (GetNumGuildMembers() or 0) or GetTime() - rosterAt > ROSTER_FRESH then
+    -- Offline members hidden (someone unticked "Show offline members" in the
+    -- guild window): list everyone again, then read.
+    if showEveryone() then
+      local f = ns.First(CG.GuildRoster, GuildRoster)
+      if f then pcall(f) end
+    end
     rosterCache, rosterAt = readRoster(), GetTime()
     rosterByKey = {}
     for _, m in ipairs(rosterCache) do rosterByKey[ns.Key(m.name)] = m end
@@ -66,6 +86,9 @@ end
 
 function ns.RankOf(name)
   local target = ns.fullName(name)
+  local m = ns.Member(name)
+  if m and m.full == target then return m.rankIndex end
+  -- (Two members with the same name on different realms: look the slow way.)
   for i = 1, (GetNumGuildMembers() or 0) do
     local n, _, rankIndex = GetGuildRosterInfo(i)
     if n and ns.fullName(n) == target then return rankIndex end

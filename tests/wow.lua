@@ -279,9 +279,24 @@ function GetGuildInfo()
     if r[1] == PLAYER then return GUILD_NAME or "The Imperium", "Rank", r[2] end
   end
 end
-function GetNumGuildMembers() return #guildRoster end
+-- The guild window's "Show offline members". With it off, the game only lists
+-- online members (the total still counts everyone), as Classic clients do.
+guildShowOffline = true
+function GetGuildRosterShowOffline() return guildShowOffline end
+function SetGuildRosterShowOffline(on) guildShowOffline = on and true or false end
+function GetNumGuildMembers()
+  local online = 0
+  for _, r in ipairs(guildRoster) do if r[3] ~= false then online = online + 1 end end
+  return #guildRoster, online
+end
+local function listed()
+  if guildShowOffline then return guildRoster end
+  local out = {}
+  for _, r in ipairs(guildRoster) do if r[3] ~= false then out[#out + 1] = r end end
+  return out
+end
 function GetGuildRosterInfo(i)
-  local r = guildRoster[i]
+  local r = listed()[i]
   if not r then return end
   local classFile = r[4] or "WARRIOR"
   local className = classFile:sub(1, 1) .. classFile:sub(2):lower() -- "PRIEST" -> "Priest"

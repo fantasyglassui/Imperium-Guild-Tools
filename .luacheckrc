@@ -29,7 +29,7 @@ read_globals = {
   "GuildControlGetRankName", "GuildRoster", "GuildRosterSetOfficerNote", "GuildRosterSetPublicNote",
   "CanEditMOTD", "CanEditOfficerNote", "CanEditPublicNote", "CanGuildDemote", "CanGuildInvite",
   "CanGuildPromote", "CanGuildRemove", "CanViewOfficerNote", "ConvertToRaid", "InviteUnit",
-  "IsInGroup", "IsInGuild", "IsInInstance", "IsInRaid", "GetInstanceInfo", "UnitIsGroupAssistant", "SetRaidSubgroup", "SwapRaidSubgroup", "GetLocale", "CreateColor", "UnitAffectingCombat", "UnitCanAttack", "UnitClass",
+  "IsInGroup", "IsInGuild", "GetGuildRosterShowOffline", "SetGuildRosterShowOffline", "IsInInstance", "IsInRaid", "GetInstanceInfo", "UnitIsGroupAssistant", "SetRaidSubgroup", "SwapRaidSubgroup", "GetLocale", "CreateColor", "UnitAffectingCombat", "UnitCanAttack", "UnitClass",
   "UnitExists", "UnitIsDeadOrGhost", "UnitIsFeignDeath", "UnitIsGroupLeader", "UnitIsPVP", "UnitIsPlayer",
   "UnitIsUnit", "UnitLevel", "UnitName", "UnitReaction",
   -- Game state

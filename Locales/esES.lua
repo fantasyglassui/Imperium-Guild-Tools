@@ -945,4 +945,13 @@ ns.LOCALES.esES = {
   ["Sounds:"] = "Sonidos:",
   ["each kind of alert has its own sound. Settings > Sounds lets you pick another for any of them, from Warcrest's sounds, the game's, SharedMedia's or your own (put .ogg or .mp3 files in Interface\\AddOns\\WarcrestSounds and restart the game)."] = "cada tipo de aviso tiene su propio sonido. En Ajustes > Sonidos puedes elegir otro para cualquiera: de los sonidos de Warcrest, los del juego, los de SharedMedia o los tuyos (pon archivos .ogg o .mp3 en Interface\\AddOns\\WarcrestSounds y reinicia el juego).",
   ["Choose the sound for each kind of alert in Settings > Sounds: 37 new Warcrest sounds, the game's sounds, SharedMedia sounds or your own files."] = "Elige el sonido de cada tipo de aviso en Ajustes > Sonidos: 37 sonidos nuevos de Warcrest, los del juego, los de SharedMedia o tus propios archivos.",
+  ["Level %d %s"] = "Nivel %d, %s",
+  ["Online in %s"] = "Conectado en %s",
+  ["an unknown zone"] = "una zona desconocida",
+  ["Offline"] = "Desconectado",
+  ["In %s"] = "En %s",
+  ["Not in a guild"] = "Sin hermandad",
+  ["Not in your guild"] = "No está en tu hermandad",
+  ["Their record here is from your guild's history."] = "Su historial aquí sale del registro de tu hermandad.",
+  ["Offline guild members count again everywhere, including player cards and achievements, and the player card names the guild."] = "Los miembros desconectados vuelven a contar en todas partes, también en tarjetas de jugador y logros, y la tarjeta muestra la hermandad.",
 }

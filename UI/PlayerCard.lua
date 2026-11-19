@@ -46,6 +46,8 @@ local function Build()
   f.name:SetWordWrap(false)
   f.info = UI.Label(f, "", "Small")
   f.info:SetPoint("TOPLEFT", 16, -64)
+  f.info:SetWidth(inner - 130)
+  f.info:SetWordWrap(false)
   f.status = UI.Label(f, "", "MutedSmall")
   f.status:SetPoint("TOPLEFT", 16, -80)
   f.status:SetWidth(inner - 130)
@@ -94,6 +96,26 @@ local function Build()
   UI.Tooltip(f.achievements, "Achievements", "Opens their achievements in the guild window.")
 end
 
+-- Someone outside your guild: their guild, if the game can tell (they're your
+-- target, mouseover, focus, in your group or on a nameplate).
+local function guildOf(name)
+  local units = { "target", "mouseover", "focus" }
+  for i = 1, 40 do units[#units + 1] = "raid" .. i end
+  for i = 1, 4 do units[#units + 1] = "party" .. i end
+  for _, u in ipairs(ns.NameplateUnits and ns.NameplateUnits() or {}) do units[#units + 1] = u end
+  local key = ns.Key(name)
+  for _, u in ipairs(units) do
+    local ok, unitName = pcall(UnitName, u)
+    unitName = ok and ns.Usable(unitName)
+    if unitName and ns.Key(unitName) == key then
+      local ok2, guild = pcall(GetGuildInfo, u)
+      guild = ok2 and ns.Usable(guild)
+      return true, (type(guild) == "string" and guild ~= "") and guild or nil
+    end
+  end
+  return false
+end
+
 local function fill(p)
   local f = card
   local m = p.member
@@ -105,12 +127,16 @@ local function fill(p)
   end
   f.name:SetTextColor(UI.ClassColor(m and m.classFile))
   if m then
-    f.info:SetText(("Level %d %s  ·  %s"):format(m.level, m.className, m.rankName))
-    f.status:SetText(m.online and ("Online in " .. (m.zone ~= "" and m.zone or "an unknown zone"))
-      or (m.mobile and "On mobile" or "Offline"))
+    local guild = ns.GuildName()
+    f.info:SetText(ns.TF("Level %d %s", m.level, m.className) .. "  ·  " .. m.rankName
+      .. (guild and ("  ·  " .. UI.Code("accent") .. "<" .. guild .. ">|r") or ""))
+    f.status:SetText(m.online and ns.TF("Online in %s", m.zone ~= "" and m.zone or ns.T("an unknown zone"))
+      or ns.T(m.mobile and "On mobile" or "Offline"))
   else
-    f.info:SetText(UI.Code("muted") .. "Not in the guild right now|r")
-    f.status:SetText("")
+    local seen, guild = guildOf(p.name)
+    f.info:SetText(UI.Code("muted") .. (guild and ns.TF("In %s", "<" .. guild .. ">")
+      or ns.T(seen and "Not in a guild" or "Not in your guild")) .. "|r")
+    f.status:SetText(UI.Code("faint") .. ns.T("Their record here is from your guild's history.") .. "|r")
   end
   if p.main then
     f.status:SetText(f.status:GetText() .. "  ·  alt of " .. p.main)

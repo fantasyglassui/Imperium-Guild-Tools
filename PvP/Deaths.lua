@@ -239,8 +239,8 @@ ns.OnEvent("PLAYER_DEAD", function()
   lastDeathSent = GetTime()
   local kind, sub, killer = classify()
   if not kind then return end
-  local c = ns.cfg
-  if not (c.enabled and c.types[kind]) then return end -- guild has this type turned off
+  -- (Recorded even with the alert turned off: deaths count for nemesis and
+  -- revenge. The alert settings only decide what's shown.)
   local zone = GetRealZoneText() or GetZoneText() or "Unknown"
   local mapID, x, y = ns.PlayerPosition()
   C_Timer.After(0.5, function()

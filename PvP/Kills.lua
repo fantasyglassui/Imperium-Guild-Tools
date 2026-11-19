@@ -68,8 +68,9 @@ local function report(e)
 
   local _, instanceType = IsInInstance()
   local kind = (instanceType == "pvp" or instanceType == "arena") and "kill_bg" or "kill_world"
-  local c = ns.cfg
-  if not (c.enabled and c.types[kind]) then return end -- guild has this type turned off
+  -- (Kills are always recorded, even with their alerts turned off: they count
+  -- for the leaderboard, streaks and achievements. The alert settings only
+  -- decide what's shown.)
   local zone = GetRealZoneText() or GetZoneText() or "Unknown"
   local diedAt, stamp = GetTime(), GetServerTime()
   local gap = math.max(0, diedAt - e.time) -- how long before the death you last hit them
@@ -84,7 +85,13 @@ local function report(e)
     else
       honor = honorSeen[k] and math.abs(honorSeen[k] - diedAt) <= 5 -- level unknown: go by the game
     end
-    if not honor then return end -- grey kills aren't reported at all
+    if not honor then -- grey kills aren't reported at all
+      if ns.db.debug then
+        ns.Say(("Kill check: %s (level %s) is grey to you, so it doesn't count."):format(e.name, tostring(e.level or "?")))
+      end
+      return
+    end
+    if ns.db.debug then ns.Say(("Kill check: you killed %s. Sent to the guild."):format(e.name)) end
     ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", "1")
   end)
 end
