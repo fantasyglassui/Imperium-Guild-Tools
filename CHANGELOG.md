@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.6.0
+### Guild events
+- **A new Events tab for everything that isn't a raid:** PvP nights, world boss hunts, dungeon runs, guild meetings and get-togethers. **Anyone in the guild can plan one**, not only officers.
+- Guildmates answer **Going, Maybe or Can't go**, get an alert when a new event is planned (you can turn that off), and a **reminder 15 minutes before** events they're going to.
+- Whoever planned the event, or an officer, can **invite everyone going** in one click, **take attendance** from their group, and cancel it.
+- Events show on the **Raids calendar** in their own colours (PvP red, world boss purple, and so on). Click one to open it.
+- Events attended show on player cards, and count for recruits' trials.
+
+### Member profiles
+- **Tell the guild about yourself:** main spec, role, the days and times you usually play, your birthday and a short note. Open it with **Edit profile** on your own player card, or **/warcrest profile**.
+- **Your item level is added automatically** from the gear you're wearing, and kept up to date as it changes.
+- Profiles show on **player cards**. The new **Profiles** button on the Roster tab lists everyone's spec, role, item level and play times, sortable by role or item level: a quick gear check before a raid.
+- **Birthdays and anniversaries:** the guild hears about a member's birthday when they log in on the day (no year is shared), and when someone has been in the guild for a year or more.
+
+### Recruiting (officers)
+- **A new Recruit tab** with the guild's recruit list, shared by every officer. Each recruit moves through **New, Contacted, Trial, Joined or Declined**, with a note.
+- **Trials:** set a recruit to Trial when they join and Warcrest tracks it: days in, raid nights and events attended. Officers are told when a trial is over. Trials last 14 days unless you pick 7, 21 or 30.
+- **Whispers about joining:** when a player outside the guild whispers an officer about joining ("guild invite?", "are you recruiting?"), they're listed on the Recruit tab with an Add button.
+- **The recruiting message:** write it once for every officer, pick a channel (Trade, General...) and post it with one click. **Guild invite** and **Whisper** buttons for each recruit.
+
+### Also
+- New: **/warcrest check [name]** shows why achievements have or haven't counted: kills in your log (killing blows, assists, and any that didn't count for honor), whether your last kill was sent and came back from the guild, and what's recorded with the guild. Use it if an achievement doesn't show up straight away.
+- New sounds setting: **Guild event** (Settings > Sounds).
+
 ## 3.5.5
 - **Lost achievements come back for everyone, not only through officers.** Every guildmate's Warcrest remembers what each guildmate has earned. Now members' addons vouch for achievements a guildmate has lost too, a few minutes after they log in. An achievement comes back once **one officer, or two different guildmates**, have seen it earned, so nobody can hand out achievements on their own. The more of the guild logs in on 3.5.5, the more comes back.
 - **History saved under Warcrest's older names is found and added back.** For a short while Warcrest was called Bannerhold and kept its history under that name. A small **Warcrest: data from Bannerhold** helper now comes in the zip (like the one for The Imperium). If any of that history is still on your computer, Warcrest adds what's missing (kills, deaths, the guild record and achievements) once, and tells you.

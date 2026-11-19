@@ -247,7 +247,7 @@ ns.OnLedgerChanged(function()
       seenEvents[e.id] = true
       local fresh = GetServerTime() - e.t < 300 and e.start > time()
       if fresh and not ns.IsMe(e.a) and ns.db.eventNews then
-        ns.Notify(("|cff4fd1c5New guild event from %s. %s.|r"):format(Ambiguate(e.a, "short"), eventLine(e)),
+        ns.Notify("|cff4fd1c5" .. ns.TF("New guild event from %s: %s.", Ambiguate(e.a, "short"), eventLine(e)) .. "|r",
           nil, nil, nil, "event", "New guild event")
       end
     end
@@ -261,8 +261,8 @@ local function remind()
     if e.start > now and e.start - now <= REMIND_BEFORE and not ns.db.eventReminded[e.id]
         and mine and mine.status ~= "no" then
       ns.db.eventReminded[e.id] = true
-      ns.Notify(("|cff4fd1c5%s starts at %s (in %d min).|r"):format(e.title, date("%H:%M", e.start),
-        math.max(1, math.floor((e.start - now) / 60))), nil, nil, nil, "event", "Guild event")
+      ns.Notify("|cff4fd1c5" .. ns.TF("%s starts at %s (in %d min).", e.title, date("%H:%M", e.start),
+        math.max(1, math.floor((e.start - now) / 60))) .. "|r", nil, nil, nil, "event", "Guild event")
     end
   end
 end

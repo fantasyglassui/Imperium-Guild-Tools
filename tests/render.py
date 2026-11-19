@@ -417,7 +417,7 @@ if __name__ == "__main__":
     guild, me = demo_guild(locale=os.environ.get("WARCREST_LOCALE"))
     rd = Renderer(me)
     panel = None
-    for tab in ("roster", "raids", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
+    for tab in ("roster", "raids", "events", "recruit", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
         panel = me.lua.eval("WarcrestPanel")

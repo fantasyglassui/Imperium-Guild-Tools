@@ -105,7 +105,7 @@ function ns.InviteRecruit(name)
   if f then pcall(f, name) end
   local r = ns.Recruit(name)
   if r and r.status == "new" then ns.SetRecruit(r.name, { status = "contacted" }) end
-  ns.Say(("Guild invite sent to %s."):format(Ambiguate(name, "short")))
+  ns.Say(ns.TF("Guild invite sent to %s.", Ambiguate(name, "short")))
 end
 
 -- A trial: days in, days long, and how it's going.
@@ -185,7 +185,7 @@ ns.OnEvent("CHAT_MSG_WHISPER", function(text, sender)
   table.insert(ns.recruitWhispers, 1, { name = name, text = text, t = time() })
   while #ns.recruitWhispers > WHISPERS_KEPT do table.remove(ns.recruitWhispers) end
   if not ns.Recruit(name) then
-    ns.Say(("%s whispered about joining. Add them on the Recruit tab, or /warcrest recruit."):format(Ambiguate(name, "short")))
+    ns.Say(ns.TF("%s whispered about joining. Add them on the Recruit tab, or /warcrest recruit.", Ambiguate(name, "short")))
   end
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)

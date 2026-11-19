@@ -90,5 +90,5 @@ def test_anniversaries():
     guild.run(30)
     alice.run('WarcrestDB.firstSeen.cara = time() - 365 * 86400')
     guild.run(310)
-    assert alice.said("Cara has been in the guild for 1 year!")
+    assert alice.said("Cara has been in the guild for a year!")
     assert all(c.errors() == [] for c in guild.clients.values())

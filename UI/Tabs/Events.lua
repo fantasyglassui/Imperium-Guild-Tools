@@ -59,6 +59,7 @@ local function RefreshEvent(e)
   for _, b in ipairs(d.answerButtons) do b:SetShown(has) end
   d.box:SetShown(has)
   for _, stat in pairs(d.stats) do stat:SetShown(has) end
+  d.title:SetWidth(RIGHT_W - 36 - (e and 190 or 0))
   if not e then
     d.tag:SetText("")
     d.title:SetText(ns.T("No event selected"))

@@ -229,14 +229,15 @@ local function checkCelebrations()
       local p = ns.MemberProfile(m.name)
       if p and p.bday == md then
         celebrate(("bday:%s:%d"):format(k, year), ns.IsMe(m.name) and ns.T("Happy birthday from your guild!")
-          or ("It's %s's birthday today!"):format(Ambiguate(m.name, "short")))
+          or ns.TF("It's %s's birthday today!", Ambiguate(m.name, "short")))
       end
       local since = ns.MemberSince(m.name)
       if since and date("%m-%d", since) == md then
         local years = year - tonumber(date("%Y", since))
         if years >= 1 then
-          celebrate(("anniv:%s:%d"):format(k, year), ("%s has been in the guild for %d year%s!")
-            :format(Ambiguate(m.name, "short"), years, years == 1 and "" or "s"))
+          celebrate(("anniv:%s:%d"):format(k, year), years == 1
+            and ns.TF("%s has been in the guild for a year!", Ambiguate(m.name, "short"))
+            or ns.TF("%s has been in the guild for %d years!", Ambiguate(m.name, "short"), years))
         end
       end
     end

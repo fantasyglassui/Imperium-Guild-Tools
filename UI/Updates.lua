@@ -11,6 +11,12 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.6.0", date = "Nov 19, 2026", items = {
+    "New Events tab: PvP nights, world bosses, meetings and more. Anyone can plan one; guildmates answer and get reminded.",
+    "Member profiles: your spec, when you play and your birthday, on your player card. Your item level is added automatically.",
+    "Officers: a Recruit tab for recruits, trials and the recruiting message.",
+    "/warcrest check shows why an achievement has or hasn't counted.",
+  } },
   { version = "3.5.5", date = "Nov 19, 2026", items = {
     "Lost achievements come back once one officer, or two guildmates, have seen them earned.",
     "History saved under the older name Bannerhold is found and added back.",

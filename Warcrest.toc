@@ -3,7 +3,7 @@
 ## Notes: Guild tools for WoW Forever: raid sign-ups, DKP with loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements and titles, player cards and officer tools. Formerly The Imperium.
 ## Author: Fantasy Glass UI
 ## X-Copyright: Copyright (c) 2026 Fantasy Glass UI
-## Version: 3.5.5
+## Version: 3.6.0
 ## Category: Guild
 ## IconTexture: Interface\AddOns\Warcrest\Media\Icon
 ## AddonCompartmentFunc: Warcrest_OnAddonCompartmentClick
@@ -83,6 +83,7 @@ UI\Tabs\Achievements.lua
 UI\Tabs\SoundsView.lua
 UI\Tabs\Settings.lua
 UI\Tabs\OfficerLog.lua
+UI\Tabs\Recruit.lua
 UI\Tabs\AddonUsers.lua
 
 # 8. Map pins, minimap button, loot auction window, updates panel

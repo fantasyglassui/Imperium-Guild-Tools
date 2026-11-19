@@ -6,11 +6,16 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | --- | --- |
 | `/warcrest` | Open or close the addon |
 | `/warcrest raids` | Raids tab |
+| `/warcrest events` | Events tab: guild events that aren't raids |
+| `/warcrest profile` | Edit your profile (spec, when you play, birthday) |
+| `/warcrest profiles` | Everyone's profiles, with item levels |
+| `/warcrest recruit` | Recruit tab (officers) |
 | `/warcrest dkp` | DKP tab |
 | `/warcrest kills` | Kills and Top Head Hunters |
 | `/warcrest wanted` | Wanted list |
 | `/warcrest card [name]` | A guild member's player card (yours if no name) |
 | `/warcrest wishlist` | The guild's loot wishlist, and yours |
+| `/warcrest check [name]` | Why achievements have or haven't counted: kills, honor, and what reached the guild |
 | `/warcrest bosses` | The last raid bosses that died, and whether each counted for the guild (and why not) |
 | `/warcrest achievements` | Your achievements and title |
 | `/warcrest addon` | Who has the addon, and who's out of date |
