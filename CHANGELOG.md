@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.5.0
+- **50 more alert sounds, 87 in all**, sorted into kinds in the sound picker:
+  - **Horns & fanfares:** battle horn, distant horn, hunting horn, royal fanfare, triumph.
+  - **Bells & chimes:** church bells, wind chimes, music box, hand bell, double bell, singing bowl.
+  - **Drums:** tribal drums, taiko, timpani roll, snare, woodblock, heavy impact.
+  - **Combat:** sword drawn, axe chop, mace hit, shield block, bow shot, arrow volley, battle cry.
+  - **Magic:** arcane blast, fire whoosh, frost shimmer, holy light, shadow pulse, nature chime, portal, power up.
+  - **Alerts:** siren, beep beep, triple beep, tick tock, countdown, error buzz, success, soft notice.
+  - **Nature:** thunderclap, rain, wind, wolf howl, raven.
+  - **Music:** marimba, flute call, organ, pizzicato, ominous drone.
+- The picker shows each sound's kind, and searching finds kinds too (type "magic" or "drums").
+
 ## 3.4.1
 - Fix: **offline guild members were treated as not in the guild** when "Show offline members" was unticked in the game's guild window (the game then lists only who's online). Their player card said "Not in the guild right now", and they could be missed for achievements, the guild's achievement feed, and checking who's an officer. Warcrest now keeps offline members listed, so everyone counts whether they're online or not. (Warcrest's own Roster tab still has its own Show offline box.)
 - The player card now names the guild: "Level 60 Mage · Officer · <Your Guild>". For someone outside your guild it says which guild they're in when the game can tell (they're your target, mouseover, in your group or on a nameplate), or "Not in your guild".

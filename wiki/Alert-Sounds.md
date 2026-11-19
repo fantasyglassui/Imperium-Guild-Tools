@@ -12,7 +12,7 @@ The Sounds view lists each kind of alert: guild kill, guild member down, wanted 
 
 The picker has:
 
-- **Warcrest's sounds**: 37 effects made for Warcrest, from war horns, fanfares and a heroic choir to war drums, sword clashes, bells, alarms, coins and a lute.
+- **Warcrest's sounds**: 87 effects made for Warcrest, in eight kinds: horns and fanfares, bells and chimes, drums, combat, magic, alerts, nature and music. The picker shows each sound's kind, and you can search by it (type "drums" or "magic").
 - **Your own sounds** (see below).
 - **SharedMedia** sounds, if you use add-ons that share them.
 - **The game's sounds**, such as the ready check, battleground ready and epic loot.

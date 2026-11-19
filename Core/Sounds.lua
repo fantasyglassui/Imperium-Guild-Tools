@@ -3,7 +3,9 @@
   Alert sounds. Every kind of alert (a guild kill, a wanted ganker spotted, a
   boss down...) has its own sound, and you can pick any sound for each one:
 
-    - Warcrest's own sounds (Media/Sounds), made for these alerts,
+    - Warcrest's own 87 sounds (Media/Sounds), made for these alerts, in
+      kinds: horns and fanfares, bells, drums, combat, magic, alerts,
+      nature and music,
     - the game's sounds,
     - sounds from SharedMedia add-ons (LibSharedMedia), if you have any,
     - your own sound files: .ogg or .mp3 files you put in
@@ -19,20 +21,52 @@ local _, ns = ...
 local OWN = ns.MEDIA .. "Sounds\\"
 ns.CUSTOM_SOUND_FOLDER = "Interface\\AddOns\\WarcrestSounds\\"
 
--- Warcrest's own sounds: file name, then the name shown.
+-- Warcrest's own sounds, by kind: file name, then the name shown.
 local OWN_SOUNDS = {
-  { "WarHorn", "War horn" }, { "RallyCry", "Rally cry" }, { "VictoryFanfare", "Victory fanfare" },
-  { "ShortFanfare", "Short fanfare" }, { "TrumpetCall", "Trumpet call" }, { "GuildFirst", "Guild first" },
-  { "HeroicChoir", "Heroic choir" }, { "WarDrums", "War drums" }, { "DrumRoll", "Drum roll" },
-  { "Heartbeat", "Heartbeat" }, { "Thunder", "Thunder" }, { "SwordClash", "Sword clash" },
-  { "BladeSwish", "Blade swish" }, { "ArrowThunk", "Arrow thunk" }, { "ShieldBash", "Shield bash" },
-  { "Anvil", "Anvil" }, { "BellChime", "Bell chime" }, { "TripleChime", "Triple chime" },
-  { "AchievementChime", "Achievement chime" }, { "NotifyDing", "Ding" }, { "CrystalPing", "Crystal ping" },
-  { "GlassTink", "Glass tink" }, { "TowerBell", "Tower bell" }, { "Gong", "Gong" }, { "SkullToll", "Death toll" },
-  { "AlarmPulse", "Alarm" }, { "WarningKlaxon", "Klaxon" }, { "RadarPing", "Radar ping" },
-  { "DangerRise", "Rising danger" }, { "LowGrowl", "Low growl" }, { "Coins", "Coins" },
-  { "Sparkle", "Sparkle" }, { "LevelUp", "Level up" }, { "MagicWhoosh", "Magic whoosh" },
-  { "HarpGliss", "Harp" }, { "LutePluck", "Lute" }, { "SoftPop", "Soft pop" },
+  { "Horns & fanfares", {
+    { "WarHorn", "War horn" }, { "BattleHorn", "Battle horn" }, { "DistantHorn", "Distant horn" },
+    { "HuntHorn", "Hunting horn" }, { "RallyCry", "Rally cry" }, { "VictoryFanfare", "Victory fanfare" },
+    { "RoyalFanfare", "Royal fanfare" }, { "ShortFanfare", "Short fanfare" }, { "TrumpetCall", "Trumpet call" },
+    { "TriumphStab", "Triumph" }, { "GuildFirst", "Guild first" },
+  } },
+  { "Bells & chimes", {
+    { "BellChime", "Bell chime" }, { "TripleChime", "Triple chime" }, { "DoubleBell", "Double bell" },
+    { "HandBell", "Hand bell" }, { "AchievementChime", "Achievement chime" }, { "NotifyDing", "Ding" },
+    { "CrystalPing", "Crystal ping" }, { "GlassTink", "Glass tink" }, { "WindChimes", "Wind chimes" },
+    { "MusicBox", "Music box" }, { "TowerBell", "Tower bell" }, { "ChurchBells", "Church bells" },
+    { "SingingBowl", "Singing bowl" }, { "Gong", "Gong" }, { "SkullToll", "Death toll" },
+  } },
+  { "Drums", {
+    { "WarDrums", "War drums" }, { "TribalDrums", "Tribal drums" }, { "TaikoHit", "Taiko" },
+    { "DrumRoll", "Drum roll" }, { "TimpaniRoll", "Timpani roll" }, { "SnareHit", "Snare" },
+    { "Woodblock", "Woodblock" }, { "Heartbeat", "Heartbeat" }, { "HeavyImpact", "Heavy impact" },
+  } },
+  { "Combat", {
+    { "SwordClash", "Sword clash" }, { "SwordDraw", "Sword drawn" }, { "BladeSwish", "Blade swish" },
+    { "AxeChop", "Axe chop" }, { "MaceHit", "Mace hit" }, { "ShieldBash", "Shield bash" },
+    { "ShieldBlock", "Shield block" }, { "Anvil", "Anvil" }, { "BowRelease", "Bow shot" },
+    { "ArrowThunk", "Arrow thunk" }, { "ArrowVolley", "Arrow volley" }, { "BattleCry", "Battle cry" },
+  } },
+  { "Magic", {
+    { "ArcaneBlast", "Arcane blast" }, { "FireWhoosh", "Fire whoosh" }, { "FrostShimmer", "Frost shimmer" },
+    { "HolyLight", "Holy light" }, { "ShadowPulse", "Shadow pulse" }, { "NatureChime", "Nature chime" },
+    { "Portal", "Portal" }, { "PowerUp", "Power up" }, { "MagicWhoosh", "Magic whoosh" },
+    { "Sparkle", "Sparkle" }, { "LevelUp", "Level up" }, { "HeroicChoir", "Heroic choir" },
+  } },
+  { "Alerts", {
+    { "AlarmPulse", "Alarm" }, { "WarningKlaxon", "Klaxon" }, { "Siren", "Siren" }, { "DangerRise", "Rising danger" },
+    { "RadarPing", "Radar ping" }, { "BeepBeep", "Beep beep" }, { "TripleBeep", "Triple beep" },
+    { "Countdown", "Countdown" }, { "TickTock", "Tick tock" }, { "ErrorBuzz", "Error buzz" },
+    { "Success", "Success" }, { "SoftNotice", "Soft notice" }, { "SoftPop", "Soft pop" }, { "Coins", "Coins" },
+  } },
+  { "Nature", {
+    { "Thunder", "Thunder" }, { "Thunderclap", "Thunderclap" }, { "RainBurst", "Rain" }, { "WindGust", "Wind" },
+    { "WolfHowl", "Wolf howl" }, { "RavenCaw", "Raven" }, { "LowGrowl", "Low growl" },
+  } },
+  { "Music", {
+    { "HarpGliss", "Harp" }, { "LutePluck", "Lute" }, { "Pizzicato", "Pizzicato" }, { "MarimbaDing", "Marimba" },
+    { "FluteCall", "Flute call" }, { "OrganChord", "Organ" }, { "OminousDrone", "Ominous drone" },
+  } },
 }
 
 -- The game's sounds (SOUNDKIT names). Names differ between game versions, so
@@ -106,14 +140,16 @@ local function sharedMedia()
   return out
 end
 
--- Every sound you can pick: { id, name, group, file or kit }, in display order.
+-- Every sound you can pick: { id, name, group, category (Warcrest's), file or kit }, in display order.
 function ns.SoundLibrary()
   if library then return library end
   library, byId = {}, {}
   local function add(s) library[#library + 1] = s; byId[s.id] = s end
   add({ id = "none", name = "No sound", group = "None" })
-  for _, s in ipairs(OWN_SOUNDS) do
-    add({ id = "wc:" .. s[1], name = s[2], group = "Warcrest", file = OWN .. s[1] .. ".ogg" })
+  for _, cat in ipairs(OWN_SOUNDS) do
+    for _, s in ipairs(cat[2]) do
+      add({ id = "wc:" .. s[1], name = s[2], group = "Warcrest", category = cat[1], file = OWN .. s[1] .. ".ogg" })
+    end
   end
   for _, c in ipairs(ns.db and ns.db.customSounds or {}) do
     add({ id = "custom:" .. c.file, name = c.name or c.file, group = "Yours", file = ns.CustomSoundPath(c.file) })

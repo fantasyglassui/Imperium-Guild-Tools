@@ -36,7 +36,7 @@ def test_pick_a_game_sound_and_a_channel():
     # Game sounds this client doesn't have aren't offered.
     ids = [s.id for s in c.ns.SoundLibrary().values()]
     assert "kit:READY_CHECK" in ids and "kit:UI_EPICLOOT_TOAST" not in ids
-    assert len([i for i in ids if i.startswith("wc:")]) >= 35
+    assert len([i for i in ids if i.startswith("wc:")]) == 87
 
 
 def test_no_sound_and_sounds_off():

@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.5.0", date = "Nov 19, 2026", items = {
+    "50 more alert sounds, 87 in all, sorted by kind in the sound picker (Settings > Sounds).",
+  } },
   { version = "3.4.1", date = "Nov 19, 2026", items = {
     "Offline guild members count again everywhere, including player cards and achievements, and the player card names the guild.",
   } },

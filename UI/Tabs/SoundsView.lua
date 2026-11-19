@@ -24,7 +24,7 @@ local SOUND_X, SOUND_W = 196, 196
 local GROUP_NAMES = { None = "", Warcrest = "Warcrest", Yours = "Yours", SharedMedia = "SharedMedia", Game = "Game" }
 
 local function groupTag(s)
-  local g = GROUP_NAMES[s.group] or s.group
+  local g = s.category or GROUP_NAMES[s.group] or s.group
   return g ~= "" and (UI.Code("faint") .. ns.T(g) .. "|r") or ""
 end
 
@@ -45,7 +45,10 @@ local search = ""
 local function pickerItems()
   local out, q = {}, search:lower()
   for _, s in ipairs(ns.SoundLibrary()) do
-    if q == "" or ns.T(s.name):lower():find(q, 1, true) or s.name:lower():find(q, 1, true) then out[#out + 1] = s end
+    if q == "" or ns.T(s.name):lower():find(q, 1, true) or s.name:lower():find(q, 1, true)
+        or (s.category and ns.T(s.category):lower():find(q, 1, true)) then
+      out[#out + 1] = s
+    end
   end
   return out
 end
@@ -75,7 +78,7 @@ local function BuildPicker()
       UI.RowSelection(row)
       row.name = UI.Label(row, "", "Body")
       row.name:SetPoint("LEFT", 12, 0)
-      row.name:SetWidth(220)
+      row.name:SetWidth(190)
       row.name:SetWordWrap(false)
       row.group = UI.Label(row, "", "MutedSmall")
       row.group:SetPoint("RIGHT", -12, 0)
@@ -94,7 +97,10 @@ local function BuildPicker()
   picker.list.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 4, -3)
   picker.list:SetEmptyText("No sounds match your search.")
   local hint = UI.Label(picker, "Click a sound to hear it and use it.", "MutedSmall")
-  hint:SetPoint("BOTTOMLEFT", 16, 24)
+  hint:SetPoint("BOTTOMLEFT", 16, 18)
+  hint:SetWidth(236)
+  hint:SetHeight(28)
+  hint:SetJustifyV("MIDDLE")
   local done = UI.Button(picker, "Done", 100, "primary")
   done:SetHeight(28)
   done:SetPoint("BOTTOMRIGHT", -16, 14)
