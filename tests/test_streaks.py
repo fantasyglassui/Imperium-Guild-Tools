@@ -8,8 +8,11 @@ def live_kill(guild, killer, victim, ago=0):
     """A guildmate reports a kill (as the game would, through the addon's message)."""
     t = int(guild.clock) - ago
     for c in guild.clients.values():
-        c.fire("CHAT_MSG_ADDON", "TheImperium", "K^kill_world^%s^STV^%d^0.5^58^1" % (victim, t), "GUILD",
-               killer + "-Realm")
+        text = "K^kill_world^%s^STV^%d^0.5^58^1" % (victim, t)
+        if c.name == killer:   # your own message is handled as it's sent, not when it comes back
+            c.ns.HandleAddonMessage("TheImperium", text, "GUILD", killer + "-Realm")
+        else:
+            c.fire("CHAT_MSG_ADDON", "TheImperium", text, "GUILD", killer + "-Realm")
     guild.run(5)
 
 
