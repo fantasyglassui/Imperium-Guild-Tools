@@ -7,7 +7,7 @@ exclude_files = { "tests/**", ".luarocks/**", ".lua/**" }
 
 -- Globals the addon creates on purpose.
 globals = {
-  "WarcrestDB", "TheImperiumDB",      -- saved variables (TheImperiumDB: the old name, handed over once)
+  "WarcrestDB", "WarcrestState", "TheImperiumDB", -- saved variables (TheImperiumDB: the old name, handed over once)
   "SlashCmdList", "SLASH_WARCREST1", "SLASH_WARCREST2", "SLASH_WARCREST3", "SLASH_WARCREST4",
   "StaticPopupDialogs",
   "Warcrest_OnAddonCompartmentClick", "Warcrest_OnAddonCompartmentEnter",

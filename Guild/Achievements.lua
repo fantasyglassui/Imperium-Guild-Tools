@@ -337,9 +337,28 @@ end
 
 ns.OnLoad(function() ns.db.achievements = ns.db.achievements or {} end)
 
+-- Achievements members have recorded with the guild (AE entries): key -> { id -> when }.
+-- They're kept by everyone's addon, so they come back after a reinstall, on a
+-- new computer, or if the game ever fails to keep Warcrest's saved data.
+local aeCache, aeStamp
+local function guildRecorded()
+  local stamp = ns.LedgerStamp("AE")
+  if aeCache and aeStamp == stamp then return aeCache end
+  aeCache, aeStamp = {}, stamp
+  for _, e in ipairs(ns.LedgerEntries("AE")) do
+    local k = ns.Key(e.a)
+    aeCache[k] = aeCache[k] or {}
+    if BY_ID[e.ach] then aeCache[k][e.ach] = tonumber(e.when) or 0 end
+  end
+  return aeCache
+end
+
 local function compute(name)
   local k = ns.Key(name)
-  local saved = ns.db.achievements[k] or {}
+  -- What's been earned before: kept on this computer, and recorded with the guild.
+  local saved = {}
+  for id, t in pairs(guildRecorded()[k] or {}) do saved[id] = t end
+  for id, t in pairs(ns.db.achievements[k] or {}) do saved[id] = saved[id] or t end
   local out, count = {}, 0
   for _, a in ipairs(LIST) do
     if a.stat ~= "others" then
@@ -525,10 +544,40 @@ local function recheck()
     end
     if roster[i + 1] then C_Timer.After(0.01, step) return end
     if #roster > 0 then ready = true end
+    if ns.RecordMyAchievements then ns.RecordMyAchievements() end
     if ns.RefreshPanel then ns.RefreshPanel() end
     if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
   end
   step()
+end
+
+-- Record your achievements with the guild (a few at a time), so they're kept
+-- by everyone's addon and not only in this computer's saved data.
+local recording = false
+function ns.RecordMyAchievements()
+  if recording or not IsInGuild() then return end
+  local me = UnitName("player")
+  local have = guildRecorded()[ns.Key(me)] or {}
+  local todo = {}
+  for _, a in ipairs(LIST) do
+    local e = ns.MemberAchievements(me)[a.id]
+    if e and e.t and not have[a.id] then todo[#todo + 1] = { a.id, e.t } end
+  end
+  if #todo == 0 then return end
+  recording = true
+  local i = 0
+  local function nextOne()
+    i = i + 1
+    local t = todo[i]
+    if not t then
+      recording = false
+      ns.RecordMyAchievements() -- anything earned while these were going out
+      return
+    end
+    ns.LedgerAdd("AE", { ach = t[1], when = math.floor(t[2]) })
+    C_Timer.After(1.5, nextOne)
+  end
+  nextOne()
 end
 
 local function changed()

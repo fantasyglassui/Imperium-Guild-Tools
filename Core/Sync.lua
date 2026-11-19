@@ -14,6 +14,8 @@ local _, ns = ...
 local WINDOW = 2 * 24 * 60 * 60   -- share up to two days back
 local OVERLAP = 12 * 60 * 60      -- re-check the 12 hours before your newest entry
 local MAX_ENTRIES = 150           -- per request
+local DEEP_WINDOW = 60 * 24 * 60 * 60 -- after saved data was lost: up to 60 days back
+local DEEP_MAX = 600
 local CLAIM_WINDOW = 30           -- seconds a claim to answer someone lasts
 
 local claimed = {}                -- requester -> time someone said they'd answer
@@ -32,14 +34,16 @@ local function newestEntry()
   return newest
 end
 
-function ns.RequestHistory(announce)
+-- deep: ask for much more (your saved data was lost, so there's nothing to go on).
+function ns.RequestHistory(announce, deep)
   if not IsInGuild() then return end
   local now = time()
   local since = math.max(now - WINDOW, newestEntry() - OVERLAP)
   if announce then since = now - WINDOW end
+  if deep then since = now - DEEP_WINDOW end
   local w = ns.db.wipes or {}
   -- The 0 is where older versions put the duel log.
-  ns.Send("HQ", since, w.kills or 0, 0, w.audit or 0)
+  ns.Send("HQ", since, w.kills or 0, 0, w.audit or 0, deep and "deep" or "")
   if announce then ns.Say("Asking guildmates for the last two days of guild history...") end
 end
 
@@ -50,7 +54,7 @@ end)
 ------------------------------------------------------------------------
 -- Answering someone else's request
 ------------------------------------------------------------------------
-local function collect(since)
+local function collect(since, limit)
   local out = {}
   for _, e in ipairs(ns.db.deathLog) do
     if e.t > since then
@@ -64,7 +68,7 @@ local function collect(since)
     end
   end
   table.sort(out, function(a, b) return a[1] > b[1] end) -- newest first
-  while #out > MAX_ENTRIES do table.remove(out) end
+  while #out > (limit or MAX_ENTRIES) do table.remove(out) end
   return out
 end
 
@@ -72,7 +76,7 @@ ns.OnMessage("HQ", function(parts, sender)
   if ns.IsMe(sender) then return end
   local since = tonumber(parts[2])
   if not since then return end
-  local entries = collect(since)
+  local entries = collect(since, parts[6] == "deep" and DEEP_MAX or MAX_ENTRIES)
   -- Clears they missed (only an officer's word is trusted for these).
   local wipes = {}
   if ns.IsAddonOfficer() then

@@ -8,7 +8,8 @@
 
   Who may write what:
     - Raids, raid cancellations, DKP changes, raid sessions and bounties: officers only.
-    - Sign-ups, wishlists, titles and boss kills: any guild member, in their own name.
+    - Sign-ups, wishlists, titles, boss kills and achievements earned: any guild
+      member, in their own name.
   Officer entries are only accepted straight from the officer who made them,
   or passed along by another officer, so nobody can slip in fake DKP. For the
   same reason only officers answer catch-up requests; members ask again every
@@ -22,7 +23,7 @@ local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, K
   RG = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
-local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true }
+local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true }
 -- Fields of each kind, in message order.
 local FIELDS = {
   EV = { "title", "start", "notes" },          -- a scheduled raid
@@ -41,6 +42,8 @@ local FIELDS = {
   SN = { "name", "parts" },                    -- a new DKP season starts; history before it is archived
   SS = { "ref", "amount", "names" },           -- a season's starting balances (parts of the snapshot)
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
+  AE = { "ach", "when" },                       -- an achievement a member earned, and when (kept with the guild,
+                                               -- so it isn't lost with one player's saved data)
   TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)

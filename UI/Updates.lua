@@ -11,7 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
-  { version = "3.5.2", date = "Nov 19, 2026", items = {
+  { version = "3.5.3", date = "Nov 19, 2026", items = {
+    "Your achievements are now kept with the guild too, so they come back even if this computer's saved data is lost.",
+    "If Warcrest's saved history doesn't load, it says so and asks the guild to send it back.",
     "Achievements and titles update straight away, without a reload.",
     "Choose your title with the Title button on the Achievements tab: it lists every title and how to earn it.",
   } },

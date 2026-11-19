@@ -3,14 +3,14 @@
 ## Notes: Guild tools for WoW Forever: raid sign-ups, DKP with loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements and titles, player cards and officer tools. Formerly The Imperium.
 ## Author: Fantasy Glass UI
 ## X-Copyright: Copyright (c) 2026 Fantasy Glass UI
-## Version: 3.5.2
+## Version: 3.5.3
 ## Category: Guild
 ## IconTexture: Interface\AddOns\Warcrest\Media\Icon
 ## AddonCompartmentFunc: Warcrest_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: Warcrest_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: Warcrest_OnAddonCompartmentLeave
 ## OptionalDeps: TomTom, OpenMap, TheImperium
-## SavedVariables: WarcrestDB
+## SavedVariables: WarcrestDB, WarcrestState
 ## X-Curse-Project-ID: 1803056
 
 # Files load in this order, and each one may use what loaded before it.
@@ -18,6 +18,7 @@
 
 # 1. Foundations: namespace, events and messages; the release reset; guild roster and settings
 Core\Core.lua
+Core\SavedData.lua
 Core\Locale.lua
 Core\Sounds.lua
 Locales\deDE.lua

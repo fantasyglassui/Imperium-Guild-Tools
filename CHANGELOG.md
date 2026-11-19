@@ -1,6 +1,9 @@
 # Changelog
 
-## 3.5.2
+## 3.5.3
+- **Your achievements are now kept with the guild, not only on your computer.** Each one you earn is recorded in the guild's shared record, so if this computer's saved data is ever lost (after an update, a crash, or the game not saving), your achievements come back from your guildmates as soon as you log in.
+- **If Warcrest's saved history doesn't load, it now notices and gets it back.** Warcrest keeps a small note of how much history you had. If it starts with nothing though there was history last time, it tells you and asks the guild to send it back: the guild record (raids, DKP, sign-ups, achievements) from officers, and up to 60 days of kills and deaths from any guildmate.
+- **Saving is safer.** Just before the game writes Warcrest's saved data, anything it can't save (such as the "secret" values newer game clients use for some names) is taken out, so one bad value can't stop the whole save.
 - Fix: **achievements and titles now update straight away**, without a /reload. Warcrest used to work achievements out again a moment after a change, and anything that read them in between (the Achievements tab, titles, player cards) could show the old ones until a reload. They're now worked out fresh whenever something they come from has changed: a kill, a death, a boss, loot, raid attendance or a level-up.
 - Fix: **reaching max level now counts at once** (it used to wait for a reload).
 - **Choosing your title has moved to the Achievements tab, and works properly.** The Title button at the top right opens a list of every title: the ones you've earned (click one to use it), and the ones you haven't yet, with the achievement that gives each. The title picker in Settings is gone.

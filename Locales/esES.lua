@@ -1051,4 +1051,7 @@ ns.LOCALES.esES = {
   ["Some achievements come with a %s. Click the Title button at the top right of the Achievements tab to see every title and pick one you've earned. It shows after your name on your player card."] = "Algunos logros dan un %s. Pulsa el botón Título arriba a la derecha de la pestaña Logros para ver todos los títulos y elegir uno que hayas conseguido. Aparece tras tu nombre en tu tarjeta de jugador.",
   ["Achievements and titles update straight away, without a reload."] = "Los logros y títulos se actualizan al momento, sin recargar.",
   ["Choose your title with the Title button on the Achievements tab: it lists every title and how to earn it."] = "Elige tu título con el botón Título de la pestaña Logros: muestra cada título y cómo conseguirlo.",
+  ["Warcrest's saved history didn't load this time (the game didn't keep it). Asking your guild to send it back; it fills in over the next few minutes."] = "El historial guardado de Warcrest no se cargó esta vez (el juego no lo conservó). Se le pide a tu hermandad que lo envíe de nuevo; se irá completando en los próximos minutos.",
+  ["Your achievements are now kept with the guild too, so they come back even if this computer's saved data is lost."] = "Tus logros ahora también se guardan con la hermandad, así que vuelven aunque se pierdan los datos guardados de este ordenador.",
+  ["If Warcrest's saved history doesn't load, it says so and asks the guild to send it back."] = "Si el historial guardado de Warcrest no se carga, te avisa y pide a la hermandad que lo envíe de nuevo.",
 }
