@@ -21,7 +21,7 @@ local SIDE_X = TABLE_W + 14
 local SIDE_W = 740 - SIDE_X
 local INNER = SIDE_W - 30
 local GUILD_R, YOU_R = -86, -30  -- the two checkbox columns, from the card's right edge
-local ROW, GROUP = 21, 19
+local ROW, GROUP = 20, 18
 
 local function formatHours(h)
   if h < 24 then return h == 1 and "1 hour" or (h .. " hours") end
