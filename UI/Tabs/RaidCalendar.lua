@@ -1,8 +1,8 @@
 --[[
   Warcrest
   The Raids tab's Calendar view: a month at a glance. Raids scheduled (gold),
-  raid nights held (green) and bosses killed, day by day. Click a scheduled
-  raid to open it.
+  raid nights held (green), bosses killed and guild events (in their own
+  colours), day by day. Click a scheduled raid or an event to open it.
 ]]
 
 local _, ns = ...
@@ -57,6 +57,13 @@ local function collect(fromT, toT)
         text = e.title, sub = date("%H:%M", e.start) })
     end
   end
+  -- Guild events (not raids), in their own colours.
+  for _, e in ipairs(ns.AllGuildEvents and ns.AllGuildEvents() or {}) do
+    if e.start >= fromT and e.start < toT then
+      add(e.start, { kind = "gevent", time = e.start, gevent = e, code = "|cff" .. ns.EventType(e.etype).color,
+        text = e.title, sub = date("%H:%M", e.start) })
+    end
+  end
   for key, s in pairs(nights) do
     local killed = bosses[key] or {}
     local text = s.title ~= "" and s.title or "Raid night"
@@ -106,6 +113,7 @@ local function Cell(parent, i, w, h)
   c:SetScript("OnClick", function(self)
     for _, item in ipairs(self.items or {}) do
       if item.kind == "raid" and ns.SelectRaid then ns.SelectRaid(item.event.id) return end
+      if item.kind == "gevent" and ns.SelectGuildEvent then ns.SelectGuildEvent(item.gevent.id) return end
     end
   end)
   c:SetScript("OnEnter", function(self)
@@ -116,6 +124,14 @@ local function Cell(parent, i, w, h)
       if item.kind == "night" then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(item.tip, 0.55, 0.85, 0.55, true)
+      elseif item.kind == "gevent" then
+        local e = item.gevent
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(item.code .. ns.T(ns.EventType(e.etype).label) .. "|r: " .. e.title .. "  " .. date("%H:%M", e.start), 1, 1, 1)
+        local c = ns.EventCounts(e.id)
+        GameTooltip:AddLine(ns.T("%d going, %d maybe"):format(c.going, c.maybe), 0.8, 0.8, 0.8)
+        if e.notes and e.notes ~= "" then GameTooltip:AddLine(e.notes, 0.7, 0.7, 0.7, true) end
+        GameTooltip:AddLine(ns.T("Click to open this event."), 0.6, 0.6, 0.6)
       else
         local e = item.event
         GameTooltip:AddLine(" ")
@@ -175,16 +191,17 @@ function M.Build(parent)
 
   -- Legend: a colored square for each kind of entry.
   local x = 0
-  for i = 3, 1, -1 do
-    local key = ({ { "accent", "Raid scheduled" }, { "good", "Raid night held" }, { "muted", "Past raid" } })[i]
+  for i = 4, 1, -1 do
+    local key = ({ { "accent", "Raid scheduled" }, { "good", "Raid night held" }, { "muted", "Past raid" },
+      { "event", "Guild event" } })[i]
     local fs = UI.Label(f, key[2], "MutedSmall")
     fs:SetPoint("TOPRIGHT", -x, -13)
     local sq = f:CreateTexture(nil, "ARTWORK")
     sq:SetSize(8, 8)
     sq:SetPoint("RIGHT", fs, "LEFT", -6, 0)
-    local col = C[key[1]]
+    local col = key[1] == "event" and { 0.31, 0.82, 0.77 } or C[key[1]]
     sq:SetColorTexture(col[1], col[2], col[3], 1)
-    x = x + fs:GetStringWidth() + 32
+    x = x + fs:GetStringWidth() + 26
   end
 
   M.heads = {}
@@ -234,7 +251,7 @@ function M.Refresh()
         break
       end
       if left < 1 then break end
-      text[#text + 1] = UI.Code(KIND_COLOR[item.kind]) .. item.text .. "|r"
+      text[#text + 1] = (item.code or UI.Code(KIND_COLOR[item.kind])) .. item.text .. "|r"
       if item.sub and #items == 1 then text[#text + 1] = UI.Code("muted") .. item.sub .. "|r" end
     end
     for l, fs in ipairs(c.lines) do fs:SetText(text[l] or "") end

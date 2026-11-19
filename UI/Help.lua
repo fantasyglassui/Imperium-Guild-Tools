@@ -102,6 +102,7 @@ local TOPICS = {
     CMD("/warcrest welcome", "the welcome and guild setup again"),
     CMD("/warcrest updates", "what's new"),
     CMD("/warcrest bosses", "the last raid bosses that died, and whether each counted"),
+    CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),
     CMD("/warcrest debug", "show error details (and boss checks) in chat"),
   }, "\n") end },
 }

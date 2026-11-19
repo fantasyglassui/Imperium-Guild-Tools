@@ -72,6 +72,7 @@ UI\Tabs\RaidPlanView.lua
 UI\Tabs\RaidCalendar.lua
 UI\Tabs\RaidProgress.lua
 UI\Tabs\Raids.lua
+UI\Tabs\Events.lua
 UI\Tabs\DKP.lua
 UI\Tabs\DKPTools.lua
 UI\Tabs\Wishlist.lua

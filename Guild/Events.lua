@@ -22,7 +22,7 @@ ns.EVENT_TYPES = {
   { key = "pvp",      label = "PvP",        color = "ff5a4f" },
   { key = "worldboss", label = "World boss", color = "e070ff" },
   { key = "dungeon",  label = "Dungeon",    color = "66ccff" },
-  { key = "meeting",  label = "Meeting",    color = "ffd200" },
+  { key = "meeting",  label = "Meeting",    color = "ff8fb0" },
   { key = "social",   label = "Social",     color = "5ed36b" },
   { key = "other",    label = "Other",      color = "c8c8c8" },
 }

@@ -581,6 +581,9 @@ SlashCmdList.WARCREST = function(input)
     if ns.ShowLastRaidNight then ns.ShowLastRaidNight() end
   elseif msg == "bosses" or msg == "boss" then
     ns.ShowBossChecks()
+  elseif msg:find("^check") then
+    -- /warcrest check [name]: why achievements have or haven't counted.
+    if ns.AchievementCheck then ns.AchievementCheck(input:match("^%s*%S+%s+(%S+)")) end
   elseif msg == "debug" then
     ns.db.debug = not ns.db.debug
     ns.Say("Debug messages " .. (ns.db.debug and "on. Error details will show in chat." or "off."))
