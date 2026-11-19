@@ -189,6 +189,19 @@ local function throttleResults()
   end
 end
 
+-- An addon message from a guildmate (or from you): run its handler.
+function ns.HandleAddonMessage(prefix, text, channel, sender)
+  -- Private messages are only accepted from guild members.
+  local member = sender and ns.RankOf and ns.RankOf(sender) ~= nil
+  local trusted = channel == "GUILD" or ((channel == "WHISPER" or channel == "RAID") and member)
+  if (prefix == ns.PREFIX or prefix == ns.PREFIX_BULK) and trusted and sender and text then
+    local parts = { strsplit(ns.SEP, text) }
+    local handler = handlers[parts[1]]
+    if handler then safely("message " .. tostring(parts[1]), handler, parts, sender, channel) end
+    if ns.NoteAddonUser and channel ~= "RAID" then ns.NoteAddonUser(sender) end
+  end
+end
+
 -- Send one message now. Returns false if the game said to slow down.
 local function deliver(m)
   if m.channel == "GUILD" and not IsInGuild() then return true end
@@ -196,6 +209,13 @@ local function deliver(m)
   local ok, result = pcall(C_ChatInfo.SendAddonMessage, m.prefix, m.text, m.channel, m.target)
   if not ok then return true end           -- a bad message: drop it
   if result == false or THROTTLED[result] then return false end
+  -- Everyone in the guild (or raid) gets it, you included: handle your own
+  -- copy here rather than waiting for the game to send it back, which not
+  -- every game client does.
+  if m.channel == "GUILD" or m.channel == "RAID" then
+    local me = ns.fullName(UnitName("player"))
+    C_Timer.After(0, function() ns.HandleAddonMessage(m.prefix, m.text, m.channel, me) end)
+  end
   return true
 end
 
@@ -388,15 +408,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
 
   if event == "CHAT_MSG_ADDON" then
     local prefix, text, channel, sender = ...
-    -- Private messages are only accepted from guild members.
-    local member = sender and ns.RankOf and ns.RankOf(sender) ~= nil
-    local trusted = channel == "GUILD" or ((channel == "WHISPER" or channel == "RAID") and member)
-    if (prefix == ns.PREFIX or prefix == ns.PREFIX_BULK) and trusted and sender and text then
-      local parts = { strsplit(ns.SEP, text) }
-      local handler = handlers[parts[1]]
-      if handler then safely("message " .. tostring(parts[1]), handler, parts, sender, channel) end
-      if ns.NoteAddonUser and channel ~= "RAID" then ns.NoteAddonUser(sender) end
-    end
+    -- Your own guild and raid messages are handled as they're sent (see deliver),
+    -- since some game clients send them back to you and some don't.
+    if (channel == "GUILD" or channel == "RAID") and sender and ns.IsMe(sender) then return end
+    ns.HandleAddonMessage(prefix, text, channel, sender)
     return
   end
 

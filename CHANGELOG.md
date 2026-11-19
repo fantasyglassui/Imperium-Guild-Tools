@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.6.1
+- Fix: **your own kills (and achievements like First Blood) now count the moment they happen.** Warcrest was waiting for the game to send your own guild messages back to you, as retail WoW does. WoW: Forever doesn't, so your own kill only reached your log later, when a guildmate's copy synced. Everything you send to the guild or your raid is now handled on your side as it goes out: your kills, deaths, Wanted sightings, bids and the rest show up straight away.
+
 ## 3.6.0
 ### Guild events
 - **A new Events tab for everything that isn't a raid:** PvP nights, world boss hunts, dungeon runs, guild meetings and get-togethers. **Anyone in the guild can plan one**, not only officers.

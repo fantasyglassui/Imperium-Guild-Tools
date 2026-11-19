@@ -80,3 +80,32 @@ def test_level_up_updates_max_level_achievement():
     a.ns.GetRoster()
     ids = [x.id for x in a.ns.ACHIEVEMENTS.values() if x.stat == "maxLevel"]
     assert ids and a.ns.HasAchievement("Alice", ids[0])
+
+
+def own_kill(echo):
+    from test_grey_kills import attack_and_kill
+    guild = Guild(M, raid=[m[0] for m in M], echo=echo)
+    for c in guild.clients.values():
+        c.login()
+    guild.run(40)
+    bob = guild["Bob"]
+    attack_and_kill(bob, "Ganker", 58)
+    guild.run(6)
+    return guild, bob
+
+
+def test_your_own_kill_counts_at_once_when_the_game_doesnt_send_it_back():
+    # WoW Forever doesn't send your own guild messages back to you: your kill
+    # must still reach your own log and achievements straight away.
+    guild, bob = own_kill(echo=False)
+    assert len(bob.ns.db.killLog) == 1
+    assert bob.ns.HasAchievement("Bob", "kill1")
+    assert guild["Alice"].ns.HasAchievement("Bob", "kill1")
+    assert len(bob.said("Bob earned First Blood!")) == 1
+
+
+def test_a_game_that_does_send_it_back_doesnt_count_it_twice():
+    guild, bob = own_kill(echo=True)
+    assert len(bob.ns.db.killLog) == 1
+    assert len(bob.said("Bob killed Ganker", clear=False)) == 1
+    assert len(bob.said("Bob earned First Blood!")) == 1

@@ -1247,4 +1247,5 @@ ns.LOCALES.deDE = {
   ["Member profiles: your spec, when you play and your birthday, on your player card. Your item level is added automatically."] = "Mitgliederprofile: deine Spezialisierung, Spielzeiten und dein Geburtstag auf deiner Spielerkarte. Die Gegenstandsstufe kommt automatisch dazu.",
   ["Officers: a Recruit tab for recruits, trials and the recruiting message."] = "Offiziere: ein Reiter Rekrutierung für Rekruten, Probezeiten und die Werbenachricht.",
   ["/warcrest check shows why an achievement has or hasn't counted."] = "/warcrest check zeigt, warum ein Erfolg gezählt hat oder nicht.",
+  ["Fix: your own kills and achievements like First Blood count the moment they happen."] = "Behoben: Deine eigenen Kills und Erfolge wie Erstes Blut zählen sofort.",
 }

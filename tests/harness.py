@@ -104,7 +104,8 @@ class Client:
 class Guild:
     """Several players, the messages between them, and a shared clock."""
 
-    def __init__(self, members, raid=(), start=START, throttle=False, setup=None):
+    def __init__(self, members, raid=(), start=START, throttle=False, setup=None, echo=False):
+        self.echo = echo  # True: the game sends your own guild/raid messages back to you (retail does)
         self.clock = float(start)
         # (name, guild rank[, class[, level]])
         self.members = [(m[0], m[1], True, m[2] if len(m) > 2 else "WARRIOR", m[3] if len(m) > 3 else 60)
@@ -160,7 +161,10 @@ class Guild:
             for c in self.clients.values():
                 if not c.online:
                     continue
-                if channel == "GUILD":
+                if c.name == who and channel in ("GUILD", "RAID"):
+                    # Like WoW Forever: your own guild and raid messages don't come back to you.
+                    ok = self.echo
+                elif channel == "GUILD":
                     ok = True
                 elif channel == "RAID":
                     ok = c.in_raid and self.clients[who].in_raid

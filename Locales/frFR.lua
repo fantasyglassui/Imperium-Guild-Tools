@@ -1247,4 +1247,5 @@ ns.LOCALES.frFR = {
   ["Member profiles: your spec, when you play and your birthday, on your player card. Your item level is added automatically."] = "Profils des membres : ta spécialisation, tes horaires et ton anniversaire sur ta fiche. Ton niveau d'objet est ajouté automatiquement.",
   ["Officers: a Recruit tab for recruits, trials and the recruiting message."] = "Officiers : un onglet Recrutement pour les recrues, les essais et le message de recrutement.",
   ["/warcrest check shows why an achievement has or hasn't counted."] = "/warcrest check explique pourquoi un haut fait a compté ou non.",
+  ["Fix: your own kills and achievements like First Blood count the moment they happen."] = "Correctif : tes propres victimes et les hauts faits comme Premier sang comptent immédiatement.",
 }

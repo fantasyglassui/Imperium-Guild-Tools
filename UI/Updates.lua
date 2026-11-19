@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.6.1", date = "Nov 19, 2026", items = {
+    "Fix: your own kills and achievements like First Blood count the moment they happen.",
+  } },
   { version = "3.6.0", date = "Nov 19, 2026", items = {
     "New Events tab: PvP nights, world bosses, meetings and more. Anyone can plan one; guildmates answer and get reminded.",
     "Member profiles: your spec, when you play and your birthday, on your player card. Your item level is added automatically.",
