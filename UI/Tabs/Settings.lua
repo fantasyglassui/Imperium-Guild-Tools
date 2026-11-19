@@ -137,7 +137,9 @@ local function BuildAlertTable(parent)
 
       local g = UI.CheckBox(card, 16)
       g:SetPoint("TOP", card, "TOPRIGHT", GUILD_R, y - 4)
-      UI.Tooltip(g, t.label, "Guild-wide: whether this is announced at all, for everyone. Officers set this and click Save for whole guild.")
+      UI.Tooltip(g, t.label, t.key == "achievement_chat"
+        and "Guild-wide: when someone earns an achievement, their addon posts it in guild chat, so everyone sees it, even without Warcrest. Officers set this and click Save for whole guild."
+        or "Guild-wide: whether this is announced at all, for everyone. Officers set this and click Save for whole guild.")
       P.guildTypes[t.key] = g
 
       local me = UI.CheckBox(card, 16)
@@ -151,7 +153,7 @@ local function BuildAlertTable(parent)
         ns.db.show[t.key] = self:GetChecked() and true or false
         if t.filter and ns.OnHistoryChanged then ns.OnHistoryChanged() end
       end)
-      UI.Tooltip(me, t.label, "Just for you: untick to stop seeing this alert yourself. Greyed out when the guild has turned it off.")
+      UI.Tooltip(me, t.label, t.youTip or "Just for you: untick to stop seeing this alert yourself. Greyed out when the guild has turned it off.")
       P.myTypes[t.key] = me
 
       local line = card:CreateTexture(nil, "BORDER")

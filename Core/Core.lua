@@ -86,6 +86,9 @@ ns.TYPES = {
   { key = "wanted",       group = "wanted", label = "Wanted gankers spotted" },
   { key = "bounty",       group = "wanted", label = "Bounties placed and claimed" },
   { key = "achievement",  group = "achievement", label = "Achievements earned" },
+  -- (A guild feature since 3.6.2: older versions' settings messages leave it alone.)
+  { key = "achievement_chat", group = "achievement", label = "Posted in guild chat", feature = true,
+    youTip = "Just for you: untick and your own achievements aren't posted in guild chat." },
   { key = "boss_first",   group = "raid", label = "Guild first boss kills" },
   { key = "raid_recap",   group = "raid", label = "Raid night recaps" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },

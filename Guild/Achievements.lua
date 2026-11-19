@@ -22,7 +22,7 @@ local REVENGE_WINDOW = 30 * 60
 local WANTED_WINDOW = 30 * 86400
 local WANTED_KILLS = 3
 local NEMESIS_KILLS = 3
-local ANNOUNCE_WITHIN = 15 * 60   -- only announce achievements earned in the last 15 minutes
+local ANNOUNCE_WITHIN = 60 * 60   -- only announce achievements earned in the last hour (a kill can arrive late)
 local MAX_LEVEL = 60
 local DOUBLE_KILL = 10            -- seconds between two killing blows for a Double Kill
 local GRUDGE_KILLS = 5            -- kills of one enemy for Grudge Match
@@ -532,6 +532,8 @@ end
 local pending = false
 local ready = false -- the first look after login only notes what's already earned
 
+local postLater -- (below)
+
 local function wanted()
   local c, show = ns.cfg, ns.db.show
   return c and c.enabled and c.types.achievement and show.achievement
@@ -544,6 +546,36 @@ end
 local CHUNK = 40
 local run = 0          -- which recheck is current (a newer one stops an older one)
 local seenEarned = {}  -- key -> { id -> true }, as of the last look
+
+-- Your own new achievements, posted in guild chat (if the guild and you want
+-- that), a moment after they're earned so several earned at once share a line.
+local toPost = {}
+local function postNow()
+  local list = toPost
+  toPost = {}
+  if #list == 0 or not IsInGuild() then return end
+  local c, show = ns.cfg, ns.db.show
+  if not (c and c.enabled and c.types.achievement_chat and show.achievement_chat) then return end
+  ns.db.postedAch = ns.db.postedAch or {}
+  local names, titles = {}, {}
+  for _, a in ipairs(list) do
+    if not ns.db.postedAch[a.id] then
+      ns.db.postedAch[a.id] = true
+      names[#names + 1] = a.name
+      if a.title then titles[#titles + 1] = a.title end
+    end
+  end
+  if #names == 0 then return end
+  local me = UnitName("player")
+  local what = #names == 1 and names[1] or (table.concat(names, ", ", 1, #names - 1) .. " and " .. names[#names])
+  local text = ("[%s] %s earned %s!"):format(ns.BRAND or "Warcrest", me, what)
+  if #titles > 0 then text = text .. (" New title: %s %s."):format(me, titles[#titles]) end
+  pcall(SendChatMessage, text, "GUILD")
+end
+postLater = function(a)
+  toPost[#toPost + 1] = a
+  if #toPost == 1 then C_Timer.After(2, postNow) end
+end
 
 local function recheck()
   pending = false
@@ -567,10 +599,13 @@ local function recheck()
         local e = is[a.id]
         if e.t then
           now_[a.id] = true
-          if ready and was and not was[a.id] and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN and wanted() then
-            local text = ("%s earned %s!"):format(short, a.name)
-            if a.title then text = text .. (" New title: %s %s."):format(short, a.title) end
-            ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
+          if ready and was and not was[a.id] and e.t > 0 and now - e.t <= ANNOUNCE_WITHIN then
+            if wanted() then
+              local text = ns.TF("%s earned %s!", short, ns.T(a.name))
+              if a.title then text = text .. " " .. ns.TF("New title: %s %s.", short, ns.T(a.title)) end
+              ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "achievement")
+            end
+            if ns.IsMe(short) then postLater(a) end
           end
         end
       end
@@ -754,6 +789,10 @@ function ns.AchievementCheck(name)
       or "No kill report of yours has come back from the guild this session.")
     line(("Messages waiting to send: %d."):format(ns.QueueSize and ns.QueueSize() or 0))
   end
+  local c, show = ns.cfg, ns.db.show
+  line(("Achievement alerts: guild %s, you %s. Posting in guild chat: guild %s, you %s."):format(
+    (c.enabled and c.types.achievement) and "on" or "off", show.achievement and "on" or "off",
+    (c.enabled and c.types.achievement_chat) and "on" or "off", show.achievement_chat and "on" or "off"))
   local e = ns.MemberAchievements(name).kill1
   line(e and e.t and ("First Blood: earned %s."):format(e.t > 0 and date("%b %d %H:%M", e.t) or "")
     or "First Blood: not yet.")

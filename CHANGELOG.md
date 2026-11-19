@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.2
+- **Achievements are now posted in guild chat.** When you earn one, your addon posts it in /guild ("Blaauurgh earned First Blood!"), so the whole guild sees it, even members without Warcrest. Several earned at once share one line, and each is only posted once. Only the player who earned it posts, so there are no repeats.
+  - Officers can turn this off for the whole guild: Settings > Alerts, **Posted in guild chat**, then Save for whole guild. Anyone can turn it off for their own achievements with the box in the You column.
+- Fix: **achievement alerts were missed when a kill arrived late.** Alerts were only shown for achievements earned in the last 15 minutes, and a kill that reached a guildmate through a later catch-up (as happened before 3.6.1) could miss that window. It's now an hour.
+- **/warcrest check** also says whether achievement alerts and guild chat posts are on, for the guild and for you.
+
 ## 3.6.1
 - Fix: **your own kills (and achievements like First Blood) now count the moment they happen.** Warcrest was waiting for the game to send your own guild messages back to you, as retail WoW does. WoW: Forever doesn't, so your own kill only reached your log later, when a guildmate's copy synced. Everything you send to the guild or your raid is now handled on your side as it goes out: your kills, deaths, Wanted sightings, bids and the rest show up straight away.
 

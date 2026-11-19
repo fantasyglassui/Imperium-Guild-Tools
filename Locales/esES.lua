@@ -1248,4 +1248,10 @@ ns.LOCALES.esES = {
   ["Officers: a Recruit tab for recruits, trials and the recruiting message."] = "Oficiales: una pestaña Reclutar para reclutas, pruebas y el mensaje de reclutamiento.",
   ["/warcrest check shows why an achievement has or hasn't counted."] = "/warcrest check muestra por qué un logro ha contado o no.",
   ["Fix: your own kills and achievements like First Blood count the moment they happen."] = "Corrección: tus propias muertes y logros como Primera sangre cuentan al instante.",
+  ["Achievements are posted in guild chat when you earn them, so everyone sees them (officers can turn this off)."] = "Los logros se publican en el chat de hermandad al conseguirlos, para que todos los vean (los oficiales pueden desactivarlo).",
+  ["Posted in guild chat"] = "Publicados en el chat de hermandad",
+  ["Just for you: untick and your own achievements aren't posted in guild chat."] = "Solo para ti: desmarca y tus logros no se publicarán en el chat de hermandad.",
+  ["Guild-wide: when someone earns an achievement, their addon posts it in guild chat, so everyone sees it, even without Warcrest. Officers set this and click Save for whole guild."] = "Para toda la hermandad: cuando alguien consigue un logro, su addon lo publica en el chat de hermandad para que todos lo vean, incluso sin Warcrest. Los oficiales lo ajustan y pulsan Guardar para toda la hermandad.",
+  ["%s earned %s!"] = "¡%s ha conseguido %s!",
+  ["New title: %s %s."] = "Nuevo título: %s %s.",
 }

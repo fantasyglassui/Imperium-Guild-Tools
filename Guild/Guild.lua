@@ -261,6 +261,7 @@ local function sendConfig()
   -- Raid night recaps (3.3.0) are on unless turned off, so settings from older
   -- versions, which don't know about them, leave them on.
   if not c.types.raid_recap then features[#features + 1] = "norecap" end
+  if not c.types.achievement_chat then features[#features + 1] = "noachchat" end
   ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, table.concat(features, ","))
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
@@ -317,7 +318,7 @@ local function handleConfig(parts, sender, retried, groups)
   c.stamp = stamp
   c.enabled = parts[3] == "1"
   for _, t in ipairs(ns.TYPES) do
-    if groups[t.group] then c.types[t.key] = on[t.key] or false end
+    if groups[t.group] and not t.feature then c.types[t.key] = on[t.key] or false end
   end
   c.officerRank = newOfficerRank
   c.by = (parts[6] and parts[6] ~= "") and parts[6] or Ambiguate(sender, "short")
@@ -327,6 +328,7 @@ local function handleConfig(parts, sender, retried, groups)
     c.dkp = features.dkp or false
     c.bounties = features.bounties or false
     c.types.raid_recap = not features.norecap
+    c.types.achievement_chat = not features.noachchat
   end
   heardCfgAt = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end

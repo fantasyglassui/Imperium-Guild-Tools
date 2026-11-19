@@ -1248,4 +1248,10 @@ ns.LOCALES.deDE = {
   ["Officers: a Recruit tab for recruits, trials and the recruiting message."] = "Offiziere: ein Reiter Rekrutierung für Rekruten, Probezeiten und die Werbenachricht.",
   ["/warcrest check shows why an achievement has or hasn't counted."] = "/warcrest check zeigt, warum ein Erfolg gezählt hat oder nicht.",
   ["Fix: your own kills and achievements like First Blood count the moment they happen."] = "Behoben: Deine eigenen Kills und Erfolge wie Erstes Blut zählen sofort.",
+  ["Achievements are posted in guild chat when you earn them, so everyone sees them (officers can turn this off)."] = "Erfolge werden im Gildenchat gepostet, wenn du sie verdienst, damit alle sie sehen (Offiziere können das abschalten).",
+  ["Posted in guild chat"] = "Im Gildenchat posten",
+  ["Just for you: untick and your own achievements aren't posted in guild chat."] = "Nur für dich: Haken entfernen, dann werden deine Erfolge nicht im Gildenchat gepostet.",
+  ["Guild-wide: when someone earns an achievement, their addon posts it in guild chat, so everyone sees it, even without Warcrest. Officers set this and click Save for whole guild."] = "Gildenweit: Wenn jemand einen Erfolg verdient, postet sein Addon ihn im Gildenchat, damit alle ihn sehen, auch ohne Warcrest. Offiziere stellen das ein und klicken auf Für ganze Gilde speichern.",
+  ["%s earned %s!"] = "%s hat %s verdient!",
+  ["New title: %s %s."] = "Neuer Titel: %s %s.",
 }

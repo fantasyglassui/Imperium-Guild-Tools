@@ -1248,4 +1248,10 @@ ns.LOCALES.frFR = {
   ["Officers: a Recruit tab for recruits, trials and the recruiting message."] = "Officiers : un onglet Recrutement pour les recrues, les essais et le message de recrutement.",
   ["/warcrest check shows why an achievement has or hasn't counted."] = "/warcrest check explique pourquoi un haut fait a compté ou non.",
   ["Fix: your own kills and achievements like First Blood count the moment they happen."] = "Correctif : tes propres victimes et les hauts faits comme Premier sang comptent immédiatement.",
+  ["Achievements are posted in guild chat when you earn them, so everyone sees them (officers can turn this off)."] = "Les hauts faits sont publiés dans le canal de guilde quand tu les obtiens, pour que tout le monde les voie (les officiers peuvent le désactiver).",
+  ["Posted in guild chat"] = "Publiés dans le canal de guilde",
+  ["Just for you: untick and your own achievements aren't posted in guild chat."] = "Pour toi seul : décoche pour ne pas publier tes hauts faits dans le canal de guilde.",
+  ["Guild-wide: when someone earns an achievement, their addon posts it in guild chat, so everyone sees it, even without Warcrest. Officers set this and click Save for whole guild."] = "Pour toute la guilde : quand quelqu'un obtient un haut fait, son addon le publie dans le canal de guilde, visible par tous, même sans Warcrest. Les officiers le règlent puis cliquent sur Enregistrer pour la guilde.",
+  ["%s earned %s!"] = "%s a obtenu %s !",
+  ["New title: %s %s."] = "Nouveau titre : %s %s.",
 }

@@ -109,3 +109,32 @@ def test_a_game_that_does_send_it_back_doesnt_count_it_twice():
     assert len(bob.ns.db.killLog) == 1
     assert len(bob.said("Bob killed Ganker", clear=False)) == 1
     assert len(bob.said("Bob earned First Blood!")) == 1
+
+
+def guild_chat(c):
+    sent = c.lua.eval("chatSent")
+    return [sent[i][1] for i in range(1, len(sent) + 1) if sent[i][2] == "GUILD"]
+
+
+def test_your_achievements_are_posted_in_guild_chat_once():
+    guild, bob = own_kill(echo=False)
+    guild.run(5)
+    lines = guild_chat(bob)
+    assert len(lines) == 1 and "Bob earned First Blood" in lines[0], lines
+    assert guild_chat(guild["Alice"]) == []          # only the one who earned it posts
+    guild.run(60)
+    assert len(guild_chat(bob)) == 1
+
+
+def test_guild_chat_posts_can_be_turned_off():
+    from test_grey_kills import attack_and_kill
+    guild = Guild(M, raid=[m[0] for m in M])
+    for c in guild.clients.values():
+        c.login()
+    guild.run(40)
+    bob = guild["Bob"]
+    bob.ns.db.show.achievement_chat = False
+    attack_and_kill(bob, "Ganker", 58)
+    guild.run(12)
+    assert guild_chat(bob) == []
+    assert bob.said("Bob earned First Blood!")       # the alert still shows

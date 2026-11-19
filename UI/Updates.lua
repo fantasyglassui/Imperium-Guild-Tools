@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.6.2", date = "Nov 19, 2026", items = {
+    "Achievements are posted in guild chat when you earn them, so everyone sees them (officers can turn this off).",
+  } },
   { version = "3.6.1", date = "Nov 19, 2026", items = {
     "Fix: your own kills and achievements like First Blood count the moment they happen.",
   } },
