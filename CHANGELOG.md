@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.0
+- New: **raid night recap.** When an officer clicks End raid, the whole guild gets a short summary in chat, with a banner to say it's there: how long the raid night ran, the bosses killed (guild firsts marked), the loot and who won it, how many attended and who was on standby, and the DKP you earned. /warcrest raidrecap shows the last one again. Officers can turn it off for the guild in Settings > Alerts (Raid night recaps), and anyone can turn it off for themselves.
+- **Help and What's new in German, French and Spanish**, so the whole addon now follows your language (Settings > General > Language).
+
 ## 3.2.0
 - New: **alert banners.** Guild alerts now drop in at the top of the screen as a card in the Warcrest look, with a colour, icon and heading for each kind: a guild kill, a wanted ganker spotted, a boss down, a bounty, a kill streak, an achievement. Up to three stack, and each fades after a few seconds. Click one to open the matching tab, right-click to dismiss it, Shift-drag to move them. Each kind also has its own sound. Prefer the old look? Settings > Alerts > On screen switches to the game's raid warning text, or chat only.
 - New: **loot council.** Hand out loot by vote instead of DKP (it works whether or not the guild uses DKP). An officer starts a vote with /warcrest council or the Loot council button on the Wishlist tab; everyone in the raid gets a small window to say Need, Greed or Pass. Officers see everyone who wants it with their wishlist, raid attendance, items won in the last 30 days and DKP, and vote with a click. The officer who started it awards the item, and it goes in the loot history.

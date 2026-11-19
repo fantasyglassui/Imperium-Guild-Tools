@@ -40,3 +40,17 @@ def test_every_translation_keeps_format_codes():
         for en, tr in ns.LOCALES[code].items():
             assert re.findall(r"%[sd]", en) == re.findall(r"%[sd]", tr), (code, en)
             assert tr.strip(), (code, en)
+
+
+def test_help_and_whats_new_fit_translated():
+    import render
+    for loc in ("deDE", "frFR", "esES"):
+        guild, me = render.demo_guild(locale=loc)
+        rd = render.Renderer(me)
+        for topic in range(1, 11):
+            me.ns.ShowHelp(topic)
+            rd.render(me.lua.eval("WarcrestHelp"), "/tmp/help.png")
+        me.ns.ShowUpdates(None)
+        rd.render(me.lua.eval("WarcrestUpdates"), "/tmp/updates.png")
+        assert sorted(rd.truncated) == [], loc
+        assert me.ns.T("Raid night recap") != "Raid night recap"

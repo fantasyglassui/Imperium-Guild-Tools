@@ -29,7 +29,7 @@ local personalDefaults = { sound = true, warning = true, mapPins = true, pinHour
   quietInstances = true, quietCombat = false, wantedThreshold = 3 }
 local showDefaults = { pvp = true, environment = true, kill_world = true, kill_bg = false, kill_honor = true,
   wanted = true, level_ten = true, level_all = false, kill_streak = true, kill_revenge = true,
-  achievement = true, boss_first = true, bounty = true }
+  achievement = true, boss_first = true, bounty = true, raid_recap = true }
 
 ns.OnLoad(function()
   local db = ns.db

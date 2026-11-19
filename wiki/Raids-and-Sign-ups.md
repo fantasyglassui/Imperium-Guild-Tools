@@ -28,6 +28,18 @@ Switch the Raids tab to **Plan** to see the selected raid's groups. Officers put
 
 Everyone can see the plan, with their own name picked out. At raid time, **Invite sign-ups** invites only the people in groups 1 to 8, and **Arrange raid** moves everyone in the raid into their planned group (you need to be raid leader or assistant, and out of combat).
 
+## Raid night recap
+
+When an officer clicks **End raid**, everyone in the guild with Warcrest gets a summary in chat, and a banner says it's there:
+
+- how long the raid night ran,
+- the bosses killed, with guild first kills marked,
+- the loot handed out and who won it (and for how much DKP, or by council or roll),
+- how many attended, and who was on standby,
+- and the DKP you earned that night.
+
+Type `/warcrest raidrecap` to see the last one again. Officers can turn recaps off for the guild in Settings > Alerts (Raid night recaps); anyone can turn them off just for themselves in the You column.
+
 ## Calendar
 
 Switch the Raids tab to **Calendar** to see a month at a glance: raids scheduled (gold), raid nights held (green, with how many bosses died) and past raids. Hover a day for the details, or click a raid to open it. The arrows move between months; **Today** comes back.

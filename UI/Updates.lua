@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.3.0", date = "Nov 19, 2026", items = {
+    "Raid night recap: when an officer ends the raid night, the whole guild gets a summary of the bosses, loot, attendance and the DKP you earned. /warcrest raidrecap shows the last one again.",
+    "Help and What's new are now in German, French and Spanish too.",
+  } },
   { version = "3.2.0", date = "Nov 18, 2026", items = {
     "Alert banners: guild alerts drop in at the top of the screen, with a colour, icon and sound for each kind. Click one to open its tab.",
     "Loot council: vote on who gets an item (/warcrest council, or the button on the Wishlist tab).",
@@ -136,8 +140,8 @@ end
 local function buildText(entries)
   local lines = {}
   for _, c in ipairs(entries) do
-    lines[#lines + 1] = ("%sVersion %s|r  |cff8b95a7%s|r"):format(ns.COLOR, c.version, c.date)
-    for _, item in ipairs(c.items) do lines[#lines + 1] = "  |cffe0b94c•|r  " .. item end
+    lines[#lines + 1] = ("%s%s|r  |cff8b95a7%s|r"):format(ns.COLOR, ns.TF("Version %s", c.version), c.date)
+    for _, item in ipairs(c.items) do lines[#lines + 1] = "  |cffe0b94c•|r  " .. ns.T(item) end
     lines[#lines + 1] = " "
   end
   return table.concat(lines, "\n")
@@ -188,8 +192,8 @@ function ns.ShowUpdates(since)
   local entries = changesSince(since)
   if #entries == 0 then entries = changesSince(nil) end
   if not win then create() end
-  win.heading:SetText(since and ("Updated to version " .. ns.version) or ("Version " .. ns.version))
-  win.sub:SetText(since and ("Here's what changed since version " .. since .. ".") or "Recent changes to Warcrest.")
+  win.heading:SetText(since and ns.TF("Updated to version %s", ns.version) or ns.TF("Version %s", ns.version))
+  win.sub:SetText(since and ns.TF("Here's what changed since version %s.", since) or ns.T("Recent changes to Warcrest."))
   win.body:SetText(buildText(entries))
   win.content:SetHeight(math.max(10, win.body:GetStringHeight() + 10))
   win:Show()

@@ -87,6 +87,7 @@ ns.TYPES = {
   { key = "bounty",       group = "wanted", label = "Bounties placed and claimed" },
   { key = "achievement",  group = "achievement", label = "Achievements earned" },
   { key = "boss_first",   group = "raid", label = "Guild first boss kills" },
+  { key = "raid_recap",   group = "raid", label = "Raid night recaps" },
   { key = "level_ten",    group = "celebrate", label = "Every 10 levels and max level" },
   { key = "level_all",    group = "celebrate", label = "Every level up" },
 }
@@ -572,6 +573,8 @@ SlashCmdList.WARCREST = function(input)
     end
   elseif msg == "council" or msg == "lc" then
     ns.OpenCouncil()
+  elseif msg == "raidrecap" or msg == "night" then
+    if ns.ShowLastRaidNight then ns.ShowLastRaidNight() end
   elseif msg == "bosses" or msg == "boss" then
     ns.ShowBossChecks()
   elseif msg == "debug" then

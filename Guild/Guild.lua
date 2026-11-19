@@ -222,6 +222,9 @@ local function sendConfig()
   local features = {}
   if c.dkp then features[#features + 1] = "dkp" end
   if c.bounties then features[#features + 1] = "bounties" end
+  -- Raid night recaps (3.3.0) are on unless turned off, so settings from older
+  -- versions, which don't know about them, leave them on.
+  if not c.types.raid_recap then features[#features + 1] = "norecap" end
   ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, table.concat(features, ","))
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
@@ -287,6 +290,7 @@ local function handleConfig(parts, sender, retried, groups)
     for f in (parts[7] or ""):gmatch("[^,]+") do features[f] = true end
     c.dkp = features.dkp or false
     c.bounties = features.bounties or false
+    c.types.raid_recap = not features.norecap
   end
   heardCfgAt = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end

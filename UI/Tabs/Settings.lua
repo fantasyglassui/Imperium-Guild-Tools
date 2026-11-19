@@ -21,7 +21,7 @@ local SIDE_X = TABLE_W + 14
 local SIDE_W = 740 - SIDE_X
 local INNER = SIDE_W - 30
 local GUILD_R, YOU_R = -86, -30  -- the two checkbox columns, from the card's right edge
-local ROW, GROUP = 22, 20
+local ROW, GROUP = 21, 19
 
 local function formatHours(h)
   if h < 24 then return h == 1 and "1 hour" or (h .. " hours") end
@@ -368,8 +368,7 @@ local function BuildGeneral(page)
   end)
   P.lang:SetHeight(26)
   P.lang:SetPoint("LEFT", reset, "RIGHT", 6, 0)
-  UI.Tooltip(P.lang, "Language", "The language for Warcrest's windows and messages. Game language follows your game client. "
-    .. "Help and the changelog stay in English.")
+  UI.Tooltip(P.lang, "Language", "The language for Warcrest's windows, messages and help. Game language follows your game client.")
   P.lang.Sync = function(self)
     for i, l in ipairs(self.options) do
       if l[1] == (ns.db.locale or "auto") then self.index = i; self.value = l[1]; self:SetText(l[2]) end

@@ -16,6 +16,7 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest addon` | Who has the addon, and who's out of date |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers) |
 | `/warcrest council` (or `lc`) | The loot council vote, or start one (officers) |
+| `/warcrest raidrecap` | The last raid night's recap |
 | `/warcrest test` | Show a test alert (a different kind each time) |
 | `/warcrest sound` | Turn alert sounds on or off |
 | `/warcrest warn` | Turn on-screen alert banners on or off |

@@ -20,6 +20,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid and guild-first announcements, and a month calendar of raids and raid nights.
 - **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open the matching tab.
 - **Loot council.** Vote on who gets an item, with each candidate's wishlist, attendance and recent loot in front of the officers. Works with or without DKP.
+- **Raid night recap.** When the raid night ends, the guild gets a summary of the bosses, loot, attendance and the DKP each person earned.
 - **Raid groups planner.** Put sign-ups into groups and on the bench before the raid; Arrange raid moves everyone into place.
 - **Bounties.** Officers can put a reward on a ganker's head; the guild member who kills them claims it. Off until an officer turns it on.
 - **German, French and Spanish.** Follows your game's language, or pick one in Settings.
@@ -64,6 +65,7 @@ When updating by hand, delete the old `Warcrest` and `TheImperium` folders first
 | `/warcrest dkp` | Open DKP |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
 | `/warcrest council` | The loot council vote, or start one (officers) |
+| `/warcrest raidrecap` | The last raid night's recap |
 | `/warcrest kills` | Open the kill log |
 | `/warcrest wanted` | Open the wanted list |
 | `/warcrest card [name]` | Show a guild member's player card (yours if no name) |

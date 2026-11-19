@@ -402,6 +402,8 @@ local function attendedSet(session)
   return set
 end
 
+ns.AttendedSet = attendedSet
+
 -- Attendance over the last 30 days for everyone, worked out once per change.
 local attendanceCache
 ns.OnLedgerChanged(function() attendanceCache = nil end)
