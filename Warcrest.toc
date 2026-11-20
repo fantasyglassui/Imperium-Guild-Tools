@@ -60,6 +60,8 @@ Guild\OfficerLog.lua
 Guild\Recap.lua
 Guild\Profile.lua
 Guild\Achievements.lua
+Guild\Goals.lua
+Guild\Crafters.lua
 
 # 6. Interface: the theme, shared widgets and the guild panel
 UI\Theme.lua
@@ -96,6 +98,7 @@ UI\Auction.lua
 UI\Council.lua
 UI\PlayerCard.lua
 UI\Profiles.lua
+UI\Crafters.lua
 UI\ChatTitles.lua
 UI\Updates.lua
 UI\Welcome.lua

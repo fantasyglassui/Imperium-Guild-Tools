@@ -419,7 +419,13 @@ function GetLocale() return gameLocale end
 equipped = {}      -- slot -> item link
 itemLevels = {}    -- item link -> { level, equipLoc }
 function GetInventoryItemLink(unit, slot) if unit == "player" then return equipped[slot] end end
+itemNames = {}     -- item ID -> name, for items looked up by ID
 function GetItemInfo(link)
+  if type(link) == "number" then
+    local name = itemNames[link]
+    if name then return name, "|cff1eff00|Hitem:" .. link .. "|h[" .. name .. "]|h|r" end
+    return nil
+  end
   local i = itemLevels[link]
   if not i then return nil end
   return link, link, 3, i[1], i[1], "Armor", "Misc", 1, i[2] or "INVTYPE_CHEST"
@@ -445,3 +451,25 @@ function ShowChat(event, msg, author)
   end
   return msg
 end
+
+-- Professions (the crafters directory)
+tradeSkill = nil   -- { name, rank, max, recipes = { { name, kind, link } } }
+craftSkill = nil   -- the same, for the enchanting window
+function GetTradeSkillLine()
+  if not tradeSkill then return "UNKNOWN", 0, 0 end
+  return tradeSkill.name, tradeSkill.rank, tradeSkill.max
+end
+function GetNumTradeSkills() return tradeSkill and #tradeSkill.recipes or 0 end
+function GetTradeSkillInfo(i) local r = tradeSkill.recipes[i]; return r[1], r[2] end
+function GetTradeSkillItemLink(i) return tradeSkill.recipes[i][3] end
+function GetCraftDisplaySkillLine()
+  if not craftSkill then return nil end
+  return craftSkill.name, craftSkill.rank, craftSkill.max
+end
+function GetNumCrafts() return craftSkill and #craftSkill.recipes or 0 end
+function GetCraftInfo(i) local r = craftSkill.recipes[i]; return r[1], "", r[2] end
+function GetCraftItemLink(i) return craftSkill.recipes[i][3] end
+spellNames = {}
+function GetSpellInfo(id) return spellNames[id] end
+openedChat = {}
+function ChatFrame_OpenChat(text) table.insert(openedChat, text) end

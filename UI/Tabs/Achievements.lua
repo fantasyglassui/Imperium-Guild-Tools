@@ -22,6 +22,12 @@ local TOP = 66              -- the strip with the member's name above the tiles
 local TILE_W = (740 - (COLS - 1) * GAP) / COLS -- changes when the window is resized
 local TILE_H = 86
 local MAX_TILES = 16
+local LEAD_W = 250
+local FEED_W = 740 - LEAD_W - 14
+local GOALS_H = 280
+local GOAL_ROW = 48
+local LEADERS = 4
+local G_INNER = LEAD_W - 28
 
 local function who() return viewing or UnitName("player") end
 local function isMe() return ns.Key(who()) == ns.Key(UnitName("player")) end
@@ -257,11 +263,13 @@ local function RefreshTiles(cat)
   refreshChooser()
 end
 
+local RefreshGoals, BuildGoals
 local function RefreshGuild()
   local feed = ns.GuildAchievements()
   P.feed:SetEmptyText("Nobody in the guild has earned an achievement yet.")
   P.feed:SetItems(feed)
-  local leaders = ns.AchievementLeaders(8)
+  local leaders = ns.AchievementLeaders(LEADERS)
+  RefreshGoals()
   for i, row in ipairs(P.leaders) do
     local e = leaders[i]
     row:SetShown(e ~= nil)
@@ -320,8 +328,131 @@ local function BuildTiles(page)
   for i = 1, MAX_TILES do P.tiles[i] = Tile(f, i) end
 end
 
-local LEAD_W = 250
-local FEED_W = 740 - LEAD_W - 14
+
+------------------------------------------------------------------------
+-- Guild goals (on the right, above the leaders)
+------------------------------------------------------------------------
+local function GoalRow(parent, i)
+  local row = CreateFrame("Frame", nil, parent)
+  row:SetPoint("TOPLEFT", 0, -34 - (i - 1) * GOAL_ROW)
+  row:SetSize(LEAD_W - 2, GOAL_ROW)
+  row.text = UI.Label(row, "", "Small")
+  row.text:SetPoint("TOPLEFT", 14, 0)
+  row.text:SetWidth(G_INNER - 22)
+  row.text:SetWordWrap(false)
+  row.remove = UI.Button(row, "x", 18)
+  row.remove:SetHeight(18)
+  row.remove:SetPoint("TOPRIGHT", -12, 2)
+  row.remove:SetScript("OnClick", function(self) if row.goal then ns.RemoveGoal(row.goal.id) end end)
+  UI.Tooltip(row.remove, "Remove goal", "Takes this goal off for the whole guild.")
+  row.track = row:CreateTexture(nil, "BORDER")
+  row.track:SetPoint("TOPLEFT", 14, -19)
+  row.track:SetSize(G_INNER, 4)
+  row.track:SetColorTexture(C.line[1], C.line[2], C.line[3], 1)
+  row.bar = row:CreateTexture(nil, "ARTWORK")
+  row.bar:SetPoint("TOPLEFT", 14, -19)
+  row.bar:SetHeight(4)
+  row.meta = UI.Label(row, "", "MutedSmall")
+  row.meta:SetPoint("TOPLEFT", 14, -28)
+  row.meta:SetWidth(G_INNER - 70)
+  row.meta:SetWordWrap(false)
+  row.count = UI.Label(row, "", "Small")
+  row.count:SetPoint("TOPRIGHT", -14, -28)
+  row.count:SetJustifyH("RIGHT")
+  return row
+end
+
+local NEW_KINDS = {}
+for _, k in ipairs(ns.GOAL_KINDS) do NEW_KINDS[#NEW_KINDS + 1] = { k.key, k.label } end
+
+BuildGoals = function(f)
+  local g = UI.Box(f, FEED_W + 14, 0, LEAD_W, GOALS_H)
+  P.goalsCard = g
+  UI.Label(g, "GUILD GOALS", "Label"):SetPoint("TOPLEFT", 14, -13)
+  P.goalRows = {}
+  for i = 1, ns.MAX_GOALS do P.goalRows[i] = GoalRow(g, i) end
+  P.goalsEmpty = UI.Label(g, "", "MutedSmall")
+  P.goalsEmpty:SetPoint("TOPLEFT", 14, -38)
+  P.goalsEmpty:SetWidth(G_INNER)
+  P.goalsEmpty:SetSpacing(2)
+
+  -- Officers: a new goal.
+  P.goalKind = UI.Cycle(g, G_INNER, NEW_KINDS, function() ns.RefreshPanel() end)
+  P.goalKind:SetHeight(26)
+  P.goalKind:SetPoint("BOTTOMLEFT", 14, 46)
+  UI.Tooltip(P.goalKind, "What to count", "Click to change what the new goal counts, across the whole guild.")
+  P.goalTarget = UI.EditBox(g, 56, 6)
+  P.goalTarget:SetHeight(26)
+  P.goalTarget:SetNumeric(true)
+  P.goalTarget:SetPoint("BOTTOMLEFT", 14, 14)
+  P.goalTarget.hint = UI.Label(P.goalTarget, "#", "MutedSmall")
+  P.goalTarget.hint:SetPoint("LEFT", 8, 0)
+  P.goalTarget:HookScript("OnTextChanged", function(self) self.hint:SetShown((self:GetText() or "") == "") end)
+  UI.Tooltip(P.goalTarget, "How many", "How many the guild should reach in the period.")
+  P.goalPeriod = UI.Cycle(g, 80, ns.GOAL_PERIODS, function() ns.RefreshPanel() end)
+  P.goalPeriod:SetHeight(26)
+  P.goalPeriod:SetPoint("LEFT", P.goalTarget, "RIGHT", 6, 0)
+  UI.Tooltip(P.goalPeriod, "Period", "Goals start over every week or every month.")
+  P.goalAdd = UI.Button(g, "Add goal", G_INNER - 56 - 80 - 12)
+  P.goalAdd:SetHeight(26)
+  P.goalAdd:SetPoint("LEFT", P.goalPeriod, "RIGHT", 6, 0)
+  P.goalAdd:SetScript("OnClick", function()
+    if ns.AddGoal(P.goalKind.value, P.goalTarget:GetText(), P.goalPeriod.value) then
+      P.goalTarget:SetText("")
+      P.goalTarget:ClearFocus()
+    end
+  end)
+end
+
+local function daysLeft(toT)
+  local n = math.max(1, math.ceil((toT - GetServerTime()) / 86400))
+  return ns.TP(n, "%d day left", "%d days left", n)
+end
+
+RefreshGoals = function()
+  local officer = ns.IsAddonOfficer()
+  local goals = ns.Goals()
+  for i, row in ipairs(P.goalRows) do
+    local goal = goals[i]
+    row:SetShown(goal ~= nil)
+    row.goal = goal
+    if goal then
+      local p = ns.GoalProgress(goal, 0)
+      row.text:SetText(ns.GoalText(goal))
+      local frac = math.min(1, p.count / math.max(1, p.target))
+      row.bar:SetWidth(math.max(1, G_INNER * frac))
+      local c = p.done and C.good or C.accent
+      row.bar:SetColorTexture(c[1], c[2], c[3], 1)
+      local period = ns.T(goal.period == "month" and "This month" or "This week")
+      row.meta:SetText(p.done and (UI.Code("good") .. ns.T("Reached!") .. "|r  " .. period)
+        or (period .. ", " .. daysLeft(p.toT)))
+      row.count:SetText((p.done and UI.Code("good") or UI.Code("text")) .. math.min(p.count, 999999) .. "|r"
+        .. UI.Code("muted") .. " / " .. p.target .. "|r")
+      row.remove:SetShown(officer)
+    end
+  end
+  local full = #goals >= ns.MAX_GOALS
+  local adding = officer and not full
+  P.goalsEmpty:SetShown(#goals == 0 or (officer and full))
+  if #goals == 0 then
+    P.goalsEmpty:SetText(ns.T(officer and "No goals yet. Set one for the guild below: it starts over every week or month."
+      or "No goals yet. Officers set them for the whole guild."))
+    P.goalsEmpty:ClearAllPoints()
+    P.goalsEmpty:SetPoint("TOPLEFT", 14, -38)
+  elseif officer and full then
+    P.goalsEmpty:SetText(ns.TF("%d goals at most. Remove one to add another.", ns.MAX_GOALS))
+    P.goalsEmpty:ClearAllPoints()
+    P.goalsEmpty:SetPoint("BOTTOMLEFT", 14, 16)
+  end
+  P.goalKind:SetShown(adding)
+  P.goalTarget:SetShown(adding)
+  P.goalPeriod:SetShown(adding)
+  P.goalAdd:SetShown(adding)
+  if adding then
+    P.goalKind:SetText(ns.T(NEW_KINDS[P.goalKind.index][2]))
+    P.goalPeriod:SetText(ns.T(ns.GOAL_PERIODS[P.goalPeriod.index][2]))
+  end
+end
 
 local function BuildGuild(page)
   local f = CreateFrame("Frame", nil, page)
@@ -360,14 +491,16 @@ local function BuildGuild(page)
     end, true)
   P.feed.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, y - 1)
 
-  local lead = UI.Box(f, FEED_W + 14, 0, LEAD_W, 450)
+  BuildGoals(f)
+
+  local lead = UI.Box(f, FEED_W + 14, -(GOALS_H + 14), LEAD_W, 450 - GOALS_H - 14)
   P.leadCard = lead
   UI.Label(lead, "MOST ACHIEVEMENTS", "Label"):SetPoint("TOPLEFT", 14, -13)
   P.leaders = {}
-  for i = 1, 8 do
+  for i = 1, LEADERS do
     local row = CreateFrame("Button", nil, lead)
-    row:SetPoint("TOPLEFT", 0, -34 - (i - 1) * 30)
-    row:SetSize(LEAD_W - 2, 30)
+    row:SetPoint("TOPLEFT", 0, -32 - (i - 1) * 28)
+    row:SetSize(LEAD_W - 2, 28)
     row.rank = UI.Label(row, "", "Muted")
     row.rank:SetPoint("LEFT", 14, 0)
     row.rank:SetWidth(14)
@@ -415,6 +548,7 @@ local function Build(page)
   UI.Grow(page, P.feedCard, 1, 1)
   UI.Grow(page, P.feed, 1, 1)
   UI.Follow(page, P.leadCard, 1, 0)
+  UI.Follow(page, P.goalsCard, 1, 0)
   UI.Grow(page, P.leadCard, 0, 1)
   UI.Grow(page, P.tilesView, 1, 0)
   table.insert(page.growth, function(dw) relayoutTiles(740 + dw) end)

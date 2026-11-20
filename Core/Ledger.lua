@@ -20,7 +20,8 @@ local _, ns = ...
 
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
   AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true,
-  RG = true, AG = true, RC = true, RM = true, WR = true }
+  RG = true, AG = true, RC = true, RM = true, WR = true,
+  GG = true, GQ = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
 local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true,
@@ -56,7 +57,9 @@ local FIELDS = {
   PF = { "spec", "role", "days", "hours", "bday", "ilvl", "note" }, -- a member's profile (the latest one counts)
   RC = { "name", "class", "level", "note", "status" }, -- officer: a recruit and where they're up to
   RM = { "text" },                             -- officer: the guild's recruiting message
-  WR = { "guild", "on" },                      -- officer: an enemy guild marked as a rival ("1") or not ("0")
+  WR = { "guild", "on" },
+  GG = { "kind", "amount", "period" },         -- officer: a guild goal: what to count ("kills", ...), how many, "week" or "month"
+  GQ = { "ref" },                              -- officer: a guild goal removed                      -- officer: an enemy guild marked as a rival ("1") or not ("0")
   TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
   RG = { "ref", "name", "group" },             -- a raid plan: someone put in group 1-8, the bench (0), or out (-1)
   BO = { "target", "amount", "note" },         -- a bounty on an enemy player (DKP reward)

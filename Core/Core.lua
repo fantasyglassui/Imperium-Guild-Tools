@@ -603,6 +603,9 @@ SlashCmdList.WARCREST = function(input)
     if ns.ShowProfileEditor then ns.ShowProfileEditor() end
   elseif msg == "profiles" then
     if ns.ShowProfiles then ns.ShowProfiles() end
+  elseif msg:find("^craft") then
+    -- /warcrest craft [search]: who in the guild can make something.
+    if ns.ShowCrafters then ns.ShowCrafters(input:match("^%s*%S+%s+(.-)%s*$")) end
   elseif msg == "events" or msg == "event" then
     if ns.OpenPanel then ns.OpenPanel("events") end
   elseif msg == "recruit" or msg == "recruits" then

@@ -439,6 +439,25 @@ def demo_guild(guild_name=None, locale=None):
     guild.run(0.5)
     me.fire("CHAT_MSG_WHISPER", "hey, is your guild recruiting healers?", "Anduin-Realm")
     guild.run(1)
+    # Crafters.
+    names = {14155: "Mooncloth Bag", 13858: "Runecloth Robe", 14156: "Felcloth Bag", 13442: "Mighty Rage Potion",
+             13445: "Elixir of Superior Defense", 12360: "Arcanite Bar", 13444: "Major Mana Potion", 16904: "Bloodfang Hood"}
+    for c in guild.clients.values():
+        c.run("; ".join('itemNames[%d] = "%s"' % kv for kv in names.items()))
+    def crafts(c, prof, rank, ids):
+        rec = ", ".join('{ "%s", "optimal", "|Hitem:%d|h[%s]|h" }' % (names[i], i, names[i]) for i in ids)
+        c.run('tradeSkill = { name = "%s", rank = %d, max = 300, recipes = { %s } }' % (prof, rank, rec))
+        c.fire("TRADE_SKILL_SHOW")
+        guild.run(1.5)
+    crafts(guild["Lyra"], "Tailoring", 300, [14155, 13858, 14156])
+    crafts(guild["Mira"], "Alchemy", 285, [13442, 13445, 12360, 13444])
+    crafts(me, "Alchemy", 300, [13442, 13444, 12360])
+    guild.run(35)
+    # Guild goals.
+    me.ns.AddGoal("kills", 50, "week")
+    me.ns.AddGoal("bosses", 3, "week")
+    me.ns.AddGoal("raidnights", 8, "month")
+    guild.run(1)
     return guild, me
 
 
@@ -468,6 +487,8 @@ if __name__ == "__main__":
     print(rd.render(me.lua.eval("WarcrestProfile"), os.path.join(out, "window-profile.png")))
     me.ns.ShowProfiles()
     print(rd.render(me.lua.eval("WarcrestProfiles"), os.path.join(out, "window-profiles.png")))
+    me.ns.ShowCrafters()
+    print(rd.render(me.lua.eval("WarcrestCrafters"), os.path.join(out, "window-crafters.png")))
     me.ns.UI.NewGuildEvent()
     print(rd.render(panel, os.path.join(out, "panel-events-new.png")))
     me.ns.OpenPanel("achievements")
