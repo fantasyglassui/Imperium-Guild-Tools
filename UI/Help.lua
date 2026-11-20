@@ -37,6 +37,9 @@ local TOPICS = {
     P("Plan:", "officers put the sign-ups into groups 1 to 8 or on the bench, by clicking a name and then a group, or with Auto-fill (tanks in group 1, a healer in each group). Everyone can see the plan. At raid time, Invite sign-ups invites only the planned groups, and Arrange raid moves everyone into their group (raid leader or assistant)."),
     P("Raid night recap:", "when an officer clicks End raid, the whole guild gets a summary in chat: the bosses killed, the loot and who won it, how many attended, and the DKP you earned. /warcrest raidrecap shows the last one again."),
     P("Officers:", "New raid schedules one. Start raid on raid night records who's there (and gives DKP, if the guild uses it). Invite sign-ups invites everyone who accepted."),
+    P("Wipes and kill times:", "every boss pull in a guild raid is recorded, kill or wipe. Progress shows the wipes and the best kill time for each boss, and the raid hears when it beats its best."),
+    P("Attunements:", "the Attunements button on Progress shows who's attuned for Molten Core, Onyxia, Blackwing Lair and Naxxramas, and who has the Upper Blackrock Spire and Scholomance keys. Sign-ups who aren't attuned are flagged."),
+    P("Assignments:", "officers write who does what on each boss with the Assignments button on Progress, and can post it to raid chat. When the boss is pulled, you're told your job."),
   }) end },
   { "Loot council", function() return join({
     T("A way to hand out loot by vote instead of DKP, and it works whether or not the guild uses DKP."),
@@ -67,12 +70,17 @@ local TOPICS = {
     P("Streaks and revenge:", "the guild hears about kill streaks, when a big streak is ended, and when someone kills a guildmate's killer."),
     P("Wanted:", "enemy players who keep killing guild members. When anyone spots one, everyone is alerted and the spot is marked on the map."),
     P("Rival guilds:", "the Wanted tab's Guilds view shows the score against every enemy guild. Officers mark rivals: the guild is alerted when a group of them is seen, and the weekly recap says how the war went."),
+    P("Where the guild fights:", "circles on the world map show where guild members killed enemy players or died to them in the last week. Hover one for the numbers; turn it off in Settings > General."),
     P("Bounties:", "off until an officer turns them on (Settings > Alerts > Bounties). Then officers can put a reward on an enemy player's head on the Wanted tab, and the first guild member to kill them in 30 days claims it, paid in DKP if the guild uses it."),
   }) end },
   { "Achievements and titles", function() return join({
     T("The Achievements tab shows what you've earned and your progress on the rest, for PvP, raids, bosses and loot. They come from the guild's shared history, so they count what you did before you installed Warcrest."),
     TF("Some achievements come with a %s. Click the Title button at the top right of the Achievements tab to see every title and pick one you've earned. It shows after your name on your player card.", B(T("title"))),
     T("The Guild view shows what's been earned lately, the guild's goals and who has the most. Officers set goals for the week or month there, like killing 50 enemy players."),
+  }) end },
+  { "Polls and orders", function() return join({
+    P("Polls:", "the Events tab's Polls view. Ask the guild a question with a few answers, and everyone with Warcrest votes. Officers can always start one; they can let members start them too (Settings > Alerts)."),
+    P("Crafting orders:", "find a recipe in the crafters window (/warcrest craft), click it, pick a crafter and place an order, saying if you're bringing the materials. The crafter accepts, declines or marks it done, and you hear when it changes. Orders shows yours."),
   }) end },
   { "Alerts and settings", function() return join({
     P("Alerts:", "the Settings tab lists every alert. The Guild column is set by officers for everyone; the You column is just for you."),
@@ -87,6 +95,7 @@ local TOPICS = {
     P("Officer log:", "promotions, joins, leaves and note changes, recorded while you're online."),
     P("Guild settings:", "which alerts the guild hears, who counts as an officer, and whether the guild uses DKP: Settings > Alerts, then Save for whole guild."),
     P("Addon tab:", "who has Warcrest, who's out of date, and Check now to ask everyone online."),
+    P("Inactive members:", "the Officers tab's Inactive view lists who hasn't logged in for 14, 30, 60 or 90 days, with their rank and last raid."),
   }) end },
   { "Commands", function() return join({
     CMD("/warcrest  /wc", "open Warcrest"),
@@ -98,6 +107,11 @@ local TOPICS = {
     CMD("/warcrest auction [item] [min bid]", "auction an item to your raid (officers)"),
     CMD("/warcrest council  /warcrest lc", "the loot council vote"),
     CMD("/warcrest raidrecap", "the last raid night's recap"),
+    CMD("/warcrest attune", "who in the guild is attuned for each raid"),
+    CMD("/warcrest assign", "raid assignments for each boss"),
+    CMD("/warcrest polls", "guild polls"),
+    CMD("/warcrest orders", "your crafting orders"),
+    CMD("/warcrest inactive", "members who haven't logged in lately (officers)"),
     CMD("/warcrest recap", "last week's guild recap"),
     CMD("/warcrest quiet", "hold alerts during combat on or off"),
     CMD("/warcrest test", "show a test alert"),

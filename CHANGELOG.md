@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.8.0
+### Raids
+- **Attunements:** a new window (the Attunements button on the Raids tab's Progress view, or `/warcrest attune`) shows who in the guild is attuned for **Molten Core, Onyxia, Blackwing Lair and Naxxramas**, and who has the **Upper Blackrock Spire** and **Scholomance** keys. Warcrest checks the attunement quests you've finished and shares them; search by name, or show level 60s only. Your player card lists your attunements, the guild hears when someone gets a new one, and a raid's sign-up list flags anyone who isn't attuned for it.
+- **Raid assignments:** officers write who does what on each boss (tanks, healers, interrupts, a line per job) with the Assignments button on Progress, or `/warcrest assign`. Everyone sees the plan with their own name picked out and their jobs at the top, and Warcrest reminds you of your job in chat when the boss is pulled. **Post to raid chat** posts the plan a line at a time.
+- **Wipe tracking:** every boss pull in a guild raid is recorded, kill or wipe, with how long it took. Progress now shows **wipes** and the **best kill time** for each boss (hover for pulls, wipes before the first kill and the last kill time), and the raid hears when it beats its best time.
+
+### Guild
+- **Guild polls:** the Events tab has a **Polls** view (`/warcrest polls`). Ask a question with 2 to 6 answers, open for 1 day to a week; everyone with Warcrest votes, and can change their vote while it's open. Officers can always start polls, and can let members start them too (Settings, **Members can start polls**).
+- **Crafting orders:** click a recipe in the crafters window to order it: pick a crafter (online ones first), say if you're bringing the materials, add a note. The crafter accepts, declines or marks it done, and both of you hear about every change. The new **Orders** view (`/warcrest orders`) lists yours.
+- **Inactive members (officers):** the Officers tab's new **Inactive** view (`/warcrest inactive`) lists who hasn't logged in for 14, 30, 60 or 90 days, longest gone first, with their rank, level and last raid.
+
+### PvP
+- **Where the guild fights:** circles on the world map show where guild members killed enemy players or died to them in the last 7 days: bigger for more fights, gold where we won more, red where we lost more. Hover one for the numbers and the enemies we meet most there. Turn it off in Settings > General.
+
+### Also
+- The Raids tab's subtitle and Progress list are now translated.
+- The help window has a new topic for polls and orders, and the new commands.
+
 ## 3.7.3
 - **Bug reports:** type `/warcrest report` (or `/warcrest bug`) and a window opens with everything needed to look into a problem: your Warcrest and game versions, language, guild size, settings, how much history you have, your other addons, and any errors since you logged in. Copy it (Ctrl+C) into the [Warcrest Discord](https://discord.gg/qeSMwQWyPR) or the contact form on [warcrest-addon.com](https://warcrest-addon.com/#contact). It has no names in it: not yours, your guild's or your guildmates'.
 - **Guild setup, finished in one go:** officers setting Warcrest up for their guild now also choose which alerts the guild hears (kills, streaks, the Wanted list, deaths, achievements, raids, celebrations) and whether achievements are posted in guild chat, then save it all for everyone. `/warcrest setup` opens it any time.

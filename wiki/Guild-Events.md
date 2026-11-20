@@ -25,3 +25,12 @@ Events attended show on each member's player card, and count toward a recruit's 
 
 ## On the calendar
 Events show on the Raids tab's **Calendar** in their own colours. Hover a day to see who's going; click an event to open it.
+
+## Polls
+
+Switch the Events tab to **Polls** (or `/warcrest polls`) to ask the guild something: which night for a new raid, where to hold the guild party.
+
+- Click **New poll**, write the question and 2 to 6 answers, choose how long it stays open (1 day to a week), and click **Start poll**. The guild hears about it.
+- **Vote** by clicking an answer. You can change your vote while it's open. Votes aren't secret: hover an answer to see who picked it.
+- Whoever asked, or an officer, can **Close poll** early.
+- Officers can always start polls. In **Settings**, they can tick **Members can start polls** (then Save for whole guild) to let everyone ask, one open poll each.

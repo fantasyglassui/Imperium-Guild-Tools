@@ -476,6 +476,11 @@ def demo_guild(guild_name=None, locale=None):
                                  ("Ragnaros", 280, False, 4800), ("Ragnaros", 412, True, 4600)):
         me.ns.LedgerAdd("BP", me.lua.table_from({"raid": "Molten Core", "enc": boss, "ok": "1" if ok else "0", "secs": secs}))
         guild.run(70)
+    for boss, secs, ok in (("Rage Winterchill", 96, False), ("Rage Winterchill", 214, True), ("Rage Winterchill", 188, True),
+                           ("Anetheron", 160, False), ("Anetheron", 131, False), ("Anetheron", 247, True), ("Anetheron", 239, True),
+                           ("Kaz'rogal", 305, True), ("Azgalor", 122, False), ("Azgalor", 296, True)):
+        me.ns.LedgerAdd("BP", me.lua.table_from({"raid": "Hyjal Summit", "enc": boss, "ok": "1" if ok else "0", "secs": secs}))
+        guild.run(65)
     # A poll and crafting orders.
     me.ns.StartPoll("Which night for Blackwing Lair?", me.lua.table_from(["Thursday", "Friday", "Sunday"]), 3)
     guild.run(2)

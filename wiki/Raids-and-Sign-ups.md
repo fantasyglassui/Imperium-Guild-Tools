@@ -50,6 +50,24 @@ Switch to **Progress** to see how far the guild has got in each raid, like **4 /
 
 A boss kill counts for the guild when **5 or more guild members, at least half the raid**, kill a raid boss. One guildmate in the raid records it for everyone. The first kill of each boss is announced to the guild (**Guild first!**), and so is clearing a raid for the first time.
 
+### Wipes and kill times
+
+Every boss pull in a guild raid is recorded, kill or wipe (same rule as kills: 5 or more guild members, at least half the raid). Progress shows the **wipes** and the **best kill time** for each boss; hover a boss for the pulls, the wipes before the first kill and the last kill time. When the guild beats its best time on a boss, the raid hears about it.
+
+## Attunements
+
+**Attunements** (at the bottom of Progress, or `/warcrest attune`) shows who's attuned for **Molten Core, Onyxia, Blackwing Lair and Naxxramas**, and who has the **Upper Blackrock Spire** and **Scholomance** keys. Warcrest checks the quests each member has finished and shares them, so it fills in as guildmates log in with Warcrest. Tick **Level 60 only** to hide alts and levellers.
+
+When you sign up for a raid you aren't attuned for, the sign-up list flags it ("Not attuned (MC)"), so officers can sort it out before raid night. The guild hears when someone gets a new attunement.
+
+## Raid assignments
+
+**Assignments** (at the bottom of Progress, or `/warcrest assign`) holds a plan for each boss: who tanks what, who heals whom, who interrupts. Pick a raid and a boss on the left.
+
+- **Officers** write the plan, a line for each job with the players' names ("Healers: Mira on Thorne, Lyra on groups 1-3"), and click **Save for the guild**. **Post to raid chat** posts it a line at a time.
+- **Everyone** sees the plan with their own name picked out, and **Your job** at the top lists just their lines.
+- When the boss is pulled (or you target it in the raid), Warcrest reminds you of your job in chat.
+
 ## No-shows and attendance
 
 If you accept and don't come (and weren't on standby), you're marked as a **no-show** for that raid, and it counts against your attendance. Attendance over the last 30 days shows next to everyone's DKP, so decline if your plans change.

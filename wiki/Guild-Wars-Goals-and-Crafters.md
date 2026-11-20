@@ -37,6 +37,14 @@ Who in the guild can make what. Open it with **Crafters** on the Roster tab, or 
 - When you open a profession window (or the Enchanting window), the recipes you know are noted and shared with the guild. Only changes are sent, and a crafting spree is sent as one update.
 - Guildmates keep everyone's lists, and ask whoever's online for theirs when they log in, so the directory fills in as people play.
 - Search by name and filter by profession. Crafters who are online are listed first, in green.
-- **Click a recipe to whisper the crafter**: "Hi! Could you craft [Mooncloth Bag] for me?"
+- **Click a recipe to order it**: pick the crafter (online ones first), tick **I'll bring the materials** if you are, add a note, and click **Place order**. Or click **Whisper** to ask them yourself.
 - Recipes are kept by item, so they show in your own language.
 - Lists not updated for 6 months are dropped.
+
+### Crafting orders
+
+The crafters window's **Orders** view (or `/warcrest orders`) lists the orders for you to make and the ones you've placed.
+
+- **Crafters** click **Accept** or **Decline**, then **Done** when it's made. You hear when an order comes in, even if it arrived while you were offline.
+- **Whoever ordered** can **Cancel** it, and hears when the crafter accepts, declines or finishes it.
+- Finished orders stay listed for a week; open ones for a month.

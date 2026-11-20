@@ -753,8 +753,8 @@ end
 -- The header's subtitle: how many raids are coming up, and whether one is on.
 local function Subtitle()
   local n = #ns.RaidEvents()
-  local text = n == 0 and "No raids scheduled" or (n == 1 and "1 raid scheduled" or (n .. " raids scheduled"))
-  if ns.ActiveSession() then text = text .. " · raid night in progress" end
+  local text = n == 0 and ns.T("No raids scheduled") or ns.TP(n, "1 raid scheduled", "%d raids scheduled", n)
+  if ns.ActiveSession() then text = text .. " · " .. ns.T("raid night in progress") end
   return text
 end
 

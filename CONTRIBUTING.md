@@ -72,3 +72,7 @@ The wiki's pages live in the `wiki/` folder. When changes to them reach `main`, 
 ## What's in the release zip
 
 The packager leaves out `CONTRIBUTING.md`, `.gitignore`, `.luacheckrc`, and the `wiki`, `tests` and `.github` folders, so players only get the addon itself.
+
+## The website
+
+The website (warcrest-addon.com) is `docs/`. Edit `docs/index.html`, the English page, then run `python3 tools/site/build.py`: it fills the What's new section from `UI/Updates.lua` and writes the German, French and Spanish pages (`docs/de`, `docs/fr`, `docs/es`) using `tools/site/i18n/*.json` and the addon's own translations. `python3 tools/site/build.py --missing` lists text that still needs translating.

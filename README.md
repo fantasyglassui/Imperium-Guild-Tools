@@ -26,6 +26,12 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Raid night recap.** When the raid night ends, the guild gets a summary of the bosses, loot, attendance and the DKP each person earned.
 - **Raid groups planner.** Put sign-ups into groups and on the bench before the raid; Arrange raid moves everyone into place.
 - **Bounties.** Officers can put a reward on a ganker's head; the guild member who kills them claims it. Off until an officer turns it on.
+- **Attunements.** Who's attuned for Molten Core, Onyxia, Blackwing Lair and Naxxramas, and who has the UBRS and Scholomance keys. Sign-ups who aren't attuned are flagged.
+- **Raid assignments.** Officers write who does what on each boss and post it to raid chat; everyone sees their own job, and is reminded of it when the boss is pulled.
+- **Wipe tracking.** Every boss pull is recorded, kill or wipe, with the best kill time for each boss.
+- **Guild polls.** Ask the guild a question; everyone with Warcrest votes.
+- **Crafting orders.** Order from a guild crafter in the crafters directory; they accept, decline or mark it done.
+- **Where the guild fights.** Circles on the world map where guild members killed enemy players or died to them this week.
 - **German, French and Spanish.** Follows your game's language, or pick one in Settings.
 - **Achievements and titles.** 44 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
 - **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
@@ -37,6 +43,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Version check.** The addon tells you when a newer version is out, and officers can see who is out of date.
 - **Guild tools for officers.** A searchable roster where officers can edit notes, promote, demote, remove and invite members, and update the Message of the Day.
 - **Guild-wide settings.** Officers can turn death alerts on or off, or choose which death types are announced, for the entire guild at once.
+- **Inactive members.** Officers see who hasn't logged in for 14, 30, 60 or 90 days, with their rank and last raid.
 - **Officer Log.** A record of promotions, demotions, removals, joins, leaves, note edits, Message of the Day changes and settings changes.
 
 ## Coming from The Imperium
@@ -69,6 +76,11 @@ When updating by hand, delete the old `Warcrest` and `TheImperium` folders first
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
 | `/warcrest council` | The loot council vote, or start one (officers) |
 | `/warcrest raidrecap` | The last raid night's recap |
+| `/warcrest attune` | Who's attuned for each raid |
+| `/warcrest assign` | Raid assignments for each boss |
+| `/warcrest polls` | Guild polls |
+| `/warcrest orders` | Your crafting orders |
+| `/warcrest inactive` | Members who haven't logged in lately (officers) |
 | `/warcrest kills` | Open the kill log |
 | `/warcrest wanted` | Open the wanted list |
 | `/warcrest card [name]` | Show a guild member's player card (yours if no name) |

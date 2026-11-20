@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Warcrest</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Outils de guilde pour World of Warcraft: Forever : raids, enchères DKP, alertes PvP, guerres de guildes rivales, événements, 161 hauts faits et plus, partagés avec chaque membre.">
+<link rel="alternate" hreflang="en" href="https://warcrest-addon.com/">
+<link rel="alternate" hreflang="de" href="https://warcrest-addon.com/de/">
+<link rel="alternate" hreflang="fr" href="https://warcrest-addon.com/fr/">
+<link rel="alternate" hreflang="es" href="https://warcrest-addon.com/es/">
+<link rel="alternate" hreflang="x-default" href="https://warcrest-addon.com/">
+<link rel="canonical" href="https://warcrest-addon.com/fr/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Warcrest">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Warcrest : une fenêtre pour toute la guilde">
+<meta property="og:description" content="Raids et enchères DKP, alertes de victoires PvP, une liste des recherchés, guerres de guildes, événements et 161 hauts faits, partagés avec chaque membre. Gratuit, pour WoW Forever.">
+<meta property="og:url" content="https://warcrest-addon.com/fr/">
+<meta property="og:image" content="https://warcrest-addon.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Warcrest : une fenêtre pour toute la guilde, avec l&#x27;onglet Victoires.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#e0b94c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: the addon's own window, in the open. A wide centred column; screenshots set in the
+   same slate-and-gold frame the game shows; one gold accent, kind colours only on alerts. */
+:root {
+  --ground: #080b10;      /* page, the sidebar's near-black */
+  --panel: #0d1118;       /* the addon window */
+  --card: #11161e;
+  --edge: #232a36;
+  --line: #1c222c;
+  --text: #f2f4f8;
+  --soft: #c9cfda;
+  --muted: #8b95a7;
+  --faint: #6b7587;
+  --gold: #e0b94c;        /* Warcrest gold */
+  --gold-dim: rgba(224, 185, 76, .14);
+  --on-gold: #14110a;
+  --good: #6fd08c;
+  --f-display: "Marcellus", "Trajan Pro", Georgia, serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wrap: 1160px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--ground); color: var(--soft);
+  font: 16px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+img { max-width: 100%; display: block; }
+h1, h2, h3 { color: var(--text); text-wrap: balance; margin: 0; }
+h1, h2 { font-family: var(--f-display); font-weight: 400; letter-spacing: .01em; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+
+/* Header */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(8, 11, 16, .92); }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: rgba(8, 11, 16, .86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--f-display); font-size: 1.35rem; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.top nav { display: flex; gap: 22px; margin-left: auto; font-size: .92rem; }
+.top nav a { color: var(--muted); }
+.top nav a:hover { color: var(--text); text-decoration: none; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 2px; font-weight: 600; font-size: .95rem; border: 1px solid var(--edge); color: var(--text); background: #151a23; white-space: nowrap; }
+.btn:hover { text-decoration: none; background: #1c2230; }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.btn.gold:hover { background: #ebc75f; }
+.top .btn { height: 36px; padding: 0 14px; font-size: .88rem; }
+@media (max-width: 760px) { .top nav { display: none; } .top .btn { margin-left: auto; } }
+
+/* Hero */
+.hero { padding-block: 72px 40px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: center; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 22px; }
+.ver { font: 500 .78rem var(--f-mono); color: var(--gold); border: 1px solid rgba(224, 185, 76, .35); padding: 3px 8px; border-radius: 2px; }
+.hero h1 { font-size: clamp(2.5rem, 5vw, 3.9rem); line-height: 1.04; margin-bottom: 22px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.lede { font-size: 1.12rem; color: var(--soft); max-width: 34em; margin-bottom: 30px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: .9rem; color: var(--muted); }
+.facts b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* The window tour */
+.tour { min-width: 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+.tabs button { font: 500 .84rem var(--f-body); color: var(--muted); background: none; border: 1px solid transparent; border-radius: 2px; padding: 6px 10px; cursor: pointer; }
+.tabs button:hover { color: var(--text); }
+.tabs button[aria-selected="true"] { color: var(--gold); background: var(--gold-dim); border-color: rgba(224, 185, 76, .3); }
+.shot { background: var(--panel); border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02); }
+.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 830; object-fit: cover; }
+.tour figcaption { margin-top: 12px; font-size: .9rem; color: var(--muted); min-height: 3em; }
+@media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .hero { padding-block: 44px 24px; } }
+
+/* Alerts */
+section { padding-block: 64px; }
+.sec-head { display: grid; gap: 12px; margin-bottom: 36px; max-width: 46em; }
+.sec-head h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.1; }
+.sec-head p { color: var(--muted); }
+.alerts { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0a0e14, var(--ground)); }
+.alert-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.stack { display: grid; gap: 10px; }
+.banner { --k: var(--gold); display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; align-items: center; padding: 11px 16px; background: linear-gradient(90deg, color-mix(in srgb, var(--k) 14%, var(--panel)), var(--panel) 70%); border: 1px solid color-mix(in srgb, var(--k) 40%, var(--edge)); border-left: 3px solid var(--k); border-radius: 2px; }
+.banner .ico { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--k) 22%, transparent); color: var(--k); }
+.banner .ico svg { width: 16px; height: 16px; }
+.banner .t { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--k); }
+.banner .m { color: var(--text); font-size: .95rem; line-height: 1.4; }
+.banner .m b { color: var(--k); font-weight: 600; }
+.points { display: grid; gap: 22px; }
+.points h3 { margin-bottom: 4px; }
+.points p { color: var(--muted); font-size: .95rem; }
+
+/* Feature rows */
+.feature { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding-block: 36px; }
+.feature.flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.feature.flip .shot { order: 2; }
+.feature h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; line-height: 1.15; margin-bottom: 14px; }
+.feature .copy { display: grid; gap: 14px; min-width: 0; }
+.feature ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.feature li { padding-left: 20px; position: relative; color: var(--soft); font-size: .96rem; }
+.feature li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); }
+.feature li b { color: var(--text); font-weight: 600; }
+.shot.tall img { aspect-ratio: auto; }
+@media (max-width: 860px) { .feature, .feature.flip { grid-template-columns: minmax(0, 1fr); gap: 24px; } .feature.flip .shot { order: 0; } .alert-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Achievements explorer */
+.ach { border-top: 1px solid var(--line); }
+.ach-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.seg { display: inline-flex; flex-wrap: wrap; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; padding: 3px; }
+.seg button { font: 500 .86rem var(--f-body); color: var(--muted); background: none; border: 0; padding: 6px 12px; border-radius: 1px; cursor: pointer; }
+.seg button span { color: var(--faint); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.seg button[aria-pressed="true"] { background: var(--edge); color: var(--text); font-weight: 600; }
+.search { display: flex; align-items: center; gap: 8px; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; padding: 0 12px; height: 38px; width: min(320px, 100%); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 .92rem var(--f-body); outline: none; }
+.search:focus-within { border-color: rgba(224, 185, 76, .6); }
+.search svg { width: 15px; height: 15px; color: var(--faint); flex: none; }
+.titlesonly { display: inline-flex; gap: 8px; align-items: center; font-size: .88rem; color: var(--muted); cursor: pointer; }
+.titlesonly input { accent-color: var(--gold); width: 16px; height: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 10px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 14px 14px 12px; display: grid; grid-template-rows: auto 1fr auto; gap: 6px; min-height: 112px; }
+.tile .n { display: flex; gap: 9px; align-items: flex-start; color: var(--text); font-weight: 600; font-size: .95rem; line-height: 1.3; }
+.tile .n svg { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--gold); }
+.tile .d { color: var(--muted); font-size: .84rem; line-height: 1.45; }
+.tile .f { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-size: .78rem; }
+.tile .c { color: var(--faint); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; font-size: .66rem; }
+.tile .tt { color: var(--gold); font-weight: 500; text-align: right; }
+.empty { padding: 32px; text-align: center; color: var(--muted); border: 1px dashed var(--edge); }
+.more { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 18px; }
+.count { color: var(--faint); font-size: .86rem; }
+.more .btn { height: 36px; font-size: .88rem; cursor: pointer; }
+
+/* Install + commands */
+.install { border-top: 1px solid var(--line); }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+.step { background: var(--card); border: 1px solid var(--line); padding: 22px; border-radius: 2px; display: grid; gap: 8px; align-content: start; }
+.step::before { counter-increment: s; content: counter(s); font-family: var(--f-display); font-size: 2rem; line-height: 1; color: var(--gold); }
+.step p { color: var(--muted); font-size: .94rem; }
+.step code, .cmds code, .faq code { font: 500 .86em var(--f-mono); color: var(--text); background: #151a23; border: 1px solid var(--edge); padding: 1px 6px; border-radius: 2px; }
+@media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; margin-top: 56px; align-items: start; }
+@media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.cmds { overflow-x: auto; border: 1px solid var(--line); border-radius: 2px; }
+.cmds table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.cmds td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; color: var(--muted); }
+.cmds tr:first-child td { border-top: 0; }
+.cmds td:first-child { white-space: nowrap; width: 1%; }
+.cmds button { margin-left: 6px; font: 500 .7rem var(--f-body); color: var(--faint); background: none; border: 1px solid var(--edge); border-radius: 2px; padding: 1px 6px; cursor: pointer; vertical-align: 1px; }
+.cmds button:hover { color: var(--gold); border-color: var(--gold); }
+.faq { display: grid; gap: 22px; }
+.faq h3 { margin-bottom: 4px; }
+.faq p { color: var(--muted); font-size: .94rem; }
+
+
+/* Contact */
+.contact { border-top: 1px solid var(--line); }
+.contact-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
+@media (max-width: 860px) { .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.form { display: grid; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 24px; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 560px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field input, .field select, .field textarea { width: 100%; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; color: var(--text); font: 400 .95rem var(--f-body); padding: 10px 12px; }
+.field textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: rgba(224, 185, 76, .7); }
+.form .btn { justify-self: start; cursor: pointer; }
+.form-note { font-size: .84rem; color: var(--faint); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.notice { padding: 12px 16px; border: 1px solid rgba(111, 208, 140, .45); background: rgba(111, 208, 140, .08); color: var(--text); border-radius: 2px; font-size: .94rem; }
+.contact .points p { color: var(--muted); }
+
+/* The Discord band */
+.help-band { margin-top: 56px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center;
+  padding: 24px 26px; background: linear-gradient(100deg, rgba(88, 101, 242, .16), var(--card) 55%); border: 1px solid rgba(88, 101, 242, .45); border-radius: 2px; }
+.help-band .dc { width: 48px; height: 48px; border-radius: 12px; background: #5865f2; display: grid; place-items: center; }
+.help-band .dc svg { width: 28px; height: 28px; }
+.help-band h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.5rem; margin-bottom: 4px; }
+.help-band p { color: var(--muted); font-size: .95rem; }
+.help-band .cta2 { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn.discord { background: #5865f2; border-color: #5865f2; color: #fff; }
+.btn.discord:hover { background: #6d78f5; }
+@media (max-width: 860px) { .help-band { grid-template-columns: minmax(0, 1fr); } }
+footer { border-top: 1px solid var(--line); padding-block: 40px 56px; color: var(--faint); font-size: .88rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: space-between; align-items: center; }
+.langs { display: flex; gap: 8px; flex-wrap: wrap; }
+.langs a, .langs span { border: 1px solid var(--edge); padding: 2px 8px; border-radius: 2px; color: var(--muted); text-decoration: none; }
+.langs a:hover { color: var(--gold); border-color: var(--gold); }
+.langs [aria-current] { color: var(--text); border-color: var(--gold); }
+/* Language menu in the header */
+.lang-menu { position: relative; }
+.lang-menu summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .85rem; font-weight: 600; letter-spacing: .04em; padding: 6px 4px; }
+.lang-menu summary::-webkit-details-marker { display: none; }
+.lang-menu summary:hover, .lang-menu[open] summary { color: var(--text); }
+.lang-menu summary svg { width: 16px; height: 16px; }
+.lang-menu ul { position: absolute; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none; background: var(--panel); border: 1px solid var(--edge); border-radius: 2px; min-width: 150px; z-index: 30; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+.lang-menu a { display: block; padding: 7px 10px; color: var(--soft); text-decoration: none; font-size: .9rem; border-radius: 2px; }
+.lang-menu a:hover { background: rgba(255,255,255,.05); color: var(--text); }
+.lang-menu a[aria-current] { color: var(--gold); }
+@media (max-width: 760px) { .lang-menu { margin-left: auto; } .lang-menu + .btn { margin-left: 0; } }
+/* What's new */
+.news { border-top: 1px solid var(--line); }
+.news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.release { border: 1px solid var(--line); background: var(--panel); padding: 22px 22px 24px; display: grid; gap: 14px; align-content: start; border-radius: 2px; }
+.release:first-child { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.release header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.release h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.5rem; color: var(--text); }
+.release time { color: var(--faint); font-size: .82rem; }
+.release ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.release li { padding-left: 18px; position: relative; color: var(--muted); font-size: .92rem; }
+.release li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+.release code, .news code { font: 500 .86em var(--f-mono); color: var(--text); }
+.news-more { margin-top: 18px; color: var(--muted); font-size: .9rem; }
+.news-more a { color: var(--gold); }
+@media (max-width: 960px) { .news-grid { grid-template-columns: minmax(0, 1fr); } }
+</style>
+<link rel="icon" href="../img/crest.png">
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Warcrest, retour en haut">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 L56 12 V30 C56 45 46 55 32 60 C18 55 8 45 8 30 V12 Z" fill="#e0b94c"/><path d="M32 9 L51 15.5 V30 C51 42.5 43 51 32 55.2 C21 51 13 42.5 13 30 V15.5 Z" fill="none" stroke="#080b10" stroke-width="2"/><path d="M32 18 L35.6 28.4 L46.6 28.6 L37.8 35.2 L41 45.8 L32 39.4 L23 45.8 L26.2 35.2 L17.4 28.6 L28.4 28.4 Z" fill="#080b10"/></svg>
+      Warcrest
+    </a>
+    <nav aria-label="Sections">
+      <a href="#features">Fonctionnalités</a>
+      <a href="#news">Nouveautés</a>
+      <a href="#achievements">Hauts faits</a>
+      <a href="#install">Installer</a>
+      <a href="#commands">Commandes</a>
+      <a href="#contact">Contact</a>
+      <a href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Discord</a>
+    </nav>
+    <details class="lang-menu">
+      <summary aria-label="Langue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>FR</summary>
+      <ul><!--langmenu--><li><a href="/" hreflang="en" lang="en">English</a></li><li><a href="/de/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/fr/" hreflang="fr" lang="fr" aria-current="page">Français</a></li><li><a href="/es/" hreflang="es" lang="es">Español</a></li></ul>
+    </details>
+    <a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Télécharger</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">
+          <span class="ver" data-version="v">v3.8.0</span>
+          <span class="label">Un addon de guilde pour World of Warcraft: Forever</span>
+        </div>
+        <h1>Une fenêtre pour <em>toute la guilde.</em></h1>
+        <p class="lede">Inscriptions aux raids, harmonisations et enchères DKP, alertes de victoires PvP et liste des gankers recherchés, événements et sondages de guilde, guerres de guildes rivales et 161 hauts faits avec titres. Installe-le et il se synchronise avec chaque membre qui l'a. Personne n'a rien à configurer.</p>
+        <div class="ctas">
+          <a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Télécharger sur CurseForge</a>
+          <a class="btn" href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Rejoindre le Discord</a>
+        </div>
+        <div class="facts">
+          <span><b>161</b> hauts faits</span>
+          <span><b>67</b> titres</span>
+          <span><b>87</b> sons d'alerte</span>
+          <span><b>4</b> langues</span>
+        </div>
+      </div>
+
+      <figure class="tour" id="tour" style="margin:0">
+        <div class="tabs" role="tablist" aria-label="Onglets de Warcrest"></div>
+        <div class="shot"><img id="tour-img" src="../img/kills.webp" width="1400" height="830" alt="L&#x27;onglet Victoires : les victoires PvP de la guilde ce mois-ci et le classement des chasseurs de têtes."></div>
+        <figcaption id="tour-cap">Les victoires PvP des membres, avec coups fatals et assistances, et le classement mensuel des meilleurs chasseurs de têtes.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="alerts" aria-labelledby="alerts-h">
+    <div class="wrap alert-grid">
+      <div class="stack" aria-label="Exemples d&#x27;alertes">
+        <div class="banner" style="--k:#ff5a4f"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13 13 3M9 3h4v4"/></svg></span><div><div class="t">Victoire de la guilde</div><div class="m"><b>Lyra le Vengeur</b> a tué Grim dans la vallée de Strangleronce</div></div></div>
+        <div class="banner" style="--k:#e070ff"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="1.5"/></svg></span><div><div class="t">Ganker recherché repéré</div><div class="m"><b>Shadowfang</b> vu à Baie-du-Butin par Thorne</div></div></div>
+        <div class="banner" style="--k:#ff8c3a"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1.5 13.5 3.5V8c0 3-2.4 5.3-5.5 6.5C4.9 13.3 2.5 11 2.5 8V3.5Z"/></svg></span><div><div class="t">Guilde rivale</div><div class="m">Guilde rivale <b>&lt;Bloodfang&gt;</b> repérée : 4 joueurs dans les contreforts de Hautebrande, vus par Mira.</div></div></div>
+        <div class="banner" style="--k:#e0b94c"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 2.5h7v3a3.5 3.5 0 0 1-7 0Zm3.5 6.5v3m-2.5 1.5h5"/></svg></span><div><div class="t">Haut fait</div><div class="m">Brakk a obtenu <b>Triplé</b> !</div></div></div>
+        <div class="banner" style="--k:#66ccff"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="3.5" width="11" height="10" rx="1"/><path d="M2.5 7h11M5.5 2v3m5-3v3"/></svg></span><div><div class="t">Raid</div><div class="m"><b>Cœur du Magma</b> commence dans 15 minutes. Tu es inscrit.</div></div></div>
+        <div class="banner" style="--k:#6fd08c"><span class="ico"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 8.5 3 3 7-7"/></svg></span><div><div class="t">Objectif de guilde</div><div class="m">Objectif de guilde atteint : <b>Tuer 50 joueurs ennemis</b> (cette semaine).</div></div></div>
+      </div>
+      <div>
+        <div class="sec-head" style="margin-bottom:28px">
+          <span class="label">Alertes</span>
+          <h2 id="alerts-h">Toute la guilde l'apprend sur le moment.</h2>
+        </div>
+        <div class="points">
+          <div><h3>Une bannière pour chaque type de nouvelle</h3><p>Victoires, morts, gankers, rivaux, boss, raids, butin et hauts faits ont chacun leur couleur, leur icône et leur son. Clique sur une bannière pour ouvrir son onglet.</p></div>
+          <div><h3>87 sons d'alerte, ou les tiens</h3><p>Choisis un son pour chaque type d'alerte parmi ceux de Warcrest, du jeu ou de SharedMedia, ou dépose tes propres fichiers .ogg et .mp3 dans un dossier.</p></div>
+          <div><h3>Silence quand ça compte</h3><p>Mets les alertes en attente en donjon, en raid ou en combat, et lis-les dans le chat une fois sorti. Les officiers choisissent ce qu'entend la guilde ; chacun peut couper ce qu'il ne veut pas.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" aria-labelledby="feat-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="label">Ce qu'il contient</span>
+        <h2 id="feat-h">Pensé pour la façon dont une guilde joue vraiment.</h2>
+        <p>Tout est gardé dans l'historique partagé de la guilde et passe d'un addon à l'autre : un membre qui était hors ligne rattrape tout à sa connexion, et rien ne dépend de l'ordinateur d'un seul officier.</p>
+      </div>
+
+      <div class="feature">
+        <div class="shot"><img src="../img/war.webp" width="1400" height="830" loading="lazy" alt="Le tableau de guerre : guildes ennemies avec les victoires de chaque côté et le score, une guilde rivale sélectionnée."></div>
+        <div class="copy">
+          <span class="label">PvP sauvage</span>
+          <h3>Victoires, gankers et guerres de guildes</h3>
+          <ul>
+            <li><b>Alertes de victoire</b> avec coups fatals et assistances, et un classement mensuel des <b>meilleurs chasseurs de têtes</b>. Les victimes grises ne comptent jamais.</li>
+            <li>Une <b>liste des recherchés</b> : les joueurs ennemis qui tuent sans cesse des membres. Quand quelqu'un en repère un, tout le monde est prévenu et l'endroit est marqué sur la carte.</li>
+            <li>Le <b>tableau de guerre</b> tient le score contre chaque guilde ennemie rencontrée. Les officiers marquent les rivales, et la guilde est prévenue quand un groupe d'entre elles se montre.</li>
+            <li>Séries, vengeances et <b>primes</b> payées en DKP, et une carte de <b>où la guilde se bat</b>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature flip">
+        <div class="shot"><img src="../img/dkp.webp" width="1400" height="830" loading="lazy" alt="L&#x27;onglet DKP : classement avec présence, attribution de DKP, une enchère et les règles DKP."></div>
+        <div class="copy">
+          <span class="label">Raids et butin</span>
+          <h3>Des inscriptions à la dernière enchère</h3>
+          <ul>
+            <li><b>Inscriptions aux raids</b> par rôle, rappels, invitations en un clic, remplaçants et suivi des absents.</li>
+            <li>Des <b>DKP</b> pour la ponctualité, chaque heure et chaque boss, dépensés dans des <b>enchères de butin en direct</b>, à offres ouvertes ou cachées.</li>
+            <li>Jets libres, dépréciation, rerolls, saisons, un <b>conseil de butin</b>, et des <b>listes de souhaits</b> montrées aux enchérisseurs quand un objet tombe.</li>
+            <li>Un <b>planificateur de groupes</b> construit à partir des inscriptions, et la progression de chaque boss, avec <b>wipes et meilleurs temps</b>.</li>
+            <li><b>Harmonisations</b> pour chaque raid, et <b>affectations de raid</b> : chacun se voit rappeler son rôle quand le boss est engagé.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="shot"><img src="../img/events.webp" width="1400" height="830" loading="lazy" alt="L&#x27;onglet Événements : une soirée PvP et une chasse au boss mondial, avec les réponses des membres."></div>
+        <div class="copy">
+          <span class="label">Vie de guilde</span>
+          <h3>Événements, sondages et artisans</h3>
+          <ul>
+            <li>Des <b>événements de guilde</b> pour tout ce qui n'est pas un raid : soirées PvP, boss mondiaux, donjons, réunions. Tout le monde peut en organiser.</li>
+            <li><b>Profils des membres</b> avec spécialisation, rôle, horaires de jeu et anniversaire. Le niveau d'objet se remplit tout seul d'après ton équipement.</li>
+            <li>L'<b>annuaire des artisans</b> : cherche ce que la guilde sait fabriquer et envoie une <b>commande d'artisanat</b> à qui le fabrique.</li>
+            <li><b>Sondages de guilde</b> : pose une question, la guilde vote.</li>
+            <li>Des <b>fiches de joueur</b> pour chaque membre, en ligne ou non, avec ses victoires, son ennemi juré, ses DKP et sa présence.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature flip">
+        <div class="shot"><img src="../img/goals.webp" width="1400" height="830" loading="lazy" alt="L&#x27;onglet Hauts faits, vue Guilde : hauts faits récents, objectifs de guilde avec barres de progression, et les meneurs."></div>
+        <div class="copy">
+          <span class="label">Hauts faits et objectifs</span>
+          <h3>Quelque chose à viser chaque semaine</h3>
+          <ul>
+            <li><b>161 hauts faits</b> tirés de l'historique partagé de la guilde : tout ce que tu as fait avant de l'installer compte aussi.</li>
+            <li><b>67 titres</b> à afficher après ton nom, dans le chat, les alertes de victoire et sur ta fiche.</li>
+            <li>Des <b>objectifs de guilde</b> fixés par les officiers pour la semaine ou le mois, avec une progression visible par tous.</li>
+            <li>Gardés par la guilde, donc jamais perdus avec les données d'un seul ordinateur.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="news" id="news" aria-labelledby="news-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="label">Nouveautés</span>
+        <h2 id="news-h">Mis à jour souvent.</h2>
+        <p>Les dernières versions, telles que Warcrest les montre en jeu. Tape <code>/warcrest updates</code> pour les y voir.</p>
+      </div>
+      <div class="news-grid"><!--news--><article class="release"><header><h3>3.8.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Harmonisations : qui est harmonisé pour le Cœur du Magma, Onyxia, le repaire de l'Aile noire et Naxxramas, et qui a les clés du pic Rochenoire supérieur et de Scholomance (<code>/warcrest attune</code>). Les inscrits non harmonisés sont signalés.</li><li>Affectations de raid : les officiers écrivent qui fait quoi sur chaque boss et peuvent le publier dans le canal de raid ; on te rappelle ton rôle quand le boss est engagé (<code>/warcrest assign</code>).</li><li>Sondages de guilde dans l'onglet Événements : pose une question, la guilde vote (<code>/warcrest polls</code>).</li><li>Commandes d'artisanat : clique sur une recette dans la fenêtre des artisans pour la demander à un artisan de la guilde (<code>/warcrest orders</code>).</li><li>Suivi des wipes : les wipes et le meilleur temps de chaque boss dans Progression, et le raid est prévenu quand il bat son record.</li><li>Officiers : la vue Inactifs de l'onglet Officiers liste qui ne s'est pas connecté récemment (<code>/warcrest inactive</code>).</li><li>La carte du monde montre où la guilde se bat : là où des membres ont tué des joueurs ennemis ou ont été tués par eux cette semaine.</li></ul></article>
+        <article class="release"><header><h3>3.7.3</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Rapports de bug : <code>/warcrest report</code> crée un rapport à copier sur le Discord ou dans le formulaire du site, avec ta version, tes réglages et les erreurs.</li><li>En configurant la guilde, les officiers choisissent aussi ses alertes et si les hauts faits sont publiés dans le canal de guilde (<code>/warcrest setup</code>).</li><li>Le Discord de Warcrest : <code>/warcrest discord</code>, ou copie l'invitation dans la fenêtre d'aide.</li></ul></article>
+        <article class="release"><header><h3>3.7.2</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correctif : les alertes et messages pouvaient s'afficher deux fois dans le chat, la seconde avec ton royaume après ton nom (« Nom-Royaume »).</li><li>Quand deux membres repèrent le même ennemi recherché en même temps, l'alerte ne s'affiche qu'une fois.</li></ul></article><!--/news--></div>
+      <p class="news-more">Tous les changements depuis la première version : <a href="https://github.com/fantasyglassui/Warcrest/blob/main/CHANGELOG.md" target="_blank" rel="noopener">le journal complet</a> (en anglais).</p>
+    </div>
+  </section>
+
+  <section class="ach" id="achievements" aria-labelledby="ach-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="label">Les 161</span>
+        <h2 id="ach-h">Tous les hauts faits et titres.</h2>
+        <p>La même liste que ta guilde voit dans l'onglet Hauts faits. Les titres s'affichent après ton nom, comme <span style="color:var(--text)">Lyra</span> <span style="color:var(--gold)">le Vengeur</span>.</p>
+      </div>
+      <div class="ach-bar">
+        <div class="seg" id="cats" role="group" aria-label="Groupes de hauts faits"></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+          <label class="titlesonly"><input type="checkbox" id="titles-only"> Seulement ceux avec un titre</label>
+          <label class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><input id="ach-q" type="search" placeholder="Chercher un haut fait" aria-label="Chercher un haut fait"></label>
+        </div>
+      </div>
+      <div class="grid" id="ach-grid"></div>
+      <div class="more"><p class="count" id="ach-count"></p><button type="button" class="btn" id="ach-more" hidden></button></div>
+    </div>
+  </section>
+
+  <section class="install" id="install" aria-labelledby="inst-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="label">Pour commencer</span>
+        <h2 id="inst-h">Installe, connecte-toi, c'est tout.</h2>
+        <p>Warcrest partage avec chaque membre qui l'a. Plus la guilde l'installe, plus il en voit.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Installer depuis CurseForge</h3><p>Dans l'appli CurseForge, cherche <b style="color:var(--text)">Warcrest</b> et clique sur Installer. Vérifie qu'il est coché dans la liste des AddOns à l'écran des personnages.</p></div>
+        <div class="step"><h3>Ouvre-le</h3><p>Clique sur l'emblème près de ta minicarte, ou tape <code>/warcrest</code> (ou <code>/wc</code>). Il rattrape tout seul l'historique de la guilde.</p></div>
+        <div class="step"><h3>Officiers : configurez la guilde</h3><p>Choisissez dans Réglages > Alertes ce qu'entend la guilde, qui compte comme officier et si vous utilisez les DKP, puis Enregistrer pour toute la guilde.</p></div>
+      </div>
+
+      <div class="two">
+        <div id="commands">
+          <div class="sec-head" style="margin-bottom:20px"><span class="label">Commandes</span><h2 style="font-size:1.8rem">Commandes</h2></div>
+          <div class="cmds"><table><tbody id="cmd-body"></tbody></table></div>
+        </div>
+        <div>
+          <div class="sec-head" style="margin-bottom:20px"><span class="label">Questions</span><h2 style="font-size:1.8rem">Bon à savoir</h2></div>
+          <div class="faq">
+            <div><h3>Tout le monde en a-t-il besoin ?</h3><p>Non. Les membres sans Warcrest voient quand même les hauts faits publiés dans le canal de guilde. Tous ceux qui l'ont partagent victoires, inscriptions et DKP entre eux.</p></div>
+            <div><h3>Et si je perds mes données sauvegardées ?</h3><p>Tes hauts faits et l'historique de la guilde sont gardés par l'addon de chacun, donc ils te reviennent de tes camarades.</p></div>
+            <div><h3>Quelles langues ?</h3><p>Anglais, allemand, français et espagnol. Il suit la langue de ton jeu, ou choisis-en une dans Réglages > Général.</p></div>
+            <div><h3>Quelque chose ne compte pas</h3><p>Tape <code>/warcrest check</code> pour voir pourquoi un haut fait ou une victoire a compté ou non.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="help-band" aria-labelledby="discord-h">
+        <div class="dc" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff"><path d="M19.6 5.3A17.4 17.4 0 0 0 15.3 4l-.5 1.1a16 16 0 0 0-5.6 0L8.7 4a17.4 17.4 0 0 0-4.3 1.3C1.7 9.4 1 13.4 1.3 17.3a17.6 17.6 0 0 0 5.3 2.7l1.1-1.8c-.6-.2-1.2-.5-1.8-.8l.4-.3a12.4 12.4 0 0 0 11.4 0l.4.3c-.6.3-1.2.6-1.8.8l1.1 1.8a17.5 17.5 0 0 0 5.3-2.7c.4-4.5-.7-8.5-3.1-12ZM8.5 14.9c-1 0-1.9-1-1.9-2.2s.8-2.2 1.9-2.2 1.9 1 1.9 2.2-.8 2.2-1.9 2.2Zm7 0c-1 0-1.9-1-1.9-2.2s.8-2.2 1.9-2.2 1.9 1 1.9 2.2-.8 2.2-1.9 2.2Z"/></svg></div>
+        <div>
+          <h3 id="discord-h">Un bug, ou une idée ?</h3>
+          <p>Viens discuter sur le Discord de Warcrest : de l'aide pour configurer ta guilde, les nouvelles versions en avant-première, et d'autres guildes qui l'utilisent. Pour un bug, tape <code style="font:500 .86em var(--f-mono);color:var(--text)">/warcrest report</code> en jeu et colle ce qu'il te donne.</p>
+        </div>
+        <div class="cta2">
+          <a class="btn discord" href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Rejoindre le Discord</a>
+          <a class="btn" href="#contact">Envoyer un message</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap contact-grid">
+      <div>
+        <div class="sec-head" style="margin-bottom:26px">
+          <span class="label">Contact</span>
+          <h2 id="contact-h">Un bug ? Une idée ?</h2>
+          <p>Écris au développeur ici, ou demande sur le Discord. Ton message arrive directement dans sa boîte, et la réponse à l'adresse que tu donnes.</p>
+        </div>
+        <div class="points">
+          <div><h3>Signaler un bug</h3><p>Dis ce que tu faisais, ce que tu attendais et ce qui s'est passé. Ta version de Warcrest aide : tape <code style="font:500 .86em var(--f-mono);color:var(--text)">/warcrest version</code> en jeu.</p></div>
+          <div><h3>Rejoindre le Discord</h3><p>Discute avec d'autres guildes qui utilisent Warcrest, obtiens de l'aide pour l'installer et découvre les nouvelles versions en premier : <a href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">discord.gg/qeSMwQWyPR</a>.</p></div>
+          <div><h3>Les idées sont bienvenues</h3><p>Dis au développeur ce dont ta guilde se servirait. Warcrest est souvent mis à jour, et les demandes orientent la suite.</p></div>
+        </div>
+      </div>
+      <form class="form" id="contact-form" action="https://formsubmit.co/fantasyglassui@gmail.com" method="POST">
+        <div class="notice" id="contact-thanks" hidden>Merci, ton message a été envoyé. Tu recevras une réponse à l'adresse indiquée.</div>
+        <div class="row2">
+          <label class="field"><span class="label">Ton nom ou personnage</span><input id="cf-name" name="name" autocomplete="name" required maxlength="80"></label>
+          <label class="field"><span class="label">Ton e-mail</span><input id="cf-email" type="email" name="email" autocomplete="email" required maxlength="120"></label>
+        </div>
+        <div class="row2">
+          <label class="field"><span class="label">Sujet</span>
+            <select id="cf-topic" name="topic">
+              <option value="Bug report">Rapport de bug</option><option value="Feature idea">Idée de fonctionnalité</option><option value="Question">Question</option><option value="Translation">Traduction</option><option value="Something else">Autre chose</option>
+            </select></label>
+          <label class="field"><span class="label">Guilde et royaume (facultatif)</span><input id="cf-guild" name="guild" maxlength="80"></label>
+        </div>
+        <label class="field"><span class="label">Message</span><textarea id="cf-msg" name="message" required maxlength="4000"></textarea></label>
+        <input type="hidden" name="_subject" id="cf-subject" value="Warcrest: website message">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://warcrest-addon.com/fr/#thanks">
+        <label class="hp" aria-hidden="true">Laisser vide <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
+        <button class="btn gold" type="submit">Envoyer le message</button>
+        <p class="form-note" id="cf-note">Les messages sont transmis par e-mail. Ton adresse sert uniquement à te répondre.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div style="display:grid;gap:6px">
+      <span style="color:var(--text);font-family:var(--f-display);font-size:1.2rem">Warcrest</span>
+      <span>Créé pour &lt;The Imperium&gt;, maintenant pour toutes les guildes. Version <span data-version="">3.8.0</span>.</span>
+    </div>
+    <div class="langs" aria-label="Langues"><!--langs--><a href="/" hreflang="en" lang="en">English</a><a href="/de/" hreflang="de" lang="de">Deutsch</a><a href="/fr/" hreflang="fr" lang="fr" aria-current="page">Français</a><a href="/es/" hreflang="es" lang="es">Español</a></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Discord</a><a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Télécharger sur CurseForge</a></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var TABS = [
+    ["kills", "Victoires", "Les victoires PvP des membres, avec coups fatals et assistances, et le classement mensuel des meilleurs chasseurs de têtes.", "L'onglet Victoires : les victoires PvP de la guilde et le classement des chasseurs de têtes."],
+    ["wanted", "Recherchés", "Les joueurs ennemis qui tuent sans cesse des membres. Quand quelqu'un en repère un, toute la guilde est prévenue.", "L'onglet Recherchés : le ganker le plus recherché et combien de membres il a tués."],
+    ["war", "Guerres de guildes", "Le score contre chaque guilde ennemie rencontrée. Les rivales en premier.", "Le tableau de guerre : guildes ennemies avec les victoires de chaque côté."],
+    ["raids", "Raids", "Sign-ups by role, a check that tanks and healers are covered, and the raid night in progress.", "L'onglet Raids : un raid à venir avec les inscriptions."],
+    ["dkp", "DKP", "Classement et présence, attribution de DKP, et une enchère de butin prête à démarrer.", "The DKP tab: standings, awards and a loot auction."],
+    ["events", "Événements", "Soirées PvP, boss mondiaux et tout ce qui n'est pas un raid. Tout le monde peut en organiser.", "L'onglet Événements : les prochains événements de guilde et les réponses."],
+    ["achievements", "Hauts faits", "Tes hauts faits en tuiles, avec la progression de ceux que tu vises encore.", "L'onglet Hauts faits : hauts faits PvP et progression."],
+    ["progress", "Progression", "Les boss vaincus dans chaque raid, avec les premières victoires, les wipes et le meilleur temps.", "La vue Progression : les boss de la guilde au sommet d'Hyjal avec premières victoires et wipes."],
+    ["polls", "Sondages", "Pose une question à la guilde ; tous ceux qui ont Warcrest votent et voient les résultats au fur et à mesure.", "La vue Sondages : quel soir pour le repaire de l'Aile noire, avec les votes jusqu'ici."],
+    ["crafters", "Artisans", "Cherche ce que la guilde sait fabriquer. Les artisans en ligne d'abord ; clique sur une recette pour la commander.", "L'annuaire des artisans : les recettes et qui les fabrique."]
+  ];
+  var tabs = document.querySelector("#tour .tabs"), img = document.getElementById("tour-img"), cap = document.getElementById("tour-cap");
+  function pick(i) {
+    var t = TABS[i];
+    img.src = "../img/" + t[0] + ".webp"; img.alt = t[3]; cap.textContent = t[2];
+    img.style.objectFit = t[0] === "crafters" ? "contain" : "cover";
+    Array.prototype.forEach.call(tabs.children, function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); b.tabIndex = j === i ? 0 : -1; });
+  }
+  TABS.forEach(function (t, i) {
+    var b = document.createElement("button");
+    b.type = "button"; b.role = "tab"; b.textContent = t[1];
+    b.addEventListener("click", function () { pick(i); });
+    b.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (d) { var n = (i + d + TABS.length) % TABS.length; pick(n); tabs.children[n].focus(); e.preventDefault(); }
+    });
+    tabs.appendChild(b);
+    var pre = new Image(); pre.src = "../img/" + t[0] + ".webp";
+  });
+  pick(0);
+
+  // Achievements
+  var A = [["pvp","Premier sang","Portez un coup fatal à un joueur ennemi.",""],["pvp","Baptême du sang","5 coups fatals sur des joueurs ennemis.",""],["pvp","Escarmoucheur","10 coups fatals sur des joueurs ennemis.",""],["pvp","Chasseur de têtes","25 coups fatals sur des joueurs ennemis.",""],["pvp","Assoiffé de sang","50 coups fatals.",""],["pvp","Bourreau","100 coups fatals.","le Bourreau"],["pvp","Seigneur de guerre","250 coups fatals.","le Seigneur de guerre"],["pvp","Légende","500 coups fatals.","la Légende"],["pvp","Belliciste","750 coups fatals.","le Belliciste"],["pvp","Mille entailles","1 000 coups fatals.","l'Impitoyable"],["pvp","Coup de main","Aidez un membre à une élimination.",""],["pvp","Renfort","Aidez des membres à 10 éliminations.",""],["pvp","Ailier","Aidez des membres à 25 éliminations.",""],["pvp","Frères d'armes","Aidez des membres à 50 éliminations.",""],["pvp","Frère d'armes","Aidez des membres à 100 éliminations.",""],["pvp","Bande de guerre","Aidez des membres à 250 éliminations.","l'Inébranlable"],["pvp","Ligne infranchissable","Aidez des membres à 500 éliminations.","le Mur de boucliers"],["pvp","Sur sa lancée","3 coups fatals d'affilée sans mourir.",""],["pvp","Déchaîné","Une série de 5 éliminations.",""],["pvp","Inarrêtable","Une série de 10 éliminations.","l'Inarrêtable"],["pvp","Divin","Une série de 15 éliminations.","le Divin"],["pvp","Massacre","Une série de 20 éliminations.","le Boucher"],["pvp","Colère incarnée","Une série de 25 éliminations.","le Courroucé"],["pvp","Doublé","Deux coups fatals en 10 secondes.",""],["pvp","Triplé","Trois coups fatals en 20 secondes.",""],["pvp","Quadruplé","Quatre coups fatals en 30 secondes.","le Tourbillon"],["pvp","Grosse journée","10 coups fatals en une journée.",""],["pvp","Jour du jugement","20 coups fatals en une journée.","le Justicier"],["pvp","Oiseau de nuit","Un coup fatal entre minuit et 5 heures du matin.",""],["pvp","Créature de la nuit","10 coups fatals entre minuit et 5 h du matin.",""],["pvp","Rôdeur nocturne","50 coups fatals entre minuit et 5 h du matin.","le Rôdeur nocturne"],["pvp","Lève-tôt","Un coup fatal entre 5 h et 8 h du matin.",""],["pvp","Guerrier du week-end","25 coups fatals les samedis et dimanches.",""],["pvp","Vagabond","Des coups fatals dans 5 zones différentes.",""],["pvp","Globe-trotter","Coups fatals dans 10 zones différentes.",""],["pvp","Guerrier du monde","Des coups fatals dans 20 zones différentes.",""],["pvp","Nulle part à l'abri","Des coups fatals dans 30 zones différentes.","le Voyageur"],["pvp","Champ de bataille","Un coup fatal en champ de bataille.",""],["pvp","Aguerri","50 coups fatals en champ de bataille.",""],["pvp","Maître de guerre","250 coups fatals en champ de bataille.","le Maître de guerre"],["pvp","Se faire des ennemis","Des coups fatals sur 10 joueurs ennemis différents.",""],["pvp","Tristement célèbre","Des coups fatals sur 50 joueurs ennemis différents.",""],["pvp","Ennemi public","Des coups fatals sur 100 joueurs ennemis différents.","l'Infâme"],["pvp","Effroi","Des coups fatals sur 250 joueurs ennemis différents.","le Redouté"],["pvp","Tueur de géants","Un coup fatal sur un ennemi de niveau ??.",""],["pvp","Régicide","10 coups fatals sur des ennemis de niveau ??.","le Tueur de géants"],["pvp","Mauvais sang","10 coups fatals sur des joueurs de guildes rivales.",""],["pvp","Vendetta sanglante","50 coups fatals sur des joueurs de guildes rivales.","le Semeur de discorde"],["pvp","Sans distinction","Des coups fatals sur 5 guildes ennemies différentes.",""],["pvp","Briseur de guildes","Des coups fatals sur 15 guildes ennemies différentes.",""],["hunt","Revanche","Tuez l'assassin d'un membre dans les 30 minutes.",""],["hunt","Rancunier","3 éliminations vengeresses.",""],["hunt","Vengeur","10 victimes vengées.","le Vengeur"],["hunt","Rétribution","25 éliminations vengeresses.",""],["hunt","Courroux de la guilde","50 éliminations vengeresses.","le Rancunier"],["hunt","Vendetta personnelle","Tuez un ennemi moins de 30 minutes après qu'il vous a tué.",""],["hunt","Gardien","Vengez 5 membres différents.",""],["hunt","Protecteur de la guilde","Vengez 20 membres différents.","le Protecteur"],["hunt","Chasseur de primes","Tuez un ennemi qui a tué des membres 3 fois en 30 jours.","le Chasseur de primes"],["hunt","Traqueur","5 éliminations d'ennemis recherchés.","le Traqueur"],["hunt","Pisteur","10 ennemis recherchés tués.",""],["hunt","Superprédateur","25 ennemis recherchés tués.","le Superprédateur"],["hunt","Collectionneur","Réclamez une prime posée par un officier.","le Collectionneur"],["hunt","Payé rubis sur l'ongle","Réclamez 3 primes.",""],["hunt","Mercenaire","Réclamez 10 primes.","le Mercenaire"],["hunt","Fléau de l'ennemi juré","Tuez un ennemi qui vous a tué 3 fois.","le Fléau de l'ennemi juré"],["hunt","Retourner la situation","Tuez à 3 reprises des ennemis qui vous avaient tué 3 fois.",""],["hunt","Rancune tenace","Tuez 5 fois le même joueur ennemi.","l'Implacable"],["hunt","Obsédé","Tuez 10 fois le même joueur ennemi.",""],["hunt","Champion","Finissez un mois en tête des Meilleurs chasseurs de têtes.","le Champion"],["hunt","Dynastie","Finissez 3 mois en tête des Meilleurs chasseurs de têtes.","l'Incontesté"],["hunt","Règne","Finissez 6 mois en tête des Meilleurs chasseurs de têtes.","le Souverain"],["hunt","Éternel","Finissez 12 mois en tête des Meilleurs chasseurs de têtes.","l'Éternel"],["hunt","Bienvenue à la guerre","Mourez face à un joueur ennemi.",""],["hunt","Couvert de cicatrices","Mourez 50 fois face à des joueurs ennemis.",""],["hunt","Souffre-douleur","Mourez 100 fois face à des joueurs ennemis.","l'Intrépide"],["hunt","Marqué","Faites-vous tuer 5 fois par le même joueur ennemi.",""],["hunt","La gravité gagne","Mourez d'une chute.",""],["hunt","Dort avec les poissons","Noyez-vous.",""],["hunt","Trop loin du bord","Mourez d'épuisement en eaux profondes.",""],["raid","Raideur","Participez à une soirée de raid.",""],["raid","Raideur vétéran","Participez à 10 soirées de raid.",""],["raid","Raideur de fer","Participez à 25 soirées de raid.","le Raideur de fer"],["raid","Inébranlable","Participez à 50 soirées de raid.","l'Inébranlable"],["raid","Machine de raid","Participez à 75 soirées de raid.",""],["raid","Centurion","Participez à 100 soirées de raid.","le Centurion"],["raid","Présence parfaite","Participez à toutes les soirées de raid d'un mois (au moins 4).","le Fiable"],["raid","Fiable","Présence parfaite pendant 3 mois.",""],["raid","Solide comme un roc","Présence parfaite pendant 6 mois.","le Roc"],["raid","Prêt et motivé","Acceptez 10 inscriptions de raid.",""],["raid","Toujours là","Acceptez 25 inscriptions de raid.",""],["raid","Habitué des raids","Acceptez 50 inscriptions de raid.",""],["raid","Sur le banc","Soyez en réserve pour une soirée de raid.",""],["raid","Esprit d'équipe","Soyez en réserve pour 5 soirées de raid.","l'Altruiste"],["raid","Chef de raid","Lancez une soirée de raid.",""],["raid","Commandant","Lancez 10 soirées de raid.","le Commandant"],["raid","Boss vaincu","Soyez là quand la guilde tue un boss de raid.",""],["raid","Chasseur de boss","Soyez là pour 10 boss tués par la guilde.",""],["raid","Tueur de boss","Soyez là pour 25 boss tués par la guilde.","le Tueur"],["raid","Fléau des boss","Soyez là pour 50 boss tués par la guilde.",""],["raid","Briseur de raid","Soyez là pour 100 boss tués par la guilde.","le Briseur de raid"],["raid","Tueur de dieux","Soyez là pour 250 boss tués par la guilde.","le Tueur de dieux"],["raid","Grande soirée","Soyez là pour 5 boss tués en une journée.",""],["raid","Grand nettoyage","Soyez là pour 10 boss tués en une journée.",""],["raid","Pionnier","Soyez là pour la première victoire de la guilde sur un boss.","le Pionnier"],["raid","Éclaireur","Soyez là pour la première victoire de la guilde sur 5 boss.","l'Éclaireur"],["raid","Défricheur","Soyez là pour la première victoire de la guilde sur 10 boss.",""],["raid","Avant-garde","Soyez là pour la première victoire de la guilde sur 20 boss.","l'Avant-garde"],["raid","Nettoyage complet","Tuez tous les boss d'un raid en une semaine.","le Conquérant"],["raid","Conquérant de raids","Nettoyages complets de 3 raids différents.",""],["raid","Conquérant du monde","Nettoyages complets de 5 raids différents.","l'Invincible"],["loot","Veinard","Gagnez un objet à une enchère ou un jet.",""],["loot","Équipé","Gagnez 10 objets.",""],["loot","Bien équipé","Gagnez 25 objets.",""],["loot","Chasseur de trésors","Gagnez 50 objets.",""],["loot","Accumulateur","Gagnez 100 objets.","l'Accumulateur"],["loot","Jackpot","Gagnez 5 objets en une journée de raid.",""],["loot","Coup de chance","Gagnez un objet lors d'un jet libre.",""],["loot","Lanceur de dés","Gagnez 5 objets aux jets libres.",""],["loot","Dame Chance","Gagnez 10 objets aux jets libres.","le Chanceux"],["loot","Choix du conseil","Obtenez un objet du conseil de butin.",""],["loot","Favori du conseil","Obtenez 10 objets du conseil de butin.",""],["loot","Panier percé","Dépensez 100 DKP ou plus pour un objet.","le Panier percé"],["loot","Flambeur","Dépensez 200 DKP ou plus pour un objet.",""],["loot","Tapis","Dépensez 500 DKP ou plus pour un objet.","l'Extravagant"],["loot","Investisseur","Dépensez 1 000 DKP en objets au total.",""],["loot","Économe","Ayez 500 DKP.",""],["loot","Banque de la guilde","Ayez 1 000 DKP.","le Fortuné"],["loot","Vœu exaucé","Gagnez un objet de votre liste de souhaits.",""],["loot","Chanceux","Gagnez 5 objets de votre liste de souhaits.","le Veinard"],["loot","Rêves réalisés","Gagnez 10 objets de votre liste de souhaits.",""],["social","De la partie","Participez à un événement de guilde.",""],["social","Habitué","Participez à 10 événements de guilde.",""],["social","Âme de la fête","Participez à 25 événements de guilde.","l'Âme de la fête"],["social","Pilier de la guilde","Participez à 50 événements de guilde.","le Pilier"],["social","Touche-à-tout","Participez à 5 types d'événements de guilde.",""],["social","Organisateur","Planifiez un événement de guilde.",""],["social","Maître des festivités","Planifiez 10 événements de guilde.","l'Hôte"],["social","Livre ouvert","Partagez votre profil.",""],["social","Frimeur","Affichez un titre à côté de votre nom.",""],["social","Second personnage","Liez un reroll à votre personnage principal.",""],["social","Roi des rerolls","Liez 3 rerolls à votre personnage principal.",""],["social","Premiers pas","Atteignez le niveau 10.",""],["social","Aventurier","Atteignez le niveau 20.",""],["social","Expérimenté","Atteignez le niveau 30.",""],["social","En selle","Atteignez le niveau 40.",""],["social","Presque au bout","Atteignez le niveau 50.",""],["social","Niveau max","Atteindre le niveau 60.",""],["social","Apprenti artisan","Partagez les recettes d'un métier avec la guilde.",""],["social","Deux métiers","Partagez deux métiers avec la guilde.",""],["social","Maître artisan","Atteignez 300 dans un métier.","l'Artisan"],["social","Grimoire vivant","Connaissez 50 recettes dans vos métiers.",""],["social","Érudit","Connaissez 100 recettes dans vos métiers.",""],["social","Grand maître artisan","Connaissez 200 recettes dans vos métiers.","le Grand Artisan"],["social","Recruteur","Ajoutez une recrue qui finit par rejoindre la guilde.",""],["social","Chasseur de talents","Ajoutez 5 recrues qui finissent par rejoindre la guilde.","le Recruteur"],["social","Décoré","Obtenez 10 autres hauts faits.","le Décoré"],["social","Héros de la guilde","Obtenez 25 autres hauts faits.","le Héros"],["social","Surdoué","Obtenez 50 autres hauts faits.","le Surdoué"],["social","Légende vivante","Obtenez 75 autres hauts faits.","la Légende vivante"],["social","Parangon","Obtenez 100 autres hauts faits.","le Parangon"]];
+  var L = { none: "Aucun haut fait ne correspond. Essaie un autre mot.", all: "Les %d hauts faits.", one: "1 haut fait.", many: "%d hauts faits.",
+    showing: "%d sur %d affichés.", fewer: "Afficher moins", showAll: "Tout afficher (%d)", copy: "Copier", copied: "Copié", copyLabel: "Copier %s",
+    preview: "Cet aperçu ne peut pas envoyer de messages. Le formulaire marche sur le vrai site." };
+  function F(s) { var a = arguments, i = 1; return s.replace(/%[ds]/g, function () { return a[i++]; }); }
+  var CATS = [["all", "Tous"], ["pvp", "PvP"], ["hunt", "Traques"], ["raid", "Raids"], ["loot", "Butin"], ["social", "Social"]];
+  var NAMES = { pvp: "PvP", hunt: "Traques", raid: "Raids", loot: "Butin", social: "Social" };
+  var cat = "all", q = "", titlesOnly = false, expanded = false, SHOWN = 8;
+  // A few of the best to start with: one or two from each group.
+  var FEATURED = ["Triplé", "Divin", "Vendetta sanglante", "Vendetta personnelle", "Champion", "Nettoyage complet", "Panier percé", "Âme de la fête"];
+  var moreBtn = document.getElementById("ach-more");
+  var catsEl = document.getElementById("cats"), grid = document.getElementById("ach-grid"), count = document.getElementById("ach-count");
+  var trophy = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4.5 2.5h7v3a3.5 3.5 0 0 1-7 0Zm0 1H2.5a2 2 0 0 0 2 2.5m7-2.5h2a2 2 0 0 1-2 2.5M8 9v3m-2.5 1.5h5"/></svg>';
+  CATS.forEach(function (c) {
+    var n = c[0] === "all" ? A.length : A.filter(function (a) { return a[0] === c[0]; }).length;
+    var b = document.createElement("button");
+    b.type = "button"; b.dataset.cat = c[0];
+    b.innerHTML = c[1] + "<span>" + n + "</span>";
+    b.addEventListener("click", function () { cat = c[0]; expanded = false; render(); });
+    catsEl.appendChild(b);
+  });
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function render() {
+    Array.prototype.forEach.call(catsEl.children, function (b) { b.setAttribute("aria-pressed", b.dataset.cat === cat ? "true" : "false"); });
+    var term = q.trim().toLowerCase();
+    var list = A.filter(function (a) {
+      if (cat !== "all" && a[0] !== cat) return false;
+      if (titlesOnly && !a[3]) return false;
+      return !term || (a[1] + " " + a[2] + " " + a[3]).toLowerCase().indexOf(term) !== -1;
+    });
+    var total = list.length;
+    if (!expanded && cat === "all" && !term && !titlesOnly) {
+      list = FEATURED.map(function (n) { return A.filter(function (a) { return a[1] === n; })[0]; }).filter(Boolean);
+    } else if (!expanded) {
+      list = list.slice(0, SHOWN);
+    }
+    grid.innerHTML = list.length ? list.map(function (a) {
+      return '<div class="tile"><div class="n">' + trophy + '<span>' + esc(a[1]) + '</span></div><div class="d">' + esc(a[2]) +
+        '</div><div class="f"><span class="c">' + NAMES[a[0]] + '</span>' + (a[3] ? '<span class="tt">' + esc(a[3]) + '</span>' : '') + '</div></div>';
+    }).join("") : '<div class="empty">' + L.none + '</div>';
+    count.textContent = list.length === total ? (total === A.length ? F(L.all, A.length) : (total === 1 ? L.one : F(L.many, total)))
+      : F(L.showing, list.length, total);
+    moreBtn.hidden = list.length >= total;
+    moreBtn.textContent = expanded ? L.fewer : F(L.showAll, total);
+    if (expanded && list.length >= total && total > SHOWN) { moreBtn.hidden = false; moreBtn.textContent = L.fewer; }
+  }
+  moreBtn.addEventListener("click", function () {
+    expanded = !expanded; render();
+    if (!expanded) document.getElementById("achievements").scrollIntoView();
+  });
+  document.getElementById("ach-q").addEventListener("input", function (e) { q = e.target.value; render(); });
+  document.getElementById("titles-only").addEventListener("change", function (e) { titlesOnly = e.target.checked; render(); });
+  render();
+
+  // Commands
+  var CMDS = [
+    ["/warcrest", "Ouvrir ou fermer Warcrest (aussi /wc)"],
+    ["/warcrest raids", "L'onglet Raids (aussi dkp, kills, wanted, wishlist, events, achievements)"],
+    ["/warcrest card Name", "A guild member's player card"],
+    ["/warcrest profile", "Modifier ton profil : spécialisation, horaires, anniversaire"],
+    ["/warcrest profiles", "Everyone's profiles, with item levels"],
+    ["/warcrest craft", "Qui dans la guilde fabrique quoi (ajoute un mot pour chercher)"],
+    ["/warcrest check", "Pourquoi un haut fait ou une victoire a compté ou non"],
+    ["/warcrest auction", "Mettre un objet aux enchères dans ton raid (officiers)"],
+    ["/warcrest council", "Le vote du conseil de butin (les officiers le lancent)"],
+    ["/warcrest attune", "Qui dans la guilde est harmonisé pour chaque raid"],
+    ["/warcrest assign", "Affectations de raid : qui fait quoi sur chaque boss"],
+    ["/warcrest polls", "Sondages de guilde"],
+    ["/warcrest orders", "Tes commandes d'artisanat"],
+    ["/warcrest recap", "Le récap de la guilde de la semaine dernière"],
+    ["/warcrest updates", "What's new in recent versions"],
+    ["/warcrest website", "L'adresse de ce site, prête à copier"],
+    ["/warcrest help", "Toutes les commandes, dans le chat"]
+  ];
+  var body = document.getElementById("cmd-body");
+  CMDS.forEach(function (c) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td><code>" + c[0] + "</code><button type=\"button\" aria-label=\"" + F(L.copyLabel, c[0]) + "\">" + L.copy + "</button></td><td>" + c[1] + "</td>";
+    var btn = tr.querySelector("button");
+    btn.addEventListener("click", function () {
+      function done() { btn.textContent = L.copied; setTimeout(function () { btn.textContent = L.copy; }, 1400); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(tr.querySelector("code")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      try { navigator.clipboard.writeText(c[0]).then(done, fallback); } catch (e) { fallback(); }
+    });
+    body.appendChild(tr);
+  });
+
+  // Contact form: it sends from the live site; the preview here can't reach other sites.
+  var form = document.getElementById("contact-form");
+  if (location.hash === "#thanks") { document.getElementById("contact-thanks").hidden = false; }
+  form.addEventListener("submit", function (e) {
+    var topic = document.getElementById("cf-topic").value;
+    document.getElementById("cf-subject").value = "Warcrest: " + topic;
+    if (!/(github\.io|warcrest-addon\.com)$/.test(location.hostname)) {
+      e.preventDefault();
+      document.getElementById("cf-note").textContent = L.preview;
+    }
+  });
+
+  // The version shown follows the addon's own file on GitHub, so it changes with each release.
+  try {
+    fetch("https://raw.githubusercontent.com/fantasyglassui/Warcrest/main/Warcrest.toc", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (t) {
+        var m = /##\s*Version:\s*([0-9][0-9.]*)/.exec(t || "");
+        if (!m) return;
+        document.querySelectorAll("[data-version]").forEach(function (el) { el.textContent = el.dataset.version + m[1]; });
+      }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>

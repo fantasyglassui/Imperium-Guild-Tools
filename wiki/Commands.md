@@ -23,6 +23,11 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers) |
 | `/warcrest council` (or `lc`) | The loot council vote, or start one (officers) |
 | `/warcrest raidrecap` | The last raid night's recap |
+| `/warcrest attune` | Who in the guild is attuned for each raid, and has the UBRS and Scholomance keys |
+| `/warcrest assign` | Raid assignments: who does what on each boss |
+| `/warcrest polls` | Guild polls (the Events tab's Polls view) |
+| `/warcrest orders` | Your crafting orders |
+| `/warcrest inactive` | Members who haven't logged in lately (officers) |
 | `/warcrest test` | Show a test alert (a different kind each time) |
 | `/warcrest sound` | Turn alert sounds on or off |
 | `/warcrest warn` | Turn on-screen alert banners on or off |

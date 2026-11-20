@@ -11,6 +11,15 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.8.0", date = "Nov 20, 2026", items = {
+    "Attunements: who's attuned for Molten Core, Onyxia, Blackwing Lair and Naxxramas, and who has the Upper Blackrock Spire and Scholomance keys (/warcrest attune). Sign-ups who aren't attuned are flagged.",
+    "Raid assignments: officers write who does what on each boss and can post it to raid chat; you're told your job when the boss is pulled (/warcrest assign).",
+    "Guild polls on the Events tab: ask a question, the guild votes (/warcrest polls).",
+    "Crafting orders: click a recipe in the crafters window to ask a guild crafter to make it (/warcrest orders).",
+    "Wipe tracking: wipes and the best kill time for each boss on Progress, and the raid hears when it beats its best.",
+    "Officers: the Inactive view on the Officers tab lists who hasn't logged in lately (/warcrest inactive).",
+    "The world map shows where the guild fights: where guild members killed enemy players or died to them this week.",
+  } },
   { version = "3.7.3", date = "Nov 20, 2026", items = {
     "Bug reports: /warcrest report gives you a report to copy into the Discord or the website's contact form, with your version, settings and any errors.",
     "Officers setting up a guild now also choose which alerts the guild hears and whether achievements are posted in guild chat (/warcrest setup).",

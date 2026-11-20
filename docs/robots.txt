@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://warcrest-addon.com/sitemap.xml
