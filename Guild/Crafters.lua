@@ -251,9 +251,9 @@ function ns.RecipeName(id)
   local name
   local spell = id:match("^e(%d+)$")
   if spell then
-    name = GetSpellInfo and GetSpellInfo(tonumber(spell))
+    name = ns.SpellName(tonumber(spell))
   else
-    name = GetItemInfo(tonumber(id))
+    name = ns.GetItemInfo(tonumber(id))
     if not name and C_Item and C_Item.RequestLoadItemDataByID then pcall(C_Item.RequestLoadItemDataByID, tonumber(id)) end
   end
   if type(name) == "string" and name ~= "" then ns.db.craftNames[id] = name end
@@ -264,7 +264,7 @@ end
 function ns.RecipeLink(id)
   local spell = id:match("^e(%d+)$")
   if spell then return ns.RecipeName(id) end
-  local _, link = GetItemInfo(tonumber(id))
+  local _, link = ns.GetItemInfo(tonumber(id))
   return link or ns.RecipeName(id)
 end
 

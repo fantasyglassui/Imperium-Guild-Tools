@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8.3
+- Fix: **Edit profile** and `/warcrest profile` did nothing, and the **crafters window** was blank. WoW: Forever's game client no longer has the old item and spell lookups (`GetItemInfo`, `GetSpellInfo`) that Warcrest used for your item level and recipe names; it now uses the newer ones, and the old ones on clients that still have them.
+
 ## 3.8.2
 - Fix: a solo kill could show the killer as their own assist ("Lyra killed Grim (assist: Lyra Realm)"), when the game wrote your realm after your name with a space. Kills already in the log are tidied up when you log in, and the same fix stops any of your own messages being handled twice.
 

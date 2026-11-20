@@ -2048,4 +2048,5 @@ ns.LOCALES.frFR = {
   ["raid night in progress"] = "soirée de raid en cours",
   ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Les alertes de séries et de vengeance montrent maintenant le titre du joueur, comme les alertes de victoire.",
   ["Fix: solo kills showed you as your own assist (\"assist: Name Realm\"). Kills already logged are tidied up."] = "Correction : les victoires en solo te montraient comme ta propre assistance (« assist : Nom Royaume »). Les victoires déjà enregistrées sont corrigées.",
+  ["Fix: the profile editor (Edit profile, /warcrest profile) didn't open and the crafters window was blank on newer game clients."] = "Correction : l'éditeur de profil (Modifier le profil, /warcrest profile) ne s'ouvrait pas et la fenêtre des artisans était vide sur les clients de jeu récents.",
 }

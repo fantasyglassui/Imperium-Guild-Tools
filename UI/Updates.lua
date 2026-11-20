@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.8.3", date = "Nov 20, 2026", items = {
+    "Fix: the profile editor (Edit profile, /warcrest profile) didn't open and the crafters window was blank on newer game clients.",
+  } },
   { version = "3.8.2", date = "Nov 20, 2026", items = {
     "Fix: solo kills showed you as your own assist (\"assist: Name Realm\"). Kills already logged are tidied up.",
   } },

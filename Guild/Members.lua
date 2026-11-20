@@ -123,13 +123,13 @@ function ns.MyItemLevel()
     local link = GetInventoryItemLink("player", slot)
     local lvl = 0
     if link then
-      lvl = tonumber((select(4, GetItemInfo(link))))
+      lvl = tonumber((select(4, ns.GetItemInfo(link))))
       -- The game hasn't loaded this item yet: the average would come out too low.
       if not lvl then return 0 end
     end
     if slot == 17 and not link then
       local main = GetInventoryItemLink("player", 16)
-      local loc = main and select(9, GetItemInfo(main))
+      local loc = main and select(9, ns.GetItemInfo(main))
       if loc == "INVTYPE_2HWEAPON" then slots = slots - 1 end
     end
     if slot == 18 and not link then slots = slots - 1 end -- no ranged slot item: not every class has one

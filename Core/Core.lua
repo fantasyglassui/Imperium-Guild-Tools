@@ -155,6 +155,24 @@ function ns.Usable(v)
   return v
 end
 
+-- Item and spell lookups. Newer game clients only have C_Item.GetItemInfo and
+-- C_Spell.GetSpellInfo (which returns a table); older ones only the globals.
+-- Both return nothing rather than erroring when neither is there.
+function ns.GetItemInfo(item)
+  local f = (C_Item and C_Item.GetItemInfo) or _G.GetItemInfo
+  if not f or item == nil then return end
+  return f(item)
+end
+
+function ns.SpellName(id)
+  if C_Spell and C_Spell.GetSpellInfo then
+    local info = C_Spell.GetSpellInfo(id)
+    if type(info) == "table" then return info.name end
+    if type(info) == "string" then return info end
+  end
+  if _G.GetSpellInfo then return (_G.GetSpellInfo(id)) end
+end
+
 function ns.First(...)
   for i = 1, select("#", ...) do
     local f = select(i, ...)
