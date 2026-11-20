@@ -525,6 +525,9 @@ ns.OnEvent("PLAYER_ENTERING_WORLD", function(isLogin, isReload)
 end)
 ns.OnGuildReady = {}
 
+-- The Warcrest website: guides, every achievement, and a contact form.
+ns.WEBSITE = "https://fantasyglassui.github.io/Warcrest/"
+
 ns.OnEvent("PLAYER_REGEN_ENABLED", function() C_Timer.After(1, flushHeld) end)
 ns.OnEvent("ZONE_CHANGED_NEW_AREA", function() C_Timer.After(2, flushHeld) end)
 ns.OnEvent("PLAYER_ENTERING_WORLD", function() C_Timer.After(3, flushHeld) end)
@@ -622,6 +625,9 @@ SlashCmdList.WARCREST = function(input)
     if ns.CheckVersions then ns.CheckVersions() end
   elseif msg == "help" or msg == "?" then
     if ns.ShowHelp then ns.ShowHelp() end
+  elseif msg == "website" or msg == "site" or msg == "feedback" or msg == "contact" or msg == "bug" then
+    ns.Say(ns.TF("Guides, every achievement and a contact form for bugs and ideas: %s", "|cffffffff" .. ns.WEBSITE .. "|r"))
+    if ns.ShowHelp then ns.ShowHelp(nil, true) end
   elseif msg == "welcome" or msg == "setup" then
     if ns.ShowWelcome then ns.ShowWelcome() end
   elseif msg == "updates" or msg == "news" or msg == "changes" then

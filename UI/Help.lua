@@ -108,6 +108,7 @@ local TOPICS = {
     CMD("/warcrest bosses", "the last raid bosses that died, and whether each counted"),
     CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),
     CMD("/warcrest debug", "show error details (and boss checks) in chat"),
+    CMD("/warcrest website", "the website, with guides and a contact form"),
   }, "\n") end },
 }
 
@@ -145,6 +146,26 @@ local function Build()
     win.topics[i] = b
   end
 
+  -- The website, to copy: guides, every achievement, and a contact form.
+  local site = UI.Label(win, "WEBSITE AND FEEDBACK", "Label")
+  site:SetPoint("BOTTOMLEFT", 16, 46)
+  site:SetWidth(LIST_W - 24)
+  site:SetWordWrap(false)
+  local box = UI.EditBox(win, LIST_W - 24)
+  box:SetHeight(24)
+  box:SetPoint("BOTTOMLEFT", 12, 16)
+  box:SetFontObject(UI.Fonts.Small)
+  box:SetText(ns.WEBSITE)
+  box:SetCursorPosition(0)
+  -- Read only: clicking selects it, ready for Ctrl+C.
+  box:SetScript("OnTextChanged", function(self, userInput)
+    if userInput then self:SetText(ns.WEBSITE); self:HighlightText() end
+  end)
+  box:HookScript("OnEditFocusGained", function(self) self:HighlightText() end)
+  box:HookScript("OnEditFocusLost", function(self) self:HighlightText(0, 0); self:SetCursorPosition(0) end)
+  UI.Tooltip(box, "Warcrest website", "Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address.")
+  win.site = box
+
   win.heading = UI.Label(win, "", "Title")
   win.heading:SetPoint("TOPLEFT", LIST_W + 24, -44)
   local sf = CreateFrame("ScrollFrame", nil, win, "UIPanelScrollFrameTemplate")
@@ -162,7 +183,8 @@ local function Build()
 end
 
 -- Open the help, on a topic (its number or its title) if given.
-function ns.ShowHelp(topic)
+-- copySite: select the website's address, ready to copy.
+function ns.ShowHelp(topic, copySite)
   if not win then Build() end
   local i = tonumber(topic) or current
   if type(topic) == "string" then
@@ -170,4 +192,5 @@ function ns.ShowHelp(topic)
   end
   show(i)
   win:Show()
+  if copySite then win.site:SetFocus(); win.site:HighlightText() end
 end

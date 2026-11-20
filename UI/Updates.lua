@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.7.1", date = "Nov 19, 2026", items = {
+    "Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website).",
+    "Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off.",
+  } },
   { version = "3.7.0", date = "Nov 19, 2026", items = {
     "117 new achievements, 161 in all, with a new Social group and 42 more titles. Each group has pages: use the arrows or the mouse wheel.",
     "War board: the Wanted tab's Guilds view shows the score against every enemy guild. Officers mark rivals, and the guild is alerted when a group of them is spotted.",

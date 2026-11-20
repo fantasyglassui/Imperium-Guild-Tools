@@ -35,3 +35,4 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest versions` | Ask guildmates which version they have |
 | `/warcrest version` | Your version, plus any problems the addon has hit |
 | `/warcrest debug` | Show error details in chat |
+| `/warcrest website` | The Warcrest website (guides and a contact form), ready to copy |

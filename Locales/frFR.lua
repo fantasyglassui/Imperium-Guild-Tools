@@ -1838,4 +1838,11 @@ ns.LOCALES.frFR = {
   ["Achievements earned across the guild"] = "Hauts faits obtenus dans la guilde",
   ["1 earned across the guild"] = "1 obtenu dans la guilde",
   ["%d earned across the guild"] = "%d obtenus dans la guilde",
+  ["WEBSITE AND FEEDBACK"] = "SITE ET AVIS",
+  ["Warcrest website"] = "Site de Warcrest",
+  ["Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address."] = "Guides, tous les hauts faits et un formulaire pour envoyer bugs et idées au développeur. Clique puis appuie sur Ctrl+C pour copier l'adresse.",
+  ["Guides, every achievement and a contact form for bugs and ideas: %s"] = "Guides, tous les hauts faits et un formulaire de contact pour les bugs et idées : %s",
+  ["the website, with guides and a contact form"] = "le site, avec guides et formulaire de contact",
+  ["Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website)."] = "Warcrest a un site : guides, tous les hauts faits et un formulaire pour envoyer bugs et idées au développeur. L'adresse est dans la fenêtre d'aide (/warcrest website).",
+  ["Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off."] = "Correctif : le sélecteur de vue de l'onglet Recherchés ne laisse plus d'espace quand les primes sont désactivées.",
 }

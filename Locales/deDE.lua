@@ -1838,4 +1838,11 @@ ns.LOCALES.deDE = {
   ["Achievements earned across the guild"] = "In der Gilde errungene Erfolge",
   ["1 earned across the guild"] = "1 in der Gilde errungen",
   ["%d earned across the guild"] = "%d in der Gilde errungen",
+  ["WEBSITE AND FEEDBACK"] = "WEBSEITE UND FEEDBACK",
+  ["Warcrest website"] = "Warcrest-Webseite",
+  ["Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address."] = "Anleitungen, alle Erfolge und ein Formular, um dem Entwickler Fehler und Ideen zu schicken. Klicke und drücke Strg+C, um die Adresse zu kopieren.",
+  ["Guides, every achievement and a contact form for bugs and ideas: %s"] = "Anleitungen, alle Erfolge und ein Kontaktformular für Fehler und Ideen: %s",
+  ["the website, with guides and a contact form"] = "die Webseite mit Anleitungen und Kontaktformular",
+  ["Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website)."] = "Warcrest hat eine Webseite: Anleitungen, alle Erfolge und ein Formular, um dem Entwickler Fehler und Ideen zu schicken. Die Adresse steht im Hilfefenster (/warcrest website).",
+  ["Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off."] = "Fehlerbehebung: Der Ansichtswechsel im Reiter Gesucht lässt keine Lücke mehr, wenn Kopfgelder aus sind.",
 }

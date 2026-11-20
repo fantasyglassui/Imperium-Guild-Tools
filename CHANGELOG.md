@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.1
+- **Warcrest has a website:** https://fantasyglassui.github.io/Warcrest/. It has a tour of every tab, all 161 achievements and titles, how to install, the commands, and a **contact form** to send bugs and ideas straight to the developer.
+- The address is at the bottom of the **help window**, ready to copy (click it, then Ctrl+C). `/warcrest website` (or `/warcrest feedback`) opens it there and prints it in chat.
+- Fix: on the Wanted tab, the Wanted / Guilds switch no longer leaves a gap on the right when bounties are off.
+
 ## 3.7.0
 ### 117 new achievements (161 in all)
 - **A new Social group** for events, profiles, crafting, levels and the guild, and more in every other group. **42 new titles** (67 in all), from "the Whirlwind" to "the Paragon".

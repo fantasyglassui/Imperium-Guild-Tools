@@ -1838,4 +1838,11 @@ ns.LOCALES.esES = {
   ["Achievements earned across the guild"] = "Logros conseguidos en la hermandad",
   ["1 earned across the guild"] = "1 conseguido en la hermandad",
   ["%d earned across the guild"] = "%d conseguidos en la hermandad",
+  ["WEBSITE AND FEEDBACK"] = "WEB Y COMENTARIOS",
+  ["Warcrest website"] = "Web de Warcrest",
+  ["Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address."] = "Guías, todos los logros y un formulario para enviar errores e ideas al desarrollador. Haz clic y pulsa Ctrl+C para copiar la dirección.",
+  ["Guides, every achievement and a contact form for bugs and ideas: %s"] = "Guías, todos los logros y un formulario de contacto para errores e ideas: %s",
+  ["the website, with guides and a contact form"] = "la web, con guías y formulario de contacto",
+  ["Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website)."] = "Warcrest tiene web: guías, todos los logros y un formulario para enviar errores e ideas al desarrollador. La dirección está en la ventana de ayuda (/warcrest website).",
+  ["Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off."] = "Arreglo: el selector de vista de la pestaña Buscados ya no deja un hueco cuando las recompensas están desactivadas.",
 }
