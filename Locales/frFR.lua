@@ -1845,4 +1845,6 @@ ns.LOCALES.frFR = {
   ["the website, with guides and a contact form"] = "le site, avec guides et formulaire de contact",
   ["Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website)."] = "Warcrest a un site : guides, tous les hauts faits et un formulaire pour envoyer bugs et idées au développeur. L'adresse est dans la fenêtre d'aide (/warcrest website).",
   ["Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off."] = "Correctif : le sélecteur de vue de l'onglet Recherchés ne laisse plus d'espace quand les primes sont désactivées.",
+  ["Fix: alerts and messages could show twice in chat, the second time with your realm after your name (\"Name-Realm\")."] = "Correctif : les alertes et messages pouvaient s'afficher deux fois dans le chat, la seconde avec ton royaume après ton nom (« Nom-Royaume »).",
+  ["When two guildmates spot the same wanted enemy at once, the sighting is shown once."] = "Quand deux membres repèrent le même ennemi recherché en même temps, l'alerte ne s'affiche qu'une fois.",
 }

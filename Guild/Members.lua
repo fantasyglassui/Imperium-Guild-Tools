@@ -12,6 +12,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local DAY_NAMES = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
 local ROLES = { tank = true, healer = true, dps = true }

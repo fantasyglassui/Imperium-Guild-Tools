@@ -10,6 +10,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local SHOW_PAST = 6 * 60 * 60       -- keep showing a raid for 6 hours after it starts
 local SESSION_MAX = 12 * 60 * 60    -- a session left running is treated as over after 12 hours

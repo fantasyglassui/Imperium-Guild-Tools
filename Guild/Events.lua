@@ -11,6 +11,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local SHOW_PAST = 6 * 3600        -- keep showing an event for 6 hours after it starts
 local REMIND_BEFORE = 15 * 60

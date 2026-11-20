@@ -12,6 +12,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local NAMES_PER_ENTRY_CHARS = 170
 local SNIPE_GUARD = 5

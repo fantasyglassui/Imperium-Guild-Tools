@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.7.2", date = "Nov 20, 2026", items = {
+    "Fix: alerts and messages could show twice in chat, the second time with your realm after your name (\"Name-Realm\").",
+    "When two guildmates spot the same wanted enemy at once, the sighting is shown once.",
+  } },
   { version = "3.7.1", date = "Nov 19, 2026", items = {
     "Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website).",
     "Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off.",

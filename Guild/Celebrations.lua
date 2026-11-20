@@ -5,6 +5,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local STAR = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:0|t"
 local CHEER_COLOR = "|cffffd200"

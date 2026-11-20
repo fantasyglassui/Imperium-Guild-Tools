@@ -25,6 +25,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local ENGAGE_WINDOW = 10  -- seconds since you last attacked a player for their death to count
 local SAME_KILL = 15      -- seconds in which repeat reports of one victim are ignored

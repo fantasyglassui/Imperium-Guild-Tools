@@ -9,6 +9,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local HEADER = "|cffd4af37"
 local CATCH_UP = 120 -- seconds after login before the recap shows

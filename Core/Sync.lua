@@ -10,6 +10,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local WINDOW = 2 * 24 * 60 * 60   -- share up to two days back
 local OVERLAP = 12 * 60 * 60      -- re-check the 12 hours before your newest entry

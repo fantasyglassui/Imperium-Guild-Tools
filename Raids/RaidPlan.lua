@@ -11,6 +11,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 ns.PLAN_GROUPS = 8
 ns.PLAN_SLOTS = 5

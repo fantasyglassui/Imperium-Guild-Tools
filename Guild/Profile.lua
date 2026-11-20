@@ -6,6 +6,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 -- The entry in a { key = count } table with the highest count.
 local function most(counts, names)

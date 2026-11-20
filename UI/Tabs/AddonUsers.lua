@@ -6,6 +6,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 local UI = ns.UI
 
 local P = {}

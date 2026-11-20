@@ -16,6 +16,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local SAME_KILL = 2 * 60 * 60    -- kills of one boss this close together are the same kill
 local MIN_GUILD = 5              -- guild members needed for a kill to count...

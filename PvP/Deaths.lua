@@ -11,6 +11,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local RECENT_WINDOW = 15  -- seconds an enemy you saw still counts
 local LANDING_WINDOW = 0.6 -- a fall death happens the moment you land

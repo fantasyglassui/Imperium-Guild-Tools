@@ -8,6 +8,18 @@
 
 local ADDON_NAME, ns = ...
 
+-- Names without the realm. The game's Ambiguate(name, "short") keeps the realm
+-- on some clients when it can't tell which realm is yours, so guildmates would
+-- show as "Name-Realm". Player names never contain "-", so cutting there is safe.
+local gameAmbiguate = Ambiguate
+function ns.Ambiguate(name, context)
+  if context == "short" and type(name) == "string" and not (issecretvalue and issecretvalue(name)) then
+    return (name:gsub("%-.*$", ""))
+  end
+  return gameAmbiguate(name, context)
+end
+local Ambiguate = ns.Ambiguate
+
 -- Hidden addon channel used to talk to guildmates. It keeps the addon's old
 -- name so Warcrest and The Imperium (2.x) understand each other while a
 -- guild updates. Players never see it.
@@ -308,8 +320,14 @@ function ns.fullName(name)
   return realm and (name .. "-" .. realm) or name
 end
 
+-- Is this you? By name, without the realm: the game may add a realm to your
+-- own messages that doesn't match the one it reports for you, and a guild (and
+-- everyone in it) is on one realm.
 function ns.IsMe(name)
-  return ns.fullName(name) == ns.fullName(UnitName("player"))
+  if type(name) ~= "string" or name == "" then return false end
+  local me = UnitName("player")
+  if not me then return false end
+  return (name:gsub("%-.*$", "")):lower() == me:lower()
 end
 
 -- Turn a Blizzard format string like "%s has promoted %s to %s." into a pattern.

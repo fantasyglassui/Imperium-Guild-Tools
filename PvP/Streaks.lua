@@ -14,6 +14,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local STREAK_GAP = 60 * 60       -- kills further apart than this start a new streak
 local REVENGE_WINDOW = 30 * 60   -- how long after a death killing the killer counts as revenge

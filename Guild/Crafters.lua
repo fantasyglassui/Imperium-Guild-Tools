@@ -13,6 +13,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local CHUNK = 160                  -- characters of recipe IDs per message
 local KEEP_DAYS = 180              -- lists not updated for this long are dropped

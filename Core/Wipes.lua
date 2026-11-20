@@ -10,6 +10,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local LOGS = {
   kills = { db = "killLog", label = "kill log" },

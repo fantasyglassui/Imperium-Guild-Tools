@@ -13,6 +13,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local MAX_WISHES = 40
 local PRIOS = { need = true, want = true }

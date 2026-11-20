@@ -15,6 +15,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local KEEP_DAYS = 90
 local MAX_NAMES = 6000

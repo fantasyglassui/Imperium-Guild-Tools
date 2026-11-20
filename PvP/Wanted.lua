@@ -13,6 +13,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local WINDOW = 30 * 24 * 60 * 60  -- kills counted from the last 30 days
 local REPORT_EVERY = 10 * 60      -- seconds before the same player is reported again
@@ -189,6 +190,8 @@ function ns.ShowSighting(s, force)
   ns.Notify(SPOT_ICON .. " " .. text, SPOT_ICON .. " " .. text .. " " .. SPOT_ICON, nil, force, "wanted")
 end
 
+local SAME_SIGHTING = 60 -- seconds in which another report of the same enemy isn't shown again
+local shownAt = {}      -- enemy key -> GetTime() of the last sighting shown
 ns.OnMessage("S", function(p, sender)
   local name = p[2]
   if not name or name == "" then return end
@@ -203,7 +206,9 @@ ns.OnMessage("S", function(p, sender)
   table.insert(ns.db.spotted, 1, s)
   while #ns.db.spotted > MAX_SIGHTINGS do table.remove(ns.db.spotted) end
   cache = nil
-  ns.ShowSighting(s)
+  -- Two guildmates can spot the same enemy at the same moment: say it once.
+  if not shownAt[k] or GetTime() - shownAt[k] > SAME_SIGHTING then ns.ShowSighting(s) end
+  shownAt[k] = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end
   if ns.RefreshMapPins then ns.RefreshMapPins() end
 end)

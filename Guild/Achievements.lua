@@ -17,6 +17,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local REVENGE_WINDOW = 30 * 60
 local WANTED_WINDOW = 30 * 86400

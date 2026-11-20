@@ -18,6 +18,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local ANSWER_TIME = 60
 local CHOICES = { need = 1, greed = 2, pass = 3 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.2
+- Fix: **alerts and chat messages showed twice** (wanted sightings, achievements, events, raid and guild news: everything but kills, which were already merged), the second copy with a realm after the name ("spotted in Feralas by Sathryus-Realm"). The game sends your own guild messages back to you with a realm attached that doesn't always match the one it reports for you, so Warcrest didn't recognise them as yours and handled them twice. It now recognises you by name.
+- Names show without the realm everywhere, even where the game would add it.
+- When two guildmates spot the same wanted enemy at the same moment, the sighting is shown once instead of twice.
+
 ## 3.7.1
 - **Warcrest has a website:** https://warcrest-addon.com/. It has a tour of every tab, all 161 achievements and titles, how to install, the commands, and a **contact form** to send bugs and ideas straight to the developer.
 - The address is at the bottom of the **help window**, ready to copy (click it, then Ctrl+C). `/warcrest website` (or `/warcrest feedback`) opens it there and prints it in chat.

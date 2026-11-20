@@ -8,6 +8,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 local MAX_ENTRIES = 300
 
 ns.OnLoad(function()

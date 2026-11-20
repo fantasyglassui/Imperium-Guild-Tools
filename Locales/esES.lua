@@ -1845,4 +1845,6 @@ ns.LOCALES.esES = {
   ["the website, with guides and a contact form"] = "la web, con guías y formulario de contacto",
   ["Warcrest has a website: guides, every achievement, and a form to send bugs and ideas to the developer. Find the address in the help window (/warcrest website)."] = "Warcrest tiene web: guías, todos los logros y un formulario para enviar errores e ideas al desarrollador. La dirección está en la ventana de ayuda (/warcrest website).",
   ["Fix: the Wanted tab's view switch no longer leaves a gap when bounties are off."] = "Arreglo: el selector de vista de la pestaña Buscados ya no deja un hueco cuando las recompensas están desactivadas.",
+  ["Fix: alerts and messages could show twice in chat, the second time with your realm after your name (\"Name-Realm\")."] = "Arreglo: los avisos y mensajes podían salir dos veces en el chat, la segunda con tu reino tras tu nombre («Nombre-Reino»).",
+  ["When two guildmates spot the same wanted enemy at once, the sighting is shown once."] = "Si dos miembros ven al mismo enemigo buscado a la vez, el aviso sale una sola vez.",
 }

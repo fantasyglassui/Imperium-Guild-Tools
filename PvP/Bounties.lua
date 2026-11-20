@@ -17,6 +17,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local LASTS = 30 * 86400
 local MAX_AMOUNT = 1000

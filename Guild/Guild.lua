@@ -5,6 +5,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 local CG = C_GuildInfo or {}
 
 ------------------------------------------------------------------------

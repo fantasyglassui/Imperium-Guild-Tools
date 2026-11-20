@@ -11,6 +11,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 ns.RECRUIT_STATUSES = {
   { key = "new",       label = "New",       color = "66ccff" },

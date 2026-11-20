@@ -37,3 +37,36 @@ def test_wanted_and_claimed():
     bob.ns.SetWantedRemoveOnKill(False)
     assert wanted(bob)[0][1] == 6
     assert bob.errors() == []
+
+
+def test_your_own_sighting_shows_once_when_the_game_echoes_it_with_a_realm():
+    """WoW: Forever sends your own guild messages back with your realm on the
+    name, and may not say which realm is yours: it must still count as you."""
+    guild = Guild([("Sathryus", 1), ("Bob", 3)], echo=True)
+    me = guild["Sathryus"]
+    me.run('GetNormalizedRealmName = function() return nil end')
+    me.ns.Send("S", "Xbalanque", "Feralas", 2, "", "", "", int(guild.clock))
+    guild.run(2)
+    lines = me.said("Xbalanque")
+    assert len(lines) == 1 and lines[0].endswith("by Sathryus")
+
+
+def test_two_reports_of_the_same_enemy_show_once():
+    guild = Guild([("Alice", 1), ("Bob", 3), ("Cara", 3)])
+    for who in ("Alice", "Bob"):
+        guild[who].ns.Send("S", "Xbalanque", "Feralas", 2, "", "", "", int(guild.clock))
+    guild.run(2)
+    assert len(guild["Cara"].said("Xbalanque")) == 1
+
+
+def test_your_own_messages_count_as_yours_whatever_realm_the_game_adds():
+    guild = Guild([("Sathryus", 1), ("Bob", 3)], echo=True)
+    me = guild["Sathryus"]
+    me.run('GetNormalizedRealmName = function() return "SomethingElse" end')
+    assert me.ns.IsMe("Sathryus-Wraithblade") and me.ns.IsMe("sathryus") and not me.ns.IsMe("Bob-Realm")
+    # Every kind of message, not only sightings: handled once.
+    me.run('zzCount = 0')
+    me.lua.eval('function(ns) ns.OnMessage("ZZ", function() zzCount = zzCount + 1 end) end')(me.ns)
+    me.ns.Send("ZZ", "x")
+    guild.run(2)
+    assert me.lua.eval("zzCount") == 1

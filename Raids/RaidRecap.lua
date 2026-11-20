@@ -11,6 +11,7 @@
 ]]
 
 local _, ns = ...
+local Ambiguate = ns.Ambiguate
 
 local HEADER = "|cff66ccff"
 local FRESH = 30 * 60 -- only raid nights that ended in the last half hour are announced
