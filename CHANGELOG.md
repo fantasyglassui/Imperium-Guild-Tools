@@ -1,7 +1,7 @@
 # Changelog
 
 ## 3.7.1
-- **Warcrest has a website:** https://fantasyglassui.github.io/Warcrest/. It has a tour of every tab, all 161 achievements and titles, how to install, the commands, and a **contact form** to send bugs and ideas straight to the developer.
+- **Warcrest has a website:** https://warcrest-addon.com/. It has a tour of every tab, all 161 achievements and titles, how to install, the commands, and a **contact form** to send bugs and ideas straight to the developer.
 - The address is at the bottom of the **help window**, ready to copy (click it, then Ctrl+C). `/warcrest website` (or `/warcrest feedback`) opens it there and prints it in chat.
 - Fix: on the Wanted tab, the Wanted / Guilds switch no longer leaves a gap on the right when bounties are off.
 

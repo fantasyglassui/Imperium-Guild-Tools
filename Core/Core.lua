@@ -526,7 +526,7 @@ end)
 ns.OnGuildReady = {}
 
 -- The Warcrest website: guides, every achievement, and a contact form.
-ns.WEBSITE = "https://fantasyglassui.github.io/Warcrest/"
+ns.WEBSITE = "https://warcrest-addon.com/"
 
 ns.OnEvent("PLAYER_REGEN_ENABLED", function() C_Timer.After(1, flushHeld) end)
 ns.OnEvent("ZONE_CHANGED_NEW_AREA", function() C_Timer.After(2, flushHeld) end)

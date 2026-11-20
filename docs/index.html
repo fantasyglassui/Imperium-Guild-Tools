@@ -6,6 +6,11 @@
 <title>Warcrest</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Guild tools for World of Warcraft: Forever: raids, DKP auctions, PvP alerts, rival guild wars, events, 161 achievements and more, shared with every guildmate.">
+<link rel="canonical" href="https://warcrest-addon.com/">
+<meta property="og:title" content="Warcrest: guild tools for WoW: Forever">
+<meta property="og:description" content="Raids, DKP auctions, PvP alerts, rival guild wars, events, 161 achievements and more, shared with every guildmate.">
+<meta property="og:url" content="https://warcrest-addon.com/">
+<meta property="og:image" content="https://warcrest-addon.com/img/crest.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -412,7 +417,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
         <label class="field"><span class="label">Message</span><textarea id="cf-msg" name="message" required maxlength="4000"></textarea></label>
         <input type="hidden" name="_subject" id="cf-subject" value="Warcrest: website message">
         <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://fantasyglassui.github.io/Warcrest/#thanks">
+        <input type="hidden" name="_next" value="https://warcrest-addon.com/#thanks">
         <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="_honey" tabindex="-1" autocomplete="off"></label>
         <button class="btn gold" type="submit">Send message</button>
         <p class="form-note" id="cf-note">Messages are forwarded by email. Your address is only used to reply to you.</p>
@@ -550,7 +555,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
   form.addEventListener("submit", function (e) {
     var topic = document.getElementById("cf-topic").value;
     document.getElementById("cf-subject").value = "Warcrest: " + topic;
-    if (!/github\.io$/.test(location.hostname)) {
+    if (!/(github\.io|warcrest-addon\.com)$/.test(location.hostname)) {
       e.preventDefault();
       document.getElementById("cf-note").textContent = "This preview can't send messages. The form works on the live website.";
     }
