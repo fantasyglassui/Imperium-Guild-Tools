@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
 
-**[Download on CurseForge](https://www.curseforge.com/wow/addons/warcrest)** · **[Website](https://warcrest-addon.com/)**
+**[Download on CurseForge](https://www.curseforge.com/wow/addons/warcrest)** · **[Website](https://warcrest-addon.com/)** · **[Discord](https://discord.gg/qeSMwQWyPR)**
 
 Guild tools for World of Warcraft: Forever. Raid sign-ups, DKP with live loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements, player cards and officer tools, shared automatically between everyone in your guild who has it.
 
