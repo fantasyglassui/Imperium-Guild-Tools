@@ -18,7 +18,6 @@ function ns.Ambiguate(name, context)
   end
   return gameAmbiguate(name, context)
 end
-local Ambiguate = ns.Ambiguate
 
 -- Hidden addon channel used to talk to guildmates. It keeps the addon's old
 -- name so Warcrest and The Imperium (2.x) understand each other while a

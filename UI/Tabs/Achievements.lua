@@ -341,9 +341,9 @@ local function BuildTiles(page)
   -- Pages of tiles: buttons, or the mouse wheel.
   local function turn(d)
     local cat = P.view.value
-    local page = math.max(1, math.min((pageOf[cat] or 1) + d, P.pages or 1))
-    if page ~= (pageOf[cat] or 1) then
-      pageOf[cat] = page
+    local want = math.max(1, math.min((pageOf[cat] or 1) + d, P.pages or 1))
+    if want ~= (pageOf[cat] or 1) then
+      pageOf[cat] = want
       ns.RefreshPanel()
     end
   end
@@ -380,7 +380,7 @@ local function GoalRow(parent, i)
   row.remove = UI.Button(row, "x", 18)
   row.remove:SetHeight(18)
   row.remove:SetPoint("TOPRIGHT", -12, 2)
-  row.remove:SetScript("OnClick", function(self) if row.goal then ns.RemoveGoal(row.goal.id) end end)
+  row.remove:SetScript("OnClick", function() if row.goal then ns.RemoveGoal(row.goal.id) end end)
   UI.Tooltip(row.remove, "Remove goal", "Takes this goal off for the whole guild.")
   row.track = row:CreateTexture(nil, "BORDER")
   row.track:SetPoint("TOPLEFT", 14, -19)

@@ -18,6 +18,10 @@ globals = {
 -- The game's own functions and tables the addon uses. A name missing here
 -- is flagged, which catches typos; add new game functions as they're used.
 read_globals = {
+  -- Professions (the crafters directory) and chat
+  "GetTradeSkillLine", "GetNumTradeSkills", "GetTradeSkillInfo", "GetTradeSkillItemLink",
+  "GetCraftDisplaySkillLine", "GetNumCrafts", "GetCraftInfo", "GetCraftItemLink", "GetSpellInfo",
+  "ChatFrame_OpenChat",
   -- Lua helpers WoW adds
   "date", "time", "strsplit", "strtrim", "tinsert", "wipe", "hooksecurefunc", "issecretvalue",
   -- Profiles and recruiting

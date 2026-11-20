@@ -154,7 +154,7 @@ end)
 ------------------------------------------------------------------------
 -- Reading your own profession windows
 ------------------------------------------------------------------------
-local function idOf(link, enchant)
+local function idOf(link)
   if type(link) ~= "string" then return nil end
   local item = link:match("item:(%d+)")
   if item then return item end
