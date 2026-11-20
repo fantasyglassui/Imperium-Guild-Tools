@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.6.5", date = "Nov 19, 2026", items = {
+    "Alerts, chat messages and the remaining screen text are now in your language.",
+    "Polish: Raids, Recruit, player card and Guild profiles.",
+  } },
   { version = "3.6.4", date = "Nov 19, 2026", items = {
     "Faster in big guilds: every tab refreshes in a few milliseconds.",
     "Day and month names in dates are now in your language.",

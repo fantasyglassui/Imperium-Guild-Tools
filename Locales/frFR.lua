@@ -1449,4 +1449,7 @@ ns.LOCALES.frFR = {
   ["moments ago"] = "à l'instant",
   ["a minute ago"] = "il y a une minute",
   ["%d minutes ago"] = "il y a %d minutes",
+  ["%d achievements"] = "%d hauts faits",
+  ["Alerts, chat messages and the remaining screen text are now in your language."] = "Les alertes, les messages de chat et le reste des textes sont maintenant dans ta langue.",
+  ["Polish: Raids, Recruit, player card and Guild profiles."] = "Finitions : Raids, Recrutement, fiche de joueur et Profils de la guilde.",
 }

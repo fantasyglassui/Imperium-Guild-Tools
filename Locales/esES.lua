@@ -1449,4 +1449,7 @@ ns.LOCALES.esES = {
   ["moments ago"] = "hace un momento",
   ["a minute ago"] = "hace un minuto",
   ["%d minutes ago"] = "hace %d minutos",
+  ["%d achievements"] = "%d logros",
+  ["Alerts, chat messages and the remaining screen text are now in your language."] = "Los avisos, los mensajes de chat y el resto de textos están ahora en tu idioma.",
+  ["Polish: Raids, Recruit, player card and Guild profiles."] = "Retoques: Bandas, Reclutar, ficha de jugador y Perfiles de la hermandad.",
 }

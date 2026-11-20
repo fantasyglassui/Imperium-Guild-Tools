@@ -142,7 +142,7 @@ local function fill(p)
   f.name:SetText(Ambiguate(p.name, "short") .. (title and (" " .. UI.Code("accent") .. title .. "|r") or ""))
   if ns.AchievementCount then
     local n = ns.AchievementCount(p.name)
-    f.achievements:SetText(n == 1 and "1 achievement" or (n .. " achievements"))
+    f.achievements:SetText(ns.TP(n, "1 achievement", "%d achievements", n))
   end
   f.name:SetTextColor(UI.ClassColor(m and m.classFile))
   if m then
@@ -232,7 +232,7 @@ local function fill(p)
   if #p.wishes > 0 then
     -- The first item they want (Need first), cut short so the line fits.
     local first = p.wishes[1].name
-    if #first > 30 then first = first:sub(1, 28) .. "..." end
+    if #first > 24 then first = first:sub(1, 22) .. "..." end
     if #p.wishes == 1 then
       loot[#loot + 1] = ns.TF("Wishlist: %s (%s)", col("text", first), ns.T(p.wishNeed > 0 and "Need" or "Want"))
     elseif p.wishNeed > 0 then

@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.6.5
+### Everything in your language
+- **Alerts and chat messages are now translated** (German, French and Spanish): kills and deaths, streaks and revenge, Wanted sightings, bounties, guild firsts and full clears, raid reminders, raid-night DKP awards, loot auctions and the loot council, alt links, DKP decay and imports, the weekly recap, level-ups and more. About 100 messages were still in English because they were put together from pieces (names, numbers, places).
+- **Screens too:** the player card's PvP and loot lines, the Wanted details, the officer log ("Thorne promoted Mira to Veteran"), the raid's tank and healer check, the Kills tab's best streak and monthly champion, the raid plan's group headings, the DKP tab's header, the welcome window, and "and higher" for ranks in Settings.
+- Singular and plural are now right in every language ("1 guild member", "3 guild members"), instead of only in English.
+
+### Polish
+- **Raids tab:** while a raid night is running, the On time / Per hour / Per boss boxes are hidden. They only apply to the next raid night you start, and showed different numbers from the one in progress.
+- **Recruit tab:** a recruit who has joined the guild shows their level and class from the roster, and class names read "Mage" rather than "MAGE".
+- **Player card:** "Item level 66" now matches the rest of the line.
+- **Guild profiles:** the window is wider, so play times fit.
+- **Events tab:** the attendance note can use two lines in longer languages.
+- **Settings > General:** "Good to know" mentions profiles and /warcrest check.
+- German times read "vor 8 h" instead of "vor 8 Std.." (no more double full stops).
+
 ## 3.6.4
 ### Performance
 - **Faster in big guilds.** Checking whether someone is in the guild was reading the whole guild roster from the game, member by member, every time the answer was "no" (whispers from strangers, recruits, party members from outside the guild). It now answers straight away. The Recruit tab with 200 recruits refreshes in about 10 ms instead of a quarter of a second.
