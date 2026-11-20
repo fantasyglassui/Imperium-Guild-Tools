@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.9.1", date = "Nov 20, 2026", items = {
+    "Fix: changes made while a guildmate was offline (profiles, recipes, guild settings and more) didn't reach them when they logged in, because the game writes names as \"Name Realm\".",
+  } },
   { version = "3.9.0", date = "Nov 20, 2026", items = {
     "Fix: \"No player named ... is currently playing\" filling chat. Warcrest now whispers guildmates by a name the server knows, and not at all when they're offline.",
     "Kill streak alerts have names, from Killing Spree at 3 kills to Godlike at 20 and Beyond Godlike at 30, and the streak achievements and titles match them.",

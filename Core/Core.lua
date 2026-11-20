@@ -369,6 +369,14 @@ end
 
 function ns.fullName(name)
   if not name then return nil end
+  -- "Name Realm" or "Name (Realm Name)", as some game clients write it: "Name-RealmName".
+  if name:find("[%s%(]") then
+    local short, realm = name:match("^([^%s%(]+)%s*%(?(.-)%)?%s*$")
+    if short then
+      realm = (realm or ""):gsub("[%s%-]", "")
+      name = realm ~= "" and (short .. "-" .. realm) or short
+    end
+  end
   if name:find("-", 1, true) then return name end
   local realm = GetNormalizedRealmName and GetNormalizedRealmName()
   return realm and (name .. "-" .. realm) or name

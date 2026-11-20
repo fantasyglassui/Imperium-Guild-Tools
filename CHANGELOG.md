@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.1
+- **Fix: shared changes didn't reach everyone.** WoW: Forever gives the names of addon messages' senders as "Name Realm", and Warcrest didn't recognise those as guildmates in private (whispered) messages. Catching up when you log in uses those messages, so anything shared while a guildmate was offline (profiles, recipes, achievements, and the rest of the guild's shared record) never reached them. Officers' guild settings could be ignored for the same reason. Everyone gets caught up within a few minutes of logging in with 3.9.1 (or type `/warcrest sync`).
+- The tests now also run with names written the way WoW: Forever writes them.
+
 ## 3.9.0
 - **Fix:** "No player named 'Name Realm' is currently playing" could fill your chat. The game gives some names with the realm after a space, which can't be whispered; Warcrest now whispers guildmates by the roster's name for them, and doesn't whisper guildmates who are offline.
 - **Kill streaks have names:** Killing Spree (3), Rampage (5), Dominating (10), Unstoppable (15), Godlike (20), Legendary (25) and Beyond Godlike (30): "Lyra the Avenger is Godlike! (20 kills in a row)". The streak achievements match: Killing Spree, Rampage, Dominating (title: the Dominator), Unstoppable (the Unstoppable), Godlike, now at 20 kills (the Godlike), and Legendary at 25 (the Legendary). Achievements already earned stay earned.

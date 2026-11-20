@@ -2077,4 +2077,5 @@ ns.LOCALES.deDE = {
   ["Killed %s (%s)"] = "%s besiegt (%s)",
   ["Killed %s in %s (%s)"] = "%s besiegt in %s (%s)",
   ["Raid night: %s"] = "Raidabend: %s",
+  ["Fix: changes made while a guildmate was offline (profiles, recipes, guild settings and more) didn't reach them when they logged in, because the game writes names as \"Name Realm\"."] = "Fehler behoben: Änderungen, während ein Gildenmitglied offline war (Profile, Rezepte, Gildeneinstellungen und mehr), erreichten es beim Einloggen nicht, weil das Spiel Namen als „Name Realm“ schreibt.",
 }

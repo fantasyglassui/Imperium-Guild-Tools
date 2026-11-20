@@ -2077,4 +2077,5 @@ ns.LOCALES.esES = {
   ["Killed %s (%s)"] = "%s derrotado (%s)",
   ["Killed %s in %s (%s)"] = "%s derrotado en %s (%s)",
   ["Raid night: %s"] = "Noche de banda: %s",
+  ["Fix: changes made while a guildmate was offline (profiles, recipes, guild settings and more) didn't reach them when they logged in, because the game writes names as \"Name Realm\"."] = "Corregido: los cambios hechos mientras un miembro estaba desconectado (perfiles, recetas, ajustes de hermandad y más) no le llegaban al conectarse, porque el juego escribe los nombres como \"Nombre Reino\".",
 }

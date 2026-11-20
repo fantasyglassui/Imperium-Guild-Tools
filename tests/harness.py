@@ -104,8 +104,14 @@ class Client:
 class Guild:
     """Several players, the messages between them, and a shared clock."""
 
-    def __init__(self, members, raid=(), start=START, throttle=False, setup=None, echo=False):
+    def __init__(self, members, raid=(), start=START, throttle=False, setup=None, echo=False, realm_space=None):
         self.echo = echo  # True: the game sends your own guild/raid messages back to you (retail does)
+        # True: like WoW: Forever, senders come as "Name Realm", and a whisper to a
+        # name with a space in it doesn't arrive ("No player named ...").
+        if realm_space is None:
+            realm_space = os.environ.get("WARCREST_REALM_SPACE") == "1"
+        self.realm_space = realm_space
+        self.bad_whispers = 0
         self.clock = float(start)
         # (name, guild rank[, class[, level]])
         self.members = [(m[0], m[1], True, m[2] if len(m) > 2 else "WARRIOR", m[3] if len(m) > 3 else 60)
@@ -169,11 +175,16 @@ class Guild:
                 elif channel == "RAID":
                     ok = c.in_raid and self.clients[who].in_raid
                 elif channel == "WHISPER":
-                    ok = target is not None and target.split("-")[0] == c.name and c.name != who
+                    if target is not None and " " in target:
+                        if c.name == who:
+                            self.bad_whispers += 1
+                        ok = False
+                    else:
+                        ok = target is not None and target.split("-")[0] == c.name and c.name != who
                 else:
                     ok = False
                 if ok:
-                    c.fire("CHAT_MSG_ADDON", prefix, text, channel, who + "-Realm")
+                    c.fire("CHAT_MSG_ADDON", prefix, text, channel, who + (" Realm" if self.realm_space else "-Realm"))
 
     def run(self, seconds, step=0.1):
         """Let time pass: timers run and messages are delivered as it goes."""
