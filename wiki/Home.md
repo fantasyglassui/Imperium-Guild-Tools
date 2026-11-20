@@ -1,6 +1,6 @@
 # Warcrest
 
-**Website:** https://warcrest-addon.com/ (with a contact form for bugs and ideas)
+**Website:** https://warcrest-addon.com/ (with a contact form for bugs and ideas) · **Download:** https://www.curseforge.com/wow/addons/warcrest
 
 Guild tools for World of Warcraft: Forever: raid sign-ups, a full DKP system with live loot auctions and wishlists, PvP kill alerts, a wanted list of gankers, achievements and player cards, all shared automatically between guildmates.
 

@@ -4,7 +4,7 @@ Install **Warcrest** from CurseForge, and everything else is shared with the gui
 
 ## Install
 
-1. In the CurseForge app, search for **Warcrest** and click **Install**.
+1. In the CurseForge app, search for **Warcrest** and click **Install**, or get it from its [CurseForge page](https://www.curseforge.com/wow/addons/warcrest).
 2. Start the game and make sure **Warcrest** is ticked in the **AddOns** list on the character screen.
 3. Keep it updated. You'll get a reminder in game when a newer version is out, and a **What's new** window after each update (reopen it with `/warcrest updates`).
 

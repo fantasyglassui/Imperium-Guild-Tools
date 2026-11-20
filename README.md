@@ -2,6 +2,8 @@
 
 [![Tests](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml/badge.svg)](https://github.com/fantasyglassui/Imperium-Guild-Tools/actions/workflows/tests.yml)
 
+**[Download on CurseForge](https://www.curseforge.com/wow/addons/warcrest)** · **[Website](https://warcrest-addon.com/)**
+
 Guild tools for World of Warcraft: Forever. Raid sign-ups, DKP with live loot auctions and wishlists, PvP kill alerts and leaderboards, a wanted list of gankers, achievements, player cards and officer tools, shared automatically between everyone in your guild who has it.
 
 Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, and is now for any guild. Members of <The Imperium> still see their own emblem and name.
