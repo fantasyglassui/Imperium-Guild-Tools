@@ -22,6 +22,7 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest addon` | Who has the addon, and who's out of date |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers) |
 | `/warcrest council` (or `lc`) | The loot council vote, or start one (officers) |
+| `/warcrest calendar` | The Calendar tab: the month's raids, raid nights and events |
 | `/warcrest raidrecap` | The last raid night's recap |
 | `/warcrest attune` | Who in the guild is attuned for each raid, and has the UBRS and Scholomance keys |
 | `/warcrest assign` | Raid assignments: who does what on each boss |

@@ -34,12 +34,12 @@ There are 161 achievements in all.
 | Shield Brother | Help guildmates with 100 kills |  |
 | War Band | Help guildmates with 250 kills |  |
 | Unbreakable Line | Help guildmates with 500 kills |  |
-| On a Roll | 3 killing blows in a row without dying |  |
+| Killing Spree | 3 killing blows in a row without dying |  |
 | Rampage | A 5-kill streak |  |
-| Unstoppable | A 10-kill streak |  |
-| Godlike | A 15-kill streak |  |
-| Massacre | A 20-kill streak |  |
-| Wrath Incarnate | A 25-kill streak |  |
+| Dominating | A 10-kill streak |  |
+| Unstoppable | A 15-kill streak |  |
+| Godlike | A 20-kill streak |  |
+| Legendary | A 25-kill streak |  |
 | Double Kill | Two killing blows within 10 seconds |  |
 | Triple Kill | Three killing blows within 20 seconds |  |
 | Quad Kill | Four killing blows within 30 seconds |  |

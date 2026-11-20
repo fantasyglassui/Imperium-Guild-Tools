@@ -26,7 +26,7 @@ local inCombat = false
 local mirrorTimers = {}
 local lastDeathSent = 0
 
-local personalDefaults = { sound = true, warning = true, mapPins = true, pinHours = 24, fightMap = true,
+local personalDefaults = { sound = true, warning = true, mapPins = true, pinHours = 24,
   quietInstances = true, quietCombat = false, wantedThreshold = 3 }
 local showDefaults = { pvp = true, environment = true, kill_world = true, kill_bg = false, kill_honor = true,
   wanted = true, level_ten = true, level_all = false, kill_streak = true, kill_revenge = true,

@@ -122,9 +122,35 @@ function ns.MyRank()
   return rankIndex
 end
 
+-- Whether a rank can read officer chat, from the game's guild control
+-- settings (nil if this game client can't say). rank: 0 for the Guild Master.
+local chatRanks, chatRanksAt = {}, 0
+local function rankHasOfficerChat(rank)
+  if GetTime() - chatRanksAt > 60 then chatRanks, chatRanksAt = {}, GetTime() end
+  local known = chatRanks[rank]
+  if known ~= nil then return known end
+  local result = false
+  local CGI = C_GuildInfo
+  if CGI and CGI.GuildControlGetRankFlags then
+    local ok, flags = pcall(CGI.GuildControlGetRankFlags, rank + 1)
+    if ok and type(flags) == "table" then result = flags[3] == true end -- 3: officer chat, listen
+  end
+  chatRanks[rank] = result
+  return result
+end
+ns.OnEvent("GUILD_RANKS_UPDATE", function() chatRanks = {} end)
+
+-- Does this rank count as an officer in Warcrest: the ranks the Guild Master
+-- picked, and (unless turned off) every rank that can read officer chat.
+function ns.IsOfficerRank(rank)
+  local c = ns.cfg
+  if rank == nil or c == nil then return false end
+  if rank <= c.officerRank then return true end
+  return c.chatOfficers ~= false and rankHasOfficerChat(rank)
+end
+
 function ns.IsAddonOfficer()
-  local r = ns.MyRank()
-  return r ~= nil and ns.cfg ~= nil and r <= ns.cfg.officerRank
+  return ns.IsOfficerRank(ns.MyRank())
 end
 
 local function perm(...)
@@ -194,6 +220,7 @@ local function fillConfig(c)
   if c.officerRank == nil then c.officerRank = 1 end
   if c.dkp == nil then c.dkp = true end -- the guild uses DKP for loot
   if c.bounties == nil then c.bounties = false end -- bounties: off until an officer turns them on
+  if c.chatOfficers == nil then c.chatOfficers = true end -- ranks with officer chat count as officers
   c.stamp = c.stamp or 0
   c.by = c.by or ""
   if not c.types then
@@ -272,6 +299,7 @@ local function sendConfig()
   if not c.types.raid_recap then features[#features + 1] = "norecap" end
   if not c.types.achievement_chat then features[#features + 1] = "noachchat" end
   if c.memberPolls then features[#features + 1] = "memberpolls" end
+  if not c.chatOfficers then features[#features + 1] = "nochatofficers" end
   ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, table.concat(features, ","))
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
@@ -284,7 +312,8 @@ function ns.PushConfig(new)
     ns.Say("Your rank can't change the guild's alert settings.")
     return false
   end
-  if new.officerRank ~= ns.cfg.officerRank and ns.MyRank() ~= 0 then
+  local chatChanged = new.chatOfficers ~= nil and (new.chatOfficers and true or false) ~= ns.cfg.chatOfficers
+  if (new.officerRank ~= ns.cfg.officerRank or chatChanged) and ns.MyRank() ~= 0 then
     ns.Say("Only the Guild Master can change which ranks manage these settings.")
     return false
   end
@@ -293,6 +322,7 @@ function ns.PushConfig(new)
   if new.dkp ~= nil then c.dkp = new.dkp and true or false end
   if new.bounties ~= nil then c.bounties = new.bounties and true or false end
   if new.memberPolls ~= nil then c.memberPolls = new.memberPolls and true or false end
+  if new.chatOfficers ~= nil then c.chatOfficers = new.chatOfficers and true or false end
   for _, t in ipairs(ns.TYPES) do c.types[t.key] = new.types[t.key] and true or false end
   c.types.kill_honor = true -- grey kills never count, whatever an older version sends
   c.stamp, c.by = GetServerTime(), UnitName("player")
@@ -319,8 +349,14 @@ local function handleConfig(parts, sender, retried, groups)
     return
   end
   local newOfficerRank = tonumber(parts[5]) or ns.cfg.officerRank
-  if rank > ns.cfg.officerRank then return end
+  if not ns.IsOfficerRank(rank) then return end
   if newOfficerRank ~= ns.cfg.officerRank and rank ~= 0 then return end
+  local features = {}
+  if groups.raid then -- C8 and later: guild features
+    for f in (parts[7] or ""):gmatch("[^,]+") do features[f] = true end
+    -- Only the Guild Master changes who counts as an officer.
+    if (not features.nochatofficers) ~= (ns.cfg.chatOfficers ~= false) and rank ~= 0 then return end
+  end
 
   local on = {}
   for key in (parts[4] or ""):gmatch("[^,]+") do on[key] = true end
@@ -334,8 +370,7 @@ local function handleConfig(parts, sender, retried, groups)
   c.officerRank = newOfficerRank
   c.by = (parts[6] and parts[6] ~= "") and parts[6] or Ambiguate(sender, "short")
   if groups.raid then -- C8 and later: guild features
-    local features = {}
-    for f in (parts[7] or ""):gmatch("[^,]+") do features[f] = true end
+    c.chatOfficers = not features.nochatofficers
     c.dkp = features.dkp or false
     c.bounties = features.bounties or false
     c.types.raid_recap = not features.norecap

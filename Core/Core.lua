@@ -250,9 +250,31 @@ function ns.HandleAddonMessage(prefix, text, channel, sender)
 end
 
 -- Send one message now. Returns false if the game said to slow down.
+-- The name to whisper a guildmate by. Some game clients report a sender as
+-- "Name Realm", which the server can't whisper ("No player named ... is
+-- currently playing"): use the roster's name for them, or "Name-Realm".
+-- Returns nil for a guildmate the roster shows offline (don't whisper them).
+function ns.WhisperName(target)
+  if type(target) ~= "string" or target == "" then return nil end
+  local m = ns.Member and ns.Member(target)
+  if m then
+    if m.online == false then return nil end
+    target = m.name or target
+  end
+  if target:find(" ", 1, true) then
+    local name, realm = target:match("^(%S+)%s+%(?(.-)%)?$")
+    if name then target = (realm ~= "" and (name .. "-" .. realm:gsub("%s+", ""))) or name end
+  end
+  return target
+end
+
 local function deliver(m)
   if m.channel == "GUILD" and not IsInGuild() then return true end
   if m.channel == "RAID" and not IsInRaid() then return true end
+  if m.channel == "WHISPER" then
+    m.target = ns.WhisperName(m.target)
+    if not m.target then return true end -- offline: drop it
+  end
   local ok, result = pcall(C_ChatInfo.SendAddonMessage, m.prefix, m.text, m.channel, m.target)
   if not ok then return true end           -- a bad message: drop it
   if result == false or THROTTLED[result] then return false end
@@ -613,6 +635,8 @@ SlashCmdList.WARCREST = function(input)
     if ns.TogglePanel then ns.TogglePanel() end
   elseif msg == "raids" or msg == "raid" then
     if ns.OpenPanel then ns.OpenPanel("raids") end
+  elseif msg == "calendar" or msg == "cal" then
+    if ns.OpenPanel then ns.OpenPanel("calendar") end
   elseif msg == "dkp" then
     if ns.OpenPanel then ns.OpenPanel("dkp") end
   elseif msg:find("^auction") then

@@ -67,19 +67,19 @@ local function collect(fromT, toT)
   for key, s in pairs(nights) do
     local killed = bosses[key] or {}
     local text = s.title ~= "" and s.title or "Raid night"
-    local tip = { ns.Date("%A, %b %d at %H:%M", s.t), "Raid night: " .. text }
-    for _, k in ipairs(killed) do tip[#tip + 1] = "Killed " .. k.name .. " (" .. date("%H:%M", k.t) .. ")" end
+    local tip = { ns.Date("%A, %b %d at %H:%M", s.t), ns.TF("Raid night: %s", text) }
+    for _, k in ipairs(killed) do tip[#tip + 1] = ns.TF("Killed %s (%s)", k.name, date("%H:%M", k.t)) end
     add(s.t, { kind = "night", time = s.t, text = text,
-      sub = #killed > 0 and (#killed .. " boss" .. (#killed == 1 and "" or "es") .. " killed") or "Raid night",
+      sub = #killed > 0 and ns.TP(#killed, "%d boss killed", "%d bosses killed", #killed) or "Raid night",
       tip = table.concat(tip, "\n") })
     bosses[key] = nil
   end
   -- Boss kills on a day with no raid night recorded.
   for _, list in pairs(bosses) do
     local tip = {}
-    for _, k in ipairs(list) do tip[#tip + 1] = "Killed " .. k.name .. " in " .. k.raid .. " (" .. date("%H:%M", k.t) .. ")" end
+    for _, k in ipairs(list) do tip[#tip + 1] = ns.TF("Killed %s in %s (%s)", k.name, k.raid, date("%H:%M", k.t)) end
     add(list[1].t, { kind = "night", time = list[1].t, text = list[1].raid,
-      sub = #list .. " boss" .. (#list == 1 and "" or "es") .. " killed", tip = table.concat(tip, "\n") })
+      sub = ns.TP(#list, "%d boss killed", "%d bosses killed", #list), tip = table.concat(tip, "\n") })
   end
   for _, list in pairs(days) do table.sort(list, function(a, b) return a.time < b.time end) end
   return days

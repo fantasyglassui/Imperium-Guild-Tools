@@ -32,3 +32,20 @@ def test_stored_kills_are_tidied():
     assert a.ns.Ambiguate("Bob Wraithblade", "short") == "Bob"
     assert a.ns.Ambiguate("Bob (Wraithblade)", "short") == "Bob"
     assert a.ns.IsMe("Alice Wraithblade")
+
+
+def test_whispers_go_to_a_name_the_server_knows():
+    guild = Guild(M)
+    a = guild["Alice"]
+    assert a.ns.WhisperName("Bob Wraithblade") in ("Bob", "Bob-Realm")      # the roster's own name for Bob
+    assert a.ns.WhisperName("Stranger Wraithblade") == "Stranger-Wraithblade"
+    assert a.ns.WhisperName("Stranger (Argent Dawn)") == "Stranger-ArgentDawn"
+    assert a.ns.WhisperName("Stranger-Realm") == "Stranger-Realm"
+
+
+def test_no_whispers_to_guildmates_who_are_offline():
+    guild = Guild(M)
+    guild.set_online("Cara", False)
+    a = guild["Alice"]
+    assert a.ns.WhisperName("Cara") is None
+    assert a.ns.WhisperName("Bob") is not None

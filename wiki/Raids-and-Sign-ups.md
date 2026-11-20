@@ -42,7 +42,7 @@ Type `/warcrest raidrecap` to see the last one again. Officers can turn recaps o
 
 ## Calendar
 
-Switch the Raids tab to **Calendar** to see a month at a glance: raids scheduled (gold), raid nights held (green, with how many bosses died) and past raids. Hover a day for the details, or click a raid to open it. The arrows move between months; **Today** comes back.
+The **Calendar** tab (on the left, under Events, or `/warcrest calendar`) shows a month at a glance: raids scheduled (gold), raid nights held (green, with how many bosses died) and past raids. Hover a day for the details, or click a raid to open it. The arrows move between months; **Today** comes back.
 
 ## Progress
 

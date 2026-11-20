@@ -138,8 +138,7 @@ local function decode(p)
 end
 
 function ns.IsOfficerName(name)
-  local rank = ns.RankOf(name)
-  return rank ~= nil and rank <= ns.cfg.officerRank
+  return ns.IsOfficerRank(ns.RankOf(name))
 end
 
 local function authorAllowed(e)

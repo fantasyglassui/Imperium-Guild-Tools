@@ -51,10 +51,6 @@ Bounties are **off** until a guild leader or officer turns them on (Settings > A
 - The whole guild hears about it. The first guild member to land the killing blow on that player in the next 30 days claims it and is paid automatically. Kills count the same way as on the Kills tab.
 - Officers can withdraw a bounty that hasn't been claimed. Claiming a bounty earns the **Collector** achievement.
 
-## Where the guild fights
-
-Circles on the world map show where guild members killed enemy players, or died to them, in the last 7 days. The bigger the circle, the more fights; **gold** where we won more, **red** where we lost more. Hover one for the numbers, the enemy we killed most there and the one who killed us most. Turn it off in Settings > General (**Show where the guild fights**).
-
 ## Deaths on the map
 
 When a guild member dies in world PvP, an X (or a skull) marks the spot on the world map, including inside OpenMap. Hover a mark for details; click it to set a TomTom waypoint if you use TomTom.

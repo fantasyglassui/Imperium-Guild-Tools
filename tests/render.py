@@ -504,13 +504,13 @@ if __name__ == "__main__":
     guild, me = demo_guild(guild_name=os.environ.get("WARCREST_GUILD"), locale=os.environ.get("WARCREST_LOCALE"))
     rd = Renderer(me)
     panel = None
-    for tab in ("roster", "raids", "events", "recruit", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
+    for tab in ("roster", "raids", "events", "calendar", "recruit", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):
         me.ns.OpenPanel(tab)
         me.ns.RefreshPanel()
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     for tab, view in (("settings", "sounds"), ("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "social"), ("achievements", "guild"),
-                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress"), ("wanted", "guilds"),
+                      ("raids", "plan"), ("raids", "progress"), ("wanted", "guilds"),
                       ("events", "polls"), ("officers", "inactive")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))

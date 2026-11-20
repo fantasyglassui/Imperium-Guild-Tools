@@ -32,7 +32,7 @@ local TOPICS = {
   { "Raids and sign-ups", function() return join({
     P("Signing up:", "pick a raid on the Raids tab, choose Tank, Healer or DPS, then Accept, Tentative or Decline. You can change your answer any time."),
     P("Reminders:", "you're reminded before raids you signed up for. Officers are warned when a raid is short of tanks or healers."),
-    P("Calendar:", "the month's raids (gold), raid nights held (green) and bosses killed. Click a raid to open it."),
+    P("Calendar tab:", "the month's raids (gold), raid nights held (green), bosses killed and guild events. Click a raid or an event to open it."),
     P("Progress:", "the bosses the guild has killed in each raid, with first kills. A kill counts when 5 or more guild members, at least half the raid, kill a raid boss. The first kill of each boss is announced."),
     P("Plan:", "officers put the sign-ups into groups 1 to 8 or on the bench, by clicking a name and then a group, or with Auto-fill (tanks in group 1, a healer in each group). Everyone can see the plan. At raid time, Invite sign-ups invites only the planned groups, and Arrange raid moves everyone into their group (raid leader or assistant)."),
     P("Raid night recap:", "when an officer clicks End raid, the whole guild gets a summary in chat: the bosses killed, the loot and who won it, how many attended, and the DKP you earned. /warcrest raidrecap shows the last one again."),
@@ -70,7 +70,6 @@ local TOPICS = {
     P("Streaks and revenge:", "the guild hears about kill streaks, when a big streak is ended, and when someone kills a guildmate's killer."),
     P("Wanted:", "enemy players who keep killing guild members. When anyone spots one, everyone is alerted and the spot is marked on the map."),
     P("Rival guilds:", "the Wanted tab's Guilds view shows the score against every enemy guild. Officers mark rivals: the guild is alerted when a group of them is seen, and the weekly recap says how the war went."),
-    P("Where the guild fights:", "circles on the world map show where guild members killed enemy players or died to them in the last week. Hover one for the numbers; turn it off in Settings > General."),
     P("Bounties:", "off until an officer turns them on (Settings > Alerts > Bounties). Then officers can put a reward on an enemy player's head on the Wanted tab, and the first guild member to kill them in 30 days claims it, paid in DKP if the guild uses it."),
   }) end },
   { "Achievements and titles", function() return join({
@@ -106,6 +105,7 @@ local TOPICS = {
     CMD("/warcrest craft [search]", "who in the guild can craft what"),
     CMD("/warcrest auction [item] [min bid]", "auction an item to your raid (officers)"),
     CMD("/warcrest council  /warcrest lc", "the loot council vote"),
+    CMD("/warcrest calendar", "the Calendar tab"),
     CMD("/warcrest raidrecap", "the last raid night's recap"),
     CMD("/warcrest attune", "who in the guild is attuned for each raid"),
     CMD("/warcrest assign", "raid assignments for each boss"),

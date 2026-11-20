@@ -20,6 +20,7 @@ local TAB_INFO = {
   roster = { icon = "roster", text = "Members, notes and ranks" },
   raids = { icon = "raids", text = "Sign-ups, raid nights and invites" },
   events = { icon = "events", text = "PvP nights, world bosses, meetings and more" },
+  calendar = { icon = "calendar", text = "The month's raids, raid nights and events" },
   recruit = { icon = "recruit", text = "Recruits, trials and the recruiting message" },
   dkp = { icon = "dkp", text = "Standings, loot and auctions" },
   wishlist = { icon = "wishlist", text = "The loot the guild wants" },

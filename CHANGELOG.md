@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.9.0
+- **Fix:** "No player named 'Name Realm' is currently playing" could fill your chat. The game gives some names with the realm after a space, which can't be whispered; Warcrest now whispers guildmates by the roster's name for them, and doesn't whisper guildmates who are offline.
+- **Kill streaks have names:** Killing Spree (3), Rampage (5), Dominating (10), Unstoppable (15), Godlike (20), Legendary (25) and Beyond Godlike (30): "Lyra the Avenger is Godlike! (20 kills in a row)". The streak achievements match: Killing Spree, Rampage, Dominating (title: the Dominator), Unstoppable (the Unstoppable), Godlike, now at 20 kills (the Godlike), and Legendary at 25 (the Legendary). Achievements already earned stay earned.
+- **Officers, without setup:** every rank that can read officer chat (in the game's guild control) now counts as an officer in Warcrest: the Recruit and Officers tabs, scheduling raids, and the guild settings. Before, only the Guild Master and the rank below did, unless the Guild Master changed it. The Guild Master can still pick ranks under **Who can change these** in Settings, and can turn the officer chat rule off there (**And every rank with officer chat**).
+- **Calendar tab:** the calendar moved from a view on the Raids tab to its own tab on the left, under Events. `/warcrest calendar` opens it.
+- **Removed:** the world map's "where the guild fights" circles, and their setting.
+- The calendar's raid nights and boss kills are now translated.
+
 ## 3.8.3
 - Fix: **Edit profile** and `/warcrest profile` did nothing, and the **crafters window** was blank. WoW: Forever's game client no longer has the old item and spell lookups (`GetItemInfo`, `GetSpellInfo`) that Warcrest used for your item level and recipe names; it now uses the newer ones, and the old ones on clients that still have them.
 

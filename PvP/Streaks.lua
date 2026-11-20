@@ -19,7 +19,16 @@ local Ambiguate = ns.Ambiguate
 local STREAK_GAP = 60 * 60       -- kills further apart than this start a new streak
 local REVENGE_WINDOW = 30 * 60   -- how long after a death killing the killer counts as revenge
 local ANNOUNCE_ENDED = 5         -- a streak this long gets a mention when it ends
-local MILESTONE = { [3] = true, [5] = true, [10] = true, [15] = true, [20] = true, [25] = true, [30] = true }
+-- Streaks the guild hears about, each with its own name.
+local MILESTONE = {
+  [3] = "%s is on a Killing Spree! (%d kills in a row)",
+  [5] = "%s is on a Rampage! (%d kills in a row)",
+  [10] = "%s is Dominating! (%d kills in a row)",
+  [15] = "%s is Unstoppable! (%d kills in a row)",
+  [20] = "%s is Godlike! (%d kills in a row)",
+  [25] = "%s is Legendary! (%d kills in a row)",
+  [30] = "%s is Beyond Godlike! (%d kills in a row)",
+}
 
 local STREAK_COLOR = "|cffffad33"
 local REVENGE_COLOR = "|cffff6b6b"
@@ -186,7 +195,7 @@ function ns.OnLiveKill(k)
   -- Streak milestones.
   local n = ns.CurrentStreak(killer, k.t)
   if MILESTONE[n] and wanted("kill_streak") then
-    local text = ns.TF("%s is on a %d-kill streak!", titled(killer), n)
+    local text = ns.TF(MILESTONE[n], titled(killer), n)
     ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r", nil, nil, "streak")
   end
 end

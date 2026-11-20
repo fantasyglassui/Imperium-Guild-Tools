@@ -32,9 +32,9 @@ def test_streak_alerts_at_three_and_five():
     for i in range(5):
         live_kill(guild, "Alice", "Enemy%d" % i)
         guild.jump(300)
-    lines = bob.said("kill streak")
+    lines = bob.said("kills in a row")
     assert len(lines) == 2
-    assert "Alice is on a 3-kill streak!" in lines[0] and "Alice is on a 5-kill streak!" in lines[1]
+    assert "Alice is on a Killing Spree! (3 kills in a row)" in lines[0] and "Alice is on a Rampage! (5 kills in a row)" in lines[1]
     assert bob.ns.CurrentStreak("Alice") == 5
 
 

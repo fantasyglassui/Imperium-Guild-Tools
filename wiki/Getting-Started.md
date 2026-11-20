@@ -51,6 +51,8 @@ After the Tuesday reset, you get a short summary of the guild's last week in cha
 
 Open **Settings**. The **Just for you** column is yours to change; the **Guild-wide** column is set by officers, and anything turned off there is greyed out for everyone.
 
+**Who counts as an officer:** the Guild Master, the rank directly below, and every rank that can read officer chat (set in the game's guild control). They get the Recruit and Officers tabs and can change the guild's settings. The Guild Master can pick other ranks, or turn off the officer chat rule, under **Who can change these** in Settings.
+
 - **Alert types:** guild PvP deaths, falls and drowning, PvP kills, Wanted sightings, and level-up celebrations.
 - **How alerts appear:** a sound, and a message in the middle of the screen. Every alert also shows in chat.
 - **Quiet mode:** alerts wait while you're in a dungeon or raid (on by default), and optionally during combat. They're listed in chat once you're out.

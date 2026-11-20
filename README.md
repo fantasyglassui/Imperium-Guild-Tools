@@ -31,7 +31,6 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Wipe tracking.** Every boss pull is recorded, kill or wipe, with the best kill time for each boss.
 - **Guild polls.** Ask the guild a question; everyone with Warcrest votes.
 - **Crafting orders.** Order from a guild crafter in the crafters directory; they accept, decline or mark it done.
-- **Where the guild fights.** Circles on the world map where guild members killed enemy players or died to them this week.
 - **German, French and Spanish.** Follows your game's language, or pick one in Settings.
 - **Achievements and titles.** 44 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
 - **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
@@ -194,7 +193,7 @@ Healers who only healed don't get credit, since healing isn't an attack.
 ## For officers
 
 - Buttons in the Roster tab only work for actions your guild rank already allows. The game server checks every action, so the addon can't give anyone extra powers.
-- Alert settings can be changed by the Guild Master and the rank directly below by default. The Guild Master can change which ranks are allowed in the Alert Settings tab.
+- Who counts as an officer in Warcrest (the Recruit and Officers tabs, scheduling raids, guild settings): the Guild Master, the rank directly below, and every rank that can read officer chat in the game's guild control. The Guild Master can change this in Settings > Alerts.
 - Settings reach everyone who is online when you save. Members who log in later get the current settings from any online officer.
 - The **Addon** tab shows who has the addon and who needs to update. Click **Check now** to ask everyone online.
 

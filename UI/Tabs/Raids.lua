@@ -11,8 +11,8 @@ local UI = ns.UI
 local P = {}
 local selectedId
 local TAB
-local view = "event"          -- "event", "group", "calendar", "progress" or "new"
-local FULL = { plan = true, calendar = true, progress = true } -- views that use the whole page
+local view = "event"          -- "event", "plan", "group", "progress" or "new"
+local FULL = { plan = true, progress = true } -- views that use the whole page
 local myRole = "dps"
 local newDay = 0               -- days from today for a new raid
 
@@ -240,14 +240,12 @@ local function Refresh()
   P.newFrame:SetShown(view == "new")
   P.view:SetShown(view ~= "new")
   if view ~= "new" then P.view:SetValue(view) end
-  -- Calendar and Progress use the whole page.
+  -- Plan and Progress use the whole page.
   local full = FULL[view] or false
   for _, f in ipairs({ P.raidsCard, P.night, P.right }) do f:SetShown(not full) end
-  UI.RaidCalendar.frame:SetShown(view == "calendar")
   UI.RaidProgress.frame:SetShown(view == "progress")
   UI.RaidPlanView.frame:SetShown(view == "plan")
   if view == "plan" then UI.RaidPlanView.Refresh(event) return end
-  if view == "calendar" then UI.RaidCalendar.Refresh() return end
   if view == "progress" then UI.RaidProgress.Refresh() return end
 
   if view == "event" then RefreshEvent(event)
@@ -591,11 +589,11 @@ end
 local function Build(page)
   -- Header: the selected raid, or your raid group right now.
   P.view = UI.Segmented(page.headerBar, { { "event", "Raid" }, { "plan", "Plan" }, { "group", "Group" },
-    { "calendar", "Calendar" }, { "progress", "Progress" } }, function(v) view = v; ns.RefreshPanel() end)
+    { "progress", "Progress" } }, function(v) view = v; ns.RefreshPanel() end)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view
   UI.Tooltip(P.view, "Switch view", "Raid: the selected raid's sign-ups. Plan: its groups and bench. Group: everyone in your raid group right now. "
-    .. "Calendar: the month's raids and raid nights. Progress: the bosses the guild has killed in each raid.")
+    .. "Progress: the bosses the guild has killed in each raid. (The calendar has its own tab.)")
 
   -- Upcoming raids.
   local raids = CreateFrame("Frame", nil, page)
@@ -726,17 +724,14 @@ local function Build(page)
   BuildGroupView(right)
   BuildNewView(right)
 
-  -- Calendar and Progress.
+  -- Plan and Progress.
   local planView = UI.RaidPlanView.Build(page)
   UI.Grow(page, planView, 1, 1)
-  local cal = UI.RaidCalendar.Build(page)
   local prog = UI.RaidProgress
   prog.Build(page)
 
   -- A bigger window: more upcoming raids show, raid night moves down, and the right side grows.
-  UI.Grow(page, cal, 1, 1)
   table.insert(page.growth, function(dw, dh)
-    UI.RaidCalendar.Resize(740 + dw, 450 + dh)
     UI.RaidPlanView.Resize(740 + dw, 450 + dh)
   end)
   UI.Grow(page, prog.frame, 1, 1)

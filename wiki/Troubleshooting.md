@@ -12,6 +12,7 @@ Most problems come down to an old version. Check `/warcrest version` first, and 
 | A boss kill didn't show on the Progress view | Type `/warcrest bosses`: it lists the last bosses that died and why each did or didn't count (it needs a raid instance, a raid group, and 5 or more guild members making up at least half the raid). Send a screenshot of it if it looks wrong. |
 | Hourly DKP stopped | The officer who started the raid left or logged off. They should end the raid and another officer start it again. |
 | Alerts went quiet in a dungeon | That's quiet mode. Held alerts are listed in chat when you leave. Change it in **Settings**. |
+| An officer can't see the Recruit or Officers tab | Warcrest counts the Guild Master, the rank below and every rank with officer chat as officers. Give their rank officer chat in the game's guild control, or have the Guild Master pick their rank under **Who can change these** in Settings. |
 | Something's broken | Turn on `/warcrest debug`, install BugSack, and send the errors to an officer or open an issue on this repository. |
 
 ## An achievement didn't show up

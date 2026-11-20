@@ -354,7 +354,7 @@ function ns.AskCrafter(name, id)
   if ChatFrame_OpenChat then
     ChatFrame_OpenChat("/w " .. Ambiguate(name, "none") .. " " .. text)
   else
-    SendChatMessage(text, "WHISPER", nil, name)
+    SendChatMessage(text, "WHISPER", nil, ns.WhisperName(name) or name)
   end
 end
 

@@ -24,7 +24,7 @@ Whoever planned the event, or any officer, can:
 Events attended show on each member's player card, and count toward a recruit's trial.
 
 ## On the calendar
-Events show on the Raids tab's **Calendar** in their own colours. Hover a day to see who's going; click an event to open it.
+Events show on the **Calendar** tab in their own colours. Hover a day to see who's going; click an event to open it.
 
 ## Polls
 

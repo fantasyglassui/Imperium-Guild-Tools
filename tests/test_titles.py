@@ -184,9 +184,9 @@ def test_streak_and_revenge_alerts_show_the_title():
     for i in range(4):   # Bob's kill of Ganker already started the streak
         live_kill(guild, "Bob", "Enemy%d" % i)
         guild.jump(300)
-    lines = cara.said("kill streak!")
-    assert "Bob the Bounty Hunter is on a 3-kill streak!" in lines[0]
-    assert "Bob the Bounty Hunter is on a 5-kill streak!" in lines[1]
+    lines = cara.said("kills in a row")
+    assert "Bob the Bounty Hunter is on a Killing Spree!" in lines[0]
+    assert "Bob the Bounty Hunter is on a Rampage!" in lines[1]
     live_death(guild, "Bob", "Avenger-Stormrage")
     assert cara.said("Bob the Bounty Hunter's 5-kill streak was ended by Avenger.")
     live_kill(guild, "Bob", "Avenger")

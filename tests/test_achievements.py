@@ -24,7 +24,7 @@ def test_kills_streaks_and_announcement():
     assert {"kill1", "streak3"} <= got
     assert "streak5" not in got
     assert bob.said("Alice earned First Blood", clear=False)
-    assert bob.said("Alice earned On a Roll")
+    assert bob.said("Alice earned Killing Spree")
     progress = bob.ns.MemberAchievements("Alice")["kill25"].progress
     assert progress == 3
 

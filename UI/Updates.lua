@@ -11,6 +11,13 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.9.0", date = "Nov 20, 2026", items = {
+    "Fix: \"No player named ... is currently playing\" filling chat. Warcrest now whispers guildmates by a name the server knows, and not at all when they're offline.",
+    "Kill streak alerts have names, from Killing Spree at 3 kills to Godlike at 20 and Beyond Godlike at 30, and the streak achievements and titles match them.",
+    "Every rank that can read officer chat now counts as an officer in Warcrest (the Recruit and Officers tabs, raids, guild settings), with no setup. The Guild Master can turn this off in Settings.",
+    "The calendar has its own tab on the left, under Events (/warcrest calendar).",
+    "The world map no longer shows where the guild fights.",
+  } },
   { version = "3.8.3", date = "Nov 20, 2026", items = {
     "Fix: the profile editor (Edit profile, /warcrest profile) didn't open and the crafters window was blank on newer game clients.",
   } },
