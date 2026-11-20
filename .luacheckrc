@@ -21,7 +21,7 @@ read_globals = {
   -- Professions (the crafters directory) and chat
   "GetTradeSkillLine", "GetNumTradeSkills", "GetTradeSkillInfo", "GetTradeSkillItemLink",
   "GetCraftDisplaySkillLine", "GetNumCrafts", "GetCraftInfo", "GetCraftItemLink", "GetSpellInfo",
-  "ChatFrame_OpenChat",
+  "ChatFrame_OpenChat", "GetGuildRosterLastOnline", "UnitClassification", "C_QuestLog", "IsQuestFlaggedCompleted",
   -- Bug reports
   "GetNumAddOns", "GetAddOnInfo", "IsAddOnLoaded", "GetBuildInfo", "UpdateAddOnMemoryUsage", "GetAddOnMemoryUsage",
   -- Lua helpers WoW adds

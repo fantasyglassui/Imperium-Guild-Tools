@@ -43,7 +43,14 @@ local function readRoster()
     local name, rankName, rankIndex, level, className, zone, publicNote, officerNote,
           isOnline, _, classFile, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
     if name then
+      -- How long they've been offline, in days (0 when online).
+      local offline = 0
+      if not isOnline and GetGuildRosterLastOnline then
+        local ok, y, mo, d, h = pcall(GetGuildRosterLastOnline, i)
+        if ok then offline = (y or 0) * 365 + (mo or 0) * 30 + (d or 0) + (h or 0) / 24 end
+      end
       list[#list + 1] = {
+        offlineDays = offline,
         index = i, name = name, full = ns.fullName(name), rankName = rankName or "",
         rankIndex = rankIndex or 99, level = level or 0, className = className or "",
         classFile = classFile, zone = zone or "", publicNote = publicNote or "",
@@ -264,6 +271,7 @@ local function sendConfig()
   -- versions, which don't know about them, leave them on.
   if not c.types.raid_recap then features[#features + 1] = "norecap" end
   if not c.types.achievement_chat then features[#features + 1] = "noachchat" end
+  if c.memberPolls then features[#features + 1] = "memberpolls" end
   ns.Send("C8", c.stamp, on, typesCSV(c.types, CONFIG_GROUPS.C8), c.officerRank, c.by, table.concat(features, ","))
   for _, msg in ipairs({ "C7", "C6", "C5", "C4", "C3", "C2" }) do
     ns.Send(msg, c.stamp, on, typesCSV(c.types, CONFIG_GROUPS[msg]), c.officerRank, c.by)
@@ -284,6 +292,7 @@ function ns.PushConfig(new)
   c.enabled, c.officerRank = new.enabled, new.officerRank
   if new.dkp ~= nil then c.dkp = new.dkp and true or false end
   if new.bounties ~= nil then c.bounties = new.bounties and true or false end
+  if new.memberPolls ~= nil then c.memberPolls = new.memberPolls and true or false end
   for _, t in ipairs(ns.TYPES) do c.types[t.key] = new.types[t.key] and true or false end
   c.types.kill_honor = true -- grey kills never count, whatever an older version sends
   c.stamp, c.by = GetServerTime(), UnitName("player")
@@ -331,6 +340,7 @@ local function handleConfig(parts, sender, retried, groups)
     c.bounties = features.bounties or false
     c.types.raid_recap = not features.norecap
     c.types.achievement_chat = not features.noachchat
+    c.memberPolls = features.memberpolls or false
   end
   heardCfgAt = GetTime()
   if ns.RefreshPanel then ns.RefreshPanel() end

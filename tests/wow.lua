@@ -308,6 +308,13 @@ function GetGuildRosterInfo(i)
   return r[1] .. "-Realm", "Rank " .. r[2], r[2], r[5] or 60, className, "Zone", "", "", r[3] ~= false, 0, classFile,
     0, 0, false, false, 0, "Player-" .. i
 end
+-- Offline members: r[6] = days since they were last online.
+function GetGuildRosterLastOnline(i)
+  local r = listed()[i]
+  if not r or r[3] ~= false then return nil end
+  local d = r[6] or 0
+  return math.floor(d / 365), math.floor((d % 365) / 30), d % 30, 0
+end
 function GuildControlGetNumRanks() return 10 end
 function GuildControlGetRankName(i) return "Rank " .. (i - 1) end
 function GetGuildRosterMOTD() return "" end
@@ -473,3 +480,8 @@ spellNames = {}
 function GetSpellInfo(id) return spellNames[id] end
 openedChat = {}
 function ChatFrame_OpenChat(text) table.insert(openedChat, text) end
+
+-- Quests finished (attunements)
+questsDone = {}
+C_QuestLog = C_QuestLog or {}
+C_QuestLog.IsQuestFlaggedCompleted = function(id) return questsDone[id] == true end

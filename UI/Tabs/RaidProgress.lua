@@ -35,7 +35,7 @@ function M.Build(parent)
   local raids = UI.Box(f, 0, 0, LIST_W, 450)
   M.raidsCard = raids
   UI.Label(raids, "RAIDS", "Label"):SetPoint("TOPLEFT", 14, -13)
-  M.raids = UI.List(raids, LIST_W - 24, 450 - 40, 62,
+  M.raids = UI.List(raids, LIST_W - 24, 450 - 40 - 72, 62,
     function(row)
       UI.RowSelection(row)
       row.name = UI.Label(row, "", "Subheading")
@@ -70,6 +70,18 @@ function M.Build(parent)
     end, true)
   M.raids.frame:SetPoint("TOPLEFT", raids, "TOPLEFT", 0, -36)
 
+  -- Who can come, and who does what.
+  M.attune = UI.Button(raids, "Attunements", LIST_W - 28)
+  M.attune:SetHeight(26)
+  M.attune:SetPoint("BOTTOMLEFT", 14, 46)
+  M.attune:SetScript("OnClick", function() ns.ShowAttunements() end)
+  UI.Tooltip(M.attune, "Attunements", "Who in the guild is attuned for each raid, and has the Upper Blackrock Spire and Scholomance keys. Also /warcrest attune.")
+  M.assign = UI.Button(raids, "Assignments", LIST_W - 28)
+  M.assign:SetHeight(26)
+  M.assign:SetPoint("BOTTOMLEFT", 14, 14)
+  M.assign:SetScript("OnClick", function() ns.ShowAssignments(selected) end)
+  UI.Tooltip(M.assign, "Raid assignments", "Who does what on each boss: tanks, healers, interrupts. Officers write them; everyone sees their own job. Also /warcrest assign.")
+
   -- Bosses of the selected raid
   local card = UI.Box(f, TABLE_X, 0, TABLE_W, 450)
   M.card = card
@@ -85,39 +97,59 @@ function M.Build(parent)
   heads:SetPoint("TOPLEFT", 0, -48)
   heads:SetPoint("TOPRIGHT", 0, -48)
   heads:SetHeight(400)
-  local y = UI.TableHeads(heads, { { "BOSS", 16 }, { "FIRST KILL", 210 }, { "KILLS", 318 }, { "LAST KILL", 372 } })
+  local y = UI.TableHeads(heads, { { "BOSS", 16 }, { "FIRST KILL", 190 }, { "KILLS", 292 }, { "WIPES", 342 }, { "BEST", 396 } })
   M.bosses = UI.List(heads, TABLE_W - 24, 450 - 48 + y - 4, 30,
     function(row)
       row.icon = UI.Icon(row, "check", 12, C.good)
       row.icon:SetPoint("LEFT", 16, 0)
       row.name = UI.Label(row, "", "Subheading")
       row.name:SetPoint("LEFT", 36, 0)
-      row.name:SetWidth(166)
+      row.name:SetWidth(148)
       row.name:SetWordWrap(false)
       row.first = UI.Label(row, "", "Small")
-      row.first:SetPoint("LEFT", 210, 0)
+      row.first:SetPoint("LEFT", 190, 0)
       row.kills = UI.Label(row, "", "Number")
-      row.kills:SetPoint("LEFT", 318, 0)
-      row.last = UI.Label(row, "", "MutedSmall")
-      row.last:SetPoint("LEFT", 372, 0)
+      row.kills:SetPoint("LEFT", 292, 0)
+      row.wipes = UI.Label(row, "", "Number")
+      row.wipes:SetPoint("LEFT", 342, 0)
+      row.best = UI.Label(row, "", "Small")
+      row.best:SetPoint("LEFT", 396, 0)
       UI.RowLine(row)
       UI.Tooltip(row, function() return row.item.name end, function()
         local b = row.item
-        local lines = { ("First killed %s."):format(ns.Date("%A, %b %d, %Y at %H:%M", b.first)) }
+        local lines = {}
+        if b.first then
+          lines[#lines + 1] = ns.TF("First killed %s.", ns.Date("%A, %b %d, %Y at %H:%M", b.first))
+          if b.last then lines[#lines + 1] = ns.TF("Last killed %s.", ns.Date("%b %d", b.last)) end
+        else
+          lines[#lines + 1] = ns.T("Not killed yet.")
+        end
+        local p = b.pulls
+        if p then
+          lines[#lines + 1] = ns.TF("Pulls: %d (%d kills, %d wipes).", p.pulls, p.kills, p.wipes)
+          if p.wipesBeforeFirst and p.wipesBeforeFirst > 0 then
+            lines[#lines + 1] = ns.TF("Wipes before the first recorded kill: %d.", p.wipesBeforeFirst)
+          end
+          if p.best then lines[#lines + 1] = ns.TF("Best kill time: %s (%s).", ns.FightTime(p.best), ns.Date("%b %d", p.bestAt)) end
+          if p.lastKill then lines[#lines + 1] = ns.TF("Last kill took %s.", ns.FightTime(p.lastKill)) end
+        end
         for _, k in ipairs(ns.BossKills()) do
-          if k.boss == b.boss and k.t == b.first then
-            lines[#lines + 1] = "There: " .. table.concat(k.names, ", ")
+          if b.first and k.boss == b.boss and k.t == b.first then
+            lines[#lines + 1] = ns.TF("There: %s", table.concat(k.names, ", "))
             break
           end
         end
-        return table.concat(lines, "\n\n")
+        return table.concat(lines, "\n")
       end)
     end,
     function(row, b)
       row.name:SetText(b.name)
-      row.first:SetText(ns.Date("%b %d, %Y", b.first))
-      row.kills:SetText(b.kills)
-      row.last:SetText(ns.Date("%b %d", b.last))
+      row.icon:SetShown(b.first ~= nil)
+      row.first:SetText(b.first and ns.Date("%b %d, %Y", b.first) or (UI.Code("muted") .. ns.T("Not yet") .. "|r"))
+      row.kills:SetText(b.kills or 0)
+      local p = b.pulls
+      row.wipes:SetText(p and p.wipes or "-")
+      row.best:SetText(p and p.best and ns.FightTime(p.best) or (UI.Code("faint") .. "-|r"))
     end, true)
   M.bosses.frame:SetPoint("TOPLEFT", heads, "TOPLEFT", 0, y - 1)
   M.bosses:SetEmptyText("No boss kills recorded yet. When 5 or more guild members (at least half the raid) "
@@ -131,6 +163,14 @@ end
 
 function M.Refresh()
   local progress = ns.RaidProgress()
+  -- Raids the guild has only wiped in so far.
+  local listed = {}
+  for _, r in ipairs(progress) do listed[r.raid] = true end
+  for raid, t in pairs(ns.PulledRaids()) do
+    if not listed[raid] then
+      progress[#progress + 1] = { raid = raid, total = ns.RAID_BOSSES[raid], bosses = {}, killed = 0, last = t }
+    end
+  end
   local current
   for _, r in ipairs(progress) do if r.raid == selected then current = r end end
   current = current or progress[1]
@@ -140,7 +180,18 @@ function M.Refresh()
   if current then
     M.raidName:SetText(current.raid)
     M.summary:SetText(progressText(current))
-    M.bosses:SetItems(current.bosses)
+    -- Bosses killed, then ones the guild has only wiped on; pulls from the wipe tracking.
+    local rows, seen = {}, {}
+    for _, b in ipairs(current.bosses) do
+      local r = { boss = b.boss, name = b.name, first = b.first, kills = b.kills, last = b.last,
+        pulls = ns.BossPulls(current.raid, b.name) }
+      rows[#rows + 1] = r
+      seen[b.name] = true
+    end
+    for _, p in ipairs(ns.RaidPulls(current.raid)) do
+      if not seen[p.boss] then rows[#rows + 1] = { boss = p.boss, name = p.boss, kills = 0, pulls = p } end
+    end
+    M.bosses:SetItems(rows)
   else
     M.raidName:SetText("Raid progress")
     M.summary:SetText("")

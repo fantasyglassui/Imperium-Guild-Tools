@@ -12,6 +12,7 @@ local C = UI.C
 
 local P = {}
 local query = ""
+local TAB
 
 local TABLE_W = 500
 local SIDE_X = TABLE_W + 14
@@ -52,7 +53,14 @@ local function classColorOf(name)
 end
 
 local function Refresh()
-  P.clear:SetShown(ns.IsGuildMaster()) -- only the Guild Master can clear logs
+  local inactive = P.filter.value == "inactive"
+  UI.InactiveView.frame:SetShown(inactive)
+  P.card:SetShown(not inactive)
+  P.side:SetShown(not inactive)
+  P.search:SetShown(not inactive)
+  P.count:SetShown(not inactive)
+  P.clear:SetShown(not inactive and ns.IsGuildMaster()) -- only the Guild Master can clear logs
+  if inactive then UI.InactiveView.Refresh() return end
   local filter, q = P.filter.value, query:lower()
   local shown = {}
   for _, e in ipairs(ns.db.audit) do
@@ -154,7 +162,9 @@ end
 local function Build(page)
   P.filter = UI.Segmented(page.headerBar, {
     { "all", "All" }, { "ranks", "Ranks" }, { "members", "Joins & leaves" }, { "notes", "Notes & settings" },
+    { "inactive", "Inactive" },
   }, ns.RefreshPanel)
+  TAB.view = P.filter
   P.filter:SetPoint("RIGHT")
   P.clear = UI.Button(page.headerBar, "Clear log", 90)
   P.clear:SetHeight(26)
@@ -164,6 +174,7 @@ local function Build(page)
 
   BuildTable(page)
   BuildSide(page)
+  UI.InactiveView.Build(page)
   UI.Grow(page, P.card, 1, 1)
   UI.Grow(page, P.list, 1, 1)
   UI.Follow(page, P.count, 1, 0)
@@ -172,10 +183,12 @@ local function Build(page)
 end
 
 local function Subtitle()
+  if P.filter and P.filter.value == "inactive" then return UI.InactiveView.Subtitle() end
   local n = #ns.db.audit
   if n == 0 then return "Guild changes, recorded while you're online" end
   return ("%d change%s recorded · newest %s"):format(n, n == 1 and "" or "s", ns.Date("%b %d", ns.db.audit[1].t))
 end
 
-UI.AddTab({ id = "officers", title = "Officers", build = Build, refresh = Refresh, subtitle = Subtitle,
-  visible = ns.CanSeeOfficerTools })
+TAB = { id = "officers", title = "Officers", build = Build, refresh = Refresh, subtitle = Subtitle,
+  visible = ns.CanSeeOfficerTools }
+UI.AddTab(TAB)

@@ -459,6 +459,32 @@ def demo_guild(guild_name=None, locale=None):
     crafts(guild["Mira"], "Alchemy", 285, [13442, 13445, 12360, 13444])
     crafts(me, "Alchemy", 300, [13442, 13444, 12360])
     guild.run(35)
+    # Attunements.
+    for name, quests in (("Thorne", (7848, 6602, 7761, 4743)), ("Lyra", (7848, 6502, 4743, 5505)), ("Mira", (7848,)),
+                         ("Brakk", (7848, 6602, 4743)), ("Aldric", ())):
+        c = guild[name]
+        c.run("; ".join("questsDone[%d] = true" % q for q in quests) or "x = 1")
+        c.ns.CheckAttunements(True)
+    guild.run(2)
+    # Raid assignments.
+    me.ns.SaveAssignment("Molten Core", "Ragnaros", "Tanks: Thorne on Ragnaros, Brakk on the sons\n"
+                         "Healers: Mira on Thorne, Lyra on groups 1-3\nDecurse: Lyra\nEveryone: melee back out at knockback")
+    me.ns.SaveAssignment("Molten Core", "Lucifron", "Tanks: Thorne on Lucifron, Brakk and Aldric on the adds\nDecurse: Lyra, Mira")
+    guild.run(3)
+    # Boss pulls.
+    for boss, secs, ok, back in (("Lucifron", 140, False, 9000), ("Lucifron", 118, True, 8800), ("Ragnaros", 300, False, 5000),
+                                 ("Ragnaros", 280, False, 4800), ("Ragnaros", 412, True, 4600)):
+        me.ns.LedgerAdd("BP", me.lua.table_from({"raid": "Molten Core", "enc": boss, "ok": "1" if ok else "0", "secs": secs}))
+        guild.run(70)
+    # A poll and crafting orders.
+    me.ns.StartPoll("Which night for Blackwing Lair?", me.lua.table_from(["Thursday", "Friday", "Sunday"]), 3)
+    guild.run(2)
+    poll = me.ns.Polls()[1]
+    for name, choice in (("Thorne", 1), ("Lyra", 2), ("Mira", 2), ("Brakk", 3)):
+        guild[name].ns.VotePoll(poll.id, choice)
+    guild["Lyra"].ns.PlaceCraftOrder("Thorne", "13444", True, "20 please")
+    me.ns.PlaceCraftOrder("Lyra", "14155", False, "")
+    guild.run(3)
     # Guild goals.
     me.ns.AddGoal("kills", 50, "week")
     me.ns.AddGoal("bosses", 3, "week")
@@ -479,7 +505,8 @@ if __name__ == "__main__":
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     for tab, view in (("settings", "sounds"), ("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "social"), ("achievements", "guild"),
-                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress"), ("wanted", "guilds")):
+                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress"), ("wanted", "guilds"),
+                      ("events", "polls"), ("officers", "inactive")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")
@@ -499,6 +526,14 @@ if __name__ == "__main__":
     print(rd.render(me.lua.eval("WarcrestHelp"), os.path.join(out, "window-help.png")))
     me.ns.ShowBugReport()
     print(rd.render(me.lua.eval("WarcrestReport"), os.path.join(out, "window-report.png")))
+    me.ns.ShowAttunements()
+    print(rd.render(me.lua.eval("WarcrestAttunements"), os.path.join(out, "window-attunements.png")))
+    me.ns.ShowAssignments("Molten Core", "Ragnaros")
+    print(rd.render(me.lua.eval("WarcrestAssignments"), os.path.join(out, "window-assignments.png")))
+    guild["Lyra"].ns.ShowAssignments("Molten Core", "Ragnaros")
+    print(rd.render(guild["Lyra"].lua.eval("WarcrestAssignments"), os.path.join(out, "window-assignments-member.png")))
+    me.ns.ShowCrafters(None, "orders")
+    print(rd.render(me.lua.eval("WarcrestCrafters"), os.path.join(out, "window-crafters-orders.png")))
     for step in (2, 3):
         me.ns.ShowWelcome(step)
         print(rd.render(me.lua.eval("WarcrestWelcome"), os.path.join(out, "window-welcome-%d.png" % step)))

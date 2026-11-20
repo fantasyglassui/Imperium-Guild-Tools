@@ -42,6 +42,8 @@ local function RefreshAlerts()
   UI.SetEnabled(P.dkp, officer)
   P.bounties:SetChecked(c.bounties)
   UI.SetEnabled(P.bounties, officer)
+  P.memberPolls:SetChecked(c.memberPolls)
+  UI.SetEnabled(P.memberPolls, officer)
   for key, cb in pairs(P.guildTypes) do
     cb:SetChecked(c.types[key])
     UI.SetEnabled(cb, officer and c.enabled)
@@ -92,6 +94,7 @@ local function RefreshGeneral()
   P.scaleSlider:SetQuietly(pct)
   P.scaleValue:SetText(pct .. "%")
   P.pins:SetChecked(db.mapPins)
+  P.fights:SetChecked(db.fightMap)
   P.pinSlider:SetQuietly(db.pinHours)
   P.pinValue:SetText(formatHours(db.pinHours))
   UI.SetEnabled(P.pinSlider, db.mapPins)
@@ -167,7 +170,7 @@ local function BuildAlertTable(parent)
 end
 
 local function BuildGuildCard(parent)
-  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 272, "Guild-wide")
+  local g = UI.Box(parent, SIDE_X, 0, SIDE_W, 280, "Guild-wide")
   P.guildCard = g
   local d = UI.Label(g, "Set by officers for everyone.", "MutedSmall")
   d:SetPoint("TOPLEFT", 14, -34)
@@ -185,13 +188,17 @@ local function BuildGuildCard(parent)
   UI.Tooltip(P.bounties, "Bounties", "Officers can put a reward on an enemy player's head, and the guild member who kills them "
     .. "claims it (paid in DKP if the guild uses DKP). Off until an officer turns it on. Click Save for whole guild to send it.")
 
-  UI.FieldLabel(g, "Who can change these", 14, -132)
+  P.memberPolls = UI.Check(g, "Members can start polls", 10, -120)
+  UI.Tooltip(P.memberPolls, "Members can start polls", "Off: only officers can start guild polls (Events tab, Polls). "
+    .. "On: any member can, one open poll each. Click Save for whole guild to send it.")
+
+  UI.FieldLabel(g, "Who can change these", 14, -148)
   P.rankDown = UI.Button(g, "<", 26)
   P.rankDown:SetHeight(24)
-  P.rankDown:SetPoint("TOPLEFT", 14, -146)
+  P.rankDown:SetPoint("TOPLEFT", 14, -162)
   P.rankUp = UI.Button(g, ">", 26)
   P.rankUp:SetHeight(24)
-  P.rankUp:SetPoint("TOPRIGHT", -14, -146)
+  P.rankUp:SetPoint("TOPRIGHT", -14, -162)
   P.rankText = UI.Label(g, "", "Small")
   P.rankText:SetPoint("LEFT", P.rankDown, "RIGHT", 8, 0)
   P.rankText:SetPoint("RIGHT", P.rankUp, "LEFT", -8, 0)
@@ -209,7 +216,7 @@ local function BuildGuildCard(parent)
 
   P.save = UI.Button(g, "Save for whole guild", INNER, "primary")
   P.save:SetHeight(28)
-  P.save:SetPoint("TOPLEFT", 14, -180)
+  P.save:SetPoint("TOPLEFT", 14, -194)
   UI.Tooltip(P.save, "Save for whole guild", "Sends the Guild column to every guildmate's addon. Members who are offline get it when they next log in while an officer is online.")
   P.save:SetScript("OnClick", function()
     local types = {}
@@ -221,11 +228,12 @@ local function BuildGuildCard(parent)
       officerRank = P.rankValue,
       dkp = P.dkp:GetChecked() and true or false,
       bounties = P.bounties:GetChecked() and true or false,
+      memberPolls = P.memberPolls:GetChecked() and true or false,
     })
   end)
 
   P.status = UI.Label(g, "", "MutedSmall")
-  P.status:SetPoint("TOPLEFT", 14, -216)
+  P.status:SetPoint("TOPLEFT", 14, -228)
   P.status:SetWidth(INNER)
   P.status:SetSpacing(2)
 end
@@ -293,36 +301,43 @@ local function BuildGeneral(page)
   local inner = COL_W - 30
 
   -- Quiet mode
-  local q = UI.Box(f, 0, 0, COL_W, 138, "Quiet mode")
+  local q = UI.Box(f, 0, 0, COL_W, 120, "Quiet mode")
   P.quietInstances = UI.Check(q, "Hold alerts in dungeons and raids", 10, -36)
   P.quietInstances:SetScript("OnClick", function(self) ns.db.quietInstances = self:GetChecked() and true or false end)
   P.quietCombat = UI.Check(q, "Hold alerts during combat", 10, -62)
   P.quietCombat:SetScript("OnClick", function(self) ns.db.quietCombat = self:GetChecked() and true or false end)
   local qhint = UI.Label(q, "Held alerts are listed in chat once you're out.", "MutedSmall")
-  qhint:SetPoint("TOPLEFT", 14, -100)
+  qhint:SetPoint("TOPLEFT", 14, -92)
   qhint:SetWidth(inner)
 
   -- World map
-  local m = UI.Box(f, 0, -152, COL_W, 130, "World map")
+  local m = UI.Box(f, 0, -134, COL_W, 156, "World map")
   P.pins = UI.Check(m, "Mark guild deaths on the world map", 10, -36)
   P.pins:SetScript("OnClick", function(self)
     ns.db.mapPins = self:GetChecked() and true or false
     if ns.RefreshMapPins then ns.RefreshMapPins() end
     ns.RefreshPanel()
   end)
-  P.pinLabel = UI.FieldLabel(m, "Keep marks for", 14, -74)
+  P.fights = UI.Check(m, "Show where the guild fights", 10, -60)
+  P.fights:SetScript("OnClick", function(self)
+    ns.db.fightMap = self:GetChecked() and true or false
+    if ns.RefreshMapPins then ns.RefreshMapPins() end
+  end)
+  UI.Tooltip(P.fights, "Where the guild fights", "Circles on the world map where guild members killed enemy players or died to them "
+    .. "in the last 7 days: bigger for more fights, gold where we won more, red where we lost more. Hover one for the numbers.")
+  P.pinLabel = UI.FieldLabel(m, "Keep death marks for", 14, -98)
   P.pinSlider = UI.Slider(m, inner - 110, 1, MAX_PIN_HOURS, 1, function(h)
     ns.db.pinHours = h
     P.pinValue:SetText(formatHours(h))
     if ns.RefreshMapPins then ns.RefreshMapPins() end
   end)
-  P.pinSlider:SetPoint("TOPLEFT", 14, -94)
+  P.pinSlider:SetPoint("TOPLEFT", 14, -118)
   P.pinValue = UI.Label(m, "", "Small")
   P.pinValue:SetPoint("LEFT", P.pinSlider, "RIGHT", 12, 0)
   UI.Tooltip(P.pinSlider, "How long a guild death stays marked on the map", "Drag, or use the mouse wheel. 1 hour to 7 days.")
 
   -- Weekly recap
-  local r = UI.Box(f, 0, -296, COL_W, 154, "Weekly recap")
+  local r = UI.Box(f, 0, -304, COL_W, 146, "Weekly recap")
   P.recap = UI.Check(r, "Show it after the Tuesday reset", 10, -36)
   P.recap:SetScript("OnClick", function(self) ns.db.weeklyRecap = self:GetChecked() and true or false end)
   local rhint = UI.Label(r, "Kills, top head hunters, raids, bosses and loot from the guild's week, in chat.", "MutedSmall")

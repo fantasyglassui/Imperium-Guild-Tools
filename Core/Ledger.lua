@@ -21,11 +21,12 @@ local _, ns = ...
 local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, KD = true,
   AT = true, SB = true, DS = true, UN = true, SN = true, SS = true, BO = true, BX = true, BC = true,
   RG = true, AG = true, RC = true, RM = true, WR = true,
-  GG = true, GQ = true }
+  GG = true, GQ = true, RA = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
 local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true, AB = true,
-  GE = true, GX = true, GS = true, GT = true, PF = true }
+  GE = true, GX = true, GS = true, GT = true, PF = true, AN = true,
+  PO = true, PV = true, PC = true, CO = true, CU = true, BP = true }
 -- Fields of each kind, in message order.
 local FIELDS = {
   EV = { "title", "start", "notes" },          -- a scheduled raid
@@ -47,6 +48,13 @@ local FIELDS = {
   AE = { "ach", "when" },                       -- an achievement a member earned, and when (kept with the guild,
                                                -- so it isn't lost with one player's saved data)
   AB = { "list" },                             -- achievements a member earned, several at once ("id.when,id.when")
+  AN = { "list" },
+  PO = { "q", "opts", "lasts" },                -- a guild poll: the question, answers ("a;b;c"), days it stays open
+  PV = { "ref", "choice" },                    -- a vote in a poll (the latest counts)
+  PC = { "ref" },
+  CO = { "crafter", "recipe", "mats", "note" }, -- a crafting order: who should make it, the recipe, bringing materials
+  CU = { "ref", "status" },
+  BP = { "raid", "enc", "ok", "secs" },        -- a boss pull: the raid, the boss, killed ("1") or wiped, how long                    -- a crafting order changed: accepted, declined, done or cancelled                              -- a poll closed (by whoever asked, or an officer)                             -- a member's attunements and keys ("mc,ony,ubrs")
   AG = { "who", "list" },                      -- officer: achievements a member had earned, put back after
                                                -- they lost them ("id.when,id.when")
   AW = { "who", "list" },                      -- a guildmate vouching for achievements a member had earned;
@@ -59,6 +67,7 @@ local FIELDS = {
   RC = { "name", "class", "level", "note", "status" }, -- officer: a recruit and where they're up to
   RM = { "text" },                             -- officer: the guild's recruiting message
   WR = { "guild", "on" },
+  RA = { "raid", "enc", "v", "part", "parts", "text" }, -- officer: a part of the raid assignments for a boss ("enc")
   GG = { "kind", "amount", "period" },         -- officer: a guild goal: what to count ("kills", ...), how many, "week" or "month"
   GQ = { "ref" },                              -- officer: a guild goal removed                      -- officer: an enemy guild marked as a rival ("1") or not ("0")
   TI = { "title" },                            -- the title a member shows: an achievement's id, or "" for none
@@ -69,7 +78,8 @@ local FIELDS = {
   WL = { "item", "name", "prio" },             -- a wishlist item: item ID, name, "need", "want" or "off" (removed)
 }
 local NUMERIC = { start = true, amount = true, onTime = true, hourly = true, decay = true, boss = true,
-  parts = true, size = true, when = true, group = true, mins = true, ilvl = true, level = true }
+  parts = true, size = true, when = true, group = true, mins = true, ilvl = true, level = true, part = true,
+  choice = true, lasts = true, secs = true }
 local CLAIM_WINDOW = 30
 
 local counter = 0

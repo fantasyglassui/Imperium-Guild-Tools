@@ -73,6 +73,7 @@ local function report(e)
   -- for the leaderboard, streaks and achievements. The alert settings only
   -- decide what's shown.)
   local zone = GetRealZoneText() or GetZoneText() or "Unknown"
+  local mapID, x, y = ns.PlayerPosition() -- where the fight was, for the map of the guild's fights
   local diedAt, stamp = GetTime(), GetServerTime()
   local gap = math.max(0, diedAt - e.time) -- how long before the death you last hit them
   -- Wait a moment for the game's honor message, then report.
@@ -95,7 +96,7 @@ local function report(e)
     end
     if ns.db.debug then ns.Say(("Kill check: you killed %s. Sent to the guild."):format(e.name)) end
     ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", "1",
-      ns.EnemyGuild and ns.EnemyGuild(e.name) or "")
+      ns.EnemyGuild and ns.EnemyGuild(e.name) or "", mapID or "", x and ("%.3f"):format(x) or "", y and ("%.3f"):format(y) or "")
   end)
 end
 
@@ -387,6 +388,7 @@ local function combine(into, k)
   end
   if k.level and (not into.level or k.level > into.level) then into.level = k.level end
   if k.vg and not into.vg then into.vg = k.vg end
+  if k.mapID and not into.mapID then into.mapID, into.x, into.y = k.mapID, k.x, k.y end
   if k.honor == true and into.honor ~= true then into.honor = true; changed = true end
   if into.honor == nil and k.honor == false then into.honor = false end
   return changed
@@ -531,15 +533,17 @@ ns.OnMessage("K", function(parts, sender)
   local k = key(victim)
   local who = Ambiguate(sender, "short")
   local vg = parts[9] ~= "" and parts[9] or nil -- the victim's guild, from 3.7
+  local mapID, x, y = tonumber(parts[10]), tonumber(parts[11]), tonumber(parts[12]) -- where, from 3.8
+  if not (mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1) then mapID, x, y = nil, nil, nil end
   if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(victim, vg, stamp) end
   if ns.IsMe(sender) then ns.lastOwnKillHeard = { victim = victim, at = GetServerTime() } end
-  local thisReport = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor }
+  local thisReport = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor, mapID = mapID, x = x, y = y }
   local p = pending[k]
   if p then
     combine(p, thisReport)
     return
   end
-  pending[k] = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor, vg = vg,
+  pending[k] = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor, vg = vg, mapID = mapID, x = x, y = y,
     victim = Ambiguate(victim, "short"), kind = kind, zone = zone or "Unknown", t = stamp or time() }
   C_Timer.After(MERGE_DELAY, function()
     local done = pending[k]
@@ -657,7 +661,8 @@ local function sendDay(target, day)
       end
       local honor = (k.honor == true and "1") or (k.honor == false and "0") or ""
       ns.QueueTo(target, "KX", k.t, k.kind, k.victim, k.zone, table.concat(k.killers, ","),
-        table.concat(gaps, ","), k.level or "", honor, k.vg or (ns.EnemyGuild and ns.EnemyGuild(k.victim)) or "")
+        table.concat(gaps, ","), k.level or "", honor, k.vg or (ns.EnemyGuild and ns.EnemyGuild(k.victim)) or "",
+        k.mapID or "", k.x and ("%.3f"):format(k.x) or "", k.y and ("%.3f"):format(k.y) or "")
     end
   end
 end
@@ -757,6 +762,8 @@ ns.OnMessage("KX", function(p)
   if p[9] == "1" then honor = true elseif p[9] == "0" then honor = false end
   local vg = p[10] ~= "" and p[10] or nil
   if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(victim, vg, t) end
+  local mapID, x, y = tonumber(p[11]), tonumber(p[12]), tonumber(p[13])
+  if not (mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1) then mapID, x, y = nil, nil, nil end
   mergeSynced({ t = t, kind = kind, victim = victim, zone = p[5] or "Unknown", killers = killers,
-    gaps = gaps, level = tonumber(p[8]), honor = honor, vg = vg })
+    gaps = gaps, level = tonumber(p[8]), honor = honor, vg = vg, mapID = mapID, x = x, y = y })
 end)

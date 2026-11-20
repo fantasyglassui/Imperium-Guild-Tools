@@ -656,6 +656,16 @@ SlashCmdList.WARCREST = function(input)
   elseif msg == "website" or msg == "site" or msg == "feedback" or msg == "contact" then
     ns.Say(ns.TF("Guides, every achievement and a contact form for bugs and ideas: %s", "|cffffffff" .. ns.WEBSITE .. "|r"))
     if ns.ShowHelp then ns.ShowHelp(nil, true) end
+  elseif msg == "attune" or msg == "attunements" or msg == "attunement" then
+    if ns.ShowAttunements then ns.ShowAttunements() end
+  elseif msg == "assign" or msg == "assignments" or msg:find("^assign ") then
+    if ns.ShowAssignments then ns.ShowAssignments() end
+  elseif msg == "polls" or msg == "poll" then
+    if ns.OpenPanel then ns.OpenPanel("events", "polls") end
+  elseif msg == "orders" then
+    if ns.ShowCrafters then ns.ShowCrafters(nil, "orders") end
+  elseif msg == "inactive" then
+    if ns.OpenPanel then ns.OpenPanel("officers", "inactive") end
   elseif msg == "discord" then
     ns.Say(ns.TF("Join the Warcrest Discord for help, news and other guilds using it: %s", "|cffffffff" .. ns.DISCORD .. "|r"))
     if ns.ShowHelp then ns.ShowHelp(nil, "discord") end

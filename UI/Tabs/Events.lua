@@ -13,6 +13,8 @@ local C = UI.C
 local P = {}
 local selectedId
 local view = "event"   -- "event" or "new"
+local tabView = "events" -- "events" or "polls"
+local TAB
 local newDay, newType, newMins = 0, "pvp", 120
 
 local LEFT_W = 280
@@ -122,6 +124,11 @@ local function RefreshEvent(e)
 end
 
 local function Refresh()
+  tabView = P.tabView.value or tabView
+  P.card:SetShown(tabView == "events")
+  P.right:SetShown(tabView == "events")
+  UI.PollsView.frame:SetShown(tabView == "polls")
+  if tabView == "polls" then UI.PollsView.Refresh() return end
   local events = ns.GuildEvents()
   if selectedId and not ns.GuildEvent(selectedId) then selectedId = nil end
   local stillListed = false
@@ -351,8 +358,16 @@ local function BuildNewView(parent)
 end
 
 local function Build(page)
+  -- Events or polls.
+  P.tabView = UI.Segmented(page.headerBar, { { "events", "Events" }, { "polls", "Polls" } },
+    function(v) tabView = v; ns.RefreshPanel() end)
+  P.tabView:SetPoint("RIGHT")
+  TAB.view = P.tabView
+  UI.PollsView.Build(page)
+
   -- Upcoming events.
   local card = CreateFrame("Frame", nil, page)
+  P.card = card
   card:SetPoint("TOPLEFT", 1, -1)
   card:SetSize(LEFT_W - 2, 448)
   UI.Card(card, 1)
@@ -421,6 +436,7 @@ local function Build(page)
   end)
 
   local right = CreateFrame("Frame", nil, page)
+  P.right = right
   right:SetPoint("TOPLEFT", RIGHT_X + 1, -1)
   right:SetSize(RIGHT_W - 2, 448)
   UI.Card(right, 1)
@@ -434,20 +450,29 @@ local function Build(page)
 end
 
 local function Subtitle()
+  tabView = P.tabView and P.tabView.value or tabView
+  if tabView == "polls" then
+    local open = 0
+    for _, p in ipairs(ns.Polls()) do if p.open then open = open + 1 end end
+    return open == 0 and ns.T("No open polls") or ns.TP(open, "1 open poll", "%d open polls", open)
+  end
   local n = #ns.GuildEvents()
   return n == 0 and ns.T("No events planned") or (n == 1 and ns.T("1 event planned") or (ns.T("%d events planned"):format(n)))
 end
 
 -- Open the form for a new event.
 function UI.NewGuildEvent()
-  view = "new"
+  view, tabView = "new", "events"
+  if P.tabView then P.tabView:SetValue("events") end
   ns.OpenPanel("events")
 end
 
 -- Open an event (from the calendar, say).
 function UI.ShowGuildEvent(id)
-  selectedId, view = id, "event"
+  selectedId, view, tabView = id, "event", "events"
+  if P.tabView then P.tabView:SetValue("events") end
   ns.OpenPanel("events")
 end
 
-UI.AddTab({ id = "events", title = "Events", build = Build, refresh = Refresh, subtitle = Subtitle })
+TAB = { id = "events", title = "Events", build = Build, refresh = Refresh, subtitle = Subtitle }
+UI.AddTab(TAB)

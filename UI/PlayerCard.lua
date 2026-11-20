@@ -230,6 +230,13 @@ local function fill(p)
     end
     loot[#loot + 1] = kills
   end
+  -- Attunements and keys, when their addon has shared them.
+  local set = ns.AttunementsOf and ns.AttunementsOf(p.name)
+  if set then
+    local have = {}
+    for _, a in ipairs(ns.ATTUNEMENTS) do if set[a.key] then have[#have + 1] = a.short end end
+    loot[#loot + 1] = ns.TF("Attuned: %s", #have > 0 and col("text", table.concat(have, ", ")) or ns.T("none yet"))
+  end
   if #p.wishes > 0 then
     -- The first item they want (Need first), cut short so the line fits.
     local first = p.wishes[1].name

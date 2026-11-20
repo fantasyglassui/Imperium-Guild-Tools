@@ -127,9 +127,13 @@ local function RefreshEvent(event)
   -- After the raid night, mark accepted sign-ups who never came.
   local noShows, attended = ns.NoShows(event.id)
   local rows = {}
+  -- A raid that needs an attunement: flag sign-ups whose addon says they don't have it.
+  local need = ns.AttunementForRaid and ns.AttunementForRaid(event.title)
   for _, su in ipairs((ns.Signups(event.id))) do
+    local set = need and ns.AttunementsOf(su.name)
     rows[#rows + 1] = { name = su.name, role = su.role, status = su.status, classFile = mk.classOf[ns.Key(su.name)],
-      noShow = attended ~= nil and su.status == "accept" and not attended[ns.Key(su.name)] }
+      noShow = attended ~= nil and su.status == "accept" and not attended[ns.Key(su.name)],
+      notAttuned = set ~= nil and su.status ~= "decline" and not set[need.key] and need or nil }
   end
   P.signups:SetEmptyText("Nobody has signed up yet.")
   P.signups:SetItems(rows)
@@ -432,6 +436,9 @@ local function BuildEventView(parent)
       row.name:SetTextColor(UI.ClassColor(s.classFile))
       row.role:SetText(ROLE_TEXT[s.role])
       row.status:SetText(s.noShow and (UI.Code("bad") .. "No-show|r") or statusText(s.status))
+      if s.notAttuned and not s.noShow then
+        row.status:SetText(statusText(s.status) .. "  " .. UI.Code("warn") .. ns.TF("Not attuned (%s)", s.notAttuned.short) .. "|r")
+      end
     end, true)
   P.signups.frame:SetPoint("TOPLEFT", d.signupBox, "TOPLEFT", 0, -25)
 
