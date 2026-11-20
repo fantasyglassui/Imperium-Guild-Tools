@@ -223,7 +223,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow">
-          <span class="ver">v3.7.0</span>
+          <span class="ver" data-version="v">v3.7.2</span>
           <span class="label">A guild addon for World of Warcraft: Forever</span>
         </div>
         <h1>One window for <em>the whole guild.</em></h1>
@@ -430,7 +430,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
   <div class="wrap">
     <div style="display:grid;gap:6px">
       <span style="color:var(--text);font-family:var(--f-display);font-size:1.2rem">Warcrest</span>
-      <span>Made for &lt;The Imperium&gt;, now for any guild. Version 3.7.0.</span>
+      <span>Made for &lt;The Imperium&gt;, now for any guild. Version <span data-version="">3.7.2</span>.</span>
     </div>
     <div class="langs" aria-label="Languages"><span>English</span><span>Deutsch</span><span>Français</span><span>Español</span></div>
     <a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Download on CurseForge</a>
@@ -560,6 +560,17 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       document.getElementById("cf-note").textContent = "This preview can't send messages. The form works on the live website.";
     }
   });
+
+  // The version shown follows the addon's own file on GitHub, so it changes with each release.
+  try {
+    fetch("https://raw.githubusercontent.com/fantasyglassui/Warcrest/main/Warcrest.toc", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (t) {
+        var m = /##\s*Version:\s*([0-9][0-9.]*)/.exec(t || "");
+        if (!m) return;
+        document.querySelectorAll("[data-version]").forEach(function (el) { el.textContent = el.dataset.version + m[1]; });
+      }).catch(function () {});
+  } catch (e) {}
 })();
 </script>
 
