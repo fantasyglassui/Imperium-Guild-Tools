@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.7.3", date = "Nov 20, 2026", items = {
+    "Bug reports: /warcrest report gives you a report to copy into the Discord or the website's contact form, with your version, settings and any errors.",
+    "Officers setting up a guild now also choose which alerts the guild hears and whether achievements are posted in guild chat (/warcrest setup).",
+    "The Warcrest Discord: /warcrest discord, or copy the invite from the help window.",
+  } },
   { version = "3.7.2", date = "Nov 20, 2026", items = {
     "Fix: alerts and messages could show twice in chat, the second time with your realm after your name (\"Name-Realm\").",
     "When two guildmates spot the same wanted enemy at once, the sighting is shown once.",

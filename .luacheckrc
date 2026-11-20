@@ -22,6 +22,8 @@ read_globals = {
   "GetTradeSkillLine", "GetNumTradeSkills", "GetTradeSkillInfo", "GetTradeSkillItemLink",
   "GetCraftDisplaySkillLine", "GetNumCrafts", "GetCraftInfo", "GetCraftItemLink", "GetSpellInfo",
   "ChatFrame_OpenChat",
+  -- Bug reports
+  "GetNumAddOns", "GetAddOnInfo", "IsAddOnLoaded", "GetBuildInfo", "UpdateAddOnMemoryUsage", "GetAddOnMemoryUsage",
   -- Lua helpers WoW adds
   "date", "time", "strsplit", "strtrim", "tinsert", "wipe", "hooksecurefunc", "issecretvalue",
   -- Profiles and recruiting

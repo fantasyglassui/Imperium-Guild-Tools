@@ -2,7 +2,7 @@
 ## Title: |cffd4af37Warcrest|r: data from Bannerhold
 ## Notes: Bannerhold (Warcrest's name for a short while) is now Warcrest. This small helper hands any history saved under that name over to Warcrest. It does nothing else.
 ## Author: Fantasy Glass UI
-## Version: 3.7.2
+## Version: 3.7.3
 ## Category: Guild
 ## IconTexture: Interface\AddOns\Warcrest\Media\Icon
 ## SavedVariables: BannerholdDB

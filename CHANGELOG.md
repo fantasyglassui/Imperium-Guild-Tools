@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.3
+- **Bug reports:** type `/warcrest report` (or `/warcrest bug`) and a window opens with everything needed to look into a problem: your Warcrest and game versions, language, guild size, settings, how much history you have, your other addons, and any errors since you logged in. Copy it (Ctrl+C) into the [Warcrest Discord](https://discord.gg/qeSMwQWyPR) or the contact form on [warcrest-addon.com](https://warcrest-addon.com/#contact). It has no names in it: not yours, your guild's or your guildmates'.
+- **Guild setup, finished in one go:** officers setting Warcrest up for their guild now also choose which alerts the guild hears (kills, streaks, the Wanted list, deaths, achievements, raids, celebrations) and whether achievements are posted in guild chat, then save it all for everyone. `/warcrest setup` opens it any time.
+- Officers in a guild nobody has set up yet get a reminder in chat, once a session.
+- **The Warcrest Discord:** `/warcrest discord`, or copy the invite from the bottom of the help window, under the website.
+
 ## 3.7.2
 - Fix: **alerts and chat messages showed twice** (wanted sightings, achievements, events, raid and guild news: everything but kills, which were already merged), the second copy with a realm after the name ("spotted in Feralas by Sathryus-Realm"). The game sends your own guild messages back to you with a realm attached that doesn't always match the one it reports for you, so Warcrest didn't recognise them as yours and handled them twice. It now recognises you by name.
 - Names show without the realm everywhere, even where the game would add it.

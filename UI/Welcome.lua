@@ -1,13 +1,15 @@
 --[[
   Warcrest
   The welcome window: shown once, the first time Warcrest loads for a
-  character in a guild. Three steps:
+  character in a guild. The steps:
     1. What Warcrest does.
     2. Guild setup: officers choose who manages Warcrest and whether the
-       guild uses DKP, and save it for everyone. Members are told their
-       officers handle this.
-    3. Where to start: the tabs worth a look first.
-  /warcrest welcome shows it again.
+       guild uses DKP. Members are told their officers handle this.
+    3. (Officers) What the guild hears: which alerts, and whether
+       achievements are posted in guild chat. Then save it for everyone.
+    4. Where to start: the tabs worth a look first.
+  /warcrest welcome shows it again; /warcrest setup opens the guild setup.
+  Officers in a guild nobody has set up yet are reminded once a session.
 ]]
 
 local _, ns = ...
@@ -19,18 +21,24 @@ local INNER = WIDTH - 48
 local win
 local step = 1
 local pages = {}
-local rankValue
+local rankValue, dkpValue
+local order = {} -- the pages shown, in order (members skip the officers' ones)
 
+-- n: the position in `order`.
 local function setStep(n)
   step = n
-  for i, p in ipairs(pages) do p:SetShown(i == n) end
+  local page = order[n]
+  for _, p in ipairs(pages) do p:SetShown(p == page) end
   for i, dot in ipairs(win.dots) do
+    dot:SetShown(i <= #order)
     local col = i == n and C.accent or C.faint
     dot:SetColorTexture(col[1], col[2], col[3], 1)
+    dot:ClearAllPoints()
+    dot:SetPoint("TOPRIGHT", win, "TOPRIGHT", -24 - (#order - i) * 16, -58)
   end
   win.back:SetShown(n > 1)
-  win.next:SetText(n == #pages and "Open Warcrest" or "Next")
-  if pages[n].refresh then pages[n].refresh() end
+  win.next:SetText(n == #order and "Open Warcrest" or "Next")
+  if page.refresh then page.refresh() end
 end
 
 local function Page(title, subtitle)
@@ -105,25 +113,16 @@ local function BuildSetup()
   rankHint:SetWidth(INNER)
 
   UI.FieldLabel(officerBox, "Loot", 24, -86)
-  local dkp = UI.Segmented(officerBox, { { "yes", "Use DKP" }, { "no", "No DKP" } })
+  local dkp = UI.Segmented(officerBox, { { "yes", "Use DKP" }, { "no", "No DKP" } }, function(v) dkpValue = v end)
   dkp:SetPoint("TOPLEFT", 24, -102)
   local dkpHint = UI.Label(officerBox, "No DKP hides the DKP tab and loot auctions. Raids, sign-ups, attendance, "
     .. "wishlists and everything else still work. You can change this later in Settings.", "MutedSmall")
   dkpHint:SetPoint("TOPLEFT", 24, -134)
   dkpHint:SetWidth(INNER)
 
-  local save = UI.Button(officerBox, "Save for the guild", 180, "primary")
-  save:SetHeight(28)
-  save:SetPoint("TOPLEFT", 24, -178)
-  local saved = UI.Label(officerBox, "", "Small")
-  saved:SetPoint("LEFT", save, "RIGHT", 12, 0)
-  save:SetScript("OnClick", function()
-    local types = {}
-    for k, v in pairs(ns.cfg.types) do types[k] = v end
-    if ns.PushConfig({ enabled = ns.cfg.enabled, types = types, officerRank = rankValue, dkp = dkp.value == "yes" }) then
-      saved:SetText(UI.Code("good") .. "Saved and sent to everyone online.|r")
-    end
-  end)
+  local nextHint = UI.Label(officerBox, "Next: the alerts the guild hears, then save it all for everyone.", "Small")
+  nextHint:SetPoint("TOPLEFT", 24, -184)
+  nextHint:SetWidth(INNER)
 
   p.refresh = function()
     local officer = ns.IsAddonOfficer()
@@ -133,19 +132,73 @@ local function BuildSetup()
     if officer then
       p.sub:SetText(ns.cfg.stamp > 0
         and ("Your guild's settings were last saved by " .. ns.cfg.by .. ". Change anything here, or later in Settings.")
-        or "Nobody has set Warcrest up for your guild yet. Pick these two things and save them for everyone.")
+        or "Nobody has set Warcrest up for your guild yet. It takes a minute: these two things, then the guild's alerts.")
       rankValue = rankValue or ns.cfg.officerRank
       rankText:SetText(ns.TF("%s and higher", UI.RankName(rankValue)))
       UI.SetEnabled(down, gm)
       UI.SetEnabled(up, gm)
-      dkp:SetValue(ns.UsesDKP() and "yes" or "no")
-      saved:SetText("")
+      dkpValue = dkpValue or (ns.UsesDKP() and "yes" or "no")
+      dkp:SetValue(dkpValue)
     else
       p.sub:SetText("")
       memberText:SetText(ns.TF("Your officers (%s and higher) look after Warcrest's guild settings: raids, DKP and which alerts the guild hears.\n\n"
         .. "You choose what you see yourself. Every alert can be turned off just for you in %sSettings|r, and quiet mode holds alerts in dungeons, raids and combat.",
         UI.RankName(ns.cfg.officerRank), UI.Code("accent")))
     end
+  end
+end
+
+
+-- Officers: which alerts the guild hears, then save everything.
+local GROUPS = { "kill", "streak", "wanted", "death", "achievement", "raid", "celebrate" }
+local function BuildAlerts()
+  local p = Page("What the guild hears", "Officers choose the alerts that reach everyone with Warcrest. "
+    .. "Each member can still turn any of them off just for themselves.")
+  p.officerOnly = true
+  local checks = {}
+  for i, g in ipairs(GROUPS) do
+    local col, row = (i - 1) % 2, math.floor((i - 1) / 2)
+    local cb = UI.Check(p, ns.GROUP_LABELS[g], 24 + col * 236, -96 - row * 30)
+    cb.group = g
+    local names = {}
+    for _, t in ipairs(ns.TYPES) do
+      if t.group == g and not t.hidden and not t.feature then names[#names + 1] = ns.T(t.label) end
+    end
+    UI.Tooltip(cb, ns.GROUP_LABELS[g], table.concat(names, "\n"))
+    checks[#checks + 1] = cb
+  end
+  local chat = UI.Check(p, "Post achievements in guild chat", 24, -222)
+  UI.Tooltip(chat, "Posted in guild chat", "Achievements are posted in guild chat, so guildmates without Warcrest see them too.")
+  local save = UI.Button(p, "Save for the guild", 180, "primary")
+  save:SetHeight(28)
+  save:SetPoint("TOPLEFT", 24, -262)
+  local saved = UI.Label(p, "", "Small")
+  saved:SetPoint("LEFT", save, "RIGHT", 12, 0)
+  save:SetScript("OnClick", function()
+    local types = {}
+    for k, v in pairs(ns.cfg.types) do types[k] = v end
+    for _, cb in ipairs(checks) do
+      for _, t in ipairs(ns.TYPES) do
+        if t.group == cb.group and not t.hidden and not t.feature then types[t.key] = cb:GetChecked() and true or false end
+      end
+    end
+    types.achievement_chat = chat:GetChecked() and true or false
+    if ns.PushConfig({ enabled = true, types = types, officerRank = rankValue or ns.cfg.officerRank,
+        dkp = (dkpValue or (ns.UsesDKP() and "yes" or "no")) == "yes" }) then
+      saved:SetText(UI.Code("good") .. ns.T("Saved and sent to everyone online.") .. "|r")
+    end
+  end)
+  p.checks, p.chat, p.save = checks, chat, save
+  p.refresh = function()
+    for _, cb in ipairs(checks) do
+      local on = false
+      for _, t in ipairs(ns.TYPES) do
+        if t.group == cb.group and not t.hidden and not t.feature and ns.cfg.types[t.key] then on = true end
+      end
+      cb:SetChecked(on)
+    end
+    chat:SetChecked(ns.cfg.types.achievement_chat ~= false)
+    saved:SetText("")
   end
 end
 
@@ -179,7 +232,7 @@ local function Build()
   win.next:SetHeight(30)
   win.next:SetPoint("BOTTOMRIGHT", -24, 13)
   win.next:SetScript("OnClick", function()
-    if step < #pages then setStep(step + 1) else win:Hide(); ns.OpenPanel() end
+    if step < #order then setStep(step + 1) else win:Hide(); ns.OpenPanel() end
   end)
   win.back = UI.Button(win, "Back", 90)
   win.back:SetHeight(30)
@@ -192,22 +245,38 @@ local function Build()
 
   BuildWelcome()
   BuildSetup()
+  BuildAlerts()
+  win.pages = pages
   BuildStart()
   win.dots = {}
   for i = 1, #pages do
     local dot = win:CreateTexture(nil, "ARTWORK")
     dot:SetSize(8, 8)
-    dot:SetPoint("TOPRIGHT", win, "TOPRIGHT", -24 - (#pages - i) * 16, -58)
     win.dots[i] = dot
   end
 end
 
-function ns.ShowWelcome()
+-- first: the step to open on (2: the guild setup).
+function ns.ShowWelcome(first)
   if not win then Build() end
-  rankValue = nil
-  setStep(1)
+  rankValue, dkpValue = nil, nil
+  local officer = ns.IsAddonOfficer()
+  order = {}
+  for _, p in ipairs(pages) do
+    if officer or not p.officerOnly then order[#order + 1] = p end
+  end
+  setStep(math.max(1, math.min(tonumber(first) or 1, #order)))
   win:Show()
   ns.db.welcomed = true
+end
+
+-- Officers in a guild nobody has set Warcrest up for: a reminder, once a session.
+local reminded = false
+local function remind()
+  if reminded or not ns.IsAddonOfficer() or (ns.cfg.stamp or 0) > 0 then return end
+  if win and win:IsShown() then return end
+  reminded = true
+  ns.Say("Warcrest isn't set up for your guild yet. Type |cffffffff/warcrest setup|r to choose who manages it, DKP and the guild's alerts. It takes a minute.")
 end
 
 -- The first time Warcrest loads for this character in a guild. Players who
@@ -216,6 +285,7 @@ end
 local isNew
 ns.OnLoad(function() isNew = ns.isNewInstall end)
 table.insert(ns.OnGuildReady, function()
+  C_Timer.After(90, remind)
   if ns.db.welcomed then return end
   local needsSetup = ns.IsAddonOfficer() and ns.cfg.stamp == 0
   if (not isNew or ns.movedFromImperium) and not needsSetup then ns.db.welcomed = true return end

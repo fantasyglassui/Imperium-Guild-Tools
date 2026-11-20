@@ -36,3 +36,6 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest version` | Your version, plus any problems the addon has hit |
 | `/warcrest debug` | Show error details in chat |
 | `/warcrest website` | The Warcrest website (guides and a contact form), ready to copy |
+| `/warcrest discord` | The Warcrest Discord invite, ready to copy |
+| `/warcrest report` | A bug report to copy into the Discord or the contact form |
+| `/warcrest setup` | Set Warcrest up for your guild: who manages it, DKP and the guild's alerts (officers) |

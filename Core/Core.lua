@@ -112,6 +112,7 @@ ns.PVP_TYPES = { pvp = true }
 local frame = CreateFrame("Frame")
 local events, inits, handlers = {}, {}, {}
 ns.loadErrors = {}
+ns.recentErrors = {} -- { text, n, t }: the last errors, for bug reports
 
 -- Run a piece of the addon; if it breaks, note the error instead of
 -- stopping everything else.
@@ -120,6 +121,15 @@ local function safely(where, fn, ...)
   local ok, err = pcall(fn, ...)
   if ok then return end
   if #ns.loadErrors < 20 then ns.loadErrors[#ns.loadErrors + 1] = where .. ": " .. tostring(err) end
+  -- The last few, for /warcrest report (the same error again counts up instead).
+  local text = (where .. ": " .. tostring(err)):sub(1, 300)
+  local last = ns.recentErrors[#ns.recentErrors]
+  if last and last.text == text then
+    last.n, last.t = last.n + 1, time()
+  else
+    ns.recentErrors[#ns.recentErrors + 1] = { text = text, n = 1, t = time() }
+    if #ns.recentErrors > 12 then table.remove(ns.recentErrors, 1) end
+  end
   if ns.db and ns.db.debug and GetTime() - lastErrorShown > 2 then
     lastErrorShown = GetTime()
     print("|cffff6060[" .. ns.BRAND .. "] error in " .. where .. ": " .. tostring(err) .. "|r")
@@ -544,6 +554,7 @@ ns.OnGuildReady = {}
 
 -- The Warcrest website: guides, every achievement, and a contact form.
 ns.WEBSITE = "https://warcrest-addon.com/"
+ns.DISCORD = "https://discord.gg/qeSMwQWyPR"
 
 ns.OnEvent("PLAYER_REGEN_ENABLED", function() C_Timer.After(1, flushHeld) end)
 ns.OnEvent("ZONE_CHANGED_NEW_AREA", function() C_Timer.After(2, flushHeld) end)
@@ -642,11 +653,18 @@ SlashCmdList.WARCREST = function(input)
     if ns.CheckVersions then ns.CheckVersions() end
   elseif msg == "help" or msg == "?" then
     if ns.ShowHelp then ns.ShowHelp() end
-  elseif msg == "website" or msg == "site" or msg == "feedback" or msg == "contact" or msg == "bug" then
+  elseif msg == "website" or msg == "site" or msg == "feedback" or msg == "contact" then
     ns.Say(ns.TF("Guides, every achievement and a contact form for bugs and ideas: %s", "|cffffffff" .. ns.WEBSITE .. "|r"))
     if ns.ShowHelp then ns.ShowHelp(nil, true) end
-  elseif msg == "welcome" or msg == "setup" then
+  elseif msg == "discord" then
+    ns.Say(ns.TF("Join the Warcrest Discord for help, news and other guilds using it: %s", "|cffffffff" .. ns.DISCORD .. "|r"))
+    if ns.ShowHelp then ns.ShowHelp(nil, "discord") end
+  elseif msg == "report" or msg == "bugreport" or msg == "bug" or msg == "bug report" then
+    if ns.ShowBugReport then ns.ShowBugReport() end
+  elseif msg == "welcome" then
     if ns.ShowWelcome then ns.ShowWelcome() end
+  elseif msg == "setup" then
+    if ns.ShowWelcome then ns.ShowWelcome(2) end
   elseif msg == "updates" or msg == "news" or msg == "changes" then
     if ns.ShowUpdates then ns.ShowUpdates(nil) end
   elseif msg == "recap" or msg == "recap now" or msg == "recap week" then

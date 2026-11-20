@@ -495,6 +495,13 @@ if __name__ == "__main__":
     print(rd.render(me.lua.eval("WarcrestProfiles"), os.path.join(out, "window-profiles.png")))
     me.ns.ShowCrafters()
     print(rd.render(me.lua.eval("WarcrestCrafters"), os.path.join(out, "window-crafters.png")))
+    me.ns.ShowHelp()
+    print(rd.render(me.lua.eval("WarcrestHelp"), os.path.join(out, "window-help.png")))
+    me.ns.ShowBugReport()
+    print(rd.render(me.lua.eval("WarcrestReport"), os.path.join(out, "window-report.png")))
+    for step in (2, 3):
+        me.ns.ShowWelcome(step)
+        print(rd.render(me.lua.eval("WarcrestWelcome"), os.path.join(out, "window-welcome-%d.png" % step)))
     me.ns.UI.NewGuildEvent()
     print(rd.render(panel, os.path.join(out, "panel-events-new.png")))
     me.ns.OpenPanel("achievements")

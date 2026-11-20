@@ -69,3 +69,67 @@ def test_help_window_every_topic():
     bob.run('SlashCmdList.WARCREST("help")')
     assert shown(bob, "WarcrestHelp")
     assert not bob.errors()
+
+
+def test_officers_set_up_the_guild_alerts_in_the_welcome():
+    guild = Guild(MEMBERS)
+    ready(guild)
+    alice, bob = guild["Alice"], guild["Bob"]
+    # Members skip the officers' page: three steps; officers get four.
+    bob.ns.ShowWelcome()
+    assert len(bob.lua.eval("WarcrestWelcome").dots) >= 3
+    alice.run('SlashCmdList.WARCREST("setup")')
+    assert shown(alice, "WarcrestWelcome")
+    # Turn off the celebrations and the guild chat posts, and save it for everyone.
+    alice.lua.eval("""function(ns)
+      local w = WarcrestWelcome
+      w.next:GetScript("OnClick")(w.next)            -- to "What the guild hears"
+    end""")(alice.ns)
+    alice.lua.eval("""function()
+      local page
+      for _, p in ipairs(WarcrestWelcome.pages) do
+        if p:IsShown() and p.officerOnly then page = p end
+      end
+      assert(page, "no alerts page")
+      for _, c in ipairs(page.checks) do
+        if c.group == "celebrate" then c:SetChecked(false) end
+      end
+      page.chat:SetChecked(false)
+      page.save:GetScript("OnClick")(page.save)
+    end""")()
+    guild.run(3)
+    for c in (alice, bob):
+        assert not c.ns.cfg.types.level_ten and not c.ns.cfg.types.level_all
+        assert not c.ns.cfg.types.achievement_chat
+        assert c.ns.cfg.types.kill_world and c.ns.cfg.stamp > 0
+    assert not alice.errors() and not bob.errors()
+
+
+def test_officers_are_reminded_when_nobody_has_set_up_the_guild():
+    guild = Guild(MEMBERS)
+    for c in guild.clients.values():
+        c.ns.db.welcomed = True
+    ready(guild)
+    guild.run(100)
+    assert guild["Alice"].said("isn't set up for your guild")
+    assert not guild["Bob"].said("isn't set up for your guild")
+
+
+def test_bug_report_and_discord():
+    guild = Guild(MEMBERS)
+    bob = guild["Bob"]
+    bob.run('SlashCmdList.WARCREST("report")')
+    assert shown(bob, "WarcrestReport")
+    text = bob.ns.BugReport()
+    assert text.startswith("Warcrest ") and "Guild: 2 members" in text and "Errors: none" in text
+    assert "Bob" not in text and "Alice" not in text           # no names
+    # An error shows up in the next report.
+    bob.lua.eval("""function(ns) ns.OnEvent("WARCREST_TEST_BOOM", function() error("boom") end) end""")(bob.ns)
+    bob.fire("WARCREST_TEST_BOOM")
+    bob.fire("WARCREST_TEST_BOOM")
+    text = bob.ns.BugReport()
+    assert "boom" in text and "x2" in text
+    bob.run('SlashCmdList.WARCREST("discord")')
+    assert bob.said("discord.gg/qeSMwQWyPR")
+    assert shown(bob, "WarcrestHelp")
+    assert not [e for e in bob.errors() if "boom" not in e]

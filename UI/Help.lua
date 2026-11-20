@@ -109,6 +109,9 @@ local TOPICS = {
     CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),
     CMD("/warcrest debug", "show error details (and boss checks) in chat"),
     CMD("/warcrest website", "the website, with guides and a contact form"),
+    CMD("/warcrest discord", "the Warcrest Discord invite"),
+    CMD("/warcrest report", "a bug report to copy into the Discord or the contact form"),
+    CMD("/warcrest setup", "set Warcrest up for your guild (officers)"),
   }, "\n") end },
 }
 
@@ -146,25 +149,31 @@ local function Build()
     win.topics[i] = b
   end
 
-  -- The website, to copy: guides, every achievement, and a contact form.
-  local site = UI.Label(win, "WEBSITE AND FEEDBACK", "Label")
-  site:SetPoint("BOTTOMLEFT", 16, 46)
-  site:SetWidth(LIST_W - 24)
-  site:SetWordWrap(false)
-  local box = UI.EditBox(win, LIST_W - 24)
-  box:SetHeight(24)
-  box:SetPoint("BOTTOMLEFT", 12, 16)
-  box:SetFontObject(UI.Fonts.Small)
-  box:SetText(ns.WEBSITE)
-  box:SetCursorPosition(0)
-  -- Read only: clicking selects it, ready for Ctrl+C.
-  box:SetScript("OnTextChanged", function(self, userInput)
-    if userInput then self:SetText(ns.WEBSITE); self:HighlightText() end
-  end)
-  box:HookScript("OnEditFocusGained", function(self) self:HighlightText() end)
-  box:HookScript("OnEditFocusLost", function(self) self:HighlightText(0, 0); self:SetCursorPosition(0) end)
-  UI.Tooltip(box, "Warcrest website", "Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address.")
-  win.site = box
+  -- The website and the Discord, to copy (the game can't open links).
+  local function copyBox(text, bottom, title, tip)
+    local box = UI.EditBox(win, LIST_W - 24)
+    box:SetHeight(24)
+    box:SetPoint("BOTTOMLEFT", 12, bottom)
+    box:SetFontObject(UI.Fonts.Small)
+    box:SetText(text)
+    box:SetCursorPosition(0)
+    -- Read only: clicking selects it, ready for Ctrl+C.
+    box:SetScript("OnTextChanged", function(self, userInput)
+      if userInput then self:SetText(text); self:HighlightText() end
+    end)
+    box:HookScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    box:HookScript("OnEditFocusLost", function(self) self:HighlightText(0, 0); self:SetCursorPosition(0) end)
+    UI.Tooltip(box, title, tip)
+    return box
+  end
+  local links = UI.Label(win, "WEBSITE AND DISCORD", "Label")
+  links:SetPoint("BOTTOMLEFT", 16, 76)
+  links:SetWidth(LIST_W - 24)
+  links:SetWordWrap(false)
+  win.site = copyBox(ns.WEBSITE, 46, "Warcrest website",
+    "Guides, every achievement, and a form to send bugs and ideas to the developer. Click, then press Ctrl+C to copy the address.")
+  win.discord = copyBox(ns.DISCORD, 16, "Warcrest Discord",
+    "Help with setting it up, news about new versions, and other guilds using Warcrest. Click, then press Ctrl+C to copy the invite.")
 
   win.heading = UI.Label(win, "", "Title")
   win.heading:SetPoint("TOPLEFT", LIST_W + 24, -44)
@@ -183,8 +192,8 @@ local function Build()
 end
 
 -- Open the help, on a topic (its number or its title) if given.
--- copySite: select the website's address, ready to copy.
-function ns.ShowHelp(topic, copySite)
+-- copy: "discord" (or true, for the website) selects that address, ready to copy.
+function ns.ShowHelp(topic, copy)
   if not win then Build() end
   local i = tonumber(topic) or current
   if type(topic) == "string" then
@@ -192,5 +201,6 @@ function ns.ShowHelp(topic, copySite)
   end
   show(i)
   win:Show()
-  if copySite then win.site:SetFocus(); win.site:HighlightText() end
+  local box = copy == "discord" and win.discord or (copy and win.site)
+  if box then box:SetFocus(); box:HighlightText() end
 end
