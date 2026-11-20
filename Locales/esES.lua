@@ -2047,4 +2047,5 @@ ns.LOCALES.esES = {
   ["%d raids scheduled"] = "%d bandas programadas",
   ["raid night in progress"] = "noche de banda en curso",
   ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Los avisos de rachas y venganzas muestran ahora el título del jugador, como los avisos de muertes.",
+  ["Fix: solo kills showed you as your own assist (\"assist: Name Realm\"). Kills already logged are tidied up."] = "Corregido: en las muertes en solitario aparecías como tu propia asistencia (\"assist: Nombre Reino\"). Las muertes ya registradas se corrigen.",
 }

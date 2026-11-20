@@ -323,7 +323,34 @@ end
 
 ns.KILL_ICON, ns.KILL_COLOR = KILL_ICON, KILL_COLOR
 
-ns.OnLoad(function() ns.db.killLog = ns.db.killLog or {} end)
+-- Killers by name only, each once. Some game clients put the realm after a
+-- name with a space ("Name Realm"), which made one player look like two: the
+-- killer, and their own assist.
+local function tidyKillers(k)
+  local seen, out, gaps = {}, {}, {}
+  for _, name in ipairs(k.killers or {}) do
+    local short = Ambiguate(name, "short")
+    local g = k.gaps and k.gaps[name]
+    if not seen[ns.Key(short)] then
+      seen[ns.Key(short)] = short
+      out[#out + 1] = short
+    end
+    short = seen[ns.Key(short)]
+    if g and (not gaps[short] or g < gaps[short]) then gaps[short] = g end
+  end
+  k.killers, k.gaps = out, gaps
+  return k
+end
+ns.TidyKillers = tidyKillers
+
+ns.OnLoad(function()
+  ns.db.killLog = ns.db.killLog or {}
+  for _, k in ipairs(ns.db.killLog) do
+    for _, name in ipairs(k.killers or {}) do
+      if name:find(ns.REALM_PATTERN) then tidyKillers(k) break end
+    end
+  end
+end)
 
 ------------------------------------------------------------------------
 -- Kills removed by officers (kept in the shared ledger, so they stay removed)
@@ -377,13 +404,13 @@ end)
 local function combine(into, k)
   local changed = false
   into.gaps = into.gaps or {}
-  for _, name in ipairs(k.killers) do
-    local known = false
+  for _, theirs in ipairs(k.killers) do
+    local known, name = false, theirs
     for _, have in ipairs(into.killers) do
-      if have == name then known = true break end
+      if ns.Key(have) == ns.Key(theirs) then known, name = true, have break end
     end
     if not known then table.insert(into.killers, name); changed = true end
-    local g = k.gaps and k.gaps[name]
+    local g = k.gaps and k.gaps[theirs]
     if g and (not into.gaps[name] or g < into.gaps[name]) then into.gaps[name] = g end
   end
   if k.level and (not into.level or k.level > into.level) then into.level = k.level end
@@ -764,6 +791,6 @@ ns.OnMessage("KX", function(p)
   if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(victim, vg, t) end
   local mapID, x, y = tonumber(p[11]), tonumber(p[12]), tonumber(p[13])
   if not (mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1) then mapID, x, y = nil, nil, nil end
-  mergeSynced({ t = t, kind = kind, victim = victim, zone = p[5] or "Unknown", killers = killers,
-    gaps = gaps, level = tonumber(p[8]), honor = honor, vg = vg, mapID = mapID, x = x, y = y })
+  mergeSynced(tidyKillers({ t = t, kind = kind, victim = victim, zone = p[5] or "Unknown", killers = killers,
+    gaps = gaps, level = tonumber(p[8]), honor = honor, vg = vg, mapID = mapID, x = x, y = y }))
 end)

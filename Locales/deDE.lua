@@ -2047,4 +2047,5 @@ ns.LOCALES.deDE = {
   ["%d raids scheduled"] = "%d Schlachtzüge geplant",
   ["raid night in progress"] = "Raidabend läuft",
   ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Meldungen zu Kill-Serien und Rache zeigen jetzt den Titel des Spielers, wie Kill-Meldungen.",
+  ["Fix: solo kills showed you as your own assist (\"assist: Name Realm\"). Kills already logged are tidied up."] = "Fehler behoben: Bei Solo-Kills warst du dein eigener Assist („Assist: Name Realm\"). Bereits erfasste Kills werden bereinigt.",
 }

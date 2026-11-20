@@ -12,9 +12,14 @@ local ADDON_NAME, ns = ...
 -- on some clients when it can't tell which realm is yours, so guildmates would
 -- show as "Name-Realm". Player names never contain "-", so cutting there is safe.
 local gameAmbiguate = Ambiguate
+-- A character's name without its realm. Usually "Name-Realm", but some game
+-- clients write "Name Realm" or "Name (Realm)". Names never have spaces.
+local REALM = "[%-%s%(].*$"
+ns.REALM_PATTERN = REALM
+
 function ns.Ambiguate(name, context)
   if context == "short" and type(name) == "string" and not (issecretvalue and issecretvalue(name)) then
-    return (name:gsub("%-.*$", ""))
+    return (name:gsub(REALM, ""))
   end
   return gameAmbiguate(name, context)
 end
@@ -167,7 +172,7 @@ local keys, keyCount = {}, 0
 function ns.Key(name)
   local k = keys[name or ""]
   if k then return k end
-  k = (tostring(name or ""):gsub("%-.*", "")):lower()
+  k = (tostring(name or ""):gsub(REALM, "")):lower()
   if keyCount > 20000 then keys, keyCount = {}, 0 end
   keys[name or ""] = k
   keyCount = keyCount + 1
@@ -336,7 +341,7 @@ function ns.IsMe(name)
   if type(name) ~= "string" or name == "" then return false end
   local me = UnitName("player")
   if not me then return false end
-  return (name:gsub("%-.*$", "")):lower() == me:lower()
+  return (name:gsub(REALM, "")):lower() == me:lower()
 end
 
 -- Turn a Blizzard format string like "%s has promoted %s to %s." into a pattern.

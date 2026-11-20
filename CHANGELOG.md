@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8.2
+- Fix: a solo kill could show the killer as their own assist ("Lyra killed Grim (assist: Lyra Realm)"), when the game wrote your realm after your name with a space. Kills already in the log are tidied up when you log in, and the same fix stops any of your own messages being handled twice.
+
 ## 3.8.1
 - Kill streak alerts (and the alert when a streak ends) and revenge alerts now show the guildmate's title, like kill alerts do: "Lyra the Avenger is on a 5-kill streak!"
 
