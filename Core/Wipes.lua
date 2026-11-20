@@ -55,14 +55,14 @@ function ns.WipeLog(which)
   local stamp = GetServerTime()
   apply(which, stamp)
   ns.Send("W", which, stamp)
-  ns.Say(("The %s was cleared for the whole guild."):format(LOGS[which].label))
+  ns.Say(ns.TF("The %s was cleared for the whole guild.", LOGS[which].label))
 end
 
 -- Straight from the guild leader.
 ns.OnMessage("W", function(p, sender)
   if ns.RankOf(sender) ~= 0 then return end
   if apply(p[2], tonumber(p[3]) or 0) and not ns.IsMe(sender) then
-    ns.Say(("%s cleared the guild's %s."):format(Ambiguate(sender, "short"), LOGS[p[2]].label))
+    ns.Say(ns.TF("%s cleared the guild's %s.", Ambiguate(sender, "short"), LOGS[p[2]].label))
   end
 end)
 

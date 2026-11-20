@@ -261,13 +261,13 @@ local ENVIRONMENT = { falling = "fell to their death", drowning = "drowned", fat
 function ns.DescribeDeath(e)
   local line
   if e.kind == "environment" then
-    line = ("%s %s in %s"):format(e.who, ENVIRONMENT[e.sub] or "died", e.zone)
+    line = ns.TF("%s %s in %s", e.who, ns.T(ENVIRONMENT[e.sub] or "died"), e.zone)
   elseif e.killer and e.killer ~= "" then
-    line = ("%s was killed by %s in %s"):format(e.who, e.killer, e.zone)
+    line = ns.TF("%s was killed by %s in %s", e.who, e.killer, e.zone)
   elseif ns.PVP_TYPES[e.kind] then
-    line = ("%s died in PvP in %s"):format(e.who, e.zone)
+    line = ns.TF("%s died in PvP in %s", e.who, e.zone)
   else
-    line = ("%s died in %s"):format(e.who, e.zone)
+    line = ns.TF("%s died in %s", e.who, e.zone)
   end
   return line
 end

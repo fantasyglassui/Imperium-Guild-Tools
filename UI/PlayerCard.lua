@@ -172,7 +172,7 @@ local function fill(p)
     local top = {}
     if pf.spec ~= "" then top[#top + 1] = UI.Code("text") .. pf.spec .. "|r" end
     if pf.role ~= "" then top[#top + 1] = ns.T(({ tank = "Tank", healer = "Healer", dps = "DPS" })[pf.role]) end
-    if pf.ilvl > 0 then top[#top + 1] = ns.TF("item level %d", pf.ilvl) end
+    if pf.ilvl > 0 then top[#top + 1] = ns.TF("Item level %d", pf.ilvl) end
     if #top > 0 then plines[#plines + 1] = table.concat(top, "  ·  ") end
     local second = {}
     local avail = ns.AvailabilityText(pf)
@@ -198,12 +198,21 @@ local function fill(p)
   f.assists.number:SetText(p.assists)
   f.deaths.number:SetText(p.deaths)
   local lines = {}
-  local streak = p.streak > 0 and ("%s%d|r right now"):format(UI.Code("accent"), p.streak) or "none right now"
-  lines[#lines + 1] = ("Streak: %s  ·  best %s%d|r"):format(streak, UI.Code("text"), p.bestStreak)
-  lines[#lines + 1] = p.nemesis and ("Nemesis: %s%s|r, who has killed them %d time%s"):format(UI.Code("bad"),
-    p.nemesis, p.nemesisCount, p.nemesisCount == 1 and "" or "s") or "Nemesis: nobody yet"
-  lines[#lines + 1] = p.favorite and ("Most killed: %s%s|r, %d time%s"):format(UI.Code("text"), p.favorite,
-    p.favoriteCount, p.favoriteCount == 1 and "" or "s") or "Most killed: nobody yet"
+  local function col(code, v) return UI.Code(code) .. tostring(v) .. "|r" end
+  local streak = p.streak > 0 and ns.TF("%s right now", col("accent", p.streak)) or ns.T("none right now")
+  lines[#lines + 1] = ns.TF("Streak: %s  ·  best %s", streak, col("text", p.bestStreak))
+  if p.nemesis then
+    lines[#lines + 1] = ns.TF(p.nemesisCount == 1 and "Nemesis: %s, who has killed them once"
+      or "Nemesis: %s, who has killed them %d times", col("bad", p.nemesis), p.nemesisCount)
+  else
+    lines[#lines + 1] = ns.T("Nemesis: nobody yet")
+  end
+  if p.favorite then
+    lines[#lines + 1] = ns.TF(p.favoriteCount == 1 and "Most killed: %s, once" or "Most killed: %s, %d times",
+      col("text", p.favorite), p.favoriteCount)
+  else
+    lines[#lines + 1] = ns.T("Most killed: nobody yet")
+  end
   f.pvpLines:SetText(table.concat(lines, "\n"))
 
   f.dkp.number:SetText(ns.UsesDKP() and p.dkp or "-")
@@ -214,27 +223,31 @@ local function fill(p)
   f.items.number:SetText(p.itemsWon)
   local loot = {}
   if p.bossKills > 0 then
-    loot[#loot + 1] = ("Boss kills: %s%d|r%s"):format(UI.Code("text"), p.bossKills,
-      p.bossFirsts > 0 and (" (" .. p.bossFirsts .. " guild first" .. (p.bossFirsts == 1 and "" or "s") .. ")") or "")
+    local kills = ns.TF("Boss kills: %s", col("text", p.bossKills))
+    if p.bossFirsts > 0 then
+      kills = kills .. " " .. ns.TF(p.bossFirsts == 1 and "(1 guild first)" or "(%d guild firsts)", p.bossFirsts)
+    end
+    loot[#loot + 1] = kills
   end
   if #p.wishes > 0 then
     -- The first item they want (Need first), cut short so the line fits.
     local first = p.wishes[1].name
     if #first > 30 then first = first:sub(1, 28) .. "..." end
     if #p.wishes == 1 then
-      loot[#loot + 1] = ("Wishlist: %s%s|r (%s)"):format(UI.Code("text"), first, p.wishNeed > 0 and "Need" or "Want")
+      loot[#loot + 1] = ns.TF("Wishlist: %s (%s)", col("text", first), ns.T(p.wishNeed > 0 and "Need" or "Want"))
+    elseif p.wishNeed > 0 then
+      loot[#loot + 1] = ns.TF("Wishlist: %s items (%d Need), like %s", col("text", #p.wishes), p.wishNeed, first)
     else
-      loot[#loot + 1] = ("Wishlist: %s%d|r items%s, like %s"):format(UI.Code("text"), #p.wishes,
-        p.wishNeed > 0 and (" (" .. p.wishNeed .. " Need)") or "", first)
+      loot[#loot + 1] = ns.TF("Wishlist: %s items, like %s", col("text", #p.wishes), first)
     end
   end
-  if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
+  if #p.loot > 0 then loot[#loot + 1] = ns.T("Recent loot:") end
   for _, l in ipairs(p.loot) do
     loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), ns.Date("%b %d", l.t), l.item,
-      l.roll and (UI.Code("muted") .. "free roll|r") or (l.council and (UI.Code("muted") .. "loot council|r")
+      l.roll and (UI.Code("muted") .. ns.T("free roll") .. "|r") or (l.council and (UI.Code("muted") .. ns.T("loot council") .. "|r")
         or (UI.Code("text") .. l.amount .. " DKP|r")))
   end
-  if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. "No loot won yet.|r" end
+  if #p.loot == 0 then loot[#loot + 1] = UI.Code("muted") .. ns.T("No loot won yet.") .. "|r" end
   f.lootLines:SetText(table.concat(loot, "\n"))
   -- As tall as what's on it: no empty space under a short record.
   f:SetHeight(math.min(HEIGHT, math.max(400 + DOWN, 342 + DOWN + math.ceil(f.lootLines:GetStringHeight()) + 30)))

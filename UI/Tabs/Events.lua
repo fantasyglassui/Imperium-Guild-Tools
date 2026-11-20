@@ -257,9 +257,10 @@ local function BuildEventView(parent)
   P.signups.frame:SetPoint("TOPLEFT", d.box, "TOPLEFT", 0, -25)
 
   d.attend = UI.Label(d, "", "Small")
-  d.attend:SetPoint("BOTTOMLEFT", 18, 22)
-  d.attend:SetWidth(RIGHT_W - 36 - 260)
-  d.attend:SetWordWrap(false)
+  d.attend:SetPoint("BOTTOMLEFT", 18, 14)
+  d.attend:SetSize(RIGHT_W - 36 - 250, 28)
+  d.attend:SetJustifyV("MIDDLE")
+  d.attend:SetWordWrap(true) -- two lines in longer languages, beside the buttons
   d.take = UI.Button(d, "Take attendance", 124)
   d.take:SetHeight(26)
   d.take:SetPoint("BOTTOMRIGHT", -18, 14)

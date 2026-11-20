@@ -356,7 +356,7 @@ local function BuildGuild(page)
       row.when:SetText(e.t > 0 and ns.Date("%b %d", e.t) or "-")
       row.who:SetText(e.name)
       row.who:SetTextColor(UI.ClassColor(e.classFile))
-      row.what:SetText(a.name .. (a.title and ("  " .. UI.Code("accent") .. "title|r") or ""))
+      row.what:SetText(ns.T(a.name) .. (a.title and ("  " .. UI.Code("accent") .. ns.T("title") .. "|r") or ""))
     end, true)
   P.feed.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, y - 1)
 

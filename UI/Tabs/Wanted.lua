@@ -20,9 +20,9 @@ local WANTED = "|cffff66ff"
 
 local function ago(t)
   local s = time() - t
-  if s < 3600 then return math.max(1, math.floor(s / 60)) .. " min ago" end
-  if s < 86400 then return math.floor(s / 3600) .. " h ago" end
-  return math.floor(s / 86400) .. " d ago"
+  if s < 3600 then return ns.TF("%d min ago", math.max(1, math.floor(s / 60))) end
+  if s < 86400 then return ns.TF("%d h ago", math.floor(s / 3600)) end
+  return ns.TF("%d d ago", math.floor(s / 86400))
 end
 
 local function selectedEntry(list)
@@ -40,24 +40,26 @@ local function RefreshDetail(w, list)
     d.label:SetText("MOST WANTED")
     d.name:SetText(UI.Code("muted") .. "Nobody|r")
     d.count:SetText("")
-    d.lines:SetText(UI.Code("muted") .. "Enemy players show up here once they've killed guild members "
-      .. (ns.db.wantedThreshold or 3) .. " times in world PvP in 30 days.|r")
+    d.lines:SetText(UI.Code("muted") .. ns.TF("Enemy players show up here once they've killed guild members %d times in world PvP in 30 days.",
+      ns.db.wantedThreshold or 3) .. "|r")
     return
   end
   d.label:SetText(w == list[1] and "MOST WANTED" or "SELECTED")
   d.name:SetText(WANTED .. w.name .. "|r")
   d.count:SetText(w.count)
+  local victims = UI.Code("text") .. w.victimCount .. "|r"
   local lines = {
-    ("Killed %s%d|r guild member%s, %d time%s in all."):format(UI.Code("text"), w.victimCount,
-      w.victimCount == 1 and "" or "s", w.count, w.count == 1 and "" or "s"),
-    ("Last kill: %s%s|r in %s, %s."):format(UI.Code("text"), Ambiguate(w.lastVictim, "short"), w.lastZone or "?", ago(w.last)),
-    w.seen and ("Last seen: %s by %s, %s."):format(w.seen.zone, Ambiguate(w.seen.by, "short"), ago(w.seen.t))
-      or (UI.Code("muted") .. "Not seen lately.|r"),
+    w.victimCount == 1 and ns.TF(w.count == 1 and "Killed %s guild member, once." or "Killed %s guild member, %d times in all.",
+      victims, w.count)
+      or ns.TF("Killed %s guild members, %d times in all.", victims, w.count),
+    ns.TF("Last kill: %s in %s, %s.", UI.Code("text") .. Ambiguate(w.lastVictim, "short") .. "|r", w.lastZone or "?", ago(w.last)),
+    w.seen and ns.TF("Last seen: %s by %s, %s.", w.seen.zone, Ambiguate(w.seen.by, "short"), ago(w.seen.t))
+      or (UI.Code("muted") .. ns.T("Not seen lately.") .. "|r"),
   }
   local bounty = ns.BountiesOn() and ns.BountyOn(w.name)
   if bounty then
-    lines[#lines + 1] = ("|cffffb347Bounty: %s, placed by %s.|r"):format(
-      bounty.amount > 0 and (bounty.amount .. " DKP") or "for the glory", bounty.by)
+    lines[#lines + 1] = "|cffffb347" .. ns.TF("Bounty: %s, placed by %s.",
+      bounty.amount > 0 and (bounty.amount .. " DKP") or ns.T("for the glory"), bounty.by) .. "|r"
   end
   d.lines:SetText(table.concat(lines, "\n"))
 end
@@ -77,7 +79,7 @@ local function Refresh()
     return
   end
   local list = ns.WantedList()
-  P.list:SetEmptyText(("Nobody has killed guild members %d or more times in world PvP in the last 30 days."):format(
+  P.list:SetEmptyText(ns.TF("Nobody has killed guild members %d or more times in world PvP in the last 30 days.",
     ns.db.wantedThreshold or 3))
   local current = selectedEntry(list)
   P.current = current
@@ -91,13 +93,13 @@ local function Refresh()
     end
   end
   P.removeOnKill:SetChecked(ns.db.wantedRemoveOnKill)
-  P.how:SetText(("Enemy players who have killed guild members %d or more times in world PvP in the last 30 days. "
-    .. "When a guildmate spots one, everyone is alerted and the spot is marked on the map for 30 minutes."):format(
+  P.how:SetText(ns.TF("Enemy players who have killed guild members %d or more times in world PvP in the last 30 days. "
+    .. "When a guildmate spots one, everyone is alerted and the spot is marked on the map for 30 minutes.",
     ns.db.wantedThreshold or 3))
 
   local hidden = ns.HiddenWantedCount()
   P.unhide:SetShown(hidden > 0)
-  P.unhide:SetText(("Show hidden (%d)"):format(hidden))
+  P.unhide:SetText(ns.TF("Show hidden (%d)", hidden))
 end
 
 local function BuildTable(page)

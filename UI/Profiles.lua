@@ -135,7 +135,7 @@ end
 -- Everyone's profiles: a list to see the guild's specs, item levels and
 -- who plays when (a gear check for officers planning raids).
 ------------------------------------------------------------------------
-local LW, LH = 640, 460
+local LW, LH = 700, 460
 local list
 local sortBy = "name"
 local ROLE_TEXT = { tank = "Tank", healer = "Healer", dps = "DPS" }

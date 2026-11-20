@@ -76,7 +76,7 @@ function M.Build(page)
       row.target:SetText(ORANGE .. b.target .. "|r")
       row.reward:SetText(b.amount > 0 and (b.amount .. " DKP") or (UI.Code("muted") .. "glory|r"))
       local st = STATE[b.state]
-      row.state:SetText(UI.Code(st[2]) .. st[1] .. "|r" .. (b.state == "claimed" and (" by " .. b.killer) or ""))
+      row.state:SetText(UI.Code(st[2]) .. st[1] .. "|r" .. (b.state == "claimed" and (" " .. ns.T("by") .. " " .. b.killer) or ""))
       row.placed:SetText(ns.Date("%b %d", b.t))
       UI.SetRowSelected(row, b.id == selected)
     end, true)

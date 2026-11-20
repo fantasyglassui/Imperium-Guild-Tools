@@ -569,15 +569,16 @@ local function postNow()
   for _, a in ipairs(list) do
     if not ns.db.postedAch[a.id] then
       ns.db.postedAch[a.id] = true
-      names[#names + 1] = a.name
-      if a.title then titles[#titles + 1] = a.title end
+      names[#names + 1] = ns.T(a.name)
+      if a.title then titles[#titles + 1] = ns.T(a.title) end
     end
   end
   if #names == 0 then return end
   local me = UnitName("player")
-  local what = #names == 1 and names[1] or (table.concat(names, ", ", 1, #names - 1) .. " and " .. names[#names])
-  local text = ("[%s] %s earned %s!"):format(ns.BRAND or "Warcrest", me, what)
-  if #titles > 0 then text = text .. (" New title: %s %s."):format(me, titles[#titles]) end
+  local what = #names == 1 and names[1]
+    or ns.TF("%s and %s", table.concat(names, ", ", 1, #names - 1), names[#names])
+  local text = ns.TF("[%s] %s earned %s!", ns.BRAND or "Warcrest", me, what)
+  if #titles > 0 then text = text .. " " .. ns.TF("New title: %s %s.", me, titles[#titles]) end
   pcall(SendChatMessage, text, "GUILD")
 end
 postLater = function(a)

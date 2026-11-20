@@ -80,7 +80,7 @@ function ns.SetPlanGroup(eventId, name, group)
     local inIt = false
     for _, p in ipairs(groups[group]) do if ns.Key(p.name) == ns.Key(name) then inIt = true end end
     if inIt then return true end
-    if #groups[group] >= ns.PLAN_SLOTS then ns.Say(("Group %d is full."):format(group)) return end
+    if #groups[group] >= ns.PLAN_SLOTS then ns.Say(ns.TF("Group %d is full.", group)) return end
   end
   return ns.LedgerAdd("RG", { ref = eventId, name = Ambiguate(name, "short"), group = group })
 end
@@ -162,7 +162,7 @@ function ns.ArrangeRaid(eventId)
   local function step()
     local m = table.remove(moves, 1)
     if not m or InCombatLockdown() then
-      ns.Say(("Arranged the raid: %d moved."):format(done))
+      ns.Say(ns.TF("Arranged the raid: %d moved.", done))
       return
     end
     -- Where everyone is now (indexes can shift after a move).

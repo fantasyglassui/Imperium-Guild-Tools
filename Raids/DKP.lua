@@ -107,7 +107,7 @@ function ns.RequestAltLink(main)
   if ns.RankOf(main) == nil then ns.Say(main .. " isn't in the guild.") return end
   if ns.IsMe(main) then return end
   ns.LedgerAdd("AL", { alt = UnitName("player"), main = main, state = "req" })
-  ns.Say(("Asked to link this character as an alt of %s. Log in on %s and confirm it on the DKP tab (Alts)."):format(main, main))
+  ns.Say(ns.TF("Asked to link this character as an alt of %s. Log in on %s and confirm it on the DKP tab (Alts).", main, main))
 end
 
 function ns.ConfirmAlt(alt)
@@ -126,7 +126,7 @@ function ns.OfficerLinkAlt(alt, main)
     if ns.RankOf(n) == nil then ns.Say(n .. " isn't in the guild.") return end
   end
   ns.LedgerAdd("AL", { alt = alt, main = main, state = "set" })
-  ns.Say(("Linked %s as an alt of %s."):format(alt, main))
+  ns.Say(ns.TF("Linked %s as an alt of %s.", alt, main))
 end
 
 -- Tell a main when an alt asks to be linked.
@@ -136,7 +136,7 @@ ns.OnLedgerChanged(function()
   for _, alt in ipairs(ns.PendingAltRequests()) do
     if not toldAbout[alt] then
       toldAbout[alt] = true
-      ns.Say(("%s wants to be linked as your alt. Confirm it on the DKP tab (Alts)."):format(alt))
+      ns.Say(ns.TF("%s wants to be linked as your alt. Confirm it on the DKP tab (Alts).", alt))
     end
   end
 end)
@@ -261,7 +261,7 @@ function ns.StartSeason(name)
   local e = ns.LedgerAdd("SN", { name = name, parts = #parts })
   if not e then return end
   for _, p in ipairs(parts) do ns.LedgerAdd("SS", { ref = e.id, amount = p.amount, names = p.names }) end
-  ns.Say(("%s has started. Everyone kept their DKP; older history has been archived."):format(name))
+  ns.Say(ns.TF("%s has started. Everyone kept their DKP; older history has been archived.", name))
 end
 
 function ns.DKPBalances() return (cache or build()).balances end
@@ -438,9 +438,9 @@ function ns.ReassignLoot(l, newWinner)
   if newWinner ~= "" then
     newWinner = Ambiguate(newWinner, "none")
     ns.LedgerAdd("DK", { amount = entry.amount, names = newWinner, reason = entry.reason })
-    ns.Say(("%s now goes to %s for %d DKP; %s was refunded."):format(l.item, newWinner, l.amount, l.winner))
+    ns.Say(ns.TF("%s now goes to %s for %d DKP; %s was refunded.", l.item, newWinner, l.amount, l.winner))
   else
-    ns.Say(("%s was refunded %d DKP for %s."):format(l.winner, l.amount, l.item))
+    ns.Say(ns.TF("%s was refunded %d DKP for %s.", l.winner, l.amount, l.item))
   end
 end
 
@@ -475,7 +475,8 @@ function ns.ImportBalances(rows)
     end
   end
   for diff, names in pairs(byDiff) do ns.AwardDKP(names, diff, "Starting balance") end
-  ns.Say(("Imported %d balance%s (%d already matched)."):format(changed, changed == 1 and "" or "s", #rows - changed))
+  ns.Say(ns.TP(changed, "Imported %d balance (%d already matched).", "Imported %d balances (%d already matched).",
+    changed, #rows - changed))
 end
 
 ------------------------------------------------------------------------
@@ -578,7 +579,7 @@ function ns.ApplyDecay(percent, automatic)
     members = members + #names
     ns.AwardDKP(names, -cut, ("Decay %d%% (week %d)"):format(percent, week))
   end
-  ns.Say(("DKP decayed by %d%% for %d member%s."):format(percent, members, members == 1 and "" or "s"))
+  ns.Say(ns.TP(members, "DKP decayed by %d%% for %d member.", "DKP decayed by %d%% for %d members.", percent, members))
 end
 
 -- Weekly decay: an online officer applies it once the new week has started.
@@ -750,7 +751,7 @@ ns.OnMessage("B1", function(p, sender)
   ns.auction = { id = p[2], link = link, min = tonumber(p[4]) or 1, high = 0, leader = nil,
     ends = GetTime() + duration, by = Ambiguate(sender, "short"), hidden = p[6] == "hidden" }
   if ns.ShowAuctionWindow then ns.ShowAuctionWindow() end
-  ns.Notify(("|cffffd200Loot auction: %s - minimum bid %d DKP.|r"):format(link, ns.auction.min), nil, nil, true, "loot")
+  ns.Notify(ns.TF("|cffffd200Loot auction: %s - minimum bid %d DKP.|r", link, ns.auction.min), nil, nil, true, "loot")
   if ns.OnAuctionStarted then ns.OnAuctionStarted(ns.auction) end
 end)
 
@@ -775,7 +776,7 @@ ns.OnMessage("B4", function(p)
     a.result = "Auction cancelled."
   elseif winner and winner ~= "" then
     a.result = ("%s won it for %d DKP."):format(winner, amount)
-    ns.Say(("%s won %s for %d DKP."):format(winner, a.link, amount))
+    ns.Say(ns.TF("%s won %s for %d DKP.", winner, a.link, amount))
   else
     a.result = "No bids. Nobody won it."
   end
@@ -800,7 +801,7 @@ ns.OnMessage("B8", function(p)
   a.rolling, a.done = false, true
   local winner, value = p[3], tonumber(p[4]) or 0
   a.result = (winner and winner ~= "") and ("%s won the roll (%d)."):format(winner, value) or "Nobody rolled."
-  if winner and winner ~= "" then ns.Say(("%s won %s with a roll of %d."):format(winner, a.link, value)) end
+  if winner and winner ~= "" then ns.Say(ns.TF("%s won %s with a roll of %d.", winner, a.link, value)) end
   if ns.RefreshAuctionWindow then ns.RefreshAuctionWindow() end
   C_Timer.After(6, function()
     if ns.auction == a and ns.HideAuctionWindow then ns.HideAuctionWindow() end

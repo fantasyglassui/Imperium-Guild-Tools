@@ -48,13 +48,13 @@ local function RefreshAlerts()
   end
   P.rankValue = P.rankValue or c.officerRank
   if not P.rankDirty then P.rankValue = c.officerRank end
-  P.rankText:SetText(UI.RankName(P.rankValue) .. " and higher")
+  P.rankText:SetText(ns.TF("%s and higher", UI.RankName(P.rankValue)))
   UI.SetEnabled(P.rankDown, isGM)
   UI.SetEnabled(P.rankUp, isGM)
   UI.SetEnabled(P.save, officer)
 
   local status = officer and "You can change the guild column."
-    or ("Only " .. UI.RankName(c.officerRank) .. " and higher can change the guild column.")
+    or ns.TF("Only %s and higher can change the guild column.", UI.RankName(c.officerRank))
   if c.stamp > 0 then
     status = status .. "\nLast saved by " .. c.by .. ", " .. ns.Date("%b %d at %H:%M", c.stamp) .. "."
   end
@@ -200,7 +200,7 @@ local function BuildGuildCard(parent)
   local function step(delta)
     P.rankValue = math.max(0, math.min(UI.NumRanks() - 1, P.rankValue + delta))
     P.rankDirty = true
-    P.rankText:SetText(UI.RankName(P.rankValue) .. " and higher")
+    P.rankText:SetText(ns.TF("%s and higher", UI.RankName(P.rankValue)))
   end
   P.rankDown:SetScript("OnClick", function() step(-1) end)
   P.rankUp:SetScript("OnClick", function() step(1) end)
@@ -379,12 +379,14 @@ local function BuildGeneral(page)
 
   -- Commands
   local h = UI.Box(f, x2, -144, COL_W, 306, "Good to know")
-  local tips = UI.Label(h, "/warcrest card Name opens a guild member's player card. /warcrest wishlist and "
-    .. "/warcrest achievements open those tabs, and /warcrest updates shows what's new. "
-    .. "/warcrest help lists every command in chat.", "Small")
-  local titles = UI.Label(h, "Your title is chosen on the Achievements tab, at the top right.", "Small")
-  titles:SetPoint("TOPLEFT", 14, -116)
+  local tips = UI.Label(h, "/warcrest card Name opens a guild member's player card, and /warcrest profile "
+    .. "your own profile. /warcrest check explains an achievement that hasn't shown up, and /warcrest updates "
+    .. "shows what's new. /warcrest help lists every command in chat.", "Small")
+  local titles = UI.Label(h, "Your title is chosen on the Achievements tab, at the top right. Everyone's profiles "
+    .. "are on the Roster tab (Profiles).", "Small")
+  titles:SetPoint("TOPLEFT", 14, -150)
   titles:SetWidth(inner)
+  titles:SetSpacing(3)
   tips:SetPoint("TOPLEFT", 14, -38)
   tips:SetWidth(inner)
   tips:SetSpacing(3)

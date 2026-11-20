@@ -93,7 +93,7 @@ local function RefreshEvent(event)
     return
   end
   d.title:SetText(event.title)
-  d.when:SetText(ns.Date("%a %b %d, %H:%M", event.start) .. "  ·  by " .. event.a)
+  d.when:SetText(ns.Date("%a %b %d, %H:%M", event.start) .. "  ·  " .. ns.T("by") .. " " .. event.a)
   d.notes:SetText(event.notes ~= "" and event.notes or "No notes.")
 
   local c = ns.SignupCounts(event.id)
@@ -118,7 +118,7 @@ local function RefreshEvent(event)
     d.banner.icon:SetTexture(UI.IconPath(warn and "warning" or "check"))
     d.banner.icon:SetVertexColor(col[1], col[2], col[3])
     d.banner.text:SetText(warn and (table.concat(mk.warnings, ". ") .. ".") or
-      ("Tanks and healers covered for %d players."):format(mk.accept))
+      ns.TF("Tanks and healers covered for %d players.", mk.accept))
     d.banner.text:SetTextColor(col[1], col[2], col[3])
     d.banner:Show()
   end
@@ -133,8 +133,8 @@ local function RefreshEvent(event)
   P.signups:SetEmptyText("Nobody has signed up yet.")
   P.signups:SetItems(rows)
   if noShows then
-    d.noShows:SetText(#noShows > 0 and (UI.Code("bad") .. "No-shows:|r " .. table.concat(noShows, ", "))
-      or (UI.Code("good") .. "Everyone who accepted showed up.|r"))
+    d.noShows:SetText(#noShows > 0 and (UI.Code("bad") .. ns.T("No-shows:") .. "|r " .. table.concat(noShows, ", "))
+      or (UI.Code("good") .. ns.T("Everyone who accepted showed up.") .. "|r"))
   else
     d.noShows:SetText("")
   end
@@ -207,9 +207,10 @@ local function RefreshSession()
     P.sessionButton:SetText("Start raid")
     P.sessionButton:SetStyle("primary")
   end
-  -- The DKP amounts only when the guild uses DKP.
+  -- The DKP amounts for starting a raid night: only when the guild uses DKP,
+  -- and not while one is running (the text above says what that one gives).
   for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.onTimeLabel, P.hourlyLabel, P.bossLabel }) do
-    w:SetShown(officer and dkp)
+    w:SetShown(officer and dkp and not s)
   end
   P.sessionButton:SetShown(officer)
   for _, w in ipairs({ P.onTime, P.hourly, P.boss, P.sessionButton }) do UI.SetEnabled(w, officer) end

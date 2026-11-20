@@ -300,7 +300,7 @@ function ns.KillHidden(k) return ns.IsGreyKill(k) end
 function ns.DescribeKill(k, titled)
   local kb = ns.KillingBlow(k)
   if titled and ns.TitledName then kb = ns.TitledName(kb) end
-  local line = ("%s killed %s in %s"):format(kb, k.victim, k.zone)
+  local line = ns.TF("%s killed %s in %s", kb, k.victim, k.zone)
   local assists = ns.Assists(k)
   if #assists > 0 then line = line .. " (assist: " .. joinNames(assists) .. ")" end
   if k.kind == "kill_bg" then line = line .. " (battleground)" end
@@ -457,7 +457,7 @@ function ns.MonthRange(offset)
     fromT = fromT - daysIn(y, m) * 86400
   end
   local toT = fromT + daysIn(y, m) * 86400
-  return fromT, toT, MONTH_NAMES[m], ("%d-%02d"):format(y, m)
+  return fromT, toT, ns.T(MONTH_NAMES[m]), ("%d-%02d"):format(y, m)
 end
 
 -- On reset day (the 1st), the guild hears last month's Top Head Hunters.
@@ -479,10 +479,10 @@ local function announceChampion()
       places[#places + 1] = ("%s%d. %s|r (%d)"):format(MEDALS[i], i, e.name, e.count)
     end
   end
-  local heading = ("The month has reset! Top Head Hunters of %s:"):format(name)
+  local heading = ns.TF("The month has reset! Top Head Hunters of %s:", name)
   ns.Notify(KILL_ICON .. " |cffd4af37" .. heading .. "|r  " .. table.concat(places, "   "),
-    ("|cffd4af37%s champion: %s with %d killing blow%s!|r"):format(name, top[1].name, top[1].count,
-      top[1].count == 1 and "" or "s"), nil, nil, "champion")
+    "|cffd4af37" .. ns.TP(top[1].count, "%s champion: %s with %d killing blow!", "%s champion: %s with %d killing blows!",
+      name, top[1].name, top[1].count) .. "|r", nil, nil, "champion")
 end
 ns.AnnounceChampion = announceChampion
 

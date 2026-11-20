@@ -59,7 +59,7 @@ local function Refresh()
   end
   P.list:SetEmptyText(q ~= "" and "Nothing matches your search."
     or (filter == "raid" and (IsInRaid() and "Nobody in your raid has a wishlist yet." or "You're not in a raid.")
-    or "Nobody has a wishlist yet. Add the first item on the right."))
+    or ns.T("Nobody has a wishlist yet. Add the first item on the right.")))
   P.list:SetItems(rows)
   P.count:SetText(#rows == 1 and "1 item" or (#rows .. " items"))
 

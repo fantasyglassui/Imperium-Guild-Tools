@@ -65,7 +65,7 @@ local function BuildWelcome()
   local p = Page("Welcome to Warcrest", "")
   p.refresh = function()
     local guild = ns.GuildName()
-    p.sub:SetText(guild and ("Guild tools for " .. UI.Code("accent") .. guild .. "|r, shared automatically with every guildmate who has Warcrest.")
+    p.sub:SetText(guild and ns.TF("Guild tools for %s, shared automatically with every guildmate who has Warcrest.", UI.Code("accent") .. guild .. "|r")
       or "Guild tools, shared automatically with every guildmate who has Warcrest. Join a guild to get started.")
   end
   Feature(p, -92, "raids", "Raids, sign-ups and DKP", "Schedule raids, sign up as Tank, Healer or DPS, track attendance, and run loot auctions.")
@@ -96,7 +96,7 @@ local function BuildSetup()
   up:SetPoint("LEFT", down, "RIGHT", 240, 0)
   local function stepRank(d)
     rankValue = math.max(0, math.min(UI.NumRanks() - 1, rankValue + d))
-    rankText:SetText(UI.RankName(rankValue) .. " and higher")
+    rankText:SetText(ns.TF("%s and higher", UI.RankName(rankValue)))
   end
   down:SetScript("OnClick", function() stepRank(-1) end)
   up:SetScript("OnClick", function() stepRank(1) end)
@@ -135,16 +135,16 @@ local function BuildSetup()
         and ("Your guild's settings were last saved by " .. ns.cfg.by .. ". Change anything here, or later in Settings.")
         or "Nobody has set Warcrest up for your guild yet. Pick these two things and save them for everyone.")
       rankValue = rankValue or ns.cfg.officerRank
-      rankText:SetText(UI.RankName(rankValue) .. " and higher")
+      rankText:SetText(ns.TF("%s and higher", UI.RankName(rankValue)))
       UI.SetEnabled(down, gm)
       UI.SetEnabled(up, gm)
       dkp:SetValue(ns.UsesDKP() and "yes" or "no")
       saved:SetText("")
     else
       p.sub:SetText("")
-      memberText:SetText(("Your officers (%s and higher) look after Warcrest's guild settings: raids, DKP and which alerts the guild hears.\n\n"
-        .. "You choose what you see yourself. Every alert can be turned off just for you in %sSettings|r, and quiet mode holds alerts in dungeons, raids and combat.")
-        :format(UI.RankName(ns.cfg.officerRank), UI.Code("accent")))
+      memberText:SetText(ns.TF("Your officers (%s and higher) look after Warcrest's guild settings: raids, DKP and which alerts the guild hears.\n\n"
+        .. "You choose what you see yourself. Every alert can be turned off just for you in %sSettings|r, and quiet mode holds alerts in dungeons, raids and combat.",
+        UI.RankName(ns.cfg.officerRank), UI.Code("accent")))
     end
   end
 end

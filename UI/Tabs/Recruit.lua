@@ -30,9 +30,15 @@ end
 
 local function classText(r)
   local parts = {}
+  -- Once they're in the guild, the roster knows their level and class.
+  local m = ns.Member(r.name)
+  local level = (r.level and r.level > 0) and r.level or (m and m.level) or 0
+  local class = (r.class and r.class ~= "") and r.class or (m and m.classFile) or ""
+  r = { level = level, class = class }
   if r.level and r.level > 0 then parts[#parts + 1] = ns.TF("Level %d", r.level) end
   if r.class and r.class ~= "" then
-    local name = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[r.class]) or r.class
+    local name = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[r.class])
+      or (r.class:sub(1, 1) .. r.class:sub(2):lower())
     local cr, cg, cb = UI.ClassColor(r.class)
     parts[#parts + 1] = ("|cff%02x%02x%02x%s|r"):format(math.floor(cr * 255), math.floor(cg * 255), math.floor(cb * 255), name)
   end
@@ -57,8 +63,9 @@ local function RefreshDetail(r)
   end
   d.name:SetText(Ambiguate(r.name, "short"))
   local info = { classText(r) }
-  info[#info + 1] = ns.TF("added %s by %s", ns.Date("%b %d", r.added), Ambiguate(r.by, "short"))
-  if r.inGuild then info[#info + 1] = UI.Code("good") .. ns.T("in the guild") .. "|r" end
+  -- In the guild already: that matters more than when they were added.
+  info[#info + 1] = r.inGuild and (UI.Code("good") .. ns.T("in the guild") .. "|r")
+    or ns.TF("added %s by %s", ns.Date("%b %d", r.added), Ambiguate(r.by, "short"))
   d.info:SetText((table.concat(info, "  ·  "):gsub("^  ·  ", "")))
 
   local opts = statusOptions()

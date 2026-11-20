@@ -88,7 +88,7 @@ function ns.PlaceBounty(target, amount, note)
   if target == "" or target:find("[%s%d]") then ns.Say("Type the enemy player's name.") return end
   if ns.Member(target) then ns.Say(target .. " is in the guild.") return end
   amount = ns.UsesDKP() and math.floor(tonumber(amount) or 0) or 0
-  if amount < 0 or amount > MAX_AMOUNT then ns.Say(("The reward must be between 0 and %d DKP."):format(MAX_AMOUNT)) return end
+  if amount < 0 or amount > MAX_AMOUNT then ns.Say(ns.TF("The reward must be between 0 and %d DKP.", MAX_AMOUNT)) return end
   if ns.BountyOn(target) then ns.Say("There's already a bounty on " .. target .. ".") return end
   local e = ns.LedgerAdd("BO", { target = target, amount = amount, note = note or "" })
   return e
@@ -188,13 +188,13 @@ local function announce(quiet)
       seen[key] = true
       if ready and not quiet and wanted() then
         if b.state == "open" and b.t >= fresh then
-          local reward = b.amount > 0 and (" " .. b.amount .. " DKP") or ""
-          local text = ("Bounty placed:%s on %s's head, by %s.%s"):format(reward, b.target, b.by,
-            b.note ~= "" and (" \"" .. b.note .. "\"") or "")
+          local text = b.amount > 0 and ns.TF("Bounty placed: %d DKP on %s's head, by %s.", b.amount, b.target, b.by)
+            or ns.TF("Bounty placed on %s's head, by %s.", b.target, b.by)
+          if b.note ~= "" then text = text .. " \"" .. b.note .. "\"" end
           ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r", nil, nil, "bounty")
         elseif b.state == "claimed" and (b.claimedAt or 0) >= fresh then
-          local text = ("%s claimed the bounty on %s%s!"):format(b.killer, b.target,
-            b.amount > 0 and ns.UsesDKP() and (" for " .. b.amount .. " DKP") or "")
+          local text = (b.amount > 0 and ns.UsesDKP()) and ns.TF("%s claimed the bounty on %s for %d DKP!", b.killer, b.target, b.amount)
+            or ns.TF("%s claimed the bounty on %s!", b.killer, b.target)
           ns.Notify(ns.KILL_ICON .. " " .. BOUNTY_COLOR .. text .. "|r", BOUNTY_COLOR .. text .. "|r", nil, nil, "bounty")
         end
       end

@@ -170,7 +170,7 @@ function ns.WishlistAdd(link, prio)
   local mine = ns.Wishes(UnitName("player"))
   local already = ns.WishFor(UnitName("player"), id)
   if not already and #mine >= MAX_WISHES then
-    ns.Say(("Your wishlist is full (%d items). Remove something first."):format(MAX_WISHES))
+    ns.Say(ns.TF("Your wishlist is full (%d items). Remove something first.", MAX_WISHES))
     return
   end
   return ns.LedgerAdd("WL", { item = id, name = name, prio = prio })
@@ -190,7 +190,7 @@ function ns.OnAuctionStarted(a)
   local me = UnitName("player")
   local mine = ns.WishFor(me, a.link)
   if mine then
-    ns.Say(("%s is up for bids, and it's on your wishlist (%s)."):format(a.link, mine.prio == "need" and "Need" or "Want"))
+    ns.Say(ns.TF("%s is up for bids, and it's on your wishlist (%s).", a.link, ns.T(mine.prio == "need" and "Need" or "Want")))
   end
   if ns.Key(a.by or "") == ns.Key(me) then
     local wishers = ns.WishersFor(a.link)

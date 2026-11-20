@@ -487,7 +487,7 @@ end
 
 local function flushHeld()
   if #held == 0 or ns.IsQuiet() then return end
-  ns.Say(("While you were busy, %d alert%s came in:"):format(#held, #held == 1 and "" or "s"))
+  ns.Say(ns.TP(#held, "While you were busy, %d alert came in:", "While you were busy, %d alerts came in:", #held))
   for _, line in ipairs(held) do print("   " .. line) end
   wipe(held)
   if ns.db.sound and ns.PlaySoundID then ns.PlaySoundID("wc:NotifyDing") end
@@ -531,12 +531,12 @@ ns.OnEvent("PLAYER_ENTERING_WORLD", function() C_Timer.After(3, flushHeld) end)
 
 ns.OnEvent("ADDON_ACTION_BLOCKED", function(who, func)
   if who == ADDON_NAME then
-    ns.Say(("The game blocked %s for addons. Use the regular Guild window for that action."):format(tostring(func)))
+    ns.Say(ns.TF("The game blocked %s for addons. Use the regular Guild window for that action.", tostring(func)))
   end
 end)
 ns.OnEvent("ADDON_ACTION_FORBIDDEN", function(who, func)
   if who == ADDON_NAME then
-    ns.Say(("The game blocked %s for addons. Use the regular Guild window for that action."):format(tostring(func)))
+    ns.Say(ns.TF("The game blocked %s for addons. Use the regular Guild window for that action.", tostring(func)))
   end
 end)
 

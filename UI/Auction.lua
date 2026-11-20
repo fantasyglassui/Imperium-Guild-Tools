@@ -121,7 +121,7 @@ local function create()
     self.acc = 0
     local a = ns.auction
     if a and not a.done then
-      self.time:SetText(("Time left: %ds"):format(math.max(0, math.ceil(a.ends - GetTime()))))
+      self.time:SetText(ns.TF("Time left: %ds", math.max(0, math.ceil(a.ends - GetTime()))))
     end
   end)
   tinsert(UISpecialFrames, "WarcrestAuction")
@@ -153,16 +153,16 @@ function ns.RefreshAuctionWindow()
   win.item:SetText(a.link)
   win.by:SetText("Auctioned by " .. a.by)
   if a.hidden then
-    win.high:SetText(("|cffe0b94cHidden bids|r - minimum %d. Highest wins, pays 2nd-highest + 1."):format(a.min))
-    win.mine:SetText(("Your DKP: %d%s"):format(ns.Balance(UnitName("player")),
-      a.myBid and ("     Your bid: |cff6fd08c%d|r (you can change it)"):format(a.myBid) or ""))
+    win.high:SetText(ns.TF("|cffe0b94cHidden bids|r - minimum %d. Highest wins, pays 2nd-highest + 1.", a.min))
+    win.mine:SetText(ns.TF("Your DKP: %d%s", ns.Balance(UnitName("player")),
+      a.myBid and ("     " .. ns.TF("Your bid: |cff6fd08c%d|r (you can change it)", a.myBid)) or ""))
   else
     if a.leader then
-      win.high:SetText(("Highest bid: |cffe0b94c%d|r by %s"):format(a.high, a.leader))
+      win.high:SetText(ns.TF("Highest bid: |cffe0b94c%d|r by %s", a.high, a.leader))
     else
-      win.high:SetText(("No bids yet. Minimum: |cffe0b94c%d|r"):format(a.min))
+      win.high:SetText(ns.TF("No bids yet. Minimum: |cffe0b94c%d|r", a.min))
     end
-    win.mine:SetText(("Your DKP: %d"):format(ns.Balance(UnitName("player"))))
+    win.mine:SetText(ns.TF("Your DKP: %d", ns.Balance(UnitName("player"))))
   end
   local open = not a.done and not a.rolling and not (a.result and a.result:find("Free roll"))
   for _, w in ipairs({ win.bid, win.bidButton, win.plus1, win.plus5, win.plus10 }) do

@@ -408,6 +408,37 @@ def demo_guild(guild_name=None, locale=None):
     guild.run(3)
     me.ns.AwardDKP(me.lua.table_from(["Lyra", "Mira"]), 25, "Ragnaros bonus")
     guild.run(3)
+    # Guild events, with answers.
+    now = int(guild.clock)
+    pvp = me.ns.CreateGuildEvent("pvp", "Tarren Mill raid", now + 26 * 3600, "Meet at the inn. Bring flasks.", 120)
+    guild.run(1)
+    guild["Lyra"].ns.CreateGuildEvent("worldboss", "Kazzak hunt", now + 50 * 3600, "", 90)
+    guild.run(1)
+    for n, st in (("Lyra", "going"), ("Mira", "maybe"), ("Brakk", "going"), ("Thorne", "going")):
+        guild[n].ns.EventSignUp(pvp.id, st)
+        guild.run(0.5)
+    # Profiles.
+    def profile(c, spec, role, days, hours, bday, note, ilvl):
+        c.run('equipped = {} itemLevels = {} for slot = 1, 18 do if slot ~= 4 then '
+              'equipped[slot] = "i" .. slot itemLevels["i" .. slot] = { %d } end end' % ilvl)
+        t = c.lua.eval("{}")
+        t["spec"], t["role"], t["hours"], t["bday"], t["note"] = spec, role, hours, bday, note
+        t["days"] = c.lua.table_from(days)
+        c.ns.SaveMyProfile(t)
+        guild.run(0.5)
+    weekdays = [True] * 5 + [False] * 2
+    profile(me, "Protection", "tank", weekdays, "19:00-23:00", "03-14", "Main tank, raid lead on Thursdays", 66)
+    profile(guild["Lyra"], "Holy", "healer", [False, False, True, True, False, True, True], "20:00-00:00", "", "", 63)
+    profile(guild["Mira"], "Frost", "dps", weekdays, "18:00-22:00", "", "Loves Alterac Valley", 61)
+    # Recruits.
+    me.ns.SetRecruit("Jaina", me.lua.eval('{ class = "MAGE", level = 60, note = "Frost mage, raided Naxx before" }'))
+    guild.run(0.5)
+    me.ns.SetRecruit("Valeera", me.lua.eval('{ class = "ROGUE", level = 58, status = "contacted" }'))
+    guild.run(0.5)
+    me.ns.SetRecruit("Brakk", me.lua.eval('{ status = "trial" }'))
+    guild.run(0.5)
+    me.fire("CHAT_MSG_WHISPER", "hey, is your guild recruiting healers?", "Anduin-Realm")
+    guild.run(1)
     return guild, me
 
 
@@ -431,3 +462,15 @@ if __name__ == "__main__":
     print(rd.render(me.lua.eval("WarcrestAlts"), os.path.join(out, "window-alts.png")))
     me.ns.ShowPlayerCard("Lyra")
     print(rd.render(me.lua.eval("WarcrestPlayerCard"), os.path.join(out, "window-player-card.png")))
+    me.ns.ShowPlayerCard(me.name)
+    print(rd.render(me.lua.eval("WarcrestPlayerCard"), os.path.join(out, "window-player-card-me.png")))
+    me.ns.ShowProfileEditor()
+    print(rd.render(me.lua.eval("WarcrestProfile"), os.path.join(out, "window-profile.png")))
+    me.ns.ShowProfiles()
+    print(rd.render(me.lua.eval("WarcrestProfiles"), os.path.join(out, "window-profiles.png")))
+    me.ns.UI.NewGuildEvent()
+    print(rd.render(panel, os.path.join(out, "panel-events-new.png")))
+    me.ns.OpenPanel("achievements")
+    me.ns.ShowTitleChooser()
+    print(rd.render(me.lua.eval("WarcrestTitles"), os.path.join(out, "window-titles.png")))
+    print("truncated:", rd.truncated)

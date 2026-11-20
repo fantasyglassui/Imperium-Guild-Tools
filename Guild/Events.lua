@@ -201,7 +201,8 @@ function ns.TakeEventAttendance(id)
     len = len + #n + 1
   end
   flush()
-  ns.Say(("Attendance taken for %s: %d guild member%s."):format(e.title, #names, #names == 1 and "" or "s"))
+  ns.Say(ns.TP(#names, "Attendance taken for %s: %d guild member.", "Attendance taken for %s: %d guild members.",
+    e.title, #names))
   return #names
 end
 
@@ -257,7 +258,7 @@ function ns.InviteEventGoing(id)
   for _, s in ipairs((ns.EventSignups(id))) do
     if s.status ~= "no" then names[#names + 1] = s.name end
   end
-  if ns.InviteNames then return ns.InviteNames(names, "going to " .. e.title) end
+  if ns.InviteNames then return ns.InviteNames(names, ns.TF("going to %s", e.title)) end
 end
 
 ------------------------------------------------------------------------

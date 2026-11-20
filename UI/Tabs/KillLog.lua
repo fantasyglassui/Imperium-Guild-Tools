@@ -63,7 +63,7 @@ end
 -- The second line under a kill's zone.
 local function detail(k)
   local assists = ns.Assists(k)
-  if #assists > 0 then return "Assist: " .. table.concat(assists, ", ") end
+  if #assists > 0 then return ns.TF("Assist: %s", table.concat(assists, ", ")) end
   if k.bounty then return "Wanted bounty claimed" end
   if k.kind == "kill_bg" then return "Battleground" end
   return "World PvP"
@@ -122,14 +122,14 @@ local function Refresh()
   elseif period == "week" then fromT, toT = time() - 7 * 86400, nil
   elseif period == "all" then fromT, toT = nil, nil end
   local best = ns.BestStreaks(fromT, toT, 1)[1]
-  P.streak:SetText(best and ("Best streak: %s%s|r · %d kills in a row"):format(UI.Code("text"), best.name, best.count)
-    or "Best streak: none yet")
+  P.streak:SetText(best and ns.TF("Best streak: %s · %d kills in a row", UI.Code("text") .. best.name .. "|r", best.count)
+    or ns.T("Best streak: none yet"))
 
   -- Last month's winner.
   local lastFrom, lastTo, lastName = ns.MonthRange(-1)
   local champ = ns.KillStats(ns.QueryKills("all", lastFrom, lastTo), 1)[1]
-  P.champion:SetText(champ and ("%s champion: %s%s|r · %d kill%s"):format(lastName, UI.Code("text"), champ.name,
-    champ.count, champ.count == 1 and "" or "s") or ("No champion for " .. lastName))
+  P.champion:SetText(champ and ns.TF(champ.count == 1 and "%s champion: %s · 1 kill" or "%s champion: %s · %d kills",
+    lastName, UI.Code("text") .. champ.name .. "|r", champ.count) or ns.TF("No champion for %s", lastName))
 end
 
 -- The header's subtitle: how many kills the table shows.

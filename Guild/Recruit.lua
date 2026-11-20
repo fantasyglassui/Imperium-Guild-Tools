@@ -129,7 +129,7 @@ function ns.RecruitMessage()
   local last = list[#list]
   if last and last.text ~= "" then return last.text end
   local g = ns.GuildName and ns.GuildName() or ""
-  return ("<%s> is recruiting! Raids, PvP and a friendly crew. Whisper me to join."):format(g ~= "" and g or "Our guild")
+  return ns.TF("<%s> is recruiting! Raids, PvP and a friendly crew. Whisper me to join.", g ~= "" and g or ns.T("Our guild"))
 end
 
 function ns.SetRecruitMessage(text)

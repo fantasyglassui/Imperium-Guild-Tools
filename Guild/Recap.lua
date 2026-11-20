@@ -87,7 +87,7 @@ end
 function ns.RecapLines(r)
   local lines = {}
   if r.kills > 0 then
-    local line = ("PvP: %d enemy player%s killed."):format(r.kills, r.kills == 1 and "" or "s")
+    local line = ns.TP(r.kills, "PvP: %d enemy player killed.", "PvP: %d enemy players killed.", r.kills)
     local places = {}
     for i, e in ipairs(r.hunters) do
       if e.count > 0 then places[#places + 1] = ("%d. %s (%d)"):format(i, e.name, e.count) end
@@ -96,22 +96,22 @@ function ns.RecapLines(r)
     lines[#lines + 1] = line
   end
   if r.deaths > 0 then
-    local line = ("Guild members killed by enemy players: %d."):format(r.deaths)
-    if r.nemesis then line = line .. ("  Most kills on us: %s (%d)."):format(r.nemesis.name, r.nemesis.count) end
+    local line = ns.TF("Guild members killed by enemy players: %d.", r.deaths)
+    if r.nemesis then line = line .. "  " .. ns.TF("Most kills on us: %s (%d).", r.nemesis.name, r.nemesis.count) end
     lines[#lines + 1] = line
   end
   if r.raidNights > 0 then
-    local line = ("Raids: %d raid night%s (%s)"):format(r.raidNights, r.raidNights == 1 and "" or "s",
+    local line = ns.TP(r.raidNights, "Raids: %d raid night (%s)", "Raids: %d raid nights (%s)", r.raidNights,
       table.concat(r.raids, ", "))
     if #r.bosses > 0 then
-      line = line .. (", %d boss%s killed"):format(#r.bosses, #r.bosses == 1 and "" or "es")
+      line = line .. ", " .. ns.TP(#r.bosses, "%d boss killed", "%d bosses killed", #r.bosses)
     end
     lines[#lines + 1] = line .. "."
   end
   if r.items > 0 then
-    local line = ("Loot: %d item%s handed out."):format(r.items, r.items == 1 and "" or "s")
+    local line = ns.TP(r.items, "Loot: %d item handed out.", "Loot: %d items handed out.", r.items)
     if r.biggest then
-      line = line .. ("  Biggest buy: %s, %s for %d DKP."):format(r.biggest.winner, r.biggest.item, r.biggest.amount)
+      line = line .. "  " .. ns.TF("Biggest buy: %s, %s for %d DKP.", r.biggest.winner, r.biggest.item, r.biggest.amount)
     end
     lines[#lines + 1] = line
   end

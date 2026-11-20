@@ -278,10 +278,10 @@ ns.OnLoad(function()
         if not announced[key] and now - b.first <= ANNOUNCE_WITHIN then
           announced[key] = true
           if wanted() then
-            local text = ("Guild first! %s is down in %s."):format(b.name, r.raid)
+            local text = ns.TF("Guild first! %s is down in %s.", b.name, r.raid)
             if r.total and r.killed == r.total and b.first == r.last then
-              text = text .. (r.total == 1 and (" %s is cleared!"):format(r.raid)
-                or (" That's all %d bosses: %s is cleared!"):format(r.total, r.raid))
+              text = text .. " " .. (r.total == 1 and ns.TF("%s is cleared!", r.raid)
+                or ns.TF("That's all %d bosses: %s is cleared!", r.total, r.raid))
             end
             ns.Notify(ns.COLOR .. text .. "|r", ns.COLOR .. text .. "|r", nil, nil, "boss", "Guild first")
           end

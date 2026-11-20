@@ -33,9 +33,9 @@ end)
 
 function ns.DescribeLevel(who, level)
   if level == maxLevel() then
-    return ("%s has reached level %d! %s salutes you!"):format(who, level, ns.GuildName() or "The guild")
+    return ns.TF("%s has reached level %d! %s salutes you!", who, level, ns.GuildName() or ns.T("The guild"))
   end
-  return ("%s reached level %d!"):format(who, level)
+  return ns.TF("%s reached level %d!", who, level)
 end
 
 function ns.ShowLevel(who, level, force)

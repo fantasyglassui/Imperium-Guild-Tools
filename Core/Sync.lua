@@ -152,7 +152,7 @@ end)
 -- End of a batch.
 ns.OnMessage("HE", function(_, sender)
   if received > 0 then
-    ns.Say(("Caught up on %d guild event%s from %s."):format(received, received == 1 and "" or "s",
+    ns.Say(ns.TP(received, "Caught up on %d guild event from %s.", "Caught up on %d guild events from %s.", received,
       Ambiguate(sender, "short")))
   end
   received = 0

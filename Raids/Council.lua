@@ -122,8 +122,8 @@ ns.OnMessage("L1", function(p, sender)
     answers = {}, votes = {} }
   if ns.ShowCouncilWindow then ns.ShowCouncilWindow() end
   local wish = ns.WishFor and ns.WishFor(UnitName("player"), ns.council.link)
-  ns.Say(("Loot council: %s. Say Need, Greed or Pass in the window.%s"):format(ns.council.link,
-    wish and " It's on your wishlist." or ""))
+  ns.Say(ns.TF("Loot council: %s. Say Need, Greed or Pass in the window.", ns.council.link)
+    .. (wish and (" " .. ns.T("It's on your wishlist.")) or ""))
 end)
 
 ns.OnMessage("L2", function(p, sender)
@@ -148,7 +148,7 @@ ns.OnMessage("L4", function(p, sender)
   c.done = true
   c.winner = (p[3] and p[3] ~= "") and p[3] or nil
   if c.winner then
-    ns.Say(("%s gets %s (loot council)."):format(c.winner, c.link))
+    ns.Say(ns.TF("%s gets %s (loot council).", c.winner, c.link))
   else
     ns.Say("Loot council vote for " .. c.link .. " was cancelled.")
   end

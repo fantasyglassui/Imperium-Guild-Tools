@@ -63,15 +63,15 @@ ns.OnEvent("CHAT_MSG_SYSTEM", function(text)
 end)
 
 local DESCRIBE = {
-  promote  = function(e) return ("%s promoted %s to %s"):format(e.actor, e.target, e.detail) end,
-  demote   = function(e) return ("%s demoted %s to %s"):format(e.actor, e.target, e.detail) end,
-  remove   = function(e) return ("%s removed %s from the guild"):format(e.actor, e.target) end,
-  join     = function(e) return ("%s joined the guild"):format(e.target) end,
-  leave    = function(e) return ("%s left the guild"):format(e.target) end,
-  note     = function(e) return ("%s edited %s's public note"):format(e.actor, e.target) end,
-  onote    = function(e) return ("%s edited %s's officer note"):format(e.actor, e.target) end,
-  motd     = function(e) return ("%s changed the Message of the Day"):format(e.actor) end,
-  settings = function(e) return ("%s changed the guild alert settings"):format(e.actor) end,
+  promote  = function(e) return ns.TF("%s promoted %s to %s", e.actor, e.target, e.detail) end,
+  demote   = function(e) return ns.TF("%s demoted %s to %s", e.actor, e.target, e.detail) end,
+  remove   = function(e) return ns.TF("%s removed %s from the guild", e.actor, e.target) end,
+  join     = function(e) return ns.TF("%s joined the guild", e.target) end,
+  leave    = function(e) return ns.TF("%s left the guild", e.target) end,
+  note     = function(e) return ns.TF("%s edited %s's public note", e.actor, e.target) end,
+  onote    = function(e) return ns.TF("%s edited %s's officer note", e.actor, e.target) end,
+  motd     = function(e) return ns.TF("%s changed the Message of the Day", e.actor) end,
+  settings = function(e) return ns.TF("%s changed the guild alert settings", e.actor) end,
 }
 
 function ns.DescribeAction(e)

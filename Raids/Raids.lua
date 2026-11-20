@@ -85,14 +85,23 @@ end
 ------------------------------------------------------------------------
 -- Raid makeup: who's coming by role and class, and what's missing
 ------------------------------------------------------------------------
-local ROLE_WORDS = { tank = { "tank", "tanks" }, healer = { "healer", "healers" } }
 local CLASS_CHECK_FROM = 10 -- only point out missing classes once this many have accepted
-
-local function plural(n, role) return ROLE_WORDS[role][n == 1 and 1 or 2] end
 
 local function joinOr(list)
   if #list <= 1 then return list[1] or "" end
-  return table.concat(list, ", ", 1, #list - 1) .. " or " .. list[#list]
+  return ns.TF("%s or %s", table.concat(list, ", ", 1, #list - 1), list[#list])
+end
+
+-- "No tanks", "Only 1 healer", "Only 2 tanks", in your language.
+local SHORT = {
+  tank = { "No tanks", "Only 1 tank", "Only %d tanks" },
+  healer = { "No healers", "Only 1 healer", "Only %d healers" },
+}
+local function shortOf(role, have)
+  local t = SHORT[role]
+  if have == 0 then return ns.T(t[1]) end
+  if have == 1 then return ns.T(t[2]) end
+  return ns.TF(t[3], have)
 end
 
 -- How many tanks and healers a raid of this size wants.
@@ -142,9 +151,9 @@ function ns.RaidMakeup(eventId)
     local role, want = need[1], need[2]
     local have = mk.roles[role]
     if have < want then
-      local text = have == 0 and ("No " .. plural(2, role)) or ("Only " .. have .. " " .. plural(have, role))
-      text = text .. (" (%d wanted for %d players)"):format(want, mk.accept)
-      if mk.maybe[role] > 0 then text = text .. (", %d tentative"):format(mk.maybe[role]) end
+      local text = shortOf(role, have)
+      text = text .. " " .. ns.TF("(%d wanted for %d players)", want, mk.accept)
+      if mk.maybe[role] > 0 then text = text .. ns.TF(", %d tentative", mk.maybe[role]) end
       mk.warnings[#mk.warnings + 1] = text
     end
   end
@@ -154,7 +163,7 @@ function ns.RaidMakeup(eventId)
       if not byClass[cls] then missing[#missing + 1] = classNames[cls] end
     end
     table.sort(missing)
-    if #missing > 0 then mk.warnings[#mk.warnings + 1] = "No " .. joinOr(missing) .. " signed up" end
+    if #missing > 0 then mk.warnings[#mk.warnings + 1] = ns.TF("No %s signed up", joinOr(missing)) end
   end
   return mk
 end
@@ -318,7 +327,7 @@ function ns.StartRaidSession(eventId, title, onTime, hourly, boss)
     ns.Say(("Raid started: %s. %d members got %d DKP for being on time; %d DKP every hour%s from now.")
       :format(title, #names, onTime, hourly, boss > 0 and (" and " .. boss .. " per boss kill") or ""))
   else
-    ns.Say(("Raid started: %s. Attendance recorded for %d members."):format(title, #names))
+    ns.Say(ns.TF("Raid started: %s. Attendance recorded for %d members.", title, #names))
   end
   -- Let guildmates who signed up but aren't here know the raid has started.
   if eventId and eventId ~= "" then
@@ -359,8 +368,8 @@ local function sessionTick()
   recordAttendance(s.id, ns.RaidAttendees(), "raid")
   if s.hourly > 0 and #names > 0 then
     ns.AwardDKP(names, s.hourly, ("Hour %d: %s"):format(s.hour, s.title))
-    ns.Say(("%d members got %d DKP for hour %d of %s%s."):format(#names, s.hourly, s.hour, s.title,
-      #standby > 0 and (" (" .. #standby .. " on standby)") or ""))
+    ns.Say(ns.TF("%d members got %d DKP for hour %d of %s.", #names, s.hourly, s.hour, s.title)
+      .. (#standby > 0 and (" " .. ns.TF("(%d on standby)", #standby)) or ""))
   end
 end
 
@@ -379,7 +388,7 @@ ns.OnEvent("ENCOUNTER_END", function(encounterID, encounterName, _, _, success)
   local names = earners(s.id)
   if #names > 0 then
     ns.AwardDKP(names, s.boss, "Boss: " .. name)
-    ns.Say(("%d members got %d DKP for killing %s."):format(#names, s.boss, name))
+    ns.Say(ns.TF("%d members got %d DKP for killing %s.", #names, s.boss, name))
   end
 end)
 
@@ -535,11 +544,11 @@ function ns.InviteNames(names, what)
     end
   end
   if #inviteQueue == 0 then
-    ns.Say("Everyone " .. what .. " who is online is already in your group.")
+    ns.Say(ns.TF("Everyone %s who is online is already in your group.", what))
     return 0
   end
-  ns.Say(("Inviting %d member%s %s%s."):format(#inviteQueue, #inviteQueue == 1 and "" or "s", what,
-    offline > 0 and (" (" .. offline .. " offline)") or ""))
+  ns.Say(ns.TP(#inviteQueue, "Inviting %d member %s.", "Inviting %d members %s.", #inviteQueue, what)
+    .. (offline > 0 and (" " .. ns.TF("(%d offline)", offline)) or ""))
   local n = #inviteQueue
   inviteMore()
   return n
@@ -556,7 +565,7 @@ function ns.InviteSignups(eventId)
     local planned = not plan or (plan[k] and plan[k].group >= 1)
     if su.status ~= "decline" and planned then names[#names + 1] = su.name end
   end
-  ns.InviteNames(names, "who signed up")
+  ns.InviteNames(names, ns.T("who signed up"))
 end
 
 ------------------------------------------------------------------------
@@ -573,7 +582,7 @@ local function remind()
       ns.db.reminded[e.id .. "#makeup"] = true
       local mk = ns.RaidMakeup(e.id)
       if #mk.warnings > 0 then
-        ns.Say(("|cffff9900%s in %d min, %d signed up:|r %s."):format(e.title,
+        ns.Say(ns.TF("|cffff9900%s in %d min, %d signed up:|r %s.", e.title,
           math.max(1, math.floor((e.start - now) / 60)), mk.accept, table.concat(mk.warnings, "; ")))
       end
     end
@@ -582,7 +591,7 @@ local function remind()
         and mine and mine.status ~= "decline" then
       ns.db.reminded[e.id] = true
       local mins = math.max(1, math.floor((e.start - now) / 60))
-      ns.Notify(("|cff66ccffRaid reminder: %s starts at %s (in %d min).|r"):format(e.title,
+      ns.Notify(ns.TF("|cff66ccffRaid reminder: %s starts at %s (in %d min).|r", e.title,
         date("%H:%M", e.start), mins), nil, nil, nil, "raid", "Raid reminder")
     end
   end

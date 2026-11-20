@@ -176,8 +176,8 @@ ns.OnLoad(function() C_Timer.NewTicker(1, scan) end)
 -- Sightings from guildmates
 ------------------------------------------------------------------------
 function ns.DescribeSighting(s)
-  local times = (s.count and s.count > 0) and (" (killed guild members %d times)"):format(s.count) or ""
-  return ("Wanted: %s%s spotted in %s by %s"):format(s.name, times, s.zone, s.by)
+  local times = (s.count and s.count > 0) and (" " .. ns.TF("(killed guild members %d times)", s.count)) or ""
+  return ns.TF("Wanted: %s%s spotted in %s by %s", s.name, times, s.zone, s.by)
 end
 
 function ns.ShowSighting(s, force)

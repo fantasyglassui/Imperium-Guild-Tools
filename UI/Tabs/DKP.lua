@@ -697,9 +697,9 @@ end
 
 -- The header's subtitle: your own DKP, and whether a raid night is earning more.
 local function Subtitle()
-  local text = "Your DKP: " .. ns.Balance(UnitName("player"))
+  local text = ns.TF("Your DKP: %d", ns.Balance(UnitName("player")))
   local s = ns.ActiveSession()
-  if s then text = text .. " · " .. s.title .. " raid night in progress" end
+  if s then text = text .. " · " .. ns.TF("%s raid night in progress", s.title) end
   return text
 end
 

@@ -84,6 +84,12 @@ function ns.TF(fmt, ...)
   return ns.T(fmt):format(...)
 end
 
+-- The same, picking the sentence for one or for several by n:
+-- ns.TP(n, "%d item handed out.", "%d items handed out.", n).
+function ns.TP(n, one, many, ...)
+  return ns.TF(n == 1 and one or many, ...)
+end
+
 -- date() with the day and month names in your language (the game's date()
 -- only knows English ones): ns.Date("%a %b %d", t) -> "Fr 15. Jan" style names.
 local DAYS = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }
