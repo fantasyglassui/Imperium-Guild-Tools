@@ -24,7 +24,7 @@ local OFFICER_KINDS = { EV = true, EX = true, DK = true, RS = true, RE = true, K
   GG = true, GQ = true }
 -- Member entries that must come straight from the player who made them (or
 -- be passed along by an officer), so nobody can make one in someone else's name.
-local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true,
+local DIRECT_ONLY = { AL = true, WL = true, TI = true, BK = true, AE = true, AW = true, AB = true,
   GE = true, GX = true, GS = true, GT = true, PF = true }
 -- Fields of each kind, in message order.
 local FIELDS = {
@@ -46,6 +46,7 @@ local FIELDS = {
   BK = { "boss", "name", "raid", "size", "names" }, -- a raid boss killed: encounter ID, boss, raid, guild members there
   AE = { "ach", "when" },                       -- an achievement a member earned, and when (kept with the guild,
                                                -- so it isn't lost with one player's saved data)
+  AB = { "list" },                             -- achievements a member earned, several at once ("id.when,id.when")
   AG = { "who", "list" },                      -- officer: achievements a member had earned, put back after
                                                -- they lost them ("id.when,id.when")
   AW = { "who", "list" },                      -- a guildmate vouching for achievements a member had earned;

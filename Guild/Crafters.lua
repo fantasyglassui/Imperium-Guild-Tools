@@ -36,6 +36,7 @@ local version = 0
 function ns.CraftersVersion() return version end
 local function changed()
   version = version + 1
+  if ns.AchievementsChanged then ns.AchievementsChanged() end
   if ns.RefreshCrafters then ns.RefreshCrafters() end
 end
 

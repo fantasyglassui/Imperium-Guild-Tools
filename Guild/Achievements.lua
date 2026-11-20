@@ -28,60 +28,186 @@ local DOUBLE_KILL = 10            -- seconds between two killing blows for a Dou
 local GRUDGE_KILLS = 5            -- kills of one enemy for Grudge Match
 local PERFECT_MIN = 4             -- raid nights a month needs for Perfect Attendance
 local WEEK = 7 * 86400
+local TRIPLE_KILL = 20            -- seconds for three killing blows
+local QUAD_KILL = 30              -- seconds for four
 
 ------------------------------------------------------------------------
 -- The achievements. goal: how many of stat it takes. stat(s) returns the
 -- player's list of times (sorted), or a time / nil for one-off ones.
 ------------------------------------------------------------------------
 local LIST = {
-  -- PvP: killing blows, assists and streaks
+  -- PvP: killing blows
   { id = "kill1", cat = "pvp", name = "First Blood", desc = "Land a killing blow on an enemy player.", stat = "kills", goal = 1 },
+  { id = "kill5", cat = "pvp", name = "Blooded", desc = "5 killing blows on enemy players.", stat = "kills", goal = 5 },
+  { id = "kill10", cat = "pvp", name = "Skirmisher", desc = "10 killing blows on enemy players.", stat = "kills", goal = 10 },
   { id = "kill25", cat = "pvp", name = "Head Hunter", desc = "25 killing blows on enemy players.", stat = "kills", goal = 25 },
+  { id = "kill50", cat = "pvp", name = "Bloodthirsty", desc = "50 killing blows.", stat = "kills", goal = 50 },
   { id = "kill100", cat = "pvp", name = "Executioner", desc = "100 killing blows.", stat = "kills", goal = 100, title = "the Executioner" },
   { id = "kill250", cat = "pvp", name = "Warlord", desc = "250 killing blows.", stat = "kills", goal = 250, title = "the Warlord" },
   { id = "kill500", cat = "pvp", name = "Legend", desc = "500 killing blows.", stat = "kills", goal = 500, title = "the Legend" },
+  { id = "kill750", cat = "pvp", name = "Warmonger", desc = "750 killing blows.", stat = "kills", goal = 750, title = "the Warmonger" },
+  { id = "kill1000", cat = "pvp", name = "Thousand Cuts", desc = "1,000 killing blows.", stat = "kills", goal = 1000, title = "the Merciless" },
+  -- PvP: assists
+  { id = "assist1", cat = "pvp", name = "Lending a Hand", desc = "Help a guildmate with a kill.", stat = "assists", goal = 1 },
+  { id = "assist10", cat = "pvp", name = "Backup", desc = "Help guildmates with 10 kills.", stat = "assists", goal = 10 },
   { id = "assist25", cat = "pvp", name = "Wingman", desc = "Help guildmates with 25 kills.", stat = "assists", goal = 25 },
+  { id = "assist50", cat = "pvp", name = "Brothers in Arms", desc = "Help guildmates with 50 kills.", stat = "assists", goal = 50 },
   { id = "assist100", cat = "pvp", name = "Shield Brother", desc = "Help guildmates with 100 kills.", stat = "assists", goal = 100 },
+  { id = "assist250", cat = "pvp", name = "War Band", desc = "Help guildmates with 250 kills.", stat = "assists", goal = 250, title = "the Steadfast" },
+  { id = "assist500", cat = "pvp", name = "Unbreakable Line", desc = "Help guildmates with 500 kills.", stat = "assists", goal = 500, title = "the Shieldwall" },
+  -- PvP: streaks and quick kills
   { id = "streak3", cat = "pvp", name = "On a Roll", desc = "3 killing blows in a row without dying.", stat = "streak3", goal = 1 },
   { id = "streak5", cat = "pvp", name = "Rampage", desc = "A 5-kill streak.", stat = "streak5", goal = 1 },
   { id = "streak10", cat = "pvp", name = "Unstoppable", desc = "A 10-kill streak.", stat = "streak10", goal = 1, title = "the Unstoppable" },
   { id = "streak15", cat = "pvp", name = "Godlike", desc = "A 15-kill streak.", stat = "streak15", goal = 1, title = "the Godlike" },
+  { id = "streak20", cat = "pvp", name = "Massacre", desc = "A 20-kill streak.", stat = "streak20", goal = 1, title = "the Butcher" },
+  { id = "streak25", cat = "pvp", name = "Wrath Incarnate", desc = "A 25-kill streak.", stat = "streak25", goal = 1, title = "the Wrathful" },
   { id = "double", cat = "pvp", name = "Double Kill", desc = "Two killing blows within 10 seconds.", stat = "double", goal = 1 },
+  { id = "triple", cat = "pvp", name = "Triple Kill", desc = "Three killing blows within 20 seconds.", stat = "triple", goal = 1 },
+  { id = "quad", cat = "pvp", name = "Quad Kill", desc = "Four killing blows within 30 seconds.", stat = "quad", goal = 1, title = "the Whirlwind" },
+  { id = "day10", cat = "pvp", name = "Busy Day", desc = "10 killing blows in one day.", stat = "day10", goal = 1 },
+  { id = "day20", cat = "pvp", name = "Day of Reckoning", desc = "20 killing blows in one day.", stat = "day20", goal = 1, title = "the Reckoner" },
+  -- PvP: when and where
   { id = "night", cat = "pvp", name = "Night Owl", desc = "A killing blow between midnight and 5 in the morning.", stat = "night", goal = 1 },
+  { id = "night10", cat = "pvp", name = "Creature of the Night", desc = "10 killing blows between midnight and 5 in the morning.", stat = "night", goal = 10 },
+  { id = "night50", cat = "pvp", name = "Nightstalker", desc = "50 killing blows between midnight and 5 in the morning.", stat = "night", goal = 50, title = "the Nightstalker" },
+  { id = "morning", cat = "pvp", name = "Early Bird", desc = "A killing blow between 5 and 8 in the morning.", stat = "morning", goal = 1 },
+  { id = "weekend", cat = "pvp", name = "Weekend Warrior", desc = "25 killing blows on Saturdays and Sundays.", stat = "weekend", goal = 25 },
+  { id = "zones5", cat = "pvp", name = "Wanderer", desc = "Killing blows in 5 different zones.", stat = "zones", goal = 5 },
   { id = "zones", cat = "pvp", name = "Globetrotter", desc = "Killing blows in 10 different zones.", stat = "zones", goal = 10 },
+  { id = "zones20", cat = "pvp", name = "World Warrior", desc = "Killing blows in 20 different zones.", stat = "zones", goal = 20 },
+  { id = "zones30", cat = "pvp", name = "No Safe Place", desc = "Killing blows in 30 different zones.", stat = "zones", goal = 30, title = "the Wayfarer" },
+  { id = "bg1", cat = "pvp", name = "Battleground Blood", desc = "A killing blow in a battleground.", stat = "bg", goal = 1 },
+  { id = "bg50", cat = "pvp", name = "Battle Hardened", desc = "50 killing blows in battlegrounds.", stat = "bg", goal = 50 },
+  { id = "bg250", cat = "pvp", name = "Warmaster", desc = "250 killing blows in battlegrounds.", stat = "bg", goal = 250, title = "the Warmaster" },
+  -- PvP: who
+  { id = "victims10", cat = "pvp", name = "Making Enemies", desc = "Killing blows on 10 different enemy players.", stat = "victims", goal = 10 },
+  { id = "victims50", cat = "pvp", name = "Infamous", desc = "Killing blows on 50 different enemy players.", stat = "victims", goal = 50 },
+  { id = "victims100", cat = "pvp", name = "Most Wanted", desc = "Killing blows on 100 different enemy players.", stat = "victims", goal = 100, title = "the Infamous" },
+  { id = "victims250", cat = "pvp", name = "Dread", desc = "Killing blows on 250 different enemy players.", stat = "victims", goal = 250, title = "the Dread" },
+  { id = "skull1", cat = "pvp", name = "Giant Slayer", desc = "A killing blow on an enemy whose level shows as ??.", stat = "skull", goal = 1 },
+  { id = "skull10", cat = "pvp", name = "Kingslayer", desc = "10 killing blows on enemies whose level shows as ??.", stat = "skull", goal = 10, title = "the Giant Slayer" },
+  { id = "rival10", cat = "pvp", name = "Bad Blood", desc = "10 killing blows on players of rival guilds.", stat = "rivalKills", goal = 10 },
+  { id = "rival50", cat = "pvp", name = "Blood Feud", desc = "50 killing blows on players of rival guilds.", stat = "rivalKills", goal = 50, title = "the Feudbringer" },
+  { id = "guilds5", cat = "pvp", name = "Equal Opportunity", desc = "Killing blows on players of 5 different enemy guilds.", stat = "guilds", goal = 5 },
+  { id = "guilds15", cat = "pvp", name = "Guild Breaker", desc = "Killing blows on players of 15 different enemy guilds.", stat = "guilds", goal = 15 },
   -- Hunts: revenge, bounties, grudges and the monthly crown
   { id = "revenge1", cat = "hunt", name = "Payback", desc = "Kill an enemy who killed a guildmate in the last 30 minutes.", stat = "revenge", goal = 1 },
+  { id = "revenge3", cat = "hunt", name = "Vengeful", desc = "3 revenge kills.", stat = "revenge", goal = 3 },
   { id = "revenge10", cat = "hunt", name = "Avenger", desc = "10 revenge kills.", stat = "revenge", goal = 10, title = "the Avenger" },
+  { id = "revenge25", cat = "hunt", name = "Retribution", desc = "25 revenge kills.", stat = "revenge", goal = 25 },
+  { id = "revenge50", cat = "hunt", name = "Wrath of the Guild", desc = "50 revenge kills.", stat = "revenge", goal = 50, title = "the Vengeful" },
+  { id = "vendetta", cat = "hunt", name = "Personal Vendetta", desc = "Kill an enemy within 30 minutes of them killing you.", stat = "vendetta", goal = 1 },
+  { id = "avenge5", cat = "hunt", name = "Guardian", desc = "Avenge 5 different guildmates.", stat = "avenged", goal = 5 },
+  { id = "avenge20", cat = "hunt", name = "Protector of the Guild", desc = "Avenge 20 different guildmates.", stat = "avenged", goal = 20, title = "the Protector" },
   { id = "bounty", cat = "hunt", name = "Bounty Hunter", desc = "Kill an enemy who killed guild members 3 times in 30 days.", stat = "bounty", goal = 1, title = "the Bounty Hunter" },
   { id = "bounty5", cat = "hunt", name = "Manhunter", desc = "5 kills of wanted enemies.", stat = "bounty", goal = 5, title = "the Manhunter" },
+  { id = "bounty10", cat = "hunt", name = "Tracker", desc = "10 kills of wanted enemies.", stat = "bounty", goal = 10 },
+  { id = "bounty25", cat = "hunt", name = "Apex Predator", desc = "25 kills of wanted enemies.", stat = "bounty", goal = 25, title = "the Apex Predator" },
   { id = "claim1", cat = "hunt", name = "Collector", desc = "Claim a bounty an officer placed.", stat = "claims", goal = 1, title = "the Collector" },
+  { id = "claim3", cat = "hunt", name = "Paid in Full", desc = "Claim 3 bounties.", stat = "claims", goal = 3 },
+  { id = "claim10", cat = "hunt", name = "Mercenary", desc = "Claim 10 bounties.", stat = "claims", goal = 10, title = "the Mercenary" },
   { id = "nemesis", cat = "hunt", name = "Nemesis Slayer", desc = "Kill an enemy who has killed you 3 times.", stat = "nemesis", goal = 1, title = "the Nemesis Slayer" },
+  { id = "nemesis3", cat = "hunt", name = "Turning the Tables", desc = "Kill enemies who had killed you 3 times, 3 times over.", stat = "nemesis", goal = 3 },
   { id = "grudge", cat = "hunt", name = "Grudge Match", desc = "Kill the same enemy player 5 times.", stat = "grudge", goal = 1, title = "the Relentless" },
+  { id = "grudge10", cat = "hunt", name = "Obsessed", desc = "Kill the same enemy player 10 times.", stat = "grudge10", goal = 1 },
   { id = "champion", cat = "hunt", name = "Champion", desc = "Finish a month top of Top Head Hunters.", stat = "champion", goal = 1, title = "the Champion" },
   { id = "champion3", cat = "hunt", name = "Dynasty", desc = "Finish 3 months top of Top Head Hunters.", stat = "champion", goal = 3, title = "the Undisputed" },
-  -- Raids and bosses
+  { id = "champion6", cat = "hunt", name = "Reign", desc = "Finish 6 months top of Top Head Hunters.", stat = "champion", goal = 6, title = "the Sovereign" },
+  { id = "champion12", cat = "hunt", name = "Eternal", desc = "Finish 12 months top of Top Head Hunters.", stat = "champion", goal = 12, title = "the Eternal" },
+  -- Hunts: the other side of it
+  { id = "death1", cat = "hunt", name = "Welcome to the War", desc = "Die to an enemy player.", stat = "pvpDeaths", goal = 1 },
+  { id = "death50", cat = "hunt", name = "Battle Scarred", desc = "Die to enemy players 50 times.", stat = "pvpDeaths", goal = 50 },
+  { id = "death100", cat = "hunt", name = "Glutton for Punishment", desc = "Die to enemy players 100 times.", stat = "pvpDeaths", goal = 100, title = "the Undaunted" },
+  { id = "hunted", cat = "hunt", name = "Marked", desc = "Be killed by the same enemy player 5 times.", stat = "hunted", goal = 1 },
+  { id = "fall", cat = "hunt", name = "Gravity Wins", desc = "Die from falling.", stat = "falls", goal = 1 },
+  { id = "drown", cat = "hunt", name = "Sleeps with the Fishes", desc = "Drown.", stat = "drowns", goal = 1 },
+  { id = "fatigue", cat = "hunt", name = "Too Far Out", desc = "Die of fatigue in deep water.", stat = "fatigue", goal = 1 },
+  -- Raids: attendance
   { id = "raid1", cat = "raid", name = "Raider", desc = "Attend a raid night.", stat = "raids", goal = 1 },
   { id = "raid10", cat = "raid", name = "Veteran Raider", desc = "Attend 10 raid nights.", stat = "raids", goal = 10 },
   { id = "raid25", cat = "raid", name = "Iron Raider", desc = "Attend 25 raid nights.", stat = "raids", goal = 25, title = "the Iron Raider" },
   { id = "raid50", cat = "raid", name = "Stalwart", desc = "Attend 50 raid nights.", stat = "raids", goal = 50, title = "the Stalwart" },
+  { id = "raid75", cat = "raid", name = "Raid Machine", desc = "Attend 75 raid nights.", stat = "raids", goal = 75 },
+  { id = "raid100", cat = "raid", name = "Centurion", desc = "Attend 100 raid nights.", stat = "raids", goal = 100, title = "the Centurion" },
   { id = "perfect", cat = "raid", name = "Perfect Attendance", desc = "Attend every raid night in a month (at least 4).", stat = "perfect", goal = 1, title = "the Dependable" },
+  { id = "perfect3", cat = "raid", name = "Reliable", desc = "Perfect attendance for 3 months.", stat = "perfect", goal = 3 },
+  { id = "perfect6", cat = "raid", name = "Rock Solid", desc = "Perfect attendance for 6 months.", stat = "perfect", goal = 6, title = "the Rock" },
+  { id = "signup10", cat = "raid", name = "Ready and Willing", desc = "Accept 10 raid sign-ups.", stat = "signups", goal = 10 },
+  { id = "signup25", cat = "raid", name = "Always There", desc = "Accept 25 raid sign-ups.", stat = "signups", goal = 25 },
+  { id = "signup50", cat = "raid", name = "Raid Regular", desc = "Accept 50 raid sign-ups.", stat = "signups", goal = 50 },
+  { id = "standby1", cat = "raid", name = "On the Bench", desc = "Be on standby for a raid night.", stat = "standby", goal = 1 },
+  { id = "standby5", cat = "raid", name = "Team Player", desc = "Be on standby for 5 raid nights.", stat = "standby", goal = 5, title = "the Selfless" },
+  { id = "lead1", cat = "raid", name = "Raid Leader", desc = "Start a raid night.", stat = "raidsLed", goal = 1 },
+  { id = "lead10", cat = "raid", name = "Commander", desc = "Start 10 raid nights.", stat = "raidsLed", goal = 10, title = "the Commander" },
+  -- Raids: bosses
   { id = "boss1", cat = "raid", name = "Boss Down", desc = "Be there when the guild kills a raid boss.", stat = "bosses", goal = 1 },
+  { id = "boss10", cat = "raid", name = "Boss Hunter", desc = "Be there for 10 guild boss kills.", stat = "bosses", goal = 10 },
   { id = "boss25", cat = "raid", name = "Boss Slayer", desc = "Be there for 25 guild boss kills.", stat = "bosses", goal = 25, title = "the Slayer" },
+  { id = "boss50", cat = "raid", name = "Bane of Bosses", desc = "Be there for 50 guild boss kills.", stat = "bosses", goal = 50 },
   { id = "boss100", cat = "raid", name = "Raidbreaker", desc = "Be there for 100 guild boss kills.", stat = "bosses", goal = 100, title = "the Raidbreaker" },
+  { id = "boss250", cat = "raid", name = "Godslayer", desc = "Be there for 250 guild boss kills.", stat = "bosses", goal = 250, title = "the Godslayer" },
+  { id = "bigNight", cat = "raid", name = "Big Night", desc = "Be there for 5 boss kills in one day.", stat = "bigNight", goal = 1 },
+  { id = "bigNight10", cat = "raid", name = "Clean Sweep", desc = "Be there for 10 boss kills in one day.", stat = "bigNight10", goal = 1 },
   { id = "pioneer", cat = "raid", name = "Pioneer", desc = "Be there for the guild's first kill of a boss.", stat = "bossFirsts", goal = 1, title = "the Pioneer" },
   { id = "pioneer5", cat = "raid", name = "Trailblazer", desc = "Be there for the guild's first kill of 5 bosses.", stat = "bossFirsts", goal = 5, title = "the Trailblazer" },
+  { id = "pioneer10", cat = "raid", name = "Pathfinder", desc = "Be there for the guild's first kill of 10 bosses.", stat = "bossFirsts", goal = 10 },
+  { id = "pioneer20", cat = "raid", name = "Vanguard", desc = "Be there for the guild's first kill of 20 bosses.", stat = "bossFirsts", goal = 20, title = "the Vanguard" },
   { id = "clear", cat = "raid", name = "Full Clear", desc = "Kill every boss of a raid within one week.", stat = "fullClear", goal = 1, title = "the Conqueror" },
-  -- Loot and the guild
+  { id = "clear3", cat = "raid", name = "Raid Conqueror", desc = "Full clears of 3 different raids.", stat = "fullClear", goal = 3 },
+  { id = "clear5", cat = "raid", name = "World Conqueror", desc = "Full clears of 5 different raids.", stat = "fullClear", goal = 5, title = "the Invincible" },
+  -- Loot
   { id = "loot1", cat = "loot", name = "Lucky", desc = "Win an item at a loot auction or roll.", stat = "loot", goal = 1 },
   { id = "loot10", cat = "loot", name = "Geared Up", desc = "Win 10 items.", stat = "loot", goal = 10 },
+  { id = "loot25", cat = "loot", name = "Well Equipped", desc = "Win 25 items.", stat = "loot", goal = 25 },
+  { id = "loot50", cat = "loot", name = "Treasure Hunter", desc = "Win 50 items.", stat = "loot", goal = 50 },
+  { id = "loot100", cat = "loot", name = "Hoarder", desc = "Win 100 items.", stat = "loot", goal = 100, title = "the Hoarder" },
+  { id = "lootNight", cat = "loot", name = "Jackpot", desc = "Win 5 items in one day of raiding.", stat = "lootNight", goal = 1 },
   { id = "roll", cat = "loot", name = "Lucky Roll", desc = "Win an item in a free roll.", stat = "rolls", goal = 1 },
+  { id = "roll5", cat = "loot", name = "Dice Roller", desc = "Win 5 items in free rolls.", stat = "rolls", goal = 5 },
+  { id = "roll10", cat = "loot", name = "Lady Luck", desc = "Win 10 items in free rolls.", stat = "rolls", goal = 10, title = "the Lucky" },
+  { id = "council1", cat = "loot", name = "Council's Choice", desc = "Win an item from the loot council.", stat = "council", goal = 1 },
+  { id = "council10", cat = "loot", name = "Council Favorite", desc = "Win 10 items from the loot council.", stat = "council", goal = 10 },
   { id = "spender", cat = "loot", name = "Big Spender", desc = "Spend 100 DKP or more on one item.", stat = "bigBuy", goal = 1, title = "the Big Spender" },
+  { id = "spend200", cat = "loot", name = "High Roller", desc = "Spend 200 DKP or more on one item.", stat = "bigBuy200", goal = 1 },
+  { id = "spend500", cat = "loot", name = "All In", desc = "Spend 500 DKP or more on one item.", stat = "bigBuy500", goal = 1, title = "the Extravagant" },
+  { id = "spent1000", cat = "loot", name = "Investor", desc = "Spend 1,000 DKP on items in all.", stat = "spent1000", goal = 1 },
+  { id = "dkp500", cat = "loot", name = "Saver", desc = "Have 500 DKP.", stat = "dkp500", goal = 1 },
+  { id = "dkp1000", cat = "loot", name = "Bank of the Guild", desc = "Have 1,000 DKP.", stat = "dkp1000", goal = 1, title = "the Wealthy" },
   { id = "wish", cat = "loot", name = "Wish Granted", desc = "Win an item that was on your wishlist.", stat = "wish", goal = 1 },
   { id = "wish5", cat = "loot", name = "Fortunate", desc = "Win 5 items that were on your wishlist.", stat = "wish", goal = 5, title = "the Fortunate" },
-  { id = "level", cat = "loot", name = "Max Level", desc = "Reach level " .. MAX_LEVEL .. ".", stat = "maxLevel", goal = 1 },
-  { id = "alts", cat = "loot", name = "Altoholic", desc = "Link 3 alts to your main.", stat = "alts", goal = 1 },
-  { id = "decorated", cat = "loot", name = "Decorated", desc = "Earn 10 other achievements.", stat = "others", goal = 10, title = "the Decorated" },
-  { id = "hero", cat = "loot", name = "Guild Hero", desc = "Earn 25 other achievements.", stat = "others", goal = 25, title = "the Hero" },
+  { id = "wish10", cat = "loot", name = "Dreams Come True", desc = "Win 10 items that were on your wishlist.", stat = "wish", goal = 10 },
+  -- Social: events, profiles, crafting and the guild
+  { id = "event1", cat = "social", name = "Joining In", desc = "Attend a guild event.", stat = "events", goal = 1 },
+  { id = "event10", cat = "social", name = "Regular", desc = "Attend 10 guild events.", stat = "events", goal = 10 },
+  { id = "event25", cat = "social", name = "Life of the Party", desc = "Attend 25 guild events.", stat = "events", goal = 25, title = "the Life of the Party" },
+  { id = "event50", cat = "social", name = "Pillar of the Guild", desc = "Attend 50 guild events.", stat = "events", goal = 50, title = "the Pillar" },
+  { id = "eventKinds", cat = "social", name = "Jack of All Trades", desc = "Attend 5 different kinds of guild event.", stat = "eventKinds", goal = 5 },
+  { id = "plan1", cat = "social", name = "Organizer", desc = "Plan a guild event.", stat = "planned", goal = 1 },
+  { id = "plan10", cat = "social", name = "Event Master", desc = "Plan 10 guild events.", stat = "planned", goal = 10, title = "the Host" },
+  { id = "profile", cat = "social", name = "Open Book", desc = "Share your profile.", stat = "profile", goal = 1 },
+  { id = "titled", cat = "social", name = "Show Off", desc = "Show a title by your name.", stat = "titled", goal = 1 },
+  { id = "alt1", cat = "social", name = "Second Character", desc = "Link an alt to your main.", stat = "alt1", goal = 1 },
+  { id = "alts", cat = "social", name = "Altoholic", desc = "Link 3 alts to your main.", stat = "alts", goal = 1 },
+  { id = "level10", cat = "social", name = "Getting Started", desc = "Reach level 10.", stat = "level10", goal = 1 },
+  { id = "level20", cat = "social", name = "Adventurer", desc = "Reach level 20.", stat = "level20", goal = 1 },
+  { id = "level30", cat = "social", name = "Seasoned", desc = "Reach level 30.", stat = "level30", goal = 1 },
+  { id = "level40", cat = "social", name = "Mounted Up", desc = "Reach level 40.", stat = "level40", goal = 1 },
+  { id = "level50", cat = "social", name = "Almost There", desc = "Reach level 50.", stat = "level50", goal = 1 },
+  { id = "level", cat = "social", name = "Max Level", desc = "Reach level " .. MAX_LEVEL .. ".", stat = "maxLevel", goal = 1 },
+  { id = "prof1", cat = "social", name = "Apprentice Crafter", desc = "Share a profession's recipes with the guild.", stat = "profs", goal = 1 },
+  { id = "prof2", cat = "social", name = "Two Trades", desc = "Share two professions with the guild.", stat = "profs", goal = 2 },
+  { id = "rank300", cat = "social", name = "Master Crafter", desc = "Reach 300 in a profession.", stat = "rank300", goal = 1, title = "the Artisan" },
+  { id = "recipes50", cat = "social", name = "Recipe Collector", desc = "Know 50 recipes between your professions.", stat = "recipes", goal = 50 },
+  { id = "recipes100", cat = "social", name = "Well Read", desc = "Know 100 recipes between your professions.", stat = "recipes", goal = 100 },
+  { id = "recipes200", cat = "social", name = "Grand Master Crafter", desc = "Know 200 recipes between your professions.", stat = "recipes", goal = 200, title = "the Grand Crafter" },
+  { id = "recruit1", cat = "social", name = "Recruiter", desc = "Add a recruit who goes on to join the guild.", stat = "recruits", goal = 1 },
+  { id = "recruit5", cat = "social", name = "Headhunter", desc = "Add 5 recruits who go on to join the guild.", stat = "recruits", goal = 5, title = "the Recruiter" },
+  { id = "decorated", cat = "social", name = "Decorated", desc = "Earn 10 other achievements.", stat = "others", goal = 10, title = "the Decorated" },
+  { id = "hero", cat = "social", name = "Guild Hero", desc = "Earn 25 other achievements.", stat = "others", goal = 25, title = "the Hero" },
+  { id = "meta50", cat = "social", name = "Overachiever", desc = "Earn 50 other achievements.", stat = "others", goal = 50, title = "the Overachiever" },
+  { id = "meta75", cat = "social", name = "Living Legend", desc = "Earn 75 other achievements.", stat = "others", goal = 75, title = "the Living Legend" },
+  { id = "meta100", cat = "social", name = "Paragon", desc = "Earn 100 other achievements.", stat = "others", goal = 100, title = "the Paragon" },
 }
 ns.ACHIEVEMENTS = LIST
 local BY_ID = {}
@@ -111,18 +237,32 @@ local historyVersion = 0
 local function buildPvP()
   local kills, assists = {}, {}
   local deathsByKiller = {} -- enemy key -> times they killed a guild member
+  local victimsOf = {}      -- enemy key -> { { t, member key } }: who they killed
   local deathsOf = {}       -- member key -> { enemy key -> sorted times }
+  local pvpDeaths, falls, drowns, fatigue, hunted = {}, {}, {}, {}, {}
   for _, d in ipairs(ns.db.deathLog or {}) do
+    local who = ns.Key(d.who or "")
     if d.kind == "pvp" and d.killer and d.killer ~= "" then
       local enemy = ns.Key(d.killer)
       push(deathsByKiller, enemy, d.t)
-      local who = ns.Key(d.who)
+      push(victimsOf, enemy, { d.t, who })
       deathsOf[who] = deathsOf[who] or {}
       push(deathsOf[who], enemy, d.t)
+      push(pvpDeaths, who, d.t)
+    elseif d.kind == "environment" then
+      if d.sub == "falling" then push(falls, who, d.t)
+      elseif d.sub == "drowning" then push(drowns, who, d.t)
+      elseif d.sub == "fatigue" then push(fatigue, who, d.t) end
     end
   end
   sortAll(deathsByKiller)
-  for _, byEnemy in pairs(deathsOf) do sortAll(byEnemy) end
+  for who, byEnemy in pairs(deathsOf) do
+    sortAll(byEnemy)
+    -- The same enemy, a 5th time.
+    for _, times in pairs(byEnemy) do
+      if times[5] then push(hunted, who, times[5]) end
+    end
+  end
 
   -- How many times in a sorted list fall in [fromT, toT): two binary searches.
   local function firstAtOrAfter(list, t)
@@ -141,6 +281,9 @@ local function buildPvP()
   local revenge, bounty, nemesis = {}, {}, {}
   local double, night, zones, grudge = {}, {}, {}, {}
   local zoneSeen, victimCount, lastKill = {}, {}, {}
+  local triple, quad, morning, weekend, day10, day20 = {}, {}, {}, {}, {}, {}
+  local victims, skull, bg, rivalKills, guilds, grudge10, vendetta, avenged = {}, {}, {}, {}, {}, {}, {}, {}
+  local recent, perDay, guildSeen, avengedSeen = {}, {}, {}, {}
   -- Oldest first, so "the 10th zone" and "the 5th time" happen in order.
   -- (The kill log is kept newest first, so reading it backwards is enough; sort
   -- only if something put it out of order.)
@@ -158,17 +301,53 @@ local function buildPvP()
         push(kills, me, k.t)
         local theirs = deathsByKiller[enemy]
         if theirs then
-          if countIn(theirs, k.t - REVENGE_WINDOW, k.t + 1) > 0 then push(revenge, me, k.t) end
+          if countIn(theirs, k.t - REVENGE_WINDOW, k.t + 1) > 0 then
+            push(revenge, me, k.t)
+            -- Which guildmates this avenged (each one counts once).
+            avengedSeen[me] = avengedSeen[me] or {}
+            for _, v in ipairs(victimsOf[enemy]) do
+              local mate = v[2]
+              if mate ~= me and v[1] >= k.t - REVENGE_WINDOW and v[1] <= k.t and not avengedSeen[me][mate] then
+                avengedSeen[me][mate] = true
+                push(avenged, me, k.t)
+              end
+            end
+          end
           if countIn(theirs, k.t - WANTED_WINDOW, k.t) >= WANTED_KILLS then push(bounty, me, k.t) end
         end
         local mine = deathsOf[me] and deathsOf[me][enemy]
         if mine and countIn(mine, 0, k.t) >= NEMESIS_KILLS then push(nemesis, me, k.t) end
+        if mine and countIn(mine, k.t - REVENGE_WINDOW, k.t + 1) > 0 then push(vendetta, me, k.t) end
+        -- Three within 20 seconds, four within 30.
+        local r = recent[me] or {}
+        recent[me] = r
+        r[#r + 1] = k.t
+        if #r > 4 then table.remove(r, 1) end
+        if #r >= 3 and k.t - r[#r - 2] <= TRIPLE_KILL then push(triple, me, k.t) end
+        if #r >= 4 and k.t - r[#r - 3] <= QUAD_KILL then push(quad, me, k.t) end
+        -- A big day.
+        local day = me .. date("%Y-%m-%d", k.t)
+        perDay[day] = (perDay[day] or 0) + 1
+        if perDay[day] == 10 then push(day10, me, k.t) end
+        if perDay[day] == 20 then push(day20, me, k.t) end
+        local wday = tonumber(date("%w", k.t))
+        if wday == 0 or wday == 6 then push(weekend, me, k.t) end
+        -- Who and where.
+        if k.kind == "kill_bg" then push(bg, me, k.t) end
+        if tonumber(k.level) and tonumber(k.level) < 0 then push(skull, me, k.t) end
+        local g = k.vg or ns.EnemyGuild(k.victim)
+        if g then
+          if ns.IsRival(g) then push(rivalKills, me, k.t) end
+          guildSeen[me] = guildSeen[me] or {}
+          if not guildSeen[me][g] then guildSeen[me][g] = true; push(guilds, me, k.t) end
+        end
         -- Two killing blows within 10 seconds.
         if lastKill[me] and k.t - lastKill[me] <= DOUBLE_KILL then push(double, me, k.t) end
         lastKill[me] = k.t
         -- Between midnight and 5 in the morning (your clock).
         local hour = tonumber(date("%H", k.t))
         if hour < 5 then push(night, me, k.t) end
+        if hour >= 5 and hour < 8 then push(morning, me, k.t) end
         -- A new zone.
         zoneSeen[me] = zoneSeen[me] or {}
         local zone = k.zone or ""
@@ -179,12 +358,16 @@ local function buildPvP()
         -- The same enemy, a 5th time.
         victimCount[me] = victimCount[me] or {}
         victimCount[me][enemy] = (victimCount[me][enemy] or 0) + 1
+        if victimCount[me][enemy] == 1 then push(victims, me, k.t) end
         if victimCount[me][enemy] == GRUDGE_KILLS then push(grudge, me, k.t) end
+        if victimCount[me][enemy] == 10 then push(grudge10, me, k.t) end
       end
       for _, a in ipairs(ns.Assists(k)) do push(assists, ns.Key(a), k.t) end
     end
   end
-  for _, t in ipairs({ kills, assists, revenge, bounty, nemesis, double, night, zones, grudge }) do sortAll(t) end
+  for _, t in ipairs({ kills, assists, revenge, bounty, nemesis, double, night, zones, grudge, triple, quad, morning,
+    weekend, day10, day20, victims, skull, bg, rivalKills, guilds, grudge10, vendetta, avenged,
+    pvpDeaths, falls, drowns, fatigue, hunted }) do sortAll(t) end
 
   -- Champions: the leader of each finished month that had kills.
   local champion = {}
@@ -200,17 +383,37 @@ local function buildPvP()
   end
   sortAll(champion)
   return { kills = kills, assists = assists, revenge = revenge, bounty = bounty, nemesis = nemesis,
-    double = double, night = night, zones = zones, grudge = grudge, champion = champion }
+    double = double, night = night, zones = zones, grudge = grudge, champion = champion,
+    triple = triple, quad = quad, morning = morning, weekend = weekend, day10 = day10, day20 = day20,
+    victims = victims, skull = skull, bg = bg, rivalKills = rivalKills, guilds = guilds, grudge10 = grudge10,
+    vendetta = vendetta, avenged = avenged, pvpDeaths = pvpDeaths, falls = falls, drowns = drowns,
+    fatigue = fatigue, hunted = hunted }
 end
 
 local function buildIndex()
-  local stamp = historyVersion .. "/" .. ns.LedgerStamp("KD")
+  local stamp = historyVersion .. "/" .. ns.LedgerStamp("KD", "WR") .. "/" .. (ns.EnemyGuildsVersion and ns.EnemyGuildsVersion() or 0)
   if not pvpIndex or pvpStamp ~= stamp then pvpIndex, pvpStamp = buildPvP(), stamp end
   local p = pvpIndex
 
   -- Loot.
   local loot, bigBuy, wonItem, rolls = {}, {}, {}, {}
-  for _, l in ipairs(ns.LootHistory()) do
+  local bigBuy200, bigBuy500, council, lootNight, spent1000 = {}, {}, {}, {}, {}
+  local lootDay, spent = {}, {}
+  local history = ns.LootHistory()
+  for i = #history, 1, -1 do -- oldest first
+    local l = history[i]
+    local k = ns.Key(l.winner)
+    if l.council then push(council, k, l.t) end
+    if not l.roll and l.amount >= 200 then push(bigBuy200, k, l.t) end
+    if not l.roll and l.amount >= 500 then push(bigBuy500, k, l.t) end
+    local day = k .. date("%Y-%m-%d", l.t)
+    lootDay[day] = (lootDay[day] or 0) + 1
+    if lootDay[day] == 5 then push(lootNight, k, l.t) end
+    local before = spent[k] or 0
+    spent[k] = before + (l.amount or 0)
+    if before < 1000 and spent[k] >= 1000 then push(spent1000, k, l.t) end
+  end
+  for _, l in ipairs(history) do
     local k = ns.Key(l.winner)
     push(loot, k, l.t)
     if l.roll then push(rolls, k, l.t) end
@@ -223,9 +426,60 @@ local function buildIndex()
   end
   sortAll(loot); sortAll(bigBuy); sortAll(rolls)
 
+  -- Raids: standby, raid nights started, sign-ups accepted.
+  local standby, raidsLed, signups, signed = {}, {}, {}, {}
+  for _, e in ipairs(ns.LedgerEntries("AT")) do
+    if e.how == "standby" then
+      for name in (e.names or ""):gmatch("[^,]+") do push(standby, ns.Key(name), e.t) end
+    end
+  end
+  for _, s in ipairs(ns.LedgerEntries("RS")) do push(raidsLed, ns.Key(s.a), s.t) end
+  for _, e in ipairs(ns.LedgerEntries("SU")) do
+    local tag = ns.Key(e.a) .. "\0" .. (e.ref or "")
+    if e.status == "accept" and not signed[tag] then
+      signed[tag] = true
+      push(signups, ns.Key(e.a), e.t)
+    end
+  end
+  -- The guild: events, profiles, titles, recruits.
+  local events, eventKinds, planned, kindSeen = {}, {}, {}, {}
+  for _, e in ipairs(ns.AllGuildEvents and ns.AllGuildEvents() or {}) do
+    if e.start <= time() then
+      push(planned, ns.Key(e.a), e.start)
+      for k in pairs(ns.EventAttended(e.id) or {}) do
+        push(events, k, e.start)
+        kindSeen[k] = kindSeen[k] or {}
+        local kind = e.etype or "other"
+        if not kindSeen[k][kind] then kindSeen[k][kind] = true; push(eventKinds, k, e.start) end
+      end
+    end
+  end
+  local profile, titled, recruits, recruited = {}, {}, {}, {}
+  for _, e in ipairs(ns.LedgerEntries("PF")) do
+    local k = ns.Key(e.a)
+    if not profile[k] then profile[k] = { e.t } end
+  end
+  for _, e in ipairs(ns.LedgerEntries("TI")) do
+    local k = ns.Key(e.a)
+    if e.title ~= "" and not titled[k] then titled[k] = { e.t } end
+  end
+  for _, e in ipairs(ns.LedgerEntries("RC")) do
+    local who = ns.Key(e.name or "")
+    if e.status == "joined" and not recruited[who] then
+      recruited[who] = true
+      push(recruits, ns.Key(e.a), e.t)
+    end
+  end
+  for _, t in ipairs({ standby, raidsLed, signups, events, eventKinds, planned, recruits, council, bigBuy200,
+    bigBuy500, lootNight, spent1000 }) do sortAll(t) end
+
   index = { kills = p.kills, assists = p.assists, revenge = p.revenge, bounty = p.bounty, nemesis = p.nemesis,
     double = p.double, night = p.night, zones = p.zones, grudge = p.grudge,
-    champion = p.champion, loot = loot, bigBuy = bigBuy, rolls = rolls, wonItem = wonItem }
+    champion = p.champion, loot = loot, bigBuy = bigBuy, rolls = rolls, wonItem = wonItem,
+    standby = standby, raidsLed = raidsLed, signups = signups, events = events, eventKinds = eventKinds,
+    planned = planned, profile = profile, titled = titled, recruits = recruits, council = council,
+    bigBuy200 = bigBuy200, bigBuy500 = bigBuy500, lootNight = lootNight, spent1000 = spent1000 }
+  for stat, list in pairs(p) do if not index[stat] then index[stat] = list end end
   return index
 end
 
@@ -310,6 +564,42 @@ local function statTimes(name, stat)
     return out
   end
   if stat == "claims" then return ns.BountyClaimTimes and ns.BountyClaimTimes(name) or {} end
+  if stat == "bigNight" or stat == "bigNight10" then
+    -- Boss kills you were at on one day: 5 (or 10).
+    local need, perDay, out = stat == "bigNight" and 5 or 10, {}, {}
+    for _, t in ipairs(ns.BossKillTimes(name)) do
+      local day = date("%Y-%m-%d", t)
+      perDay[day] = (perDay[day] or 0) + 1
+      if perDay[day] == need then out[#out + 1] = t end
+    end
+    return out
+  end
+  if stat == "dkp500" or stat == "dkp1000" then
+    return ns.Balance(name) >= (stat == "dkp500" and 500 or 1000) and { 0 } or {}
+  end
+  if stat == "alt1" then return #ns.AltsOf(name) >= 1 and { 0 } or {} end
+  if stat:find("^level%d") then
+    local m = ns.Member(name)
+    return (m and m.level >= tonumber(stat:match("%d+"))) and { 0 } or {}
+  end
+  if stat == "profs" or stat == "rank300" or stat == "recipes" then
+    -- From the crafters directory: when each profession was shared.
+    local c = ns.db.crafters and ns.db.crafters[k]
+    local out = {}
+    if c then
+      local latest = 0
+      for _, p in pairs(c.profs) do
+        latest = math.max(latest, p.v or 0)
+        if stat == "profs" then out[#out + 1] = p.v or 0 end
+        if stat == "rank300" and (p.rank or 0) >= 300 then out[#out + 1] = p.v or 0 end
+      end
+      if stat == "recipes" then
+        for _, p in pairs(c.profs) do for _ = 1, #p.ids do out[#out + 1] = latest end end
+      end
+      table.sort(out)
+    end
+    return out
+  end
   if stat == "alts" then
     return #ns.AltsOf(name) >= 3 and { 0 } or {}
   end
@@ -333,6 +623,7 @@ local cacheStamp      -- what the cache was worked out from
 -- the Achievements tab, titles and player cards are right straight away.
 local function freshness()
   return ns.LedgerVersion() .. ":" .. historyVersion .. ":" .. (ns.RosterLevelsVersion and ns.RosterLevelsVersion() or 0)
+    .. ":" .. (ns.CraftersVersion and ns.CraftersVersion() or 0)
 end
 
 ns.OnLoad(function() ns.db.achievements = ns.db.achievements or {} end)
@@ -343,13 +634,21 @@ ns.OnLoad(function() ns.db.achievements = ns.db.achievements or {} end)
 local aeCache, aeStamp
 local aeVouchedByMe = {} -- key .. "\0" .. id -> true: ones you've already vouched for
 local function guildRecorded()
-  local stamp = ns.LedgerStamp("AE", "AG", "AW")
+  local stamp = ns.LedgerStamp("AE", "AG", "AW", "AB")
   if aeCache and aeStamp == stamp then return aeCache end
   aeCache, aeStamp = {}, stamp
   for _, e in ipairs(ns.LedgerEntries("AE")) do
     local k = ns.Key(e.a)
     aeCache[k] = aeCache[k] or {}
     if BY_ID[e.ach] then aeCache[k][e.ach] = tonumber(e.when) or 0 end
+  end
+  -- Several of your own at once (AB): "id.when,id.when".
+  for _, e in ipairs(ns.LedgerEntries("AB")) do
+    local k = ns.Key(e.a)
+    aeCache[k] = aeCache[k] or {}
+    for id, when in tostring(e.list or ""):gmatch("([%w_]+)%.(%d+)") do
+      if BY_ID[id] and not aeCache[k][id] then aeCache[k][id] = tonumber(when) or 0 end
+    end
   end
   -- Put back from what guildmates' addons had seen the member earn: one
   -- officer is enough (AG); otherwise two different guildmates must agree (AW).
@@ -633,27 +932,38 @@ end
 -- Record your achievements with the guild (a few at a time), so they're kept
 -- by everyone's addon and not only in this computer's saved data.
 local recording = false
+local RECORD_MAX = 150 -- characters of "id.when" pairs per entry, to fit one message
 function ns.RecordMyAchievements()
   if recording or not IsInGuild() then return end
   local me = UnitName("player")
   local have = guildRecorded()[ns.Key(me)] or {}
-  local todo = {}
+  -- Several to an entry, so earning a lot at once doesn't fill the record.
+  local todo, parts, len = {}, {}, 0
   for _, a in ipairs(LIST) do
     local e = ns.MemberAchievements(me)[a.id]
-    if e and e.t and not have[a.id] then todo[#todo + 1] = { a.id, e.t } end
+    if e and e.t and not have[a.id] then
+      local item = a.id .. "." .. math.floor(e.t)
+      if len + #item + 1 > RECORD_MAX then
+        todo[#todo + 1] = table.concat(parts, ",")
+        parts, len = {}, 0
+      end
+      parts[#parts + 1] = item
+      len = len + #item + 1
+    end
   end
+  if #parts > 0 then todo[#todo + 1] = table.concat(parts, ",") end
   if #todo == 0 then return end
   recording = true
   local i = 0
   local function nextOne()
     i = i + 1
-    local t = todo[i]
-    if not t then
+    local list = todo[i]
+    if not list then
       recording = false
       ns.RecordMyAchievements() -- anything earned while these were going out
       return
     end
-    ns.LedgerAdd("AE", { ach = t[1], when = math.floor(t[2]) })
+    ns.LedgerAdd("AB", { list = list })
     C_Timer.After(1.5, nextOne)
   end
   nextOne()
@@ -744,6 +1054,7 @@ function ns.OnHistoryChanged()
   if previousHook then previousHook() end
 end
 ns.OnLedgerChanged(changed)
+ns.AchievementsChanged = changed -- (the crafters directory changed)
 ns.OnLevelsChanged = changed -- someone levelled up (Max Level)
 table.insert(ns.OnGuildReady, changed)
 -- Until the roster has loaded once, keep looking (that first look is the baseline).

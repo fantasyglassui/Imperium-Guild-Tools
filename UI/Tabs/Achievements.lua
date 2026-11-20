@@ -29,6 +29,7 @@ local GOAL_ROW = 48
 local LEADERS = 4
 local G_INNER = LEAD_W - 28
 
+local pageOf = {} -- category -> the page of tiles shown
 local function who() return viewing or UnitName("player") end
 local function isMe() return ns.Key(who()) == ns.Key(UnitName("player")) end
 
@@ -243,12 +244,21 @@ local function RefreshTiles(cat)
   for _, a in ipairs(ns.ACHIEVEMENTS) do
     if a.cat == cat then shown[#shown + 1] = a end
   end
+  -- Sixteen to a page.
+  local pages = math.max(1, math.ceil(#shown / MAX_TILES))
+  local page = math.max(1, math.min(pageOf[cat] or 1, pages))
+  pageOf[cat] = page
   for i = 1, MAX_TILES do
     local t = P.tiles[i]
-    local a = shown[i]
+    local a = shown[(page - 1) * MAX_TILES + i]
     t:SetShown(a ~= nil)
     if a then fillTile(t, a, mine[a.id]) end
   end
+  P.pager:SetShown(pages > 1)
+  P.pageText:SetText(ns.TF("Page %d of %d", page, pages))
+  UI.SetEnabled(P.prev, page > 1)
+  UI.SetEnabled(P.next, page < pages)
+  P.pages = pages
 
   -- The strip at the top.
   local m = ns.Member(name)
@@ -326,6 +336,32 @@ local function BuildTiles(page)
   P.cardButton = card
 
   for i = 1, MAX_TILES do P.tiles[i] = Tile(f, i) end
+
+  -- Pages of tiles: buttons, or the mouse wheel.
+  local function turn(d)
+    local cat = P.view.value
+    local page = math.max(1, math.min((pageOf[cat] or 1) + d, P.pages or 1))
+    if page ~= (pageOf[cat] or 1) then
+      pageOf[cat] = page
+      ns.RefreshPanel()
+    end
+  end
+  local pager = CreateFrame("Frame", nil, f)
+  P.pager = pager
+  pager:SetSize(170, 22)
+  pager:SetPoint("TOPLEFT", 220, -30)
+  P.prev = UI.Button(pager, "<", 26)
+  P.prev:SetHeight(22)
+  P.prev:SetPoint("LEFT")
+  P.prev:SetScript("OnClick", function() turn(-1) end)
+  P.pageText = UI.Label(pager, "", "Small")
+  P.pageText:SetPoint("LEFT", P.prev, "RIGHT", 10, 0)
+  P.next = UI.Button(pager, ">", 26)
+  P.next:SetHeight(22)
+  P.next:SetPoint("LEFT", P.pageText, "RIGHT", 10, 0)
+  P.next:SetScript("OnClick", function() turn(1) end)
+  f:EnableMouseWheel(true)
+  f:SetScript("OnMouseWheel", function(_, delta) turn(delta > 0 and -1 or 1) end)
 end
 
 
@@ -538,7 +574,7 @@ end
 
 local function Build(page)
   P.view = UI.Segmented(page.headerBar, { { "pvp", "PvP" }, { "hunt", "Hunts" }, { "raid", "Raids" },
-    { "loot", "Loot & more" }, { "guild", "Guild" } },
+    { "loot", "Loot" }, { "social", "Social" }, { "guild", "Guild" } },
     ns.RefreshPanel)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view

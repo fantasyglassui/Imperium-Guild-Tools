@@ -86,7 +86,7 @@ def test_earned_achievements_stay_after_the_log_is_cleared():
 def test_achievements_tab_and_settings_title_card():
     from render import Renderer, demo_guild
     guild, me = demo_guild()
-    for view in ("pvp", "hunt", "raid", "loot", "guild"):
+    for view in ("pvp", "hunt", "raid", "loot", "social", "guild"):
         me.ns.OpenPanel("achievements", view)
     me.ns.ShowAchievements("Lyra")
     me.ns.OpenPanel("settings", "general")

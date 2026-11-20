@@ -52,7 +52,8 @@ def test_grudge_match_and_hero_counts():
     assert "grudge" in got
     # Decorated and Guild Hero count everything else earned.
     progress = guild["Bob"].ns.MemberAchievements("Eve")
-    assert progress["hero"].progress == len(got)
+    metas = {"decorated", "hero", "meta50", "meta75", "meta100"}
+    assert progress["hero"].progress == len(set(got) - metas)
 
 
 def test_full_clear_needs_every_boss_within_a_week():
@@ -91,7 +92,7 @@ def test_perfect_attendance():
 def test_new_tabs_show_without_errors():
     from render import Renderer, demo_guild
     guild, me = demo_guild()
-    for view in ("pvp", "hunt", "raid", "loot", "guild"):
+    for view in ("pvp", "hunt", "raid", "loot", "social", "guild"):
         me.ns.OpenPanel("achievements", view)
-    assert len(me.ns.ACHIEVEMENTS) == 44
+    assert len(me.ns.ACHIEVEMENTS) == 161
     assert not me.errors()
