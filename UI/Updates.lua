@@ -11,6 +11,12 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.7.0", date = "Nov 19, 2026", items = {
+    "117 new achievements, 161 in all, with a new Social group and 42 more titles. Each group has pages: use the arrows or the mouse wheel.",
+    "War board: the Wanted tab's Guilds view shows the score against every enemy guild. Officers mark rivals, and the guild is alerted when a group of them is spotted.",
+    "Guild goals: officers set targets for the week or month on the Achievements tab (Guild view), and the guild hears when one is reached.",
+    "Crafters: find who in the guild can make something and whisper them (Roster tab, or /warcrest craft).",
+  } },
   { version = "3.6.5", date = "Nov 19, 2026", items = {
     "Alerts, chat messages and the remaining screen text are now in your language.",
     "Polish: Raids, Recruit, player card and Guild profiles.",

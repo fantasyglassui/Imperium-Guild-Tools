@@ -66,12 +66,13 @@ local TOPICS = {
     P("Top Head Hunters:", "the monthly leaderboard on the Kills tab. The champion is announced on the 1st."),
     P("Streaks and revenge:", "the guild hears about kill streaks, when a big streak is ended, and when someone kills a guildmate's killer."),
     P("Wanted:", "enemy players who keep killing guild members. When anyone spots one, everyone is alerted and the spot is marked on the map."),
+    P("Rival guilds:", "the Wanted tab's Guilds view shows the score against every enemy guild. Officers mark rivals: the guild is alerted when a group of them is seen, and the weekly recap says how the war went."),
     P("Bounties:", "off until an officer turns them on (Settings > Alerts > Bounties). Then officers can put a reward on an enemy player's head on the Wanted tab, and the first guild member to kill them in 30 days claims it, paid in DKP if the guild uses it."),
   }) end },
   { "Achievements and titles", function() return join({
     T("The Achievements tab shows what you've earned and your progress on the rest, for PvP, raids, bosses and loot. They come from the guild's shared history, so they count what you did before you installed Warcrest."),
     TF("Some achievements come with a %s. Click the Title button at the top right of the Achievements tab to see every title and pick one you've earned. It shows after your name on your player card.", B(T("title"))),
-    T("The Guild view shows what's been earned lately and who has the most."),
+    T("The Guild view shows what's been earned lately, the guild's goals and who has the most. Officers set goals for the week or month there, like killing 50 enemy players."),
   }) end },
   { "Alerts and settings", function() return join({
     P("Alerts:", "the Settings tab lists every alert. The Guild column is set by officers for everyone; the You column is just for you."),
@@ -93,6 +94,7 @@ local TOPICS = {
     CMD("/warcrest card Name", "a guild member's player card"),
     CMD("/warcrest profile", "your profile: spec, when you play, birthday"),
     CMD("/warcrest profiles", "everyone's profiles, with item levels"),
+    CMD("/warcrest craft [search]", "who in the guild can craft what"),
     CMD("/warcrest auction [item] [min bid]", "auction an item to your raid (officers)"),
     CMD("/warcrest council  /warcrest lc", "the loot council vote"),
     CMD("/warcrest raidrecap", "the last raid night's recap"),

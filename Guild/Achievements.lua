@@ -118,7 +118,7 @@ local LIST = {
   -- Hunts: the other side of it
   { id = "death1", cat = "hunt", name = "Welcome to the War", desc = "Die to an enemy player.", stat = "pvpDeaths", goal = 1 },
   { id = "death50", cat = "hunt", name = "Battle Scarred", desc = "Die to enemy players 50 times.", stat = "pvpDeaths", goal = 50 },
-  { id = "death100", cat = "hunt", name = "Glutton for Punishment", desc = "Die to enemy players 100 times.", stat = "pvpDeaths", goal = 100, title = "the Undaunted" },
+  { id = "death100", cat = "hunt", name = "Punching Bag", desc = "Die to enemy players 100 times.", stat = "pvpDeaths", goal = 100, title = "the Undaunted" },
   { id = "hunted", cat = "hunt", name = "Marked", desc = "Be killed by the same enemy player 5 times.", stat = "hunted", goal = 1 },
   { id = "fall", cat = "hunt", name = "Gravity Wins", desc = "Die from falling.", stat = "falls", goal = 1 },
   { id = "drown", cat = "hunt", name = "Sleeps with the Fishes", desc = "Drown.", stat = "drowns", goal = 1 },

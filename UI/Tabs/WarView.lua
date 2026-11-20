@@ -72,7 +72,7 @@ function M.Build(page)
 
   local card = UI.Box(f, 0, 0, TABLE_W, 450)
   M.card = card
-  local y = UI.TableHeads(card, { { "GUILD", 12 }, { "WE KILLED", 220 }, { "THEY KILLED", 310 }, { "SCORE", -12, true } })
+  local y = UI.TableHeads(card, { { "GUILD", 12 }, { "WE KILLED", 220 }, { "THEY KILLED", 310 }, { "SCORE", TABLE_W - 40, right = true } })
   M.list = UI.List(card, TABLE_W - 24, 450 + y - 2, 26,
     function(row)
       UI.RowSelection(row)

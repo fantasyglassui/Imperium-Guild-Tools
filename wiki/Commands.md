@@ -9,6 +9,7 @@ All commands start with `/warcrest`, or the short `/wc`. The old `/imperium` and
 | `/warcrest events` | Events tab: guild events that aren't raids |
 | `/warcrest profile` | Edit your profile (spec, when you play, birthday) |
 | `/warcrest profiles` | Everyone's profiles, with item levels |
+| `/warcrest craft [search]` | The crafters directory: who in the guild can make what |
 | `/warcrest recruit` | Recruit tab (officers) |
 | `/warcrest dkp` | DKP tab |
 | `/warcrest kills` | Kills and Top Head Hunters |

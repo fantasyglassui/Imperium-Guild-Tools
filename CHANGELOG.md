@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.7.0
+### 117 new achievements (161 in all)
+- **A new Social group** for events, profiles, crafting, levels and the guild, and more in every other group. **42 new titles** (67 in all), from "the Whirlwind" to "the Paragon".
+- **PvP:** more killing-blow and assist milestones (up to 1,000), Triple and Quad Kills, 20- and 25-kill streaks, 10 or 20 kills in one day, Early Bird and Weekend Warrior, kills in 5, 20 and 30 zones, battleground kills, kills of ?? level enemies, different enemy players killed (up to 250), and kills of rival guilds and of different enemy guilds.
+- **Hunts:** more revenge, bounty and claim milestones, Personal Vendetta (kill your own killer within 30 minutes), avenging different guildmates, Obsessed (the same enemy 10 times), 6 and 12 months as champion, and the other side of it: dying to enemy players, being hunted by the same enemy, falling, drowning and fatigue.
+- **Raids:** 75 and 100 raid nights, 3 and 6 months of perfect attendance, raid sign-ups accepted, standby, raid nights led, 10, 50 and 250 boss kills, 5 or 10 bosses in one day, guild firsts of 10 and 20 bosses, and full clears of 3 and 5 different raids.
+- **Loot:** up to 100 items won, 5 items in one day, free-roll and loot council wins, 200 and 500 DKP on one item, 1,000 DKP spent in all, 500 and 1,000 DKP saved, and 10 wishlist items.
+- **Social:** guild events attended (up to 50) and of 5 different kinds, events planned, sharing your profile, showing a title, linking an alt, levels 10 to 50, professions shared, 300 skill and up to 200 recipes, recruits brought in (officers), and 50, 75 and 100 achievements.
+- **Pages of tiles:** each group shows 16 at a time. Turn the page with the arrows next to your name, or the mouse wheel. "Loot & more" is now "Loot".
+- Your achievements are recorded with the guild several to an entry, so earning a lot at once doesn't fill the guild's record.
+- Everything you've done before counts, as far back as the guild's shared history goes. Only achievements earned in the last hour are announced, so the new ones won't flood chat.
+
+### The war board: rival guilds
+- **The Wanted tab has a new Guilds view:** every enemy guild the guild has met, with how many of theirs we've killed, how many of ours they've killed, and the score, for this month, last month, 7 days or all time. Click a guild to see who on our side has hit them hardest, and who on theirs has hit us.
+- Which guild an enemy is in comes from what guildmates see (nameplates, targets, mouseovers) and travels with every kill and death report, so everyone's addon learns it.
+- **Officers mark rival guilds** (or add one by name). Rivals are listed first, and when **3 or more players of a rival guild are seen together**, the guild is alerted where. The **weekly recap** says how each war went.
+
+### Guild goals
+- **Officers set goals for the whole guild** on the Achievements tab, Guild view: enemy players killed, rival guild kills, raid bosses, raid nights, guild events, achievements earned or loot handed out, for the week or the month. Up to 4 at a time.
+- Everyone sees the progress, and the guild hears when a goal is reached.
+
+### The crafters directory
+- **Who in the guild can make what.** Open your profession windows and your recipes are shared with the guild (only when they change). Search everyone's recipes by name, filter by profession, and **click a recipe to whisper the crafter**. Online crafters are listed first.
+- Open it with **Crafters** on the Roster tab, or `/warcrest craft` (with a word to search, like `/warcrest craft mooncloth`).
+- Recipes show in your own language.
+
+### Also
+- Translations for everything new in German, French and Spanish, and fixes for a few achievement descriptions that ran over three lines in German.
+
 ## 3.6.5
 ### Everything in your language
 - **Alerts and chat messages are now translated** (German, French and Spanish): kills and deaths, streaks and revenge, Wanted sightings, bounties, guild firsts and full clears, raid reminders, raid-night DKP awards, loot auctions and the loot council, alt links, DKP decay and imports, the weekly recap, level-ups and more. About 100 messages were still in English because they were put together from pieces (names, numbers, places).

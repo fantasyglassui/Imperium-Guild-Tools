@@ -439,6 +439,12 @@ def demo_guild(guild_name=None, locale=None):
     guild.run(0.5)
     me.fire("CHAT_MSG_WHISPER", "hey, is your guild recruiting healers?", "Anduin-Realm")
     guild.run(1)
+    # Enemy guilds and a rival.
+    for c in guild.clients.values():
+        for victim, g in (("Ganker", "Bloodfang"), ("Shadowstep", "Bloodfang"), ("Grimtusk", "Iron Horde")):
+            c.ns.NoteEnemyGuild(victim, g)
+    me.ns.SetRival("Bloodfang", True)
+    guild.run(1)
     # Crafters.
     names = {14155: "Mooncloth Bag", 13858: "Runecloth Robe", 14156: "Felcloth Bag", 13442: "Mighty Rage Potion",
              13445: "Elixir of Superior Defense", 12360: "Arcanite Bar", 13444: "Major Mana Potion", 16904: "Bloodfang Hood"}
@@ -473,7 +479,7 @@ if __name__ == "__main__":
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
     for tab, view in (("settings", "sounds"), ("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "social"), ("achievements", "guild"),
-                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress")):
+                      ("raids", "plan"), ("raids", "calendar"), ("raids", "progress"), ("wanted", "guilds")):
         me.ns.OpenPanel(tab, view)
         print(rd.render(panel, os.path.join(out, "panel-%s-%s.png" % (tab, view))))
     me.ns.OpenPanel("settings", "alerts")

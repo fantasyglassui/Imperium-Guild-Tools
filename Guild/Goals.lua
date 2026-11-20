@@ -29,7 +29,7 @@ local KIND_BY_KEY = {}
 for _, k in ipairs(ns.GOAL_KINDS) do KIND_BY_KEY[k.key] = k end
 function ns.GoalKind(key) return KIND_BY_KEY[key] end
 
-ns.GOAL_PERIODS = { { "week", "This week" }, { "month", "This month" } }
+ns.GOAL_PERIODS = { { "week", "Week" }, { "month", "Month" } }
 
 ns.OnLoad(function()
   ns.db.goalsDone = ns.db.goalsDone or {} -- goal id .. ":" .. period start -> true (already announced)

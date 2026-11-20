@@ -2,7 +2,7 @@
 ## Title: |cffd4af37Warcrest|r: data from The Imperium
 ## Notes: The Imperium is now Warcrest. This small helper hands your settings and history over to Warcrest, and replaces the old The Imperium files. It does nothing else.
 ## Author: Fantasy Glass UI
-## Version: 3.6.5
+## Version: 3.7.0
 ## Category: Guild
 ## IconTexture: Interface\AddOns\Warcrest\Media\Icon
 ## SavedVariables: TheImperiumDB

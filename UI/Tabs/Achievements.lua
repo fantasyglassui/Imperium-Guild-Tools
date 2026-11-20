@@ -265,7 +265,7 @@ local function RefreshTiles(cat)
   P.who:SetText(ns.TitledName(name))
   P.who:SetTextColor(UI.ClassColor(m and m.classFile))
   local count, total = ns.AchievementCount(name), #ns.ACHIEVEMENTS
-  P.summary:SetText(("%s%d|r of %d earned"):format(UI.Code("accent"), count, total))
+  P.summary:SetText(ns.TF("%s of %d earned", UI.Code("accent") .. count .. "|r", total))
   P.bar:SetWidth(math.max(1, P.barW * count / total))
   P.back:SetShown(not isMe())
   P.picker:SetShown(isMe())
@@ -459,7 +459,7 @@ RefreshGoals = function()
       row.bar:SetWidth(math.max(1, G_INNER * frac))
       local c = p.done and C.good or C.accent
       row.bar:SetColorTexture(c[1], c[2], c[3], 1)
-      local period = ns.T(goal.period == "month" and "This month" or "This week")
+      local period = ns.T(goal.period == "month" and "Month" or "Week")
       row.meta:SetText(p.done and (UI.Code("good") .. ns.T("Reached!") .. "|r  " .. period)
         or (period .. ", " .. daysLeft(p.toT)))
       row.count:SetText((p.done and UI.Code("good") or UI.Code("text")) .. math.min(p.count, 999999) .. "|r"
@@ -601,7 +601,8 @@ end
 local function Subtitle()
   if P.view and P.view.value == "guild" then
     local feed = ns.GuildAchievements()
-    return #feed == 0 and "Achievements earned across the guild" or (#feed .. " earned across the guild")
+    return #feed == 0 and ns.T("Achievements earned across the guild")
+      or ns.TP(#feed, "1 earned across the guild", "%d earned across the guild", #feed)
   end
   local name = who()
   -- Your count is shown under your name already.

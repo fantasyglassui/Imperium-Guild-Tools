@@ -45,7 +45,8 @@ def earn(guild):
 def test_achievements_are_recorded_with_the_guild():
     guild = Guild(M, raid=[m[0] for m in M])
     earn(guild)
-    recorded = [(e.a, e.ach) for e in guild["Alice"].ns.LedgerEntries("AE").values()]
+    recorded = [(e.a, item.split(".")[0]) for e in guild["Alice"].ns.LedgerEntries("AB").values()
+                for item in e.list.split(",")]
     assert ("Bob", "kill1") in recorded and ("Bob", "pioneer") in recorded
     assert ("Alice", "pioneer") in recorded
 
@@ -94,7 +95,7 @@ def test_officers_put_back_achievements_a_member_lost():
     earn(guild)
     assert guild["Alice"].ns.db.achievements["bob"]["kill1"]
     for c in guild.clients.values():
-        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" then WarcrestDB.ledger[id] = nil end end '
+        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" or e.k == "AB" then WarcrestDB.ledger[id] = nil end end '
               'wipe(WarcrestDB.killLog)'); c.ns.ReindexLedger()
     for c in guild.clients.values():
         if c.name != "Alice":
@@ -112,7 +113,7 @@ def test_guildmates_vouch_for_lost_achievements_when_no_officer_can():
     guild = Guild(M, raid=[m[0] for m in M])
     earn(guild)
     for c in guild.clients.values():
-        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" then WarcrestDB.ledger[id] = nil end end '
+        c.run('for id, e in pairs(WarcrestDB.ledger) do if e.k == "AE" or e.k == "AB" then WarcrestDB.ledger[id] = nil end end '
               'wipe(WarcrestDB.killLog)')
         c.ns.ReindexLedger()
     for c in guild.clients.values():

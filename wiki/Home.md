@@ -13,6 +13,7 @@ Warcrest was made for **<The Imperium>** and used to carry its name. It now work
 | Bidding on loot or checking your DKP | [DKP for Members](DKP-for-Members) |
 | Into world PvP | [PvP Kills and the Wanted List](PvP-Kills-and-the-Wanted-List) |
 | Chasing achievements or a title | [Achievements and Titles](Achievements-and-Titles) |
+| At war with another guild, setting goals, or looking for a crafter | [Guild Wars, Goals and Crafters](Guild-Wars-Goals-and-Crafters) |
 | An officer running a raid | [Officer Raid Night Guide](Officer-Raid-Night-Guide) |
 | An officer looking after DKP | [Officer DKP Management](Officer-DKP-Management) |
 | Looking for a command | [Commands](Commands) |
@@ -26,6 +27,8 @@ Warcrest was made for **<The Imperium>** and used to carry its name. It now work
 - **DKP** for attendance, hourly play and boss kills, spent in **live loot auctions** (open or hidden bids), with free rolls, decay, alts, corrections and seasons.
 - **Loot wishlists** (Need or Want), shown to officers and bidders when an item is auctioned, and a **loot council** for guilds that vote on loot.
 - **Raid groups planner:** groups and bench planned from the sign-ups, and the raid arranged in one click.
+- A **war board** of enemy guilds, with **rival guilds** marked by officers and alerts when a group of them is spotted.
+- **Guild goals** for the week or month, **161 achievements** with titles, and a **crafters directory** to find who can make what.
 - **Bounties** on gankers (officers turn them on), and **alert banners** with a look and sound for each kind of alert.
 - In **English, German, French and Spanish**.
 - **Achievements and titles** earned from kills, streaks, raids and loot, and **player cards** for every guild member.
