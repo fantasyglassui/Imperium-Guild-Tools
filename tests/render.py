@@ -470,7 +470,7 @@ def demo_guild(guild_name=None, locale=None):
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "render"
     os.makedirs(out, exist_ok=True)
-    guild, me = demo_guild(locale=os.environ.get("WARCREST_LOCALE"))
+    guild, me = demo_guild(guild_name=os.environ.get("WARCREST_GUILD"), locale=os.environ.get("WARCREST_LOCALE"))
     rd = Renderer(me)
     panel = None
     for tab in ("roster", "raids", "events", "recruit", "dkp", "wishlist", "kills", "wanted", "achievements", "settings", "officers", "addon"):

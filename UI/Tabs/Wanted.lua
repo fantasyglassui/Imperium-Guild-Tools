@@ -75,6 +75,9 @@ local function Refresh()
   UI.BountyView.frame:SetShown(showBounties)
   UI.WarView.frame:SetShown(showWar)
   P.threshold:SetShown(view == "wanted")
+  -- The view switch sits next to the threshold, or at the right when it's hidden.
+  P.view:ClearAllPoints()
+  if view == "wanted" then P.view:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0) else P.view:SetPoint("RIGHT") end
   if showBounties or showWar then
     P.unhide:Hide()
     if showBounties then UI.BountyView.Refresh() else UI.WarView.Refresh() end

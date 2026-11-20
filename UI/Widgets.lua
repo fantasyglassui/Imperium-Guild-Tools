@@ -158,8 +158,8 @@ function UI.Segmented(parent, options, onChange, height)
   function seg:SetOptionShown(v, shown)
     local px = 3
     for _, b in ipairs(self.buttons) do
-      if b.value == v then b:SetShown(shown) end
-      if b:IsShown() then
+      if b.value == v then b.off = not shown; b:SetShown(shown) end
+      if not b.off then
         b:ClearAllPoints()
         b:SetPoint("TOPLEFT", px, -3)
         px = px + b:GetWidth()
