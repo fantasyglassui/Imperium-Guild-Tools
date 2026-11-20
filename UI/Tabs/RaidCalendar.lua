@@ -67,7 +67,7 @@ local function collect(fromT, toT)
   for key, s in pairs(nights) do
     local killed = bosses[key] or {}
     local text = s.title ~= "" and s.title or "Raid night"
-    local tip = { date("%A, %b %d at %H:%M", s.t), "Raid night: " .. text }
+    local tip = { ns.Date("%A, %b %d at %H:%M", s.t), "Raid night: " .. text }
     for _, k in ipairs(killed) do tip[#tip + 1] = "Killed " .. k.name .. " (" .. date("%H:%M", k.t) .. ")" end
     add(s.t, { kind = "night", time = s.t, text = text,
       sub = #killed > 0 and (#killed .. " boss" .. (#killed == 1 and "" or "es") .. " killed") or "Raid night",
@@ -119,7 +119,7 @@ local function Cell(parent, i, w, h)
   c:SetScript("OnEnter", function(self)
     if not self.items or #self.items == 0 then return end
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(date("%A, %B %d", self.t))
+    GameTooltip:SetText(ns.Date("%A, %B %d", self.t))
     for _, item in ipairs(self.items) do
       if item.kind == "night" then
         GameTooltip:AddLine(" ")
@@ -222,7 +222,7 @@ end
 
 function M.Refresh()
   local fromT = monthStart(offset)
-  M.title:SetText(date("%B %Y", fromT))
+  M.title:SetText(ns.Date("%B %Y", fromT))
   M.todayButton:SetShown(offset ~= 0)
   local firstDay = tonumber(date("%w", fromT)) -- 0 = Sunday
   local gridStart = fromT - firstDay * 86400 + 3600 -- (an hour in, so daylight saving can't slip a day)

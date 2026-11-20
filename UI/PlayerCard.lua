@@ -187,7 +187,7 @@ local function fill(p)
   end
   local extra = {}
   local since = m and ns.MemberSince and ns.MemberSince(p.name)
-  if since then extra[#extra + 1] = ns.T("Member since") .. " " .. date("%b %Y", since) end
+  if since then extra[#extra + 1] = ns.T("Member since") .. " " .. ns.Date("%b %Y", since) end
   local events = ns.EventsAttended and ns.EventsAttended(p.name, 30) or 0
   if events > 0 then extra[#extra + 1] = ns.TF(events == 1 and "%d guild event in 30 days" or "%d guild events in 30 days", events) end
   if #extra > 0 and #plines < 3 then plines[#plines + 1] = UI.Code("muted") .. table.concat(extra, "  ·  ") .. "|r" end
@@ -230,7 +230,7 @@ local function fill(p)
   end
   if #p.loot > 0 then loot[#loot + 1] = "Recent loot:" end
   for _, l in ipairs(p.loot) do
-    loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), date("%b %d", l.t), l.item,
+    loot[#loot + 1] = ("%s%s|r  %s  %s"):format(UI.Code("muted"), ns.Date("%b %d", l.t), l.item,
       l.roll and (UI.Code("muted") .. "free roll|r") or (l.council and (UI.Code("muted") .. "loot council|r")
         or (UI.Code("text") .. l.amount .. " DKP|r")))
   end

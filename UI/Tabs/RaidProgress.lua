@@ -60,7 +60,7 @@ function M.Build(parent)
     function(row, r)
       row.name:SetText(r.raid)
       row.count:SetText(progressText(r))
-      row.when:SetText(date("%b %d", r.last))
+      row.when:SetText(ns.Date("%b %d", r.last))
       local done = r.total and r.killed >= r.total
       local col = done and C.good or C.accent
       row.fill:SetColorTexture(col[1], col[2], col[3], 1)
@@ -103,7 +103,7 @@ function M.Build(parent)
       UI.RowLine(row)
       UI.Tooltip(row, function() return row.item.name end, function()
         local b = row.item
-        local lines = { ("First killed %s."):format(date("%A, %b %d, %Y at %H:%M", b.first)) }
+        local lines = { ("First killed %s."):format(ns.Date("%A, %b %d, %Y at %H:%M", b.first)) }
         for _, k in ipairs(ns.BossKills()) do
           if k.boss == b.boss and k.t == b.first then
             lines[#lines + 1] = "There: " .. table.concat(k.names, ", ")
@@ -115,9 +115,9 @@ function M.Build(parent)
     end,
     function(row, b)
       row.name:SetText(b.name)
-      row.first:SetText(date("%b %d, %Y", b.first))
+      row.first:SetText(ns.Date("%b %d, %Y", b.first))
       row.kills:SetText(b.kills)
-      row.last:SetText(date("%b %d", b.last))
+      row.last:SetText(ns.Date("%b %d", b.last))
     end, true)
   M.bosses.frame:SetPoint("TOPLEFT", heads, "TOPLEFT", 0, y - 1)
   M.bosses:SetEmptyText("No boss kills recorded yet. When 5 or more guild members (at least half the raid) "

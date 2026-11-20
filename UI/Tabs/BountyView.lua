@@ -62,12 +62,12 @@ function M.Build(page)
       row:SetScript("OnClick", function(self) selected = self.item.id; ns.RefreshPanel() end)
       UI.Tooltip(row, function() return ORANGE .. row.item.target .. "|r" end, function()
         local b = row.item
-        local lines = { ("Placed by %s on %s."):format(b.by, date("%b %d at %H:%M", b.t)) }
+        local lines = { ("Placed by %s on %s."):format(b.by, ns.Date("%b %d at %H:%M", b.t)) }
         if b.note ~= "" then lines[#lines + 1] = "\"" .. b.note .. "\"" end
         if b.state == "claimed" then
-          lines[#lines + 1] = ("Claimed by %s on %s."):format(b.killer, date("%b %d at %H:%M", b.claimedAt))
+          lines[#lines + 1] = ("Claimed by %s on %s."):format(b.killer, ns.Date("%b %d at %H:%M", b.claimedAt))
         elseif b.state == "open" then
-          lines[#lines + 1] = ("Open until %s."):format(date("%b %d", b.expires))
+          lines[#lines + 1] = ("Open until %s."):format(ns.Date("%b %d", b.expires))
         end
         return table.concat(lines, "\n")
       end)
@@ -77,7 +77,7 @@ function M.Build(page)
       row.reward:SetText(b.amount > 0 and (b.amount .. " DKP") or (UI.Code("muted") .. "glory|r"))
       local st = STATE[b.state]
       row.state:SetText(UI.Code(st[2]) .. st[1] .. "|r" .. (b.state == "claimed" and (" by " .. b.killer) or ""))
-      row.placed:SetText(date("%b %d", b.t))
+      row.placed:SetText(ns.Date("%b %d", b.t))
       UI.SetRowSelected(row, b.id == selected)
     end, true)
   M.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, y - 1)
@@ -154,8 +154,8 @@ function M.Refresh()
   if current and officer and current.state == "open" then
     M.infoTitle:SetText(current.target)
     M.infoText:SetText(("%s, placed by %s on %s. Open until %s.%s"):format(
-      current.amount > 0 and (current.amount .. " DKP") or "For the glory", current.by, date("%b %d", current.t),
-      date("%b %d", current.expires), current.note ~= "" and ("\n\n\"" .. current.note .. "\"") or ""))
+      current.amount > 0 and (current.amount .. " DKP") or "For the glory", current.by, ns.Date("%b %d", current.t),
+      ns.Date("%b %d", current.expires), current.note ~= "" and ("\n\n\"" .. current.note .. "\"") or ""))
     M.withdraw:Show()
   else
     M.infoTitle:SetText("How bounties work")

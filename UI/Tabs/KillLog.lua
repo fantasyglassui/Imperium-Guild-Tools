@@ -350,7 +350,7 @@ local function BuildTable(page)
       row.victim:SetText(k.victim)
       row.zone:SetText(k.zone)
       row.detail:SetText(detail(k))
-      row.when:SetText(date("%b %d · %H:%M", k.t))
+      row.when:SetText(ns.Date("%b %d · %H:%M", k.t))
     end, true)
   P.list.frame:SetPoint("TOPLEFT", card, "TOPLEFT", 0, -29)
 

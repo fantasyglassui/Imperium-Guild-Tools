@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.6.4
+### Performance
+- **Faster in big guilds.** Checking whether someone is in the guild was reading the whole guild roster from the game, member by member, every time the answer was "no" (whispers from strangers, recruits, party members from outside the guild). It now answers straight away. The Recruit tab with 200 recruits refreshes in about 10 ms instead of a quarter of a second.
+- **Titles in chat** look up a guildmate's title instantly instead of going through every title choice in the guild for each chat line.
+- **The Events tab** works out everyone's answers and attendance once per change instead of once per row: about five times quicker with many events.
+- Every tab refreshes in a few milliseconds in a 500-member guild with full history, events, profiles and recruits.
+
+### Polish
+- **Dates are in your language.** Day and month names ("Friday, Nov 20") were always in English, because the game's date function only knows English. They now follow your language everywhere in Warcrest: raids, events, the calendar, player cards, the officer log and more.
+- **Your item level is only shared once the game has loaded all your gear,** so it's never shared lower than it is. A changed item level is shared at most once a day.
+- Old event reminders and last year's birthday notes are tidied out of your saved data.
+- Layout fixes in German, French and Spanish: the new-event form, the profile editor (the Role buttons stuck out), and the Guild profiles list (the summary ran under the sort buttons, which are now at the bottom).
+
 ## 3.6.3
 - **Titles in chat.** When a guildmate with a title says something (guild, officer, say, yell, party, raid, whispers and chat channels), your chat window shows their title in gold at the start: **[Lyra]: (the Avenger) anyone up for Tarren Mill?** It only changes what your own chat window shows, so players without Warcrest see their messages as normal. Turn it off with **Show titles in chat** in the Title window (Achievements tab).
 - **Titles in kill alerts:** "Lyra the Avenger killed Grim in Stranglethorn Vale".

@@ -14,6 +14,16 @@ def test_game_language_is_used():
     assert ns.T("Something not translated") == "Something not translated"
 
 
+def test_dates_use_day_and_month_names_in_your_language():
+    guild = Guild([("Thorne", 1)], setup=german)
+    ns = guild["Thorne"].ns
+    t = guild["Thorne"].lua.eval("time({ year = 2026, month = 11, day = 20, hour = 20 })")
+    assert ns.Date("%A, %b %d", t) == "Freitag, Nov. 20"
+    assert ns.Date("%a %H:%M", t) == "Fr 20:00"
+    english = Guild([("Thorne", 1)])["Thorne"].ns
+    assert english.Date("%A, %B %d", t) == "Friday, November 20"
+
+
 def test_labels_and_buttons_translate():
     guild = Guild([("Thorne", 1)], setup=german)
     me = guild["Thorne"]

@@ -122,7 +122,7 @@ end
 function ns.ShowRecap(offset, quietIfEmpty)
   local r = ns.WeeklyRecap(offset)
   if r.empty and quietIfEmpty then return false end
-  local span = date("%b %d", r.from) .. " - " .. date("%b %d", (offset or -1) == 0 and GetServerTime() or (r.to - 1))
+  local span = ns.Date("%b %d", r.from) .. " - " .. ns.Date("%b %d", (offset or -1) == 0 and GetServerTime() or (r.to - 1))
   ns.Say(HEADER .. ((offset or -1) == 0 and "This week so far" or "Last week in the guild") .. "|r  (" .. span .. ")")
   local lines = ns.RecapLines(r)
   if #lines == 0 then

@@ -322,7 +322,7 @@ function UI.NumRanks()
 end
 
 function UI.FormatTime(t)
-  return date("%b %d %H:%M", t)
+  return ns.Date("%b %d %H:%M", t)
 end
 
 ------------------------------------------------------------------------

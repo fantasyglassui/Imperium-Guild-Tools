@@ -100,7 +100,8 @@ end
 function ns.RankOf(name)
   local target = ns.fullName(name)
   local m = ns.Member(name)
-  if m and m.full == target then return m.rankIndex end
+  if not m then return nil end -- nobody in the guild has that name
+  if m.full == target then return m.rankIndex end
   -- (Two members with the same name on different realms: look the slow way.)
   for i = 1, (GetNumGuildMembers() or 0) do
     local n, _, rankIndex = GetGuildRosterInfo(i)

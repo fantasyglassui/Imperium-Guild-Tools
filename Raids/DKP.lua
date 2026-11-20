@@ -232,7 +232,7 @@ end
 function ns.StartSeason(name)
   if not ns.IsAddonOfficer() then ns.Say("Only officers can start a new season.") return end
   name = strtrim(name or "")
-  if name == "" then name = "Season " .. date("%b %Y") end
+  if name == "" then name = "Season " .. ns.Date("%b %Y") end
   -- Everyone's DKP up to now (changes made this very second count after the start).
   local now = GetServerTime()
   local sn = ns.CurrentSeason()

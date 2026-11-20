@@ -74,7 +74,7 @@ local function RefreshEvent(e)
   local t = ns.EventType(e.etype)
   d.tag:SetText(typeCode(e) .. ns.Upper(ns.T(t.label)) .. "|r")
   d.title:SetText(e.title)
-  d.when:SetText(("%s - %s (%s)  ·  %s %s"):format(date("%a %b %d, %H:%M", e.start), date("%H:%M", ns.EventEnds(e)),
+  d.when:SetText(("%s - %s (%s)  ·  %s %s"):format(ns.Date("%a %b %d, %H:%M", e.start), date("%H:%M", ns.EventEnds(e)),
     lengthText(e.mins), ns.T("by"), Ambiguate(e.a, "short")))
   d.notes:SetText(e.notes ~= "" and e.notes or ns.T("No notes."))
 
@@ -135,7 +135,7 @@ local function Refresh()
   if view == "event" then
     RefreshEvent(e)
   else
-    P.newDayText:SetText(date("%A, %b %d", dayStart(newDay)))
+    P.newDayText:SetText(ns.Date("%A, %b %d", dayStart(newDay)))
   end
 end
 
@@ -280,8 +280,10 @@ local function BuildNewView(parent)
   n:SetAllPoints()
   P.newFrame = n
   UI.Label(n, "Plan a guild event", "Title"):SetPoint("TOPLEFT", 18, -16)
-  UI.Label(n, "Guildmates hear about it and can answer straight away. Anyone going gets a reminder.", "MutedSmall")
-    :SetPoint("TOPLEFT", 18, -40)
+  local intro = UI.Label(n, "Guildmates hear about it and can answer straight away. Anyone going gets a reminder.", "MutedSmall")
+  intro:SetPoint("TOPLEFT", 18, -40)
+  intro:SetWidth(RIGHT_W - 36)
+  intro:SetWordWrap(false)
 
   UI.FieldLabel(n, "Kind of event", 18, -66)
   local opts = {}
@@ -386,7 +388,7 @@ local function Build(page)
       UI.SetRowSelected(row, e.id == selectedId)
       row.tag:SetText(typeCode(e) .. ns.Upper(ns.T(ns.EventType(e.etype).label)) .. "|r")
       row.title:SetText(e.title)
-      row.when:SetText(date("%a %b %d · %H:%M", e.start))
+      row.when:SetText(ns.Date("%a %b %d · %H:%M", e.start))
       local c = ns.EventCounts(e.id)
       row.count:SetText(c.going)
       local cc = c.going > 0 and C.good or C.faint
@@ -432,6 +434,12 @@ end
 local function Subtitle()
   local n = #ns.GuildEvents()
   return n == 0 and ns.T("No events planned") or (n == 1 and ns.T("1 event planned") or (ns.T("%d events planned"):format(n)))
+end
+
+-- Open the form for a new event.
+function UI.NewGuildEvent()
+  view = "new"
+  ns.OpenPanel("events")
 end
 
 -- Open an event (from the calendar, say).

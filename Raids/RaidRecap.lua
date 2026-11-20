@@ -110,7 +110,7 @@ function ns.RaidNightRecapSummary(r)
 end
 
 function ns.PrintRaidNightRecap(r)
-  ns.Say(HEADER .. ns.TF("Raid night recap: %s", r.title) .. "|r  (" .. date("%a %b %d", r.from) .. ", "
+  ns.Say(HEADER .. ns.TF("Raid night recap: %s", r.title) .. "|r  (" .. ns.Date("%a %b %d", r.from) .. ", "
     .. duration(r.to - r.from) .. ")")
   for _, line in ipairs(ns.RaidNightRecapLines(r)) do print("  " .. line) end
 end

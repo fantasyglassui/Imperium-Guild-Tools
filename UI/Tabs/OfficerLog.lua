@@ -110,7 +110,7 @@ local function BuildTable(page)
       UI.Tooltip(row, function() return UI.FormatTime(row.item.t) end, function() return ns.DescribeAction(row.item) end)
     end,
     function(row, e)
-      row.time:SetText(date("%b %d · %H:%M", e.t))
+      row.time:SetText(ns.Date("%b %d · %H:%M", e.t))
       local who = e.actor ~= "" and e.actor or e.target
       row.who:SetText(Ambiguate(who, "short"))
       row.who:SetTextColor(classColorOf(who))
@@ -173,7 +173,7 @@ end
 local function Subtitle()
   local n = #ns.db.audit
   if n == 0 then return "Guild changes, recorded while you're online" end
-  return ("%d change%s recorded · newest %s"):format(n, n == 1 and "" or "s", date("%b %d", ns.db.audit[1].t))
+  return ("%d change%s recorded · newest %s"):format(n, n == 1 and "" or "s", ns.Date("%b %d", ns.db.audit[1].t))
 end
 
 UI.AddTab({ id = "officers", title = "Officers", build = Build, refresh = Refresh, subtitle = Subtitle,

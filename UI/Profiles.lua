@@ -9,7 +9,7 @@
 local _, ns = ...
 local UI = ns.UI
 
-local W, H = 440, 350
+local W, H = 480, 350
 local win
 local days = {}
 local role = ""
@@ -67,13 +67,13 @@ local function Build()
   UI.Label(win, "Tell the guild about yourself. It shows on your player card.", "MutedSmall"):SetPoint("TOPLEFT", x, -42)
 
   UI.FieldLabel(win, "Main spec", x, -66)
-  win.spec = UI.EditBox(win, 184, 24)
+  win.spec = UI.EditBox(win, 190, 24)
   win.spec:SetHeight(26)
   win.spec:SetPoint("TOPLEFT", x, -78)
-  UI.FieldLabel(win, "Role", x + 196, -66)
+  UI.FieldLabel(win, "Role", x + 202, -66)
   win.role = UI.Segmented(win, { { "", "None" }, { "tank", "Tank" }, { "healer", "Healer" }, { "dps", "DPS" } },
     function(v) role = v end)
-  win.role:SetPoint("TOPLEFT", x + 196, -78)
+  win.role:SetPoint("TOPLEFT", x + 202, -78)
 
   UI.FieldLabel(win, "Days you usually play", x, -116)
   win.dayButtons = {}
@@ -94,10 +94,10 @@ local function Build()
   win.hours.hint:SetPoint("LEFT", 8, 0)
   win.hours:HookScript("OnTextChanged", function(self) self.hint:SetShown((self:GetText() or "") == "") end)
 
-  UI.FieldLabel(win, "Birthday (optional)", x + 216, -164)
+  UI.FieldLabel(win, "Birthday (optional)", x + 202, -164)
   win.month = UI.Cycle(win, 130, monthOptions(), function(v) month = v end)
   win.month:SetHeight(26)
-  win.month:SetPoint("TOPLEFT", x + 216, -176)
+  win.month:SetPoint("TOPLEFT", x + 202, -176)
   win.day = UI.EditBox(win, 48, 2)
   win.day:SetHeight(26)
   win.day:SetNumeric(true)
@@ -159,12 +159,14 @@ end
 local function BuildList()
   list = UI.Window("WarcrestProfiles", LW, LH, ns.T("Guild profiles"))
   list.info = UI.Label(list, "", "MutedSmall")
-  list.info:SetPoint("TOPLEFT", 16, -42)
+  list.info:SetPoint("TOPLEFT", 16, -44)
+  list.info:SetWidth(LW - 32)
+  list.info:SetWordWrap(false)
   list.sort = UI.Segmented(list, { { "name", "Name" }, { "role", "Role" }, { "ilvl", "Item level" } }, function(v)
     sortBy = v
     ns.RefreshProfiles()
   end)
-  list.sort:SetPoint("TOPRIGHT", -16, -36)
+  list.sort:SetPoint("BOTTOMRIGHT", -16, 14)
 
   local box = CreateFrame("Frame", nil, list)
   box:SetPoint("TOPLEFT", 16, -70)

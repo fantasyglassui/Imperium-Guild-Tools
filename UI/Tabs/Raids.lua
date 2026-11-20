@@ -93,7 +93,7 @@ local function RefreshEvent(event)
     return
   end
   d.title:SetText(event.title)
-  d.when:SetText(date("%a %b %d, %H:%M", event.start) .. "  ·  by " .. event.a)
+  d.when:SetText(ns.Date("%a %b %d, %H:%M", event.start) .. "  ·  by " .. event.a)
   d.notes:SetText(event.notes ~= "" and event.notes or "No notes.")
 
   local c = ns.SignupCounts(event.id)
@@ -247,7 +247,7 @@ local function Refresh()
   if view == "event" then RefreshEvent(event)
   elseif view == "group" then RefreshGroup(event)
   else
-    P.newDayText:SetText(date("%A, %b %d", dayStart(newDay)))
+    P.newDayText:SetText(ns.Date("%A, %b %d", dayStart(newDay)))
   end
   RefreshSession()
 end
@@ -638,7 +638,7 @@ local function Build(page)
       row.sel:SetShown(on)
       row.bar:SetShown(on)
       row.title:SetText(e.title)
-      row.when:SetText(date("%a %b %d · %H:%M", e.start))
+      row.when:SetText(ns.Date("%a %b %d · %H:%M", e.start))
       local c = ns.SignupCounts(e.id)
       local mine = ns.MySignup(e.id)
       row.count:SetText(c.accept)
@@ -701,7 +701,7 @@ local function Build(page)
       ns.EndRaidSession()
     else
       local e = ns.RaidEvent(selectedId)
-      local title = e and e.title or ("Raid " .. date("%b %d"))
+      local title = e and e.title or ("Raid " .. ns.Date("%b %d"))
       ns.StartRaidSession(e and e.id or "", title, P.onTime:GetText(), P.hourly:GetText(), P.boss:GetText())
     end
     ns.RefreshPanel()

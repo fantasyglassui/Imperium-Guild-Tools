@@ -92,3 +92,12 @@ def test_anniversaries():
     guild.run(310)
     assert alice.said("Cara has been in the guild for a year!")
     assert all(c.errors() == [] for c in guild.clients.values())
+
+
+def test_item_level_waits_for_the_game_to_load_your_gear():
+    guild = Guild(M)
+    bob = guild["Bob"]
+    gear(bob, 60)
+    assert bob.ns.MyItemLevel() == 60
+    bob.run('itemLevels["item5"] = nil')          # one item not loaded yet
+    assert bob.ns.MyItemLevel() == 0             # unknown, rather than too low

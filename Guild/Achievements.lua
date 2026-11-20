@@ -487,12 +487,20 @@ end
 ------------------------------------------------------------------------
 -- Titles
 ------------------------------------------------------------------------
+-- Each member's latest title choice: key -> achievement id ("" for none).
+-- Rebuilt only when a title changes; looked up for every chat line.
+local chosen, chosenStamp
+local function titleChoices()
+  local stamp = ns.LedgerStamp("TI")
+  if chosen and chosenStamp == stamp then return chosen end
+  chosen, chosenStamp = {}, stamp
+  for _, e in ipairs(ns.LedgerEntries("TI")) do chosen[ns.Key(e.a)] = e.title end -- oldest first: the latest wins
+  return chosen
+end
+
 -- The title a member chose (the achievement's id), if they've earned it.
 function ns.TitleOf(name)
-  local k, id = ns.Key(name), nil
-  for _, e in ipairs(ns.LedgerEntries("TI")) do
-    if ns.Key(e.a) == k then id = e.title end
-  end
+  local id = titleChoices()[ns.Key(name)]
   local a = id and BY_ID[id]
   if a and a.title and ns.HasAchievement(name, id) then return a.title, id end
 end
@@ -770,10 +778,10 @@ function ns.AchievementCheck(name)
   for _, kill in ipairs(greys) do
     local m = ns.Member(name)
     line(("  Not counted: %s (level %s), %s; %s is level %s now; honor reported: %s."):format(kill.victim,
-      tostring(kill.level or "?"), date("%b %d %H:%M", kill.t), name, tostring(m and m.level or "?"), tostring(kill.honor)))
+      tostring(kill.level or "?"), ns.Date("%b %d %H:%M", kill.t), name, tostring(m and m.level or "?"), tostring(kill.honor)))
   end
   if latest then
-    line(("Latest kill: %s at %s, by %s."):format(latest.victim, date("%H:%M %b %d", latest.t),
+    line(("Latest kill: %s at %s, by %s."):format(latest.victim, ns.Date("%H:%M %b %d", latest.t),
       table.concat(latest.killers or {}, ", ")))
   end
   if ns.IsMe(name) then
@@ -794,7 +802,7 @@ function ns.AchievementCheck(name)
     (c.enabled and c.types.achievement) and "on" or "off", show.achievement and "on" or "off",
     (c.enabled and c.types.achievement_chat) and "on" or "off", show.achievement_chat and "on" or "off"))
   local e = ns.MemberAchievements(name).kill1
-  line(e and e.t and ("First Blood: earned %s."):format(e.t > 0 and date("%b %d %H:%M", e.t) or "")
+  line(e and e.t and ("First Blood: earned %s."):format(e.t > 0 and ns.Date("%b %d %H:%M", e.t) or "")
     or "First Blood: not yet.")
   line(("Achievements earned: %d of %d. Recorded with the guild: %d."):format(ns.AchievementCount(name), #LIST,
     (function() local n = 0 for _ in pairs(guildRecorded()[k] or {}) do n = n + 1 end return n end)()))

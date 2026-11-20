@@ -15,7 +15,7 @@ local _, ns = ...
 
 local DAY_NAMES = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
 local ROLES = { tank = true, healer = true, dps = true }
-local ILVL_EVERY = 6 * 3600   -- share a changed item level at most this often
+local ILVL_EVERY = 24 * 3600  -- share a changed item level at most once a day
 local SPEC_MAX, NOTE_MAX = 24, 80
 
 ns.PROFILE_DAYS = DAY_NAMES
@@ -23,6 +23,11 @@ ns.PROFILE_DAYS = DAY_NAMES
 ns.OnLoad(function()
   ns.db.celebrated = ns.db.celebrated or {} -- "bday:key:year" / "anniv:key:year" -> true
   ns.db.firstSeen = ns.db.firstSeen or {}   -- key -> when Warcrest first saw them in the guild
+  -- Only this year's celebrations need remembering.
+  local year = ":" .. date("%Y") .. "$"
+  for key in pairs(ns.db.celebrated) do
+    if not key:find(year) then ns.db.celebrated[key] = nil end
+  end
 end)
 
 ------------------------------------------------------------------------
@@ -116,7 +121,11 @@ function ns.MyItemLevel()
   for _, slot in ipairs(SLOTS) do
     local link = GetInventoryItemLink("player", slot)
     local lvl = 0
-    if link then lvl = tonumber((select(4, GetItemInfo(link)))) or 0 end
+    if link then
+      lvl = tonumber((select(4, GetItemInfo(link))))
+      -- The game hasn't loaded this item yet: the average would come out too low.
+      if not lvl then return 0 end
+    end
     if slot == 17 and not link then
       local main = GetInventoryItemLink("player", 16)
       local loc = main and select(9, GetItemInfo(main))

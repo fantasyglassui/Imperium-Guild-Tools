@@ -31,7 +31,7 @@ StaticPopupDialogs["IMPERIUM_NEW_SEASON"] = {
   hasEditBox = true,
   OnShow = function(self)
     local box = self.editBox or self.EditBox
-    if box then box:SetText("Season " .. date("%b %Y")) end
+    if box then box:SetText("Season " .. ns.Date("%b %Y")) end
   end,
   OnAccept = function(self)
     local box = self.editBox or self.EditBox
@@ -170,7 +170,7 @@ local function Refresh()
   local lines = {}
   for i, e in ipairs(ns.DKPHistory(UnitName("player"))) do
     if i > 16 then break end
-    lines[#lines + 1] = ("%s%s|r  %s%+d|r  %s"):format(UI.Code("muted"), date("%b %d", e.t),
+    lines[#lines + 1] = ("%s%s|r  %s%+d|r  %s"):format(UI.Code("muted"), ns.Date("%b %d", e.t),
       e.amount >= 0 and UI.Code("good") or UI.Code("bad"), e.amount, e.reason)
   end
   P.myHistory:SetText(#lines > 0 and table.concat(lines, "\n") or (UI.Code("muted") .. "No DKP changes yet.|r"))
@@ -496,7 +496,7 @@ local function Build(page)
         GameTooltip:AddLine(" ")
         for i, e in ipairs(ns.DKPHistory(self.item.name)) do
           if i > 10 then break end
-          GameTooltip:AddDoubleLine(date("%b %d", e.t) .. "  " .. e.reason, (e.amount >= 0 and "+" or "") .. e.amount,
+          GameTooltip:AddDoubleLine(ns.Date("%b %d", e.t) .. "  " .. e.reason, (e.amount >= 0 and "+" or "") .. e.amount,
             0.8, 0.8, 0.8, e.amount >= 0 and 0.25 or 1, e.amount >= 0 and 1 or 0.4, 0.25)
         end
         GameTooltip:Show()
@@ -564,7 +564,7 @@ local function Build(page)
         if not ok then GameTooltip:SetText(l.item) end
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(("Won by %s for %d DKP"):format(l.winner, l.amount), C.accent[1], C.accent[2], C.accent[3])
-        GameTooltip:AddLine(date("%A %b %d, %H:%M", l.t) .. (l.raid and (" - " .. l.raid) or ""), 0.8, 0.8, 0.8)
+        GameTooltip:AddLine(ns.Date("%A %b %d, %H:%M", l.t) .. (l.raid and (" - " .. l.raid) or ""), 0.8, 0.8, 0.8)
         GameTooltip:AddLine((l.roll and "Free roll" or (l.council and "Loot council" or "Auction")) .. " run by " .. l.by, 0.6, 0.6, 0.6)
         if ns.IsAddonOfficer() then
           GameTooltip:AddLine("Right-click to refund it or give it to someone else.", 1, 0.5, 0.5)
@@ -574,7 +574,7 @@ local function Build(page)
       row:SetScript("OnLeave", function() GameTooltip:Hide() end)
     end,
     function(row, l)
-      row.date:SetText(date("%b %d", l.t))
+      row.date:SetText(ns.Date("%b %d", l.t))
       row.item:SetText(l.item)
       row.winner:SetText(l.winner)
       row.dkp:SetText(l.roll and (UI.Code("muted") .. "roll|r") or (l.council and (UI.Code("muted") .. "council|r") or l.amount))
@@ -617,7 +617,7 @@ local function Build(page)
         GameTooltip:SetText(("%s%d DKP"):format(e.amount >= 0 and "+" or "", e.amount), 1, 1, 1)
         GameTooltip:AddLine(e.reason, C.accent[1], C.accent[2], C.accent[3], true)
         GameTooltip:AddLine(e.names:gsub(",", ", "), 0.8, 0.8, 0.8, true)
-        GameTooltip:AddLine(("%s, by %s"):format(date("%A %b %d, %H:%M", e.t), e.a), 0.6, 0.6, 0.6)
+        GameTooltip:AddLine(("%s, by %s"):format(ns.Date("%A %b %d, %H:%M", e.t), e.a), 0.6, 0.6, 0.6)
         if c.undone then
           GameTooltip:AddLine(("Undone by %s%s"):format(c.undone.a, c.undone.reason ~= "" and (": " .. c.undone.reason) or ""), 1, 0.4, 0.4, true)
         elseif ns.IsAddonOfficer() then
@@ -630,7 +630,7 @@ local function Build(page)
     function(row, c)
       local e = c.entry
       local dim = c.undone and 0.45 or 1
-      row.date:SetText(date("%b %d", e.t))
+      row.date:SetText(ns.Date("%b %d", e.t))
       row.amount:SetText((e.amount >= 0 and UI.Code("good") .. "+" or UI.Code("bad")) .. e.amount .. "|r")
       row.who:SetText(e.names:gsub(",", ", "))
       row.reason:SetText(c.undone and (UI.Code("muted") .. "(undone) " .. e.reason .. "|r") or e.reason)

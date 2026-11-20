@@ -57,7 +57,7 @@ local function RefreshDetail(r)
   end
   d.name:SetText(Ambiguate(r.name, "short"))
   local info = { classText(r) }
-  info[#info + 1] = ns.TF("added %s by %s", date("%b %d", r.added), Ambiguate(r.by, "short"))
+  info[#info + 1] = ns.TF("added %s by %s", ns.Date("%b %d", r.added), Ambiguate(r.by, "short"))
   if r.inGuild then info[#info + 1] = UI.Code("good") .. ns.T("in the guild") .. "|r" end
   d.info:SetText((table.concat(info, "  ·  "):gsub("^  ·  ", "")))
 
@@ -105,7 +105,7 @@ local function Refresh()
   P.channel.index, P.channel.value = pick, opts[pick][1]
   P.channel:SetText(opts[pick][2])
   UI.SetEnabled(P.post, #chans > 0)
-  P.posted:SetText(ns.db.recruitPostedAt and ns.TF("Last posted %s", date("%b %d, %H:%M", ns.db.recruitPostedAt)) or "")
+  P.posted:SetText(ns.db.recruitPostedAt and ns.TF("Last posted %s", ns.Date("%b %d, %H:%M", ns.db.recruitPostedAt)) or "")
 
   for i, o in ipairs(TRIAL_LENGTHS) do
     if o[1] == ns.db.trialDays then P.trialLength.index, P.trialLength.value = i, o[1] end

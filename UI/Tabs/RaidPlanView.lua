@@ -215,7 +215,7 @@ function M.Refresh(event)
     end
     return
   end
-  M.title:SetText(event.title .. "  " .. UI.Code("muted") .. date("%a %b %d, %H:%M", event.start) .. "|r")
+  M.title:SetText(event.title .. "  " .. UI.Code("muted") .. ns.Date("%a %b %d, %H:%M", event.start) .. "|r")
   M.hint:SetText(officer and (picked and ("Now click where " .. picked .. " goes.") or "Click a name, then a group or the bench.")
     or "Your officers' plan for this raid.")
   local groups, bench, unplaced = ns.RaidPlanGroups(event.id)

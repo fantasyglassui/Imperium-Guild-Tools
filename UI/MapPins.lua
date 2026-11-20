@@ -67,7 +67,7 @@ function pinMethods:OnMouseEnter()
   else
     GameTooltip:AddLine(ns.DeathIcon(e) .. ns.DescribeDeath(e), 1, 1, 1, true)
   end
-  GameTooltip:AddLine(date("%b %d %H:%M", e.t), 0.7, 0.7, 0.7)
+  GameTooltip:AddLine(ns.Date("%b %d %H:%M", e.t), 0.7, 0.7, 0.7)
   if TomTom and TomTom.AddWaypoint then
     GameTooltip:AddLine("Click to set a TomTom waypoint.", 0.5, 0.8, 1)
   end

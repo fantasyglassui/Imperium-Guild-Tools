@@ -353,7 +353,7 @@ local function BuildGuild(page)
     end,
     function(row, e)
       local a = ns.Achievement(e.id)
-      row.when:SetText(e.t > 0 and date("%b %d", e.t) or "-")
+      row.when:SetText(e.t > 0 and ns.Date("%b %d", e.t) or "-")
       row.who:SetText(e.name)
       row.who:SetTextColor(UI.ClassColor(e.classFile))
       row.what:SetText(a.name .. (a.title and ("  " .. UI.Code("accent") .. "title|r") or ""))

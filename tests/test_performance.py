@@ -99,3 +99,78 @@ def test_a_dkp_award_doesnt_rebuild_boss_kills():
     guild.run(1)
     assert lua.eval("function(ns) return rawequal(ns.BossKills(), FIRST_KILLS) end")(ns)  # the same cached list
     assert ns.Balance("Bob") == 5        # while the balances did catch up
+
+
+def fill_new_features(client, now):
+    """60 events with 100 answers each, 300 profiles, 200 recruits and 150 titles."""
+    client.lua.eval("""function(ns, now)
+      local L, n = ns.db.ledger, 0
+      local function add(k, a, t, fields)
+        n = n + 1
+        local e = { k = k, a = a, t = t, id = a .. ":" .. t .. ":" .. n }
+        for key, v in pairs(fields) do e[key] = v end
+        L[e.id] = e
+        return e
+      end
+      local types = { "pvp", "worldboss", "dungeon", "meeting", "social", "other" }
+      for i = 1, 60 do
+        local ev = add("GE", "Member" .. string.format("%03d", i), now - 86400 * 20 + i * 3600 * 10,
+          { title = "Event " .. i, start = now - 86400 * 10 + i * 3600 * 8, etype = types[i % 6 + 1], notes = "", mins = 120 })
+        for j = 1, 100 do
+          add("GS", "Member" .. string.format("%03d", (i * 7 + j) % 500), ev.t + j,
+            { ref = ev.id, status = ({ "going", "maybe", "no" })[j % 3 + 1] })
+        end
+        add("GT", ev.a, ev.t + 500, { ref = ev.id, names = "Member001,Member002,Member003,Member004" })
+      end
+      for i = 0, 299 do
+        add("PF", "Member" .. string.format("%03d", i), now - 1000 + i,
+          { spec = "Holy", role = ({ "tank", "healer", "dps" })[i % 3 + 1], days = "1111100", hours = "19:00-23:00",
+            bday = "", ilvl = 50 + i % 15, note = "" })
+      end
+      for i = 1, 200 do
+        add("RC", "Alice", now - 5000 + i, { name = "Recruit" .. i, class = "MAGE", level = 60, note = "",
+          status = ({ "new", "contacted", "trial", "joined", "declined" })[i % 5 + 1] })
+      end
+      for i = 0, 149 do
+        add("TI", "Member" .. string.format("%03d", i), now - 100 + i, { title = "kill1" })
+      end
+      ns.ReindexLedger()
+    end""")(client.ns, now)
+
+
+def test_events_profiles_and_recruiting_stay_quick_in_a_big_guild():
+    guild, bob = big_guild()
+    alice = guild["Alice"]
+    now = int(guild.clock)
+    for c in (alice, bob):
+        fill_new_features(c, now)
+    guild.run(3)
+    slowest = 0
+    for client, tab in ((bob, "events"), (alice, "recruit"), (bob, "raids")):
+        client.ns.OpenPanel(tab)
+        for _ in range(3):   # the first refresh builds the caches; later ones should be quicker still
+            start = time.perf_counter()
+            client.ns.RefreshPanel()
+            slowest = max(slowest, time.perf_counter() - start)
+    bob.ns.ShowProfiles()
+    start = time.perf_counter()
+    bob.ns.RefreshProfiles()
+    slowest = max(slowest, time.perf_counter() - start)
+    assert slowest < 1.0, slowest
+    assert not bob.errors() and not alice.errors()
+
+
+def test_titles_in_chat_cost_next_to_nothing():
+    guild, bob = big_guild()
+    fill_new_features(bob, int(guild.clock))
+    show = bob.lua.eval("ShowChat")
+    show("CHAT_MSG_GUILD", "warm up", "Member001-Realm")
+    start = time.perf_counter()
+    bob.lua.eval("""function()
+      for i = 1, 5000 do
+        ShowChat("CHAT_MSG_CHANNEL", "WTS stuff " .. i, "Member" .. string.format("%03d", i % 500) .. "-Realm")
+      end
+    end""")()
+    took = time.perf_counter() - start
+    assert took < 1.0, took
+    assert not bob.errors()

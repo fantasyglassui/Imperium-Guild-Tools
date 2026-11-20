@@ -84,4 +84,19 @@ function ns.TF(fmt, ...)
   return ns.T(fmt):format(...)
 end
 
+-- date() with the day and month names in your language (the game's date()
+-- only knows English ones): ns.Date("%a %b %d", t) -> "Fr 15. Jan" style names.
+local DAYS = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }
+local DAYS_SHORT = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" }
+local MONTHS = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
+  "October", "November", "December" }
+local MONTHS_SHORT = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
+function ns.Date(fmt, t)
+  if not active or not fmt:find("%%[aAbB]") then return date(fmt, t) end
+  local d = date("*t", t)
+  local names = { a = DAYS_SHORT[d.wday], A = DAYS[d.wday], b = MONTHS_SHORT[d.month], B = MONTHS[d.month] }
+  fmt = fmt:gsub("%%([aAbB])", function(c) return (ns.T(names[c]):gsub("%%", "%%%%")) end)
+  return date(fmt, t)
+end
+
 ns.OnLoad(ns.ApplyLocale)

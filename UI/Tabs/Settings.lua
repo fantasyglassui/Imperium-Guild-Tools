@@ -56,7 +56,7 @@ local function RefreshAlerts()
   local status = officer and "You can change the guild column."
     or ("Only " .. UI.RankName(c.officerRank) .. " and higher can change the guild column.")
   if c.stamp > 0 then
-    status = status .. "\nLast saved by " .. c.by .. ", " .. date("%b %d at %H:%M", c.stamp) .. "."
+    status = status .. "\nLast saved by " .. c.by .. ", " .. ns.Date("%b %d at %H:%M", c.stamp) .. "."
   end
   P.status:SetText(status)
 

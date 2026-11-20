@@ -47,13 +47,16 @@ function ns.CanManageEvent(e, name)
 end
 
 -- Cancellations that count (from the event's maker or an officer).
+local cancelledSet, goneStamp
 local function cancelled()
-  local set = {}
+  local stamp = ns.LedgerStamp("GE", "GX")
+  if cancelledSet and goneStamp == stamp then return cancelledSet end
+  cancelledSet, goneStamp = {}, stamp
   for _, x in ipairs(ns.LedgerEntries("GX")) do
     local e = ns.db.ledger[x.ref]
-    if e and e.k == "GE" and ns.CanManageEvent(e, x.a) then set[x.ref] = true end
+    if e and e.k == "GE" and ns.CanManageEvent(e, x.a) then cancelledSet[x.ref] = true end
   end
-  return set
+  return cancelledSet
 end
 
 function ns.GuildEvent(id)
@@ -107,26 +110,44 @@ function ns.EventSignUp(id, status)
   return ns.LedgerAdd("GS", { ref = id, status = status })
 end
 
+-- Every event's answers, built once per change: ref -> { list, byKey, counts }.
+local ORDER = { going = 1, maybe = 2, no = 3 }
+local answers, answersStamp
+local NONE = { list = {}, byKey = {}, counts = { going = 0, maybe = 0, no = 0 } }
+local function allAnswers()
+  local stamp = ns.LedgerStamp("GS")
+  if answers and answersStamp == stamp then return answers end
+  answers, answersStamp = {}, stamp
+  for _, e in ipairs(ns.LedgerEntries("GS")) do -- oldest first: each member's latest answer wins
+    if STATUSES[e.status] then
+      local a = answers[e.ref] or { byKey = {} }
+      answers[e.ref] = a
+      a.byKey[ns.Key(e.a)] = { name = e.a, status = e.status, t = e.t }
+    end
+  end
+  for _, a in pairs(answers) do
+    a.list, a.counts = {}, { going = 0, maybe = 0, no = 0 }
+    for _, su in pairs(a.byKey) do
+      a.list[#a.list + 1] = su
+      a.counts[su.status] = a.counts[su.status] + 1
+    end
+    table.sort(a.list, function(x, y)
+      if x.status ~= y.status then return ORDER[x.status] < ORDER[y.status] end
+      return x.name < y.name
+    end)
+  end
+  return answers
+end
+
 -- Each member's latest answer: a sorted list, and key -> answer.
 function ns.EventSignups(id)
-  local byKey = {}
-  for _, e in ipairs(ns.LedgerEntries("GS")) do
-    if e.ref == id and STATUSES[e.status] then byKey[ns.Key(e.a)] = { name = e.a, status = e.status, t = e.t } end
-  end
-  local list = {}
-  for _, s in pairs(byKey) do list[#list + 1] = s end
-  local order = { going = 1, maybe = 2, no = 3 }
-  table.sort(list, function(a, b)
-    if a.status ~= b.status then return order[a.status] < order[b.status] end
-    return a.name < b.name
-  end)
-  return list, byKey
+  local a = allAnswers()[id] or NONE
+  return a.list, a.byKey
 end
 
 function ns.EventCounts(id)
-  local c = { going = 0, maybe = 0, no = 0 }
-  for _, s in ipairs((ns.EventSignups(id))) do c[s.status] = c[s.status] + 1 end
-  return c
+  local c = (allAnswers()[id] or NONE).counts
+  return { going = c.going, maybe = c.maybe, no = c.no }
 end
 
 function ns.MyEventSignup(id)
@@ -184,17 +205,25 @@ function ns.TakeEventAttendance(id)
   return #names
 end
 
--- Who came to an event: key -> name (nil if attendance was never taken).
-function ns.EventAttended(id)
-  local e = ns.GuildEvent(id)
-  local set
+-- Who came to each event, built once per change: ref -> { key -> name }.
+local came, cameStamp
+local function allAttended()
+  local stamp = ns.LedgerStamp("GE", "GT")
+  if came and cameStamp == stamp then return came end
+  came, cameStamp = {}, stamp
   for _, t in ipairs(ns.LedgerEntries("GT")) do
-    if t.ref == id and ns.CanManageEvent(e, t.a) then
-      set = set or {}
-      for name in t.names:gmatch("[^,]+") do set[ns.Key(name)] = name end
+    if ns.CanManageEvent(ns.GuildEvent(t.ref), t.a) then
+      local set = came[t.ref] or {}
+      came[t.ref] = set
+      for name in (t.names or ""):gmatch("[^,]+") do set[ns.Key(name)] = name end
     end
   end
-  return set
+  return came
+end
+
+-- Who came to an event: key -> name (nil if attendance was never taken).
+function ns.EventAttended(id)
+  return allAttended()[id]
 end
 
 -- How many events someone came to in the last `days` days.
@@ -235,7 +264,7 @@ end
 -- News and reminders
 ------------------------------------------------------------------------
 local function eventLine(e)
-  return ("%s: %s, %s"):format(ns.T(ns.EventType(e.etype).label), e.title, date("%a %b %d, %H:%M", e.start))
+  return ("%s: %s, %s"):format(ns.T(ns.EventType(e.etype).label), e.title, ns.Date("%a %b %d, %H:%M", e.start))
 end
 
 -- A new event from someone else, heard live: let guildmates know (if they want to).
@@ -268,6 +297,11 @@ local function remind()
 end
 
 ns.OnLoad(function()
+  -- Reminders already shown, for events that have since gone (or ended over a day ago).
+  for id in pairs(ns.db.eventReminded) do
+    local e = ns.GuildEvent(id)
+    if not e or ns.EventEnds(e) < time() - 86400 then ns.db.eventReminded[id] = nil end
+  end
   seenEvents = {}
   for _, e in ipairs(ns.LedgerEntries("GE")) do seenEvents[e.id] = true end
   C_Timer.NewTicker(30, remind)
