@@ -278,7 +278,8 @@ function UnitName(unit)
   if unit == nil or unit == "player" then return PLAYER end
   return units[unit] and units[unit].name
 end
-function GetGuildInfo()
+function GetGuildInfo(unit)
+  if unit and unit ~= "player" then return units[unit] and units[unit].guild end
   for _, r in ipairs(guildRoster) do
     if r[1] == PLAYER then return GUILD_NAME or "The Imperium", "Rank", r[2] end
   end

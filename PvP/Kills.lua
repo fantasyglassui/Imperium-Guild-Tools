@@ -93,7 +93,8 @@ local function report(e)
       return
     end
     if ns.db.debug then ns.Say(("Kill check: you killed %s. Sent to the guild."):format(e.name)) end
-    ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", "1")
+    ns.Send("K", kind, e.name, zone, stamp, ("%.1f"):format(gap), e.level or "", "1",
+      ns.EnemyGuild and ns.EnemyGuild(e.name) or "")
   end)
 end
 
@@ -384,6 +385,7 @@ local function combine(into, k)
     if g and (not into.gaps[name] or g < into.gaps[name]) then into.gaps[name] = g end
   end
   if k.level and (not into.level or k.level > into.level) then into.level = k.level end
+  if k.vg and not into.vg then into.vg = k.vg end
   if k.honor == true and into.honor ~= true then into.honor = true; changed = true end
   if into.honor == nil and k.honor == false then into.honor = false end
   return changed
@@ -527,6 +529,8 @@ ns.OnMessage("K", function(parts, sender)
   if parts[8] == "1" then honor = true elseif parts[8] == "0" then honor = false end
   local k = key(victim)
   local who = Ambiguate(sender, "short")
+  local vg = parts[9] ~= "" and parts[9] or nil -- the victim's guild, from 3.7
+  if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(victim, vg, stamp) end
   if ns.IsMe(sender) then ns.lastOwnKillHeard = { victim = victim, at = GetServerTime() } end
   local thisReport = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor }
   local p = pending[k]
@@ -534,7 +538,7 @@ ns.OnMessage("K", function(parts, sender)
     combine(p, thisReport)
     return
   end
-  pending[k] = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor,
+  pending[k] = { killers = { who }, gaps = { [who] = gap }, level = level, honor = honor, vg = vg,
     victim = Ambiguate(victim, "short"), kind = kind, zone = zone or "Unknown", t = stamp or time() }
   C_Timer.After(MERGE_DELAY, function()
     local done = pending[k]
@@ -652,7 +656,7 @@ local function sendDay(target, day)
       end
       local honor = (k.honor == true and "1") or (k.honor == false and "0") or ""
       ns.QueueTo(target, "KX", k.t, k.kind, k.victim, k.zone, table.concat(k.killers, ","),
-        table.concat(gaps, ","), k.level or "", honor)
+        table.concat(gaps, ","), k.level or "", honor, k.vg or (ns.EnemyGuild and ns.EnemyGuild(k.victim)) or "")
     end
   end
 end
@@ -750,6 +754,8 @@ ns.OnMessage("KX", function(p)
   end
   local honor
   if p[9] == "1" then honor = true elseif p[9] == "0" then honor = false end
+  local vg = p[10] ~= "" and p[10] or nil
+  if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(victim, vg, t) end
   mergeSynced({ t = t, kind = kind, victim = victim, zone = p[5] or "Unknown", killers = killers,
-    gaps = gaps, level = tonumber(p[8]), honor = honor })
+    gaps = gaps, level = tonumber(p[8]), honor = honor, vg = vg })
 end)

@@ -154,6 +154,19 @@ function UI.Segmented(parent, options, onChange, height)
       b.text:SetTextColor(c[1], c[2], c[3])
     end
   end
+  -- Show or hide one option (the rest close up).
+  function seg:SetOptionShown(v, shown)
+    local px = 3
+    for _, b in ipairs(self.buttons) do
+      if b.value == v then b:SetShown(shown) end
+      if b:IsShown() then
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", px, -3)
+        px = px + b:GetWidth()
+      end
+    end
+    self:SetWidth(px + 3)
+  end
   seg:SetValue(options[1][1])
   return seg
 end

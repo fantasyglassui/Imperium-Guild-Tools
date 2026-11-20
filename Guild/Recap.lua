@@ -79,6 +79,7 @@ function ns.WeeklyRecap(offset)
     end
   end
 
+  r.wars = ns.WarRecapLines and ns.WarRecapLines(fromT, toT) or {}
   r.empty = r.kills == 0 and r.deaths == 0 and r.raidNights == 0 and r.items == 0
   return r
 end
@@ -92,7 +93,7 @@ function ns.RecapLines(r)
     for i, e in ipairs(r.hunters) do
       if e.count > 0 then places[#places + 1] = ("%d. %s (%d)"):format(i, e.name, e.count) end
     end
-    if #places > 0 then line = line .. "  Top Head Hunters: " .. table.concat(places, "  ") end
+    if #places > 0 then line = line .. "  " .. ns.TF("Top Head Hunters: %s", table.concat(places, "  ")) end
     lines[#lines + 1] = line
   end
   if r.deaths > 0 then
@@ -100,6 +101,7 @@ function ns.RecapLines(r)
     if r.nemesis then line = line .. "  " .. ns.TF("Most kills on us: %s (%d).", r.nemesis.name, r.nemesis.count) end
     lines[#lines + 1] = line
   end
+  for _, w in ipairs(r.wars or {}) do lines[#lines + 1] = w end
   if r.raidNights > 0 then
     local line = ns.TP(r.raidNights, "Raids: %d raid night (%s)", "Raids: %d raid nights (%s)", r.raidNights,
       table.concat(r.raids, ", "))

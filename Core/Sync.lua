@@ -59,12 +59,14 @@ local function collect(since, limit)
   for _, e in ipairs(ns.db.deathLog) do
     if e.t > since then
       out[#out + 1] = { e.t, "HD", e.t, e.who, e.kind, e.sub or "", e.zone, e.killer or "", e.level or 0,
-        e.mapID or "", e.x and ("%.4f"):format(e.x) or "", e.y and ("%.4f"):format(e.y) or "" }
+        e.mapID or "", e.x and ("%.4f"):format(e.x) or "", e.y and ("%.4f"):format(e.y) or "",
+        e.kg or (e.killer and e.killer ~= "" and ns.EnemyGuild and ns.EnemyGuild(e.killer)) or "" }
     end
   end
   for _, k in ipairs(ns.db.killLog) do
     if k.t > since then
-      out[#out + 1] = { k.t, "HK", k.t, k.kind, k.victim, k.zone, table.concat(k.killers, ",") }
+      out[#out + 1] = { k.t, "HK", k.t, k.kind, k.victim, k.zone, table.concat(k.killers, ","),
+        k.vg or (ns.EnemyGuild and ns.EnemyGuild(k.victim)) or "" }
     end
   end
   table.sort(out, function(a, b) return a[1] > b[1] end) -- newest first
@@ -129,8 +131,10 @@ ns.OnMessage("HD", function(p)
   if not t or not DEATH_KINDS[kind] or not p[3] or p[3] == "" then return end
   local mapID, x, y = tonumber(p[10]), tonumber(p[11]), tonumber(p[12])
   local valid = mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1
+  local kg = p[13] ~= "" and p[13] or nil
+  if kg and p[7] and p[7] ~= "" and ns.NoteEnemyGuild then ns.NoteEnemyGuild(p[7], kg, t) end
   if ns.MergeDeath({ t = t, who = p[3], kind = kind, sub = p[5] or "", zone = p[6] or "Unknown",
-      killer = p[7] or "", level = tonumber(p[8]) or 0,
+      killer = p[7] or "", level = tonumber(p[8]) or 0, kg = kg,
       mapID = valid and mapID or nil, x = valid and x or nil, y = valid and y or nil }) then
     received = received + 1
   end
@@ -143,7 +147,9 @@ ns.OnMessage("HK", function(p)
   local killers = {}
   for name in (p[6] or ""):gmatch("[^,]+") do killers[#killers + 1] = name end
   if #killers == 0 then return end
-  if ns.MergeKill({ t = t, kind = kind, victim = p[4], zone = p[5] or "Unknown", killers = killers }) then
+  local vg = p[7] ~= "" and p[7] or nil
+  if vg and ns.NoteEnemyGuild then ns.NoteEnemyGuild(p[4], vg, t) end
+  if ns.MergeKill({ t = t, kind = kind, victim = p[4], zone = p[5] or "Unknown", killers = killers, vg = vg }) then
     received = received + 1
   end
   refreshSoon()

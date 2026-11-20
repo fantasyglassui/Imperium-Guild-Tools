@@ -65,17 +65,19 @@ local function RefreshDetail(w, list)
 end
 
 local function Refresh()
-  -- Bounties: a second view, when the guild has them on.
+  -- Views: Wanted, Guilds (the war board) and, when the guild has them on, Bounties.
   local bounties = ns.BountiesOn()
-  P.view:SetShown(bounties)
-  local view = bounties and P.view.value or "wanted"
-  local showBounties = view == "bounties"
-  for _, w in ipairs({ P.card, P.note, P.side }) do w:SetShown(not showBounties) end
+  P.view:SetOptionShown("bounties", bounties)
+  if P.view.value == "bounties" and not bounties then P.view:SetValue("wanted") end
+  local view = P.view.value
+  local showBounties, showWar = view == "bounties", view == "guilds"
+  for _, w in ipairs({ P.card, P.note, P.side }) do w:SetShown(view == "wanted") end
   UI.BountyView.frame:SetShown(showBounties)
-  P.threshold:SetShown(not showBounties)
-  if showBounties then
+  UI.WarView.frame:SetShown(showWar)
+  P.threshold:SetShown(view == "wanted")
+  if showBounties or showWar then
     P.unhide:Hide()
-    UI.BountyView.Refresh()
+    if showBounties then UI.BountyView.Refresh() else UI.WarView.Refresh() end
     return
   end
   local list = ns.WantedList()
@@ -229,7 +231,7 @@ local function BuildHeader(bar)
   P.unhide:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0)
   P.unhide:SetScript("OnClick", ns.UnhideAllWanted)
 
-  P.view = UI.Segmented(bar, { { "wanted", "Wanted" }, { "bounties", "Bounties" } }, ns.RefreshPanel)
+  P.view = UI.Segmented(bar, { { "wanted", "Wanted" }, { "guilds", "Guilds" }, { "bounties", "Bounties" } }, ns.RefreshPanel)
   P.view:SetPoint("RIGHT", P.threshold, "LEFT", -8, 0)
 end
 
@@ -239,6 +241,13 @@ local function Build(page)
   TAB.view = P.view
   BuildTable(page)
   BuildSide(page)
+  local wv = UI.WarView
+  wv.Build(page)
+  UI.Grow(page, wv.frame, 1, 1)
+  UI.Grow(page, wv.card, 1, 1)
+  UI.Grow(page, wv.list, 1, 1)
+  UI.Follow(page, wv.side, 1, 0)
+  UI.Grow(page, wv.side, 0, 1)
   local bv = UI.BountyView
   bv.Build(page)
   UI.Grow(page, bv.frame, 1, 1)
@@ -255,6 +264,7 @@ end
 
 -- The header's subtitle: how many are on the list.
 local function Subtitle()
+  if P.view and P.view.value == "guilds" then return UI.WarView.Subtitle() end
   if ns.BountiesOn() and P.view and P.view.value == "bounties" then
     local open = 0
     for _, b in ipairs(ns.Bounties()) do if b.state == "open" then open = open + 1 end end

@@ -245,7 +245,8 @@ ns.OnEvent("PLAYER_DEAD", function()
   local mapID, x, y = ns.PlayerPosition()
   C_Timer.After(0.5, function()
     ns.Send("D2", kind, sub or "", zone, killer or "", UnitLevel("player") or 0,
-      mapID or "", x and ("%.4f"):format(x) or "", y and ("%.4f"):format(y) or "", GetServerTime())
+      mapID or "", x and ("%.4f"):format(x) or "", y and ("%.4f"):format(y) or "", GetServerTime(),
+      killer and ns.EnemyGuild and ns.EnemyGuild(killer) or "")
   end)
 end)
 
@@ -309,6 +310,7 @@ function ns.MergeDeath(e)
   for _, old in ipairs(ns.db.deathLog) do
     if ns.Key(old.who) == who and old.kind == e.kind and math.abs(old.t - e.t) <= SAME_EVENT then
       if not old.mapID and e.mapID then old.mapID, old.x, old.y = e.mapID, e.x, e.y end
+      if e.kg and not old.kg then old.kg = e.kg end
       return false
     end
   end
@@ -335,10 +337,13 @@ ns.OnMessage("D2", function(parts, sender)
   if not VALID[kind] then return end
   local mapID, x, y = tonumber(parts[7]), tonumber(parts[8]), tonumber(parts[9])
   local valid = mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1
+  local kg = parts[11] ~= "" and parts[11] or nil -- the killer's guild, from 3.7
+  local t = tonumber(parts[10]) or time()
+  if kg and parts[5] and parts[5] ~= "" and ns.NoteEnemyGuild then ns.NoteEnemyGuild(parts[5], kg, t) end
   record({
-    t = tonumber(parts[10]) or time(), who = Ambiguate(sender, "short"), kind = kind, sub = parts[3] or "",
+    t = t, who = Ambiguate(sender, "short"), kind = kind, sub = parts[3] or "",
     zone = parts[4] or "Unknown", killer = parts[5] or "", level = tonumber(parts[6]) or 0,
-    mapID = valid and mapID or nil, x = valid and x or nil, y = valid and y or nil,
+    mapID = valid and mapID or nil, x = valid and x or nil, y = valid and y or nil, kg = kg,
   })
 end)
 
