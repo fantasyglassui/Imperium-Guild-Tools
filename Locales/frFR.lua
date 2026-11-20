@@ -2046,4 +2046,5 @@ ns.LOCALES.frFR = {
   ["1 raid scheduled"] = "1 raid prévu",
   ["%d raids scheduled"] = "%d raids prévus",
   ["raid night in progress"] = "soirée de raid en cours",
+  ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Les alertes de séries et de vengeance montrent maintenant le titre du joueur, comme les alertes de victoire.",
 }

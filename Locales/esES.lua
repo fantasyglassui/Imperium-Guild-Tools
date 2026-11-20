@@ -2046,4 +2046,5 @@ ns.LOCALES.esES = {
   ["1 raid scheduled"] = "1 banda programada",
   ["%d raids scheduled"] = "%d bandas programadas",
   ["raid night in progress"] = "noche de banda en curso",
+  ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Los avisos de rachas y venganzas muestran ahora el título del jugador, como los avisos de muertes.",
 }

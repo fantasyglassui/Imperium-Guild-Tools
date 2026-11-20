@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.8.1", date = "Nov 20, 2026", items = {
+    "Kill streak and revenge alerts now show the killer's title, like kill alerts do.",
+  } },
   { version = "3.8.0", date = "Nov 20, 2026", items = {
     "Attunements: who's attuned for Molten Core, Onyxia, Blackwing Lair and Naxxramas, and who has the Upper Blackrock Spire and Scholomance keys (/warcrest attune). Sign-ups who aren't attuned are flagged.",
     "Raid assignments: officers write who does what on each boss and can post it to raid chat; you're told your job when the boss is pulled (/warcrest assign).",

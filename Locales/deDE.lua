@@ -2046,4 +2046,5 @@ ns.LOCALES.deDE = {
   ["1 raid scheduled"] = "1 Schlachtzug geplant",
   ["%d raids scheduled"] = "%d Schlachtzüge geplant",
   ["raid night in progress"] = "Raidabend läuft",
+  ["Kill streak and revenge alerts now show the killer's title, like kill alerts do."] = "Meldungen zu Kill-Serien und Rache zeigen jetzt den Titel des Spielers, wie Kill-Meldungen.",
 }

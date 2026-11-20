@@ -144,6 +144,11 @@ local function wanted(kind)
   return c and c.enabled and c.types[kind] and show[kind]
 end
 
+-- A guildmate's name with their title ("Lyra the Avenger"), as kill alerts show it.
+local function titled(name)
+  return ns.TitledName and ns.TitledName(name) or Ambiguate(name, "short")
+end
+
 local function ago(seconds)
   local m = math.floor(seconds / 60 + 0.5)
   if m < 1 then return ns.T("moments ago") end
@@ -169,9 +174,9 @@ function ns.OnLiveKill(k)
     if wanted("kill_revenge") then
       local text
       if ns.Key(avenged.who) == ns.Key(killer) then
-        text = ns.TF("Revenge! %s paid %s back for killing them %s.", killer, k.victim, ago(k.t - avenged.t))
+        text = ns.TF("Revenge! %s paid %s back for killing them %s.", titled(killer), k.victim, ago(k.t - avenged.t))
       else
-        text = ns.TF("Revenge! %s killed %s, who killed %s %s.", killer, k.victim,
+        text = ns.TF("Revenge! %s killed %s, who killed %s %s.", titled(killer), k.victim,
           Ambiguate(avenged.who, "short"), ago(k.t - avenged.t))
       end
       ns.Notify(ns.KILL_ICON .. " " .. REVENGE_COLOR .. text .. "|r", REVENGE_COLOR .. text .. "|r", nil, nil, "revenge")
@@ -181,7 +186,7 @@ function ns.OnLiveKill(k)
   -- Streak milestones.
   local n = ns.CurrentStreak(killer, k.t)
   if MILESTONE[n] and wanted("kill_streak") then
-    local text = ns.TF("%s is on a %d-kill streak!", killer, n)
+    local text = ns.TF("%s is on a %d-kill streak!", titled(killer), n)
     ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r", nil, nil, "streak")
   end
 end
@@ -191,8 +196,8 @@ function ns.OnLiveDeath(d)
   if d.kind ~= "pvp" then return end
   local ended = ns.CurrentStreak(d.who, d.t - 1)
   if ended >= ANNOUNCE_ENDED and wanted("kill_streak") then
-    local text = d.killer and ns.TF("%s's %d-kill streak was ended by %s.", Ambiguate(d.who, "short"), ended,
-      Ambiguate(d.killer, "short")) or ns.TF("%s's %d-kill streak was ended.", Ambiguate(d.who, "short"), ended)
+    local text = d.killer and ns.TF("%s's %d-kill streak was ended by %s.", titled(d.who), ended,
+      Ambiguate(d.killer, "short")) or ns.TF("%s's %d-kill streak was ended.", titled(d.who), ended)
     ns.Notify(ns.KILL_ICON .. " " .. STREAK_COLOR .. text .. "|r", STREAK_COLOR .. text .. "|r", nil, nil, "streak")
   end
 end

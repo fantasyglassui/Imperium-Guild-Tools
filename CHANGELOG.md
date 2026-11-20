@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.8.1
+- Kill streak alerts (and the alert when a streak ends) and revenge alerts now show the guildmate's title, like kill alerts do: "Lyra the Avenger is on a 5-kill streak!"
+
 ## 3.8.0
 ### Raids
 - **Attunements:** a new window (the Attunements button on the Raids tab's Progress view, or `/warcrest attune`) shows who in the guild is attuned for **Molten Core, Onyxia, Blackwing Lair and Naxxramas**, and who has the **Upper Blackrock Spire** and **Scholomance** keys. Warcrest checks the attunement quests you've finished and shares them; search by name, or show level 60s only. Your player card lists your attunements, the guild hears when someone gets a new one, and a raid's sign-up list flags anyone who isn't attuned for it.
