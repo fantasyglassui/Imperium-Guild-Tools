@@ -166,9 +166,48 @@ function ns.SpellName(id)
   return info and info.name
 end
 
+-- Boss fights, keystone runs and PvP matches lock addon chat: the game sends
+-- nothing an addon says (chat lines or addon messages) until they end.
+-- Warcrest holds what it has to say and sends it then.
+local lockedAt -- when the game last refused an addon message as locked
+function ns.ChatLocked()
+  if C_ChatInfo.InChatMessagingLockdown() == true then return true end
+  return lockedAt ~= nil and GetTime() - lockedAt < 5
+end
+
+-- A countdown (an auction, a roll, a vote) can't end while nobody can answer:
+-- while addon chat is locked, keep at least a few seconds on it. True while locked.
+function ns.HoldCountdown(t, secs)
+  if not (t and t.ends and ns.ChatLocked()) then return false end
+  t.ends = math.max(t.ends, GetTime() + (secs or 5))
+  return true
+end
+
+local heldChat = {} -- chat lines waiting for the lockdown to end
+local MAX_HELD_CHAT = 20
+local toldLocked -- told the player we're holding messages, this lockdown
+local function noteHeld()
+  if toldLocked then return end
+  toldLocked = true
+  ns.Say("The game blocks addon messages during boss fights and PvP matches. Warcrest will send its messages when this one ends.")
+end
+
 -- Say something in chat.
 function ns.SendChat(text, chatType, language, target)
+  if ns.ChatLocked() then
+    if #heldChat < MAX_HELD_CHAT then heldChat[#heldChat + 1] = { text, chatType, language, target } end
+    noteHeld()
+    return true, "held"
+  end
   return pcall(C_ChatInfo.SendChatMessage, text, chatType, language, target)
+end
+
+local function sendHeldChat()
+  local lines = heldChat
+  heldChat = {}
+  for i, l in ipairs(lines) do
+    C_Timer.After((i - 1) * 0.4, function() ns.SendChat(l[1], l[2], l[3], l[4]) end)
+  end
 end
 
 -- Open the chat box with this text in it.
@@ -230,13 +269,14 @@ local function enqueue(level, prefix, channel, target, text)
   table.insert(queues[level], { prefix = prefix, channel = channel, target = target, text = text, tries = 0 })
 end
 
-local THROTTLED = {}
+local THROTTLED, LOCKDOWN = {}, 11
 local function throttleResults()
   local r = Enum and Enum.SendAddonMessageResult
   if r then
     for _, name in ipairs({ "AddonMessageThrottle", "ChannelThrottle", "GeneralError" }) do
       if r[name] then THROTTLED[r[name]] = true end
     end
+    LOCKDOWN = r.AddOnMessageLockdown or LOCKDOWN
   end
 end
 
@@ -279,8 +319,10 @@ local function deliver(m)
     m.target = ns.WhisperName(m.target)
     if not m.target then return true end -- offline: drop it
   end
+  if ns.ChatLocked() then return "held" end
   local ok, result = pcall(C_ChatInfo.SendAddonMessage, m.prefix, m.text, m.channel, m.target)
   if not ok then return true end           -- a bad message: drop it
+  if result == LOCKDOWN then lockedAt = GetTime() return "held" end
   if result == false or THROTTLED[result] then return false end
   -- Everyone in the guild (or raid) gets it, you included: handle your own
   -- copy here rather than waiting for the game to send it back, which not
@@ -292,7 +334,26 @@ local function deliver(m)
   return true
 end
 
+local locked    -- addon chat was locked last tick
+local unlocking -- it just ended: once a message goes out, send the rest
+local function unlocked()
+  unlocking, toldLocked = nil, nil
+  sendHeldChat()
+  if ns.OnChatUnlocked then ns.OnChatUnlocked() end
+end
+
 local function pump()
+  if ns.ChatLocked() then
+    if not locked then
+      locked = true
+      if ns.QueueSize() > 0 or #heldChat > 0 then noteHeld() end
+    end
+    return
+  end
+  if locked then
+    locked, unlocking = nil, true
+    if ns.QueueSize() == 0 then unlocked() end
+  end
   local now = GetTime()
   local elapsed = lastRefill and (now - lastRefill) or 0
   lastRefill = now
@@ -311,8 +372,16 @@ local function pump()
       local need = (level == 3 and m.prefix == ns.PREFIX) and 4 or 1
       if tokens[m.prefix] >= need then
         tokens[m.prefix] = tokens[m.prefix] - 1
-        if deliver(m) then
+        local sent = deliver(m)
+        if sent == "held" then
+          -- Addon chat is locked (a boss fight, say): keep it all for later.
+          tokens[m.prefix] = tokens[m.prefix] + 1
+          locked = true
+          noteHeld()
+          return
+        elseif sent then
           table.remove(q, i)
+          if unlocking then unlocked() end
         else
           -- The game held it back: wait a moment, then try again (a few times).
           tokens[m.prefix] = 0
@@ -474,6 +543,8 @@ frame:SetScript("OnEvent", function(_, event, ...)
 
   if event == "CHAT_MSG_ADDON" then
     local prefix, text, channel, sender = ...
+    -- During a lockdown the game can hand these over as secret values: skip them.
+    if not (ns.Usable(prefix) and ns.Usable(text) and ns.Usable(channel) and ns.Usable(sender)) then return end
     -- Your own guild and raid messages are handled as they're sent (see deliver),
     -- since some game clients send them back to you and some don't.
     if (channel == "GUILD" or channel == "RAID") and sender and ns.IsMe(sender) then return end
@@ -709,8 +780,8 @@ SlashCmdList.WARCREST = function(input)
     if ns.ShowHelp then ns.ShowHelp(nil, "discord") end
   elseif msg == "report" or msg == "bugreport" or msg == "bug" or msg == "bug report" then
     if ns.ShowBugReport then ns.ShowBugReport() end
-  elseif msg == "welcome" then
-    if ns.ShowWelcome then ns.ShowWelcome() end
+  elseif msg == "start" or msg == "welcome" or msg == "started" then
+    if ns.ShowGettingStarted then ns.ShowGettingStarted() end
   elseif msg == "setup" then
     if ns.ShowWelcome then ns.ShowWelcome(2) end
   elseif msg == "updates" or msg == "news" or msg == "changes" then

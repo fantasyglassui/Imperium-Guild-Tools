@@ -1,14 +1,15 @@
 --[[
   Warcrest
-  The welcome window: shown once, the first time Warcrest loads for a
-  character in a guild. The steps:
+  The welcome and guild setup window. New players get Getting started
+  (UI/GettingStarted.lua) the first time Warcrest loads for a character in a
+  guild; officers open this from there, or with /warcrest setup. The steps:
     1. What Warcrest does.
     2. Guild setup: officers choose who manages Warcrest and whether the
        guild uses DKP. Members are told their officers handle this.
     3. (Officers) What the guild hears: which alerts, and whether
        achievements are posted in guild chat. Then save it for everyone.
     4. Where to start: the tabs worth a look first.
-  /warcrest welcome shows it again; /warcrest setup opens the guild setup.
+  /warcrest setup opens the guild setup.
   Officers in a guild nobody has set up yet are reminded once a session.
 ]]
 
@@ -291,6 +292,6 @@ table.insert(ns.OnGuildReady, function()
   if not isNew and not needsSetup then ns.db.welcomed = true return end
   C_Timer.After(4, function()
     if ns.db.welcomed or InCombatLockdown() or not ns.GuildName() then return end
-    ns.ShowWelcome()
+    if ns.ShowGettingStarted then ns.ShowGettingStarted() else ns.ShowWelcome() end
   end)
 end)

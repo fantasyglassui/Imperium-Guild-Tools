@@ -15,12 +15,56 @@ def shown(client, frame):
     return f is not None and f.IsShown(f)
 
 
-def test_welcome_shows_once_for_a_new_install():
+def test_getting_started_shows_once_for_a_new_install():
     guild = Guild(MEMBERS)
     ready(guild)
-    assert shown(guild["Bob"], "WarcrestWelcome")
+    assert shown(guild["Bob"], "WarcrestGettingStarted")
+    assert not shown(guild["Bob"], "WarcrestWelcome")
     assert guild["Bob"].ns.db.welcomed
     assert not guild["Bob"].errors()
+
+
+def test_getting_started_ticks_itself_off():
+    guild = Guild(MEMBERS)
+    ready(guild)
+    bob = guild["Bob"]
+    done, n, total = bob.ns.StartedSteps()
+    assert (n, total) == (0, 5)
+    bob.ns.OpenPanel("roster")
+    ev = guild["Alice"].ns.CreateRaid("Molten Core", bob.lua.eval("time()") + 86400, "")
+    guild.run(3)
+    bob.ns.SignUp(ev.id, "accept", "tank")
+    bob.ns.SaveMyProfile(bob.lua.table_from({"spec": "Protection", "role": "tank"}))
+    bob.ns.NoteMyRecipes("Mining", 1, 75, bob.lua.table_from({"i2770": "Copper Ore"}))
+    guild.run(3)
+    done, n, _ = bob.ns.StartedSteps()
+    assert n == 4 and not done.title
+    assert bob.ns.db.started.signup        # stays done, even if the raid goes
+    w = bob.lua.eval("WarcrestGettingStarted")
+    bob.ns.RefreshGettingStarted()
+    assert w.rows[5].primary.IsShown(w.rows[5].primary)     # the one left is highlighted
+    assert not w.rows[1].button.IsShown(w.rows[1].button)
+    assert not w.setup.IsShown(w.setup)                      # members: no guild setup
+    assert not bob.errors()
+
+
+def test_getting_started_from_the_slash_command_and_help():
+    guild = Guild(MEMBERS)
+    for c in guild.clients.values():
+        c.ns.db.welcomed = True
+    ready(guild)
+    alice = guild["Alice"]
+    assert not shown(alice, "WarcrestGettingStarted")
+    alice.run('SlashCmdList.WARCREST("start")')
+    w = alice.lua.eval("WarcrestGettingStarted")
+    assert shown(alice, "WarcrestGettingStarted") and w.setup.IsShown(w.setup)   # officers get the guild setup
+    w.setup.GetScript(w.setup, "OnClick")(w.setup)
+    assert shown(alice, "WarcrestWelcome")
+    alice.ns.ShowHelp(1)
+    h = alice.lua.eval("WarcrestHelp")
+    h.checklist.GetScript(h.checklist, "OnClick")(h.checklist)
+    assert shown(alice, "WarcrestGettingStarted")
+    assert not alice.errors()
 
 
 def test_no_welcome_for_players_who_already_had_it():

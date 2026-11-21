@@ -65,3 +65,22 @@ for _, name in ipairs({ "GetItemInfo", "GetSpellInfo", "SendChatMessage", "ChatF
     "GetCraftInfo", "GetCraftItemLink" }) do
   _G[name] = nil
 end
+
+-- Chat lockdown (a boss fight, a keystone run, a PvP match): set chatLockdown = true
+-- (or "result", when only SendAddonMessage says so). Addon messages come back
+-- AddOnMessageLockdown and nothing goes out; chat lines are blocked.
+chatLockdown = false
+Enum.SendAddonMessageResult.AddOnMessageLockdown = 11
+Enum.SendAddonMessageResult.TargetOffline = 12
+C_ChatInfo.InChatMessagingLockdown = function() return chatLockdown == true end
+do
+  local sendAddon, sendChat = C_ChatInfo.SendAddonMessage, C_ChatInfo.SendChatMessage
+  C_ChatInfo.SendAddonMessage = function(...)
+    if chatLockdown then return 11 end
+    return sendAddon(...)
+  end
+  C_ChatInfo.SendChatMessage = function(...)
+    if chatLockdown then error("Interface action blocked") end
+    return sendChat(...)
+  end
+end

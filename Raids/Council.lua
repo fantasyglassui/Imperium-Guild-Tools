@@ -47,6 +47,7 @@ function ns.StartCouncil(link, seconds)
   if ns.council and not ns.council.done then ns.Say("A loot council vote is already open.") return end
   link = strtrim(link or "")
   if link == "" then ns.Say("Put an item in first: Shift-click it into the item box.") return end
+  if ns.ChatLocked() then ns.Say("Wait for the fight to end: the game blocks addon messages until then, so nobody could answer.") return end
   seconds = math.max(15, math.min(300, math.floor(tonumber(seconds) or ANSWER_TIME)))
   local id = tostring(GetServerTime())
   ns.SendRaid("L1", id, link, seconds)
@@ -156,5 +157,14 @@ ns.OnMessage("L4", function(p, sender)
   refresh()
   C_Timer.After(8, function()
     if ns.council == c and ns.HideCouncilWindow then ns.HideCouncilWindow() end
+  end)
+end)
+
+-- Answers can't arrive during a boss fight (the game holds addon messages):
+-- keep the vote open until it's over.
+ns.OnLoad(function()
+  C_Timer.NewTicker(1, function()
+    local c = ns.council
+    if c and not c.done then ns.HoldCountdown(c, 10) end
   end)
 end)

@@ -679,12 +679,24 @@ end)
 
 ns.OnLoad(function()
   C_Timer.NewTicker(0.5, function()
-    if roll and GetTime() >= roll.ends then finishRoll() end
+    -- Rolls can't be seen during a boss fight: wait for it to end.
+    if roll and not ns.HoldCountdown(roll, ROLL_TIME) and GetTime() >= roll.ends then finishRoll() end
   end)
 end)
 
 local function tick()
-  if auction and GetTime() >= auction.ends then finish() end
+  local a = auction
+  if not a then return end
+  -- Nobody can bid while addon chat is locked (a boss fight): the clock waits.
+  if ns.HoldCountdown(a, SNIPE_GUARD * 2) then a.held = true return end
+  if a.held then
+    -- Everyone's clock waited too; put the leader's time right.
+    a.held = nil
+    if not a.hidden and a.bidder then
+      ns.SendRaid("B3", a.id, a.high, Ambiguate(a.bidder, "short"), math.ceil(a.ends - GetTime()))
+    end
+  end
+  if GetTime() >= a.ends then finish() end
 end
 
 function ns.StartAuction(link, minBid, duration)
@@ -692,6 +704,7 @@ function ns.StartAuction(link, minBid, duration)
   if not ns.IsAddonOfficer() then ns.Say("Only officers can run loot auctions.") return end
   if not IsInRaid() then ns.Say("You need to be in a raid group to run an auction.") return end
   if auction then ns.Say("An auction is already running.") return end
+  if ns.ChatLocked() then ns.Say("Wait for the fight to end: the game blocks addon messages until then, so nobody could bid.") return end
   link = strtrim(link or "")
   if link == "" then ns.Say("Put an item in first: Shift-click it into the item box.") return end
   minBid = math.max(1, math.floor(tonumber(minBid) or 1))
@@ -759,7 +772,7 @@ end)
 ns.OnMessage("B3", function(p)
   local a = ns.auction
   if not a or a.id ~= p[2] then return end
-  a.high, a.leader = tonumber(p[3]) or a.high, p[4]
+  a.high, a.leader = tonumber(p[3]) or a.high, (p[4] ~= "" and p[4]) or a.leader
   a.ends = GetTime() + (tonumber(p[5]) or 0)
   if ns.RefreshAuctionWindow then ns.RefreshAuctionWindow() end
 end)

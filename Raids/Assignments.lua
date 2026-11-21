@@ -154,7 +154,8 @@ end
 ------------------------------------------------------------------------
 local reminded = {} -- boss -> GetTime()
 local function remind(boss)
-  local plan = boss and planForBoss(boss)
+  boss = ns.Usable(boss) -- creature names can be secret inside instances
+  local plan = type(boss) == "string" and planForBoss(boss)
   if not plan then return end
   if reminded[boss] and GetTime() - reminded[boss] < REMIND_QUIET then return end
   local jobs = ns.JobsIn(plan.text, UnitName("player"))

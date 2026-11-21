@@ -176,8 +176,8 @@ local function asksToJoin(text)
 end
 
 ns.OnEvent("CHAT_MSG_WHISPER", function(text, sender)
-  if not ns.IsAddonOfficer() or not sender or ns.RankOf(sender) ~= nil then return end
-  if issecretvalue and (issecretvalue(text) or issecretvalue(sender)) then return end
+  if not (ns.Usable(text) and ns.Usable(sender)) then return end
+  if not ns.IsAddonOfficer() or ns.RankOf(sender) ~= nil then return end
   if not asksToJoin(text) then return end
   local name = Ambiguate(sender, "none")
   for i = #ns.recruitWhispers, 1, -1 do

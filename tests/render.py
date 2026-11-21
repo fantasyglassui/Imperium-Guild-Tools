@@ -539,6 +539,8 @@ if __name__ == "__main__":
     print(rd.render(guild["Lyra"].lua.eval("WarcrestAssignments"), os.path.join(out, "window-assignments-member.png")))
     me.ns.ShowCrafters(None, "orders")
     print(rd.render(me.lua.eval("WarcrestCrafters"), os.path.join(out, "window-crafters-orders.png")))
+    me.ns.ShowGettingStarted()
+    print(rd.render(me.lua.eval("WarcrestGettingStarted"), os.path.join(out, "window-getting-started.png")))
     for step in (2, 3):
         me.ns.ShowWelcome(step)
         print(rd.render(me.lua.eval("WarcrestWelcome"), os.path.join(out, "window-welcome-%d.png" % step)))

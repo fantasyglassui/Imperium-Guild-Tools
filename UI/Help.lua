@@ -27,7 +27,8 @@ local TOPICS = {
     TF("Open it with %s (or %s), the crest by your minimap, or Options > AddOns > Warcrest.", B("/warcrest"), B("/wc")),
     T("The more guildmates who have it, the better it works: only players with Warcrest share what they see. The Addon tab shows who has it."),
     T("Click any guild member's name, almost anywhere, to open their player card."),
-    TF("Officers: the welcome window (%s) sets who manages Warcrest and whether the guild uses DKP.", B("/warcrest welcome")),
+    TF("New here? %s opens a short checklist that ticks itself off as you go: sign up for a raid, fill in your profile, share your recipes and pick a title.", B("/warcrest start")),
+    TF("Officers: the guild setup (%s) sets who manages Warcrest, whether the guild uses DKP, and the guild's alerts.", B("/warcrest setup")),
   }) end },
   { "Raids and sign-ups", function() return join({
     P("Signing up:", "pick a raid on the Raids tab, choose Tank, Healer or DPS, then Accept, Tentative or Decline. You can change your answer any time."),
@@ -117,7 +118,7 @@ local TOPICS = {
     CMD("/warcrest test", "show a test alert"),
     CMD("/warcrest sync", "fetch recent history from guildmates"),
     CMD("/warcrest minimap", "show or hide the minimap button"),
-    CMD("/warcrest welcome", "the welcome and guild setup again"),
+    CMD("/warcrest start", "the Getting started checklist"),
     CMD("/warcrest updates", "what's new"),
     CMD("/warcrest bosses", "the last raid bosses that died, and whether each counted"),
     CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),
@@ -133,6 +134,7 @@ local function show(i)
   current = i
   for n, b in ipairs(win.topics) do UI.SetRowSelected(b, n == i) end
   win.heading:SetText(TOPICS[i][1])
+  if win.checklist then win.checklist:SetShown(i == 1) end
   win.text:SetText(TOPICS[i][2]())
   win.scroll:SetVerticalScroll(0)
   win.content:SetHeight(math.max(1, win.text:GetStringHeight() + 20))
@@ -191,6 +193,11 @@ local function Build()
 
   win.heading = UI.Label(win, "", "Title")
   win.heading:SetPoint("TOPLEFT", LIST_W + 24, -44)
+  -- On Getting started: the checklist.
+  win.checklist = UI.Button(win, "Open the checklist", 150, "primary")
+  win.checklist:SetHeight(26)
+  win.checklist:SetPoint("TOPRIGHT", -24, -42)
+  win.checklist:SetScript("OnClick", function() win:Hide(); ns.ShowGettingStarted() end)
   local sf = CreateFrame("ScrollFrame", nil, win, "UIPanelScrollFrameTemplate")
   sf:SetPoint("TOPLEFT", LIST_W + 24, -80)
   sf:SetSize(WIDTH - LIST_W - 24 - 30, HEIGHT - 80 - 20)

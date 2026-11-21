@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.11.0
+- **Getting started.** New members get a short checklist instead of the old welcome window: open Warcrest, sign up for a raid, fill in your profile, share your recipes and pick a title. Each step ticks itself off when you've done it. Officers set the guild up from the same window (**Guild setup**). Open it any time with `/warcrest start` or from Help > Getting started.
+- **Boss fights and PvP matches no longer lose messages.** WoW: Forever, like the current retail game, blocks addon messages during boss encounters, keystone runs and PvP matches. Warcrest used to treat a blocked message as sent, so DKP awards, recorded pulls, battleground kills and bids made mid-fight could be lost. It now holds them (and any chat posts, like achievements or raid assignments) and sends everything as soon as the fight ends. It tells you once per fight when it's holding messages.
+- **Loot auctions and loot council votes wait out a fight.** They can't be started while messages are blocked, and one that's running pauses (the bid window says so) and carries on when the fight ends.
+- Messages the game hands over as hidden ("secret") values during a fight are skipped safely, including boss names for the "your job" reminders.
+
 ## 3.10.0
 A clean-up release.
 - **The Imperium and Bannerhold folders are gone.** They only handed saved data over from the addon's old names, and that was done long ago. Warcrest no longer comes with them; if they're still in your `Interface/AddOns` folder you can delete them.

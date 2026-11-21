@@ -287,6 +287,7 @@ function ns.TogglePanel()
   if blockedByCombat() then return end
   if not panel then CreatePanel() end
   panel:SetShown(not panel:IsShown())
+  if panel:IsShown() and ns.NoteStarted then ns.NoteStarted("open") end
 end
 
 -- tab: a tab's position, or its id ("kills", "settings", ...).
@@ -302,6 +303,7 @@ function ns.OpenPanel(tab, view)
     end
   end
   panel:Show()
+  if ns.NoteStarted then ns.NoteStarted("open") end
   ShowTab(index)
   local t = UI.tabs[index]
   if view and t and t.view then

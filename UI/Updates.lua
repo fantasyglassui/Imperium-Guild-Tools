@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.11.0", date = "Nov 20, 2026", items = {
+    "Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. /warcrest start, or Help.",
+    "Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.",
+    "Loot auctions and loot council votes pause while a boss fight blocks messages, and can't be started during one, so nobody misses the chance to bid.",
+  } },
   { version = "3.10.0", date = "Nov 20, 2026", items = {
     "Settings moved to the bottom of the side menu, next to Help.",
     "The small The Imperium and Bannerhold folders aren't needed any more: you can delete them from your AddOns folder.",

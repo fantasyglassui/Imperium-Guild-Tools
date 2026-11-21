@@ -118,7 +118,11 @@ local function create()
     self.acc = 0
     local a = ns.auction
     if a and not a.done then
-      self.time:SetText(ns.TF("Time left: %ds", math.max(0, math.ceil(a.ends - GetTime()))))
+      if ns.HoldCountdown(a, 10) then
+        self.time:SetText(ns.T("Paused until the fight ends"))
+      else
+        self.time:SetText(ns.TF("Time left: %ds", math.max(0, math.ceil(a.ends - GetTime()))))
+      end
     end
   end)
   tinsert(UISpecialFrames, "WarcrestAuction")
