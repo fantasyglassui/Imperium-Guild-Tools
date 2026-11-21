@@ -3,6 +3,7 @@
 Builds the website's language pages and its "What's new" section.
 
   python3 tools/site/build.py            fill docs/index.html's What's new, write docs/de, docs/fr, docs/es
+                                         and the changelog pages (docs/changelog, docs/<lang>/changelog)
   python3 tools/site/build.py --missing  list the English text that has no translation yet
 
 docs/index.html is the English page and the one to edit. The other pages are
@@ -17,6 +18,9 @@ import os
 import re
 import sys
 from html.parser import HTMLParser
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import changelog  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DOCS = os.path.join(ROOT, "docs")
@@ -70,7 +74,7 @@ def addon_locale(code):
     return out
 
 
-def releases():
+def releases(limit=NEWS_SHOWN):
     """The newest entries of UI/Updates.lua's CHANGES: (version, date, [items])."""
     src = read(os.path.join(ROOT, "UI", "Updates.lua"))
     src = src[src.index("local CHANGES = {"):]
@@ -78,7 +82,7 @@ def releases():
     for m in re.finditer(r'\{ version = "([^"]+)", date = "([^"]+)", items = \{(.*?)\n  \} \}', src, re.S):
         items = [lua_unescape(x) for x in re.findall(r'^\s*"((?:[^"\\]|\\.)*)",\s*$', m.group(3), re.M)]
         out.append((m.group(1), m.group(2), items))
-        if len(out) >= NEWS_SHOWN:
+        if limit and len(out) >= limit:
             break
     return out
 
@@ -99,10 +103,13 @@ def iso_date(text):
     return "%s-%02d-%02d" % (m.group(3), EN_MONTHS.index(m.group(1)[:3]) + 1, int(m.group(2))) if m else ""
 
 
+def news_item(t, tr):
+    t = html.escape(tr.get(t, t), quote=False)
+    return re.sub(r"(/warcrest(?: [a-z]+)?)", r"<code>\1</code>", t)
+
+
 def news_html(lang, tr):
-    def item(t):
-        t = html.escape(tr.get(t, t), quote=False)
-        return re.sub(r"(/warcrest(?: [a-z]+)?)", r"<code>\1</code>", t)
+    item = lambda t: news_item(t, tr)
     parts = []
     for version, date, items in releases():
         lis = "".join("<li>%s</li>" % item(t) for t in items)
@@ -272,11 +279,33 @@ def fill_news(src, lang, tr):
     return re.sub(r"<!--news-->.*?<!--/news-->", lambda m: "<!--news-->" + news_html(lang, tr) + "<!--/news-->", src, count=1, flags=re.S)
 
 
+def changelog_pages(pages):
+    """docs/changelog/ and docs/<lang>/changelog/. pages: lang -> its built main page."""
+    all_releases = releases(limit=None)
+    dates = {v: d for v, d, _ in all_releases}
+    notes = {v: items for v, _, items in all_releases}
+    detail = changelog.markdown_releases(read(os.path.join(ROOT, "CHANGELOG.md")))
+    version = re.search(r"## Version: (\S+)", read(os.path.join(ROOT, "Warcrest.toc"))).group(1)
+    for code, loc, *_ in LANGS:
+        if code == "en":
+            entries = [(v, body, False) for v, body in detail]
+        else:
+            addon = addon_locale(loc)
+            entries = []
+            for v, _ in detail:
+                items = notes.get(v)
+                body = "<ul>%s</ul>" % "".join("<li>%s</li>" % news_item(t, addon) for t in items) if items else ""
+                entries.append((v, body, not items))
+        out = changelog.page(code, pages[code], entries, dates, version, local_date, iso_date)
+        write(os.path.join(DOCS, *([] if code == "en" else [code]), "changelog", "index.html"), out)
+
+
 def main():
     show_missing = "--missing" in sys.argv
     index = os.path.join(DOCS, "index.html")
     src = links(fill_news(read(index), "en", {}), "en")
     write(index, src)
+    pages = {"en": src}
     for code, loc, hl, ogl, name, short in LANGS[1:]:
         tr = json.load(open(os.path.join(os.path.dirname(__file__), "i18n", code + ".json"), encoding="utf-8"))
         tr = {norm(k): v for k, v in tr.items()}
@@ -292,15 +321,19 @@ def main():
         page = page.replace('<meta property="og:url" content="%s">' % SITE, '<meta property="og:url" content="%s%s/">' % (SITE, code), 1)
         page = page.replace('<meta property="og:locale" content="en_US">', '<meta property="og:locale" content="%s">' % ogl, 1)
         page = page.replace('value="%s#thanks"' % SITE, 'value="%s%s/#thanks"' % (SITE, code), 1)
+        page = page.replace('href="/changelog/"', 'href="/%s/changelog/"' % code)
         page = re.sub(r'(src|href)="img/', r'\1="../img/', page)
         page = page.replace('"img/"', '"../img/"')
         write(os.path.join(DOCS, code, "index.html"), page)
+        pages[code] = page
         if show_missing or missing:
             print("%s: %d missing" % (code, len(missing)))
             if show_missing:
                 for m in sorted(missing):
                     print("   ", json.dumps(m, ensure_ascii=False))
+    changelog_pages(pages)
     urls = [SITE] + [SITE + c + "/" for c, *_ in LANGS[1:]]
+    urls += [SITE + "changelog/"] + [SITE + c + "/changelog/" for c, *_ in LANGS[1:]]
     write(os.path.join(DOCS, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
           + "".join("  <url><loc>%s</loc></url>\n" % u for u in urls) + "</urlset>\n")
     write(os.path.join(DOCS, "robots.txt"), "User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % SITE)

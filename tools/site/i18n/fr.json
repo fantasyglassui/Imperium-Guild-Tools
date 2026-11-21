@@ -59,7 +59,6 @@
  "Events": "Événements",
  "Events, polls and crafters": "Événements, sondages et artisans",
  "Every achievement and title.": "Tous les hauts faits et titres.",
- "Every change since the first version: <a href=\"https://github.com/fantasyglassui/Warcrest/blob/main/CHANGELOG.md\" target=\"_blank\" rel=\"noopener\">the full changelog</a>.": "Tous les changements depuis la première version : <a href=\"https://github.com/fantasyglassui/Warcrest/blob/main/CHANGELOG.md\" target=\"_blank\" rel=\"noopener\">le journal complet</a> (en anglais).",
  "Every command, in chat": "Toutes les commandes, dans le chat",
  "Everything is kept in the guild's shared record and passed between guildmates' addons, so a member who was offline catches up when they log in, and nothing lives on one officer's computer.": "Tout est gardé dans l'historique partagé de la guilde et passe d'un addon à l'autre : un membre qui était hors ligne rattrape tout à sa connexion, et rien ne dépend de l'ordinateur d'un seul officier.",
  "Example alerts": "Exemples d'alertes",
@@ -191,5 +190,7 @@
  "Your achievements as tiles, with progress on the ones you're still working on.": "Tes hauts faits en tuiles, avec la progression de ceux que tu vises encore.",
  "Your crafting orders": "Tes commandes d'artisanat",
  "Your email": "Ton e-mail",
- "Your name or character": "Ton nom ou personnage"
+ "Your name or character": "Ton nom ou personnage",
+ "Every change since the first version, with a search: <a href=\"/changelog/\">the full changelog</a>.": "Tous les changements depuis la première version, avec une recherche : <a href=\"/changelog/\">le journal complet</a>.",
+ "Changelog": "Journal"
 }

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Journal des modifications : chaque version de Warcrest</title>
+<meta name="description" content="Chaque version de Warcrest, l&#x27;addon de guilde pour World of Warcraft: Forever, et ce qui a changé, de la plus récente à la plus ancienne.">
+<link rel="alternate" hreflang="en" href="https://warcrest-addon.com/changelog/">
+<link rel="alternate" hreflang="de" href="https://warcrest-addon.com/de/changelog/">
+<link rel="alternate" hreflang="fr" href="https://warcrest-addon.com/fr/changelog/">
+<link rel="alternate" hreflang="es" href="https://warcrest-addon.com/es/changelog/">
+<link rel="alternate" hreflang="x-default" href="https://warcrest-addon.com/changelog/">
+<link rel="canonical" href="https://warcrest-addon.com/fr/changelog/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Warcrest">
+<meta property="og:title" content="Journal des modifications : chaque version de Warcrest">
+<meta property="og:description" content="Chaque version de Warcrest, l&#x27;addon de guilde pour World of Warcraft: Forever, et ce qui a changé, de la plus récente à la plus ancienne.">
+<meta property="og:url" content="https://warcrest-addon.com/fr/changelog/">
+<meta property="og:image" content="https://warcrest-addon.com/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#e0b94c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: the addon's own window, in the open. A wide centred column; screenshots set in the
+   same slate-and-gold frame the game shows; one gold accent, kind colours only on alerts. */
+:root {
+  --ground: #080b10;      /* page, the sidebar's near-black */
+  --panel: #0d1118;       /* the addon window */
+  --card: #11161e;
+  --edge: #232a36;
+  --line: #1c222c;
+  --text: #f2f4f8;
+  --soft: #c9cfda;
+  --muted: #8b95a7;
+  --faint: #6b7587;
+  --gold: #e0b94c;        /* Warcrest gold */
+  --gold-dim: rgba(224, 185, 76, .14);
+  --on-gold: #14110a;
+  --good: #6fd08c;
+  --f-display: "Marcellus", "Trajan Pro", Georgia, serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wrap: 1160px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--ground); color: var(--soft);
+  font: 16px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+img { max-width: 100%; display: block; }
+h1, h2, h3 { color: var(--text); text-wrap: balance; margin: 0; }
+h1, h2 { font-family: var(--f-display); font-weight: 400; letter-spacing: .01em; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+
+/* Header */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(8, 11, 16, .92); }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: rgba(8, 11, 16, .86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 24px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--f-display); font-size: 1.35rem; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.top nav { display: flex; gap: 22px; margin-left: auto; font-size: .92rem; }
+.top nav a { color: var(--muted); }
+.top nav a:hover { color: var(--text); text-decoration: none; }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 2px; font-weight: 600; font-size: .95rem; border: 1px solid var(--edge); color: var(--text); background: #151a23; white-space: nowrap; }
+.btn:hover { text-decoration: none; background: #1c2230; }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.btn.gold:hover { background: #ebc75f; }
+.top .btn { height: 36px; padding: 0 14px; font-size: .88rem; }
+@media (max-width: 760px) { .top nav { display: none; } .top .btn { margin-left: auto; } }
+
+/* Hero */
+.hero { padding-block: 72px 40px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: center; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 22px; }
+.ver { font: 500 .78rem var(--f-mono); color: var(--gold); border: 1px solid rgba(224, 185, 76, .35); padding: 3px 8px; border-radius: 2px; }
+.hero h1 { font-size: clamp(2.5rem, 5vw, 3.9rem); line-height: 1.04; margin-bottom: 22px; }
+.hero h1 em { font-style: normal; color: var(--gold); }
+.lede { font-size: 1.12rem; color: var(--soft); max-width: 34em; margin-bottom: 30px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: .9rem; color: var(--muted); }
+.facts b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* The window tour */
+.tour { min-width: 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+.tabs button { font: 500 .84rem var(--f-body); color: var(--muted); background: none; border: 1px solid transparent; border-radius: 2px; padding: 6px 10px; cursor: pointer; }
+.tabs button:hover { color: var(--text); }
+.tabs button[aria-selected="true"] { color: var(--gold); background: var(--gold-dim); border-color: rgba(224, 185, 76, .3); }
+.shot { background: var(--panel); border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02); }
+.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 830; object-fit: cover; }
+.tour figcaption { margin-top: 12px; font-size: .9rem; color: var(--muted); min-height: 3em; }
+@media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .hero { padding-block: 44px 24px; } }
+
+/* Alerts */
+section { padding-block: 64px; }
+.sec-head { display: grid; gap: 12px; margin-bottom: 36px; max-width: 46em; }
+.sec-head h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.1; }
+.sec-head p { color: var(--muted); }
+.alerts { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0a0e14, var(--ground)); }
+.alert-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.stack { display: grid; gap: 10px; }
+.banner { --k: var(--gold); display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; align-items: center; padding: 11px 16px; background: linear-gradient(90deg, color-mix(in srgb, var(--k) 14%, var(--panel)), var(--panel) 70%); border: 1px solid color-mix(in srgb, var(--k) 40%, var(--edge)); border-left: 3px solid var(--k); border-radius: 2px; }
+.banner .ico { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--k) 22%, transparent); color: var(--k); }
+.banner .ico svg { width: 16px; height: 16px; }
+.banner .t { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--k); }
+.banner .m { color: var(--text); font-size: .95rem; line-height: 1.4; }
+.banner .m b { color: var(--k); font-weight: 600; }
+.points { display: grid; gap: 22px; }
+.points h3 { margin-bottom: 4px; }
+.points p { color: var(--muted); font-size: .95rem; }
+
+/* Feature rows */
+.feature { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding-block: 36px; }
+.feature.flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.feature.flip .shot { order: 2; }
+.feature h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.7rem; line-height: 1.15; margin-bottom: 14px; }
+.feature .copy { display: grid; gap: 14px; min-width: 0; }
+.feature ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.feature li { padding-left: 20px; position: relative; color: var(--soft); font-size: .96rem; }
+.feature li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); }
+.feature li b { color: var(--text); font-weight: 600; }
+.shot.tall img { aspect-ratio: auto; }
+@media (max-width: 860px) { .feature, .feature.flip { grid-template-columns: minmax(0, 1fr); gap: 24px; } .feature.flip .shot { order: 0; } .alert-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Achievements explorer */
+.ach { border-top: 1px solid var(--line); }
+.ach-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.seg { display: inline-flex; flex-wrap: wrap; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; padding: 3px; }
+.seg button { font: 500 .86rem var(--f-body); color: var(--muted); background: none; border: 0; padding: 6px 12px; border-radius: 1px; cursor: pointer; }
+.seg button span { color: var(--faint); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.seg button[aria-pressed="true"] { background: var(--edge); color: var(--text); font-weight: 600; }
+.search { display: flex; align-items: center; gap: 8px; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; padding: 0 12px; height: 38px; width: min(320px, 100%); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 .92rem var(--f-body); outline: none; }
+.search:focus-within { border-color: rgba(224, 185, 76, .6); }
+.search svg { width: 15px; height: 15px; color: var(--faint); flex: none; }
+.titlesonly { display: inline-flex; gap: 8px; align-items: center; font-size: .88rem; color: var(--muted); cursor: pointer; }
+.titlesonly input { accent-color: var(--gold); width: 16px; height: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 10px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 14px 14px 12px; display: grid; grid-template-rows: auto 1fr auto; gap: 6px; min-height: 112px; }
+.tile .n { display: flex; gap: 9px; align-items: flex-start; color: var(--text); font-weight: 600; font-size: .95rem; line-height: 1.3; }
+.tile .n svg { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--gold); }
+.tile .d { color: var(--muted); font-size: .84rem; line-height: 1.45; }
+.tile .f { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; font-size: .78rem; }
+.tile .c { color: var(--faint); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; font-size: .66rem; }
+.tile .tt { color: var(--gold); font-weight: 500; text-align: right; }
+.empty { padding: 32px; text-align: center; color: var(--muted); border: 1px dashed var(--edge); }
+.more { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 18px; }
+.count { color: var(--faint); font-size: .86rem; }
+.more .btn { height: 36px; font-size: .88rem; cursor: pointer; }
+
+/* Install + commands */
+.install { border-top: 1px solid var(--line); }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+.step { background: var(--card); border: 1px solid var(--line); padding: 22px; border-radius: 2px; display: grid; gap: 8px; align-content: start; }
+.step::before { counter-increment: s; content: counter(s); font-family: var(--f-display); font-size: 2rem; line-height: 1; color: var(--gold); }
+.step p { color: var(--muted); font-size: .94rem; }
+.step code, .cmds code, .faq code { font: 500 .86em var(--f-mono); color: var(--text); background: #151a23; border: 1px solid var(--edge); padding: 1px 6px; border-radius: 2px; }
+@media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; margin-top: 56px; align-items: start; }
+@media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
+.cmds { overflow-x: auto; border: 1px solid var(--line); border-radius: 2px; }
+.cmds table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.cmds td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; color: var(--muted); }
+.cmds tr:first-child td { border-top: 0; }
+.cmds td:first-child { white-space: nowrap; width: 1%; }
+.cmds button { margin-left: 6px; font: 500 .7rem var(--f-body); color: var(--faint); background: none; border: 1px solid var(--edge); border-radius: 2px; padding: 1px 6px; cursor: pointer; vertical-align: 1px; }
+.cmds button:hover { color: var(--gold); border-color: var(--gold); }
+.faq { display: grid; gap: 22px; }
+.faq h3 { margin-bottom: 4px; }
+.faq p { color: var(--muted); font-size: .94rem; }
+
+
+/* Contact */
+.contact { border-top: 1px solid var(--line); }
+.contact-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
+@media (max-width: 860px) { .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.form { display: grid; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 24px; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 560px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field input, .field select, .field textarea { width: 100%; background: #151a23; border: 1px solid var(--edge); border-radius: 2px; color: var(--text); font: 400 .95rem var(--f-body); padding: 10px 12px; }
+.field textarea { min-height: 140px; resize: vertical; line-height: 1.5; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: rgba(224, 185, 76, .7); }
+.form .btn { justify-self: start; cursor: pointer; }
+.form-note { font-size: .84rem; color: var(--faint); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.notice { padding: 12px 16px; border: 1px solid rgba(111, 208, 140, .45); background: rgba(111, 208, 140, .08); color: var(--text); border-radius: 2px; font-size: .94rem; }
+.contact .points p { color: var(--muted); }
+
+/* The Discord band */
+.help-band { margin-top: 56px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center;
+  padding: 24px 26px; background: linear-gradient(100deg, rgba(88, 101, 242, .16), var(--card) 55%); border: 1px solid rgba(88, 101, 242, .45); border-radius: 2px; }
+.help-band .dc { width: 48px; height: 48px; border-radius: 12px; background: #5865f2; display: grid; place-items: center; }
+.help-band .dc svg { width: 28px; height: 28px; }
+.help-band h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.5rem; margin-bottom: 4px; }
+.help-band p { color: var(--muted); font-size: .95rem; }
+.help-band .cta2 { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn.discord { background: #5865f2; border-color: #5865f2; color: #fff; }
+.btn.discord:hover { background: #6d78f5; }
+@media (max-width: 860px) { .help-band { grid-template-columns: minmax(0, 1fr); } }
+footer { border-top: 1px solid var(--line); padding-block: 40px 56px; color: var(--faint); font-size: .88rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: space-between; align-items: center; }
+.langs { display: flex; gap: 8px; flex-wrap: wrap; }
+.langs a, .langs span { border: 1px solid var(--edge); padding: 2px 8px; border-radius: 2px; color: var(--muted); text-decoration: none; }
+.langs a:hover { color: var(--gold); border-color: var(--gold); }
+.langs [aria-current] { color: var(--text); border-color: var(--gold); }
+/* Language menu in the header */
+.lang-menu { position: relative; }
+.lang-menu summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .85rem; font-weight: 600; letter-spacing: .04em; padding: 6px 4px; }
+.lang-menu summary::-webkit-details-marker { display: none; }
+.lang-menu summary:hover, .lang-menu[open] summary { color: var(--text); }
+.lang-menu summary svg { width: 16px; height: 16px; }
+.lang-menu ul { position: absolute; right: 0; top: calc(100% + 6px); margin: 0; padding: 6px; list-style: none; background: var(--panel); border: 1px solid var(--edge); border-radius: 2px; min-width: 150px; z-index: 30; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+.lang-menu a { display: block; padding: 7px 10px; color: var(--soft); text-decoration: none; font-size: .9rem; border-radius: 2px; }
+.lang-menu a:hover { background: rgba(255,255,255,.05); color: var(--text); }
+.lang-menu a[aria-current] { color: var(--gold); }
+@media (max-width: 760px) { .lang-menu { margin-left: auto; } .lang-menu + .btn { margin-left: 0; } }
+/* What's new */
+.news { border-top: 1px solid var(--line); }
+.news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.release { border: 1px solid var(--line); background: var(--panel); padding: 22px 22px 24px; display: grid; gap: 14px; align-content: start; border-radius: 2px; }
+.release:first-child { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.release header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.release h3 { font-family: var(--f-display); font-weight: 400; font-size: 1.5rem; color: var(--text); }
+.release time { color: var(--faint); font-size: .82rem; }
+.release ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.release li { padding-left: 18px; position: relative; color: var(--muted); font-size: .92rem; }
+.release li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+.release code, .news code { font: 500 .86em var(--f-mono); color: var(--text); }
+.news-more { margin-top: 18px; color: var(--muted); font-size: .9rem; }
+.news-more a { color: var(--gold); }
+@media (max-width: 960px) { .news-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* The changelog page */
+.cl-head { padding-block: 56px 28px; }
+.cl-head h1 { font-size: clamp(2.1rem, 4.2vw, 3.1rem); line-height: 1.08; }
+.cl-head p { color: var(--muted); max-width: 46em; margin: 0; }
+.cl-head code, .cl-entry code { font: 500 .86em var(--f-mono); color: var(--text); }
+.cl-head a, .cl-entry a { color: var(--gold); }
+.cl-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 8px; }
+.cl-search { flex: 1 1 280px; max-width: 420px; height: 42px; padding: 0 14px; border-radius: 2px; border: 1px solid var(--edge);
+  background: var(--panel); color: var(--text); font: inherit; font-size: .95rem; }
+.cl-search:focus { outline: none; border-color: color-mix(in srgb, var(--gold) 60%, var(--edge)); }
+.cl-count { color: var(--faint); font-size: .88rem; }
+.cl-body { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 40px; align-items: start; padding-bottom: 80px; }
+.cl-nav { position: sticky; top: 84px; max-height: calc(100vh - 110px); overflow: auto; padding-right: 6px; }
+.cl-nav h2 { font-family: var(--f-body); font-size: .72rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin: 0 0 8px; }
+.cl-nav h2:not(:first-child) { margin-top: 18px; }
+.cl-nav h2 { text-transform: none; letter-spacing: .04em; font-size: .8rem; }
+.cl-nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.cl-nav a { display: block; padding: 4px 10px; border-left: 2px solid var(--line); color: var(--muted); font: 500 .86rem var(--f-mono); }
+.cl-nav a:hover { color: var(--text); text-decoration: none; border-left-color: var(--edge); }
+.cl-nav a[aria-current] { color: var(--gold); border-left-color: var(--gold); }
+.cl-list { display: grid; gap: 16px; }
+.cl-entry { border: 1px solid var(--line); background: var(--panel); padding: 24px 26px 26px; border-radius: 2px; scroll-margin-top: 84px; }
+.cl-entry:first-child { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.cl-entry > header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.cl-entry h2 { font-size: 1.7rem; line-height: 1.1; }
+.cl-entry h2 a { color: var(--text); }
+.cl-entry h2 a:hover { color: var(--gold); text-decoration: none; }
+.cl-entry time { color: var(--faint); font-size: .85rem; }
+.cl-entry h3 { font: 600 .98rem var(--f-body); color: var(--text); margin: 18px 0 8px; }
+.cl-entry p { margin: 0 0 10px; color: var(--soft); }
+.cl-entry ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.cl-entry ul ul { margin-top: 8px; padding-left: 18px; }
+.cl-entry li { padding-left: 18px; position: relative; color: var(--muted); }
+.cl-entry li::before { content: ""; position: absolute; left: 2px; top: .66em; width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+.cl-entry li li::before { background: var(--faint); }
+.cl-entry strong { color: var(--text); font-weight: 600; }
+.cl-entry .cl-more { margin: 14px 0 0; font-size: .9rem; }
+.cl-entry .cl-old { color: var(--faint); }
+.cl-none { color: var(--muted); padding: 24px 0; }
+mark { background: var(--gold-dim); color: var(--text); padding: 0 1px; border-radius: 2px; }
+@media (max-width: 860px) { .cl-body { grid-template-columns: minmax(0, 1fr); } .cl-nav { display: none; } .cl-entry { padding: 20px 18px 22px; } }
+</style>
+<link rel="icon" href="/img/crest.png">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/fr/" aria-label="Warcrest, retour en haut">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 L56 12 V30 C56 45 46 55 32 60 C18 55 8 45 8 30 V12 Z" fill="#e0b94c"/><path d="M32 9 L51 15.5 V30 C51 42.5 43 51 32 55.2 C21 51 13 42.5 13 30 V15.5 Z" fill="none" stroke="#080b10" stroke-width="2"/><path d="M32 18 L35.6 28.4 L46.6 28.6 L37.8 35.2 L41 45.8 L32 39.4 L23 45.8 L26.2 35.2 L17.4 28.6 L28.4 28.4 Z" fill="#080b10"/></svg>
+      Warcrest
+    </a>
+    <nav aria-label="Sections">
+      <a href="/fr/#features">Fonctionnalités</a>
+      <a href="/fr/#news">Nouveautés</a>
+      <a href="/fr/changelog/" aria-current="page">Journal</a>
+      <a href="/fr/#achievements">Hauts faits</a>
+      <a href="/fr/#install">Installer</a>
+      <a href="/fr/#commands">Commandes</a>
+      <a href="/fr/#contact">Contact</a>
+      <a href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Discord</a>
+    </nav>
+    <details class="lang-menu">
+      <summary aria-label="Langue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>FR</summary>
+      <ul><!--langmenu--><li><a href="/changelog/" hreflang="en" lang="en">English</a></li><li><a href="/de/changelog/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/fr/changelog/" hreflang="fr" lang="fr" aria-current="page">Français</a></li><li><a href="/es/changelog/" hreflang="es" lang="es">Español</a></li></ul>
+    </details>
+    <a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Télécharger</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="cl-head">
+    <div class="wrap">
+      <div class="sec-head" style="margin-bottom:22px">
+        <span class="label">Journal</span>
+        <h1>Chaque version, chaque changement.</h1>
+        <p>Tout ce qui a changé dans Warcrest depuis la première version, du plus récent au plus ancien, tel que Warcrest l'affiche en jeu (<code>/warcrest updates</code>). Les notes détaillées sont en <a href="/changelog/" hreflang="en">anglais</a>.</p>
+      </div>
+      <div class="cl-tools">
+        <input class="cl-search" id="cl-search" type="search" placeholder="Rechercher dans le journal" aria-label="Rechercher dans le journal" autocomplete="off">
+        <span class="cl-count" id="cl-count" aria-live="polite">75 versions</span>
+      </div>
+    </div>
+  </section>
+  <div class="wrap cl-body">
+    <nav class="cl-nav" aria-label="Versions"><h2>3.x</h2><ul><li><a href="#v3-11-0">3.11.0</a></li><li><a href="#v3-10-0">3.10.0</a></li><li><a href="#v3-9-3">3.9.3</a></li><li><a href="#v3-9-2">3.9.2</a></li><li><a href="#v3-9-1">3.9.1</a></li><li><a href="#v3-9-0">3.9.0</a></li><li><a href="#v3-8-3">3.8.3</a></li><li><a href="#v3-8-2">3.8.2</a></li><li><a href="#v3-8-1">3.8.1</a></li><li><a href="#v3-8-0">3.8.0</a></li><li><a href="#v3-7-3">3.7.3</a></li><li><a href="#v3-7-2">3.7.2</a></li><li><a href="#v3-7-1">3.7.1</a></li><li><a href="#v3-7-0">3.7.0</a></li><li><a href="#v3-6-5">3.6.5</a></li><li><a href="#v3-6-4">3.6.4</a></li><li><a href="#v3-6-3">3.6.3</a></li><li><a href="#v3-6-2">3.6.2</a></li><li><a href="#v3-6-1">3.6.1</a></li><li><a href="#v3-6-0">3.6.0</a></li><li><a href="#v3-5-5">3.5.5</a></li><li><a href="#v3-5-4">3.5.4</a></li><li><a href="#v3-5-3">3.5.3</a></li><li><a href="#v3-5-1">3.5.1</a></li><li><a href="#v3-5-0">3.5.0</a></li><li><a href="#v3-4-1">3.4.1</a></li><li><a href="#v3-4-0">3.4.0</a></li><li><a href="#v3-3-1">3.3.1</a></li><li><a href="#v3-3-0">3.3.0</a></li><li><a href="#v3-2-0">3.2.0</a></li><li><a href="#v3-1-1">3.1.1</a></li><li><a href="#v3-1-0">3.1.0</a></li><li><a href="#v3-0-0">3.0.0</a></li></ul><h2>2.x</h2><ul><li><a href="#v2-14-0">2.14.0</a></li><li><a href="#v2-13-0">2.13.0</a></li><li><a href="#v2-12-0">2.12.0</a></li><li><a href="#v2-11-1">2.11.1</a></li><li><a href="#v2-11-0">2.11.0</a></li><li><a href="#v2-10-0">2.10.0</a></li><li><a href="#v2-9-0">2.9.0</a></li><li><a href="#v2-8-0">2.8.0</a></li><li><a href="#v2-7-0">2.7.0</a></li><li><a href="#v2-6-0">2.6.0</a></li><li><a href="#v2-5-0">2.5.0</a></li><li><a href="#v2-4-1">2.4.1</a></li><li><a href="#v2-4-0">2.4.0</a></li><li><a href="#v2-3-0">2.3.0</a></li><li><a href="#v2-2-0">2.2.0</a></li><li><a href="#v2-1-1">2.1.1</a></li><li><a href="#v2-1-0 (release)">2.1.0 (release)</a></li><li><a href="#v2-0-0">2.0.0</a></li></ul><h2>1.x</h2><ul><li><a href="#v1-9-6">1.9.6</a></li><li><a href="#v1-9-5">1.9.5</a></li><li><a href="#v1-9-4">1.9.4</a></li><li><a href="#v1-9-3">1.9.3</a></li><li><a href="#v1-9-2">1.9.2</a></li><li><a href="#v1-9-1">1.9.1</a></li><li><a href="#v1-9-0">1.9.0</a></li><li><a href="#v1-8-2">1.8.2</a></li><li><a href="#v1-8-1">1.8.1</a></li><li><a href="#v1-8-0">1.8.0</a></li><li><a href="#v1-7-0">1.7.0</a></li><li><a href="#v1-6-3">1.6.3</a></li><li><a href="#v1-6-2">1.6.2</a></li><li><a href="#v1-6-1">1.6.1</a></li><li><a href="#v1-6-0">1.6.0</a></li><li><a href="#v1-5-2">1.5.2</a></li><li><a href="#v1-5-1">1.5.1</a></li><li><a href="#v1-5-0">1.5.0</a></li><li><a href="#v1-4-0">1.4.0</a></li><li><a href="#v1-3-1">1.3.1</a></li><li><a href="#v1-3-0">1.3.0</a></li><li><a href="#v1-2-0">1.2.0</a></li><li><a href="#v1-1-0">1.1.0</a></li><li><a href="#v1-0-0">1.0.0</a></li></ul></nav>
+    <div>
+      <div class="cl-list">
+        <article class="cl-entry" id="v3-11-0"><header><h2><a href="#v3-11-0" title="Lien vers cette version">3.11.0</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Premiers pas : une courte liste pour les nouveaux membres qui se coche toute seule (s'inscrire à un raid, remplir son profil, partager ses recettes, choisir un titre). Les officiers y configurent aussi la guilde. <code>/warcrest start</code>, ou l'Aide.</li><li>Combats de boss et matchs JcJ : le jeu bloque les messages d'addons jusqu'à leur fin. Warcrest garde maintenant ce qu'il doit envoyer (DKP, victimes, tentatives, enchères, messages) et l'envoie à la fin du combat, au lieu de le perdre.</li><li>Les enchères et les votes du conseil de butin se mettent en pause quand un combat de boss bloque les messages, et ne peuvent pas démarrer pendant, pour que personne ne rate sa chance.</li></ul><p class="cl-more"><a href="/changelog/#v3-11-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-10-0"><header><h2><a href="#v3-10-0" title="Lien vers cette version">3.10.0</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Les réglages sont maintenant en bas du menu latéral, près de l'Aide.</li><li>Les petits dossiers The Imperium et Bannerhold ne servent plus : tu peux les supprimer de ton dossier AddOns.</li><li>Nettoyage : Warcrest n'utilise plus que les fonctions de jeu propres à WoW: Forever, et les restes des fonctions retirées ont disparu.</li></ul><p class="cl-more"><a href="/changelog/#v3-10-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-9-3"><header><h2><a href="#v3-9-3" title="Lien vers cette version">3.9.3</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : dans WoW: Forever, les recettes n'étaient pas partagées (la fenêtre de métier est maintenant lue de la nouvelle façon), les hauts faits n'étaient pas publiés dans le canal de guilde, les affectations de raid et le message de recrutement ne pouvaient pas être publiés, et le style d'alerte Avertissement de raid n'affichait rien.</li></ul><p class="cl-more"><a href="/changelog/#v3-9-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-9-2"><header><h2><a href="#v3-9-2" title="Lien vers cette version">3.9.2</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : les titres ne s'affichaient pas dans le chat sur les clients de jeu récents.</li></ul><p class="cl-more"><a href="/changelog/#v3-9-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-9-1"><header><h2><a href="#v3-9-1" title="Lien vers cette version">3.9.1</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : les changements faits pendant qu'un membre était hors ligne (profils, recettes, réglages de guilde et plus) ne lui parvenaient pas à sa connexion, car le jeu écrit les noms « Nom Royaume ».</li></ul><p class="cl-more"><a href="/changelog/#v3-9-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-9-0"><header><h2><a href="#v3-9-0" title="Lien vers cette version">3.9.0</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : « Aucun joueur nommé ... ne joue actuellement » remplissait le chat. Warcrest chuchote maintenant aux membres avec un nom que le serveur connaît, et plus du tout quand ils sont hors ligne.</li><li>Les alertes de séries ont des noms, de Série meurtrière à 3 victoires à Divin à 20 et au-delà du Divin à 30, et les hauts faits et titres de séries suivent.</li><li>Tout rang qui peut lire le canal officier compte maintenant comme officier dans Warcrest (onglets Recrutement et Officiers, raids, réglages de guilde), sans configuration. Le maître de guilde peut le désactiver dans les Réglages.</li><li>Le calendrier a son propre onglet à gauche, sous Événements (<code>/warcrest calendar</code>).</li><li>La carte du monde ne montre plus où la guilde se bat.</li></ul><p class="cl-more"><a href="/changelog/#v3-9-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-8-3"><header><h2><a href="#v3-8-3" title="Lien vers cette version">3.8.3</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : l'éditeur de profil (Modifier le profil, <code>/warcrest profile</code>) ne s'ouvrait pas et la fenêtre des artisans était vide sur les clients de jeu récents.</li></ul><p class="cl-more"><a href="/changelog/#v3-8-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-8-2"><header><h2><a href="#v3-8-2" title="Lien vers cette version">3.8.2</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correction : les victoires en solo te montraient comme ta propre assistance (« assist : Nom Royaume »). Les victoires déjà enregistrées sont corrigées.</li></ul><p class="cl-more"><a href="/changelog/#v3-8-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-8-1"><header><h2><a href="#v3-8-1" title="Lien vers cette version">3.8.1</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Les alertes de séries et de vengeance montrent maintenant le titre du joueur, comme les alertes de victoire.</li></ul><p class="cl-more"><a href="/changelog/#v3-8-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-8-0"><header><h2><a href="#v3-8-0" title="Lien vers cette version">3.8.0</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Harmonisations : qui est harmonisé pour le Cœur du Magma, Onyxia, le repaire de l'Aile noire et Naxxramas, et qui a les clés du pic Rochenoire supérieur et de Scholomance (<code>/warcrest attune</code>). Les inscrits non harmonisés sont signalés.</li><li>Affectations de raid : les officiers écrivent qui fait quoi sur chaque boss et peuvent le publier dans le canal de raid ; on te rappelle ton rôle quand le boss est engagé (<code>/warcrest assign</code>).</li><li>Sondages de guilde dans l'onglet Événements : pose une question, la guilde vote (<code>/warcrest polls</code>).</li><li>Commandes d'artisanat : clique sur une recette dans la fenêtre des artisans pour la demander à un artisan de la guilde (<code>/warcrest orders</code>).</li><li>Suivi des wipes : les wipes et le meilleur temps de chaque boss dans Progression, et le raid est prévenu quand il bat son record.</li><li>Officiers : la vue Inactifs de l'onglet Officiers liste qui ne s'est pas connecté récemment (<code>/warcrest inactive</code>).</li><li>La carte du monde montre où la guilde se bat : là où des membres ont tué des joueurs ennemis ou ont été tués par eux cette semaine.</li></ul><p class="cl-more"><a href="/changelog/#v3-8-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-7-3"><header><h2><a href="#v3-7-3" title="Lien vers cette version">3.7.3</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Rapports de bug : <code>/warcrest report</code> crée un rapport à copier sur le Discord ou dans le formulaire du site, avec ta version, tes réglages et les erreurs.</li><li>En configurant la guilde, les officiers choisissent aussi ses alertes et si les hauts faits sont publiés dans le canal de guilde (<code>/warcrest setup</code>).</li><li>Le Discord de Warcrest : <code>/warcrest discord</code>, ou copie l'invitation dans la fenêtre d'aide.</li></ul><p class="cl-more"><a href="/changelog/#v3-7-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-7-2"><header><h2><a href="#v3-7-2" title="Lien vers cette version">3.7.2</a></h2><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Correctif : les alertes et messages pouvaient s'afficher deux fois dans le chat, la seconde avec ton royaume après ton nom (« Nom-Royaume »).</li><li>Quand deux membres repèrent le même ennemi recherché en même temps, l'alerte ne s'affiche qu'une fois.</li></ul><p class="cl-more"><a href="/changelog/#v3-7-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-7-1"><header><h2><a href="#v3-7-1" title="Lien vers cette version">3.7.1</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Warcrest a un site : guides, tous les hauts faits et un formulaire pour envoyer bugs et idées au développeur. L'adresse est dans la fenêtre d'aide (<code>/warcrest website</code>).</li><li>Correctif : le sélecteur de vue de l'onglet Recherchés ne laisse plus d'espace quand les primes sont désactivées.</li></ul><p class="cl-more"><a href="/changelog/#v3-7-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-7-0"><header><h2><a href="#v3-7-0" title="Lien vers cette version">3.7.0</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>117 nouveaux hauts faits, 161 au total, avec un nouveau groupe Social et 42 titres de plus. Chaque groupe a plusieurs pages : flèches ou molette de la souris.</li><li>Tableau de guerre : la vue Guildes de l'onglet Recherchés montre le bilan contre chaque guilde ennemie. Les officiers marquent les rivales, et la guilde est alertée quand un groupe d'entre elles est repéré.</li><li>Objectifs de guilde : les officiers fixent des objectifs pour la semaine ou le mois dans l'onglet Hauts faits (vue Guilde), et la guilde est prévenue quand l'un est atteint.</li><li>Artisans : trouve qui dans la guilde sait fabriquer un objet et chuchote-lui (onglet Membres ou <code>/warcrest craft</code>).</li></ul><p class="cl-more"><a href="/changelog/#v3-7-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-5"><header><h2><a href="#v3-6-5" title="Lien vers cette version">3.6.5</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Les alertes, les messages de chat et le reste des textes sont maintenant dans ta langue.</li><li>Finitions : Raids, Recrutement, fiche de joueur et Profils de la guilde.</li></ul><p class="cl-more"><a href="/changelog/#v3-6-5" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-4"><header><h2><a href="#v3-6-4" title="Lien vers cette version">3.6.4</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Plus rapide dans les grandes guildes : chaque onglet se met à jour en quelques millisecondes.</li><li>Les noms des jours et des mois sont maintenant dans ta langue.</li></ul><p class="cl-more"><a href="/changelog/#v3-6-4" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-3"><header><h2><a href="#v3-6-3" title="Lien vers cette version">3.6.3</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Les titres s'affichent dans le chat, les alertes de victimes et l'onglet Victimes.</li></ul><p class="cl-more"><a href="/changelog/#v3-6-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-2"><header><h2><a href="#v3-6-2" title="Lien vers cette version">3.6.2</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Les hauts faits sont publiés dans le canal de guilde quand tu les obtiens, pour que tout le monde les voie (les officiers peuvent le désactiver).</li></ul><p class="cl-more"><a href="/changelog/#v3-6-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-1"><header><h2><a href="#v3-6-1" title="Lien vers cette version">3.6.1</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Correctif : tes propres victimes et les hauts faits comme Premier sang comptent immédiatement.</li></ul><p class="cl-more"><a href="/changelog/#v3-6-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-6-0"><header><h2><a href="#v3-6-0" title="Lien vers cette version">3.6.0</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Nouvel onglet Événements : soirées JcJ, boss mondiaux, réunions et plus. Tout le monde peut en planifier ; la guilde répond et reçoit un rappel.</li><li>Profils des membres : ta spécialisation, tes horaires et ton anniversaire sur ta fiche. Ton niveau d'objet est ajouté automatiquement.</li><li>Officiers : un onglet Recrutement pour les recrues, les essais et le message de recrutement.</li><li><code>/warcrest check</code> explique pourquoi un haut fait a compté ou non.</li></ul><p class="cl-more"><a href="/changelog/#v3-6-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-5-5"><header><h2><a href="#v3-5-5" title="Lien vers cette version">3.5.5</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Les hauts faits perdus reviennent dès qu'un officier, ou deux membres de la guilde, les ont vus obtenus.</li><li>L'historique enregistré sous l'ancien nom Bannerhold est retrouvé et rajouté.</li></ul><p class="cl-more"><a href="/changelog/#v3-5-5" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-5-4"><header><h2><a href="#v3-5-4" title="Lien vers cette version">3.5.4</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Correctif : des victimes étaient supprimées après que le tueur avait pris des niveaux, et les hauts faits qui en venaient disparaissaient aussi. C'est réglé.</li><li>Les hauts faits perdus par des membres sont rétablis à partir de ce dont se souviennent les addons des officiers.</li></ul><p class="cl-more"><a href="/changelog/#v3-5-4" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-5-3"><header><h2><a href="#v3-5-3" title="Lien vers cette version">3.5.3</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Tes hauts faits sont désormais aussi conservés par la guilde : ils reviennent même si les données enregistrées sur cet ordinateur sont perdues.</li><li>Si l'historique enregistré de Warcrest ne se charge pas, il te le signale et demande à la guilde de le renvoyer.</li><li>Les hauts faits et les titres se mettent à jour tout de suite, sans recharger.</li><li>Choisissez votre titre avec le bouton Titre de l'onglet Hauts faits : il liste chaque titre et comment l'obtenir.</li></ul><p class="cl-more"><a href="/changelog/#v3-5-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-5-1"><header><h2><a href="#v3-5-1" title="Lien vers cette version">3.5.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v3-5-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-5-0"><header><h2><a href="#v3-5-0" title="Lien vers cette version">3.5.0</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>50 nouveaux sons d'alerte, 87 en tout, classés par type dans le choix des sons (Paramètres &gt; Sons).</li></ul><p class="cl-more"><a href="/changelog/#v3-5-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-4-1"><header><h2><a href="#v3-4-1" title="Lien vers cette version">3.4.1</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Les membres hors ligne comptent de nouveau partout, cartes de joueur et hauts faits compris, et la carte de joueur indique la guilde.</li></ul><p class="cl-more"><a href="/changelog/#v3-4-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-4-0"><header><h2><a href="#v3-4-0" title="Lien vers cette version">3.4.0</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Choisissez le son de chaque type d'alerte dans Paramètres &gt; Sons : 37 nouveaux sons Warcrest, ceux du jeu, de SharedMedia ou vos propres fichiers.</li></ul><p class="cl-more"><a href="/changelog/#v3-4-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-3-1"><header><h2><a href="#v3-3-1" title="Lien vers cette version">3.3.1</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Plus rapide, surtout dans les grandes guildes : le rattrapage après une absence, les attributions de DKP et les hauts faits ne provoquent plus de saccades.</li><li>La fenêtre des rerolls a été repensée, et la carte de joueur s'adapte à son contenu.</li></ul><p class="cl-more"><a href="/changelog/#v3-3-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-3-0"><header><h2><a href="#v3-3-0" title="Lien vers cette version">3.3.0</a></h2><time datetime="2026-11-19">19 nov. 2026</time></header><ul><li>Récap de la soirée de raid : quand un officier termine la soirée, toute la guilde reçoit un résumé des boss, du butin, de la présence et des DKP gagnés. <code>/warcrest raidrecap</code> affiche à nouveau le dernier.</li><li>L'aide et les nouveautés sont maintenant aussi en allemand, en français et en espagnol.</li></ul><p class="cl-more"><a href="/changelog/#v3-3-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-2-0"><header><h2><a href="#v3-2-0" title="Lien vers cette version">3.2.0</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>Bannières d'alerte : les alertes de guilde apparaissent en haut de l'écran, avec une couleur, une icône et un son pour chaque type. Cliquez dessus pour ouvrir l'onglet.</li><li>Conseil de butin : votez pour savoir qui reçoit un objet (<code>/warcrest council</code>, ou le bouton de l'onglet Liste de souhaits).</li><li>Planificateur de groupes : la vue Plan de l'onglet Raids répartit les inscrits en groupes, et Organiser le raid met chacun à sa place.</li><li>Primes : les officiers peuvent les activer dans les Paramètres, puis mettre une récompense sur la tête d'un ganker.</li><li>Warcrest parle maintenant allemand, français et espagnol (Paramètres &gt; Général &gt; Langue).</li></ul><p class="cl-more"><a href="/changelog/#v3-2-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-1-1"><header><h2><a href="#v3-1-1" title="Lien vers cette version">3.1.1</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>Prêt pour le lancement des raids : <code>/warcrest bosses</code> montre les derniers boss de raid morts et si chacun a compté pour la guilde (et sinon, pourquoi).</li></ul><p class="cl-more"><a href="/changelog/#v3-1-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-1-0"><header><h2><a href="#v3-1-0" title="Lien vers cette version">3.1.0</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>Progression de raid : les boss tués sont enregistrés pour la guilde. La vue Progression de l'onglet Raids montre où vous en êtes dans chaque raid, et les premières victoires de la guilde sont annoncées.</li><li>Calendrier de raid : la vue Calendrier de l'onglet Raids montre les raids, soirées de raid et boss tués du mois.</li><li>22 nouveaux hauts faits, 43 en tout, en quatre groupes : JcJ, Chasses, Raids, et Butin &amp; plus. 14 nouveaux titres à gagner.</li><li>Un accueil et une configuration de guilde pour les nouveaux joueurs et guildes, et les guildes peuvent désormais désactiver les DKP.</li><li>Aide : cliquez sur Aide en bas du menu latéral, ou tapez <code>/warcrest help</code>.</li><li>Plus rapide dans les grandes guildes, et beaucoup de finitions.</li></ul><p class="cl-more"><a href="/changelog/#v3-1-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v3-0-0"><header><h2><a href="#v3-0-0" title="Lien vers cette version">3.0.0</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>The Imperium devient Warcrest, des outils pour toutes les guildes. Les membres de &lt;The Imperium&gt; gardent l'emblème Imperium ; vos paramètres et votre historique ont suivi.</li><li>Les commandes commencent par <code>/warcrest</code>, ou /wc en abrégé. /imperium marche toujours.</li></ul><p class="cl-more"><a href="/changelog/#v3-0-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-14-0"><header><h2><a href="#v2-14-0" title="Lien vers cette version">2.14.0</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>Listes de souhaits : marquez les objets dont vous avez Besoin ou Envie dans le nouvel onglet Liste de souhaits. Quand l'un d'eux est mis aux enchères, vous êtes prévenu, et la fenêtre d'enchère montre qui le veut.</li><li>Hauts faits et titres : 21 hauts faits pour les éliminations, séries, vengeances, primes, raids et butin dans le nouvel onglet Hauts faits. Certains donnent un titre à afficher après votre nom.</li><li>Les onglets Recherchés, Paramètres, Officiers et Addon ont le nouveau look.</li><li>Nouvelles commandes : <code>/warcrest wishlist</code> et <code>/warcrest achievements</code>.</li></ul><p class="cl-more"><a href="/changelog/#v2-14-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-13-0"><header><h2><a href="#v2-13-0" title="Lien vers cette version">2.13.0</a></h2><time datetime="2026-11-18">18 nov. 2026</time></header><ul><li>Fiches de joueur : cliquez sur le nom d'un membre dans les onglets Membres, Éliminations, DKP ou Raids pour voir ses victimes, morts, némésis, meilleure série, DKP, présence et butin au même endroit. Ou tapez <code>/warcrest card</code> Nom.</li><li>Séries de victimes : la guilde est prévenue quand quelqu'un enchaîne 3, 5, 10 victimes ou plus, et quand une grosse série prend fin. L'onglet Éliminations montre la meilleure série de la période.</li><li>Vengeance : la guilde est prévenue quand quelqu'un tue un ennemi qui vient de tuer un membre.</li><li>Les onglets DKP, Raids et Membres adoptent le nouveau style.</li></ul><p class="cl-more"><a href="/changelog/#v2-13-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-12-0"><header><h2><a href="#v2-12-0" title="Lien vers cette version">2.12.0</a></h2><time datetime="2026-11-17">17 nov. 2026</time></header><ul><li>Un nouveau style : la fenêtre de guilde et ses fenêtres sont redessinées, sombres et épurées avec l'or de l'Imperium, une nouvelle police et un menu latéral avec icônes.</li><li>L'onglet Éliminations est redessiné : un tableau des victimes, le meneur du mois et les meilleurs chasseurs de têtes avec des barres. Choisissez la période en haut, et faites glisser les bords des colonnes pour voir les noms longs en entier.</li><li>Redimensionnez la fenêtre : faites glisser son coin inférieur droit pour voir plus de lignes, ou réglez sa taille dans Paramètres &gt; Fenêtre de guilde.</li><li>Chaque liste vide l'indique, et la fenêtre s'ouvre sur le dernier onglet utilisé.</li><li>Des infobulles sur les boutons qui ne s'expliquaient pas. Elles s'affichent même quand un bouton est grisé.</li></ul><p class="cl-more"><a href="/changelog/#v2-12-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-11-1"><header><h2><a href="#v2-11-1" title="Lien vers cette version">2.11.1</a></h2><time datetime="2026-11-17">17 nov. 2026</time></header><ul><li>Corrigé : les victimes de niveau gris étaient encore enregistrées. Elles ne sont plus jamais annoncées ni enregistrées, et celles déjà présentes dans votre onglet Éliminations sont supprimées.</li></ul><p class="cl-more"><a href="/changelog/#v2-11-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-11-0"><header><h2><a href="#v2-11-0" title="Lien vers cette version">2.11.0</a></h2><time datetime="2026-11-17">17 nov. 2026</time></header><ul><li>Composition du raid : l'onglet Raids montre qui vient par classe et prévient quand il manque des tanks ou des soigneurs, ou qu'une classe n'a aucun inscrit. Les raids incomplets ont un ! orange dans la liste.</li><li>Les officiers sont prévenus une heure avant un raid si sa composition est incomplète.</li><li>Bilan hebdomadaire : après la réinitialisation du mardi, un résumé de la semaine de la guilde s'affiche dans le chat : victimes, meilleurs chasseurs de têtes, raids, boss et butin. Désactivez-le dans les Paramètres, ou tapez <code>/warcrest recap</code> pour le revoir.</li></ul><p class="cl-more"><a href="/changelog/#v2-11-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-10-0"><header><h2><a href="#v2-10-0" title="Lien vers cette version">2.10.0</a></h2><time datetime="2026-11-16">16 nov. 2026</time></header><ul><li>Le classement des chasseurs de têtes repart de zéro le 1er de chaque mois. Choisissez Mois dernier ou Total dans l'onglet Éliminations pour voir les classements précédents.</li><li>Le jour de la réinitialisation (le 1er), la guilde découvre les trois meilleurs chasseurs de têtes du mois précédent. Le champion du mois dernier est aussi affiché sous le classement.</li><li>Corrigé : pour certaines anciennes victimes, le classement pouvait attribuer un coup fatal différent selon l'écran du membre.</li></ul><p class="cl-more"><a href="/changelog/#v2-10-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-9-0"><header><h2><a href="#v2-9-0" title="Lien vers cette version">2.9.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Saisons de DKP : les officiers peuvent lancer une nouvelle saison depuis l'onglet DKP. Chacun garde ses DKP, et l'historique ancien est archivé pour que l'addon reste rapide.</li><li>Les DKP, les raids et la présence sont calculés bien plus vite, surtout avec beaucoup d'historique.</li></ul><p class="cl-more"><a href="/changelog/#v2-9-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-8-0"><header><h2><a href="#v2-8-0" title="Lien vers cette version">2.8.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Rerolls : liez vos rerolls à votre personnage principal dans l'onglet DKP (Rerolls). Ils partagent vos DKP et votre présence. Il faut les deux personnages pour les lier, donc vous seul pouvez lier vos rerolls.</li><li>DKP de boss : les officiers peuvent fixer des DKP par boss tué au lancement d'un raid. Ils sont attribués automatiquement à chaque boss tué.</li><li>Jets libres : si personne n'enchérit sur un objet, le raid peut le tirer aux dés à la place.</li><li>Vérification de classe : vous êtes prévenu avant d'enchérir sur un équipement que votre classe ne peut pas utiliser.</li><li>Les officiers peuvent annuler tout changement de DKP, rembourser un butin ou le donner à quelqu'un d'autre, et importer des soldes de départ.</li></ul><p class="cl-more"><a href="/changelog/#v2-8-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-7-0"><header><h2><a href="#v2-7-0" title="Lien vers cette version">2.7.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Présence : l'onglet DKP montre la présence en raid de chaque membre sur les 30 derniers jours. Survolez un nom pour les détails.</li><li>Remplaçants : les officiers peuvent mettre des membres en remplaçants pendant un raid. Ils gagnent les mêmes DKP que le raid et comptent comme présents.</li><li>Absences : après une soirée de raid, ceux qui avaient accepté sans venir sont signalés dans l'onglet Raids et dans leur présence.</li><li>Invitations de raid : les officiers peuvent inviter tous les inscrits en un clic. Si un raid commence sans vous, vous recevez un rappel.</li><li>Dépréciation des DKP : les officiers peuvent retirer un pourcentage des DKP de chacun, tout de suite ou automatiquement chaque semaine.</li><li>Enchères cachées : les officiers peuvent passer les enchères en mode caché, où le gagnant paie la deuxième enchère + 1.</li></ul><p class="cl-more"><a href="/changelog/#v2-7-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-6-0"><header><h2><a href="#v2-6-0" title="Lien vers cette version">2.6.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Historique du butin : dans l'onglet DKP, passez à Historique du butin pour voir chaque objet remporté aux enchères, par qui, pour combien et lors de quelle soirée. Survolez un objet pour son infobulle.</li><li>Les officiers peuvent exporter les DKP en sauvegarde texte : classement, butin et chaque changement de DKP.</li><li>Plus fiable les soirs chargés : les messages sont désormais espacés pour respecter les limites du jeu, donc victimes et enchères ne se perdent plus quand tout arrive en même temps.</li></ul><p class="cl-more"><a href="/changelog/#v2-6-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-5-0"><header><h2><a href="#v2-5-0" title="Lien vers cette version">2.5.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Coups fatals et assistances : le membre qui a frappé un ennemi en dernier obtient le coup fatal, tous ceux qui ont aidé une assistance. Le classement des chasseurs de têtes compte désormais les coups fatals, avec les assistances à côté.</li><li>Victimes honorables seulement : les victimes grises (niveau bien plus bas, sans honneur) ne comptent plus, activé par défaut pour la guilde. Les officiers peuvent le changer dans les Paramètres.</li><li>Les officiers peuvent faire un clic droit sur une victime dans l'onglet Éliminations pour la retirer pour toute la guilde.</li></ul><p class="cl-more"><a href="/changelog/#v2-5-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-4-1"><header><h2><a href="#v2-4-1" title="Lien vers cette version">2.4.1</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Corrigé : les onglets Éliminations et les classements pouvaient différer d'un membre à l'autre. Les journaux se comparent maintenant toutes les 15 minutes et complètent ce qui manque dans les deux sens, pour que tout le monde ait les mêmes victimes.</li><li>Corrigé : tuer le même joueur à nouveau en moins de 2 minutes (camping) ne comptait qu'une fois. Les victimes ne sont plus regroupées que si elles ont lieu à moins de 30 secondes d'intervalle.</li></ul><p class="cl-more"><a href="/changelog/#v2-4-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-4-0"><header><h2><a href="#v2-4-0" title="Lien vers cette version">2.4.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Nouvel onglet Addon : voyez quels membres ont installé The Imperium, quelle version, et quand leur addon a été vu pour la dernière fois. Filtrez par qui l'a, qui ne l'a pas, ou qui doit le mettre à jour.</li><li>Cliquez sur Vérifier pour interroger tous les membres en ligne. Ouvrez-le avec <code>/warcrest addon</code>.</li></ul><p class="cl-more"><a href="/changelog/#v2-4-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-3-0"><header><h2><a href="#v2-3-0" title="Lien vers cette version">2.3.0</a></h2><time datetime="2026-11-15">15 nov. 2026</time></header><ul><li>Nouveau : quand un membre tue un joueur recherché, la prime est réclamée et il disparaît de la liste Recherchés. Son compteur repart de zéro, il revient donc s'il continue à tuer des membres.</li><li>Les alertes de victime disent « Prime réclamée ! » quand la victime était sur la liste Recherchés.</li><li>Vous pouvez désactiver cela avec la nouvelle case en bas de l'onglet Recherchés.</li></ul><p class="cl-more"><a href="/changelog/#v2-3-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-2-0"><header><h2><a href="#v2-2-0" title="Lien vers cette version">2.2.0</a></h2><time datetime="2026-11-14">14 nov. 2026</time></header><ul><li>Nouveau : cette fenêtre de nouveautés. Elle apparaît après chaque mise à jour avec ce qui a changé. Rouvrez-la avec <code>/warcrest updates</code>.</li></ul><p class="cl-more"><a href="/changelog/#v2-2-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-1-1"><header><h2><a href="#v2-1-1" title="Lien vers cette version">2.1.1</a></h2><time datetime="2026-11-14">14 nov. 2026</time></header><ul><li>Corrigé : les morts par dégâts sur la durée étaient annoncées comme des chutes. Une mort ne compte comme chute que si vous êtes tombé au moins une seconde, êtes mort en atterrissant et n'étiez pas en combat.</li></ul><p class="cl-more"><a href="/changelog/#v2-1-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-1-0 (release)"><header><h2><a href="#v2-1-0 (release)" title="Lien vers cette version">2.1.0 (release)</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v2-1-0 (release)" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v2-0-0"><header><h2><a href="#v2-0-0" title="Lien vers cette version">2.0.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v2-0-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-6"><header><h2><a href="#v1-9-6" title="Lien vers cette version">1.9.6</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-6" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-5"><header><h2><a href="#v1-9-5" title="Lien vers cette version">1.9.5</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-5" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-4"><header><h2><a href="#v1-9-4" title="Lien vers cette version">1.9.4</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-4" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-3"><header><h2><a href="#v1-9-3" title="Lien vers cette version">1.9.3</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-2"><header><h2><a href="#v1-9-2" title="Lien vers cette version">1.9.2</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-1"><header><h2><a href="#v1-9-1" title="Lien vers cette version">1.9.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-9-0"><header><h2><a href="#v1-9-0" title="Lien vers cette version">1.9.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-9-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-8-2"><header><h2><a href="#v1-8-2" title="Lien vers cette version">1.8.2</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-8-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-8-1"><header><h2><a href="#v1-8-1" title="Lien vers cette version">1.8.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-8-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-8-0"><header><h2><a href="#v1-8-0" title="Lien vers cette version">1.8.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-8-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-7-0"><header><h2><a href="#v1-7-0" title="Lien vers cette version">1.7.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-7-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-6-3"><header><h2><a href="#v1-6-3" title="Lien vers cette version">1.6.3</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-6-3" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-6-2"><header><h2><a href="#v1-6-2" title="Lien vers cette version">1.6.2</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-6-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-6-1"><header><h2><a href="#v1-6-1" title="Lien vers cette version">1.6.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-6-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-6-0"><header><h2><a href="#v1-6-0" title="Lien vers cette version">1.6.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-6-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-5-2"><header><h2><a href="#v1-5-2" title="Lien vers cette version">1.5.2</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-5-2" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-5-1"><header><h2><a href="#v1-5-1" title="Lien vers cette version">1.5.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-5-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-5-0"><header><h2><a href="#v1-5-0" title="Lien vers cette version">1.5.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-5-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-4-0"><header><h2><a href="#v1-4-0" title="Lien vers cette version">1.4.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-4-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-3-1"><header><h2><a href="#v1-3-1" title="Lien vers cette version">1.3.1</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-3-1" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-3-0"><header><h2><a href="#v1-3-0" title="Lien vers cette version">1.3.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-3-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-2-0"><header><h2><a href="#v1-2-0" title="Lien vers cette version">1.2.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-2-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-1-0"><header><h2><a href="#v1-1-0" title="Lien vers cette version">1.1.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-1-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+        <article class="cl-entry" id="v1-0-0"><header><h2><a href="#v1-0-0" title="Lien vers cette version">1.0.0</a></h2></header><p class="cl-old">Les notes de cette version sont en anglais.</p><p class="cl-more"><a href="/changelog/#v1-0-0" hreflang="en">Notes détaillées en anglais</a></p></article>
+      </div>
+      <p class="cl-none" id="cl-none" hidden>Aucune version n&#x27;en parle.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div style="display:grid;gap:6px">
+      <span style="color:var(--text);font-family:var(--f-display);font-size:1.2rem">Warcrest</span>
+      <span>Créé pour &lt;The Imperium&gt;, maintenant pour toutes les guildes. Version <span data-version="">3.11.0</span>.</span>
+    </div>
+    <div class="langs" aria-label="Langues"><!--langs--><a href="/changelog/" hreflang="en" lang="en">English</a><a href="/de/changelog/" hreflang="de" lang="de">Deutsch</a><a href="/fr/changelog/" hreflang="fr" lang="fr" aria-current="page">Français</a><a href="/es/changelog/" hreflang="es" lang="es">Español</a></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="https://discord.gg/qeSMwQWyPR" target="_blank" rel="noopener">Discord</a><a class="btn gold" href="https://www.curseforge.com/wow/addons/warcrest" target="_blank" rel="noopener">Télécharger sur CurseForge</a></div>
+  </div>
+</footer>
+<script type="application/json" id="cl-text">{"count": "{n} versions", "shown": "{n} sur {total} versions"}</script>
+<script>
+(function () {
+  var input = document.getElementById("cl-search"), count = document.getElementById("cl-count"),
+      none = document.getElementById("cl-none"), entries = [].slice.call(document.querySelectorAll(".cl-entry")),
+      links = {}, total = entries.length, T = JSON.parse(document.getElementById("cl-text").textContent);
+  document.querySelectorAll(".cl-nav a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  entries.forEach(function (e) { e.dataset.text = e.textContent.toLowerCase(); });
+  function clearMarks(root) {
+    root.querySelectorAll("mark").forEach(function (m) { m.replaceWith(document.createTextNode(m.textContent)); });
+    root.normalize();
+  }
+  function mark(root, q) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      var t = node.nodeValue, i = t.toLowerCase().indexOf(q);
+      if (i < 0) return;
+      var frag = document.createDocumentFragment(), last = 0;
+      while (i >= 0) {
+        frag.appendChild(document.createTextNode(t.slice(last, i)));
+        var m = document.createElement("mark"); m.textContent = t.slice(i, i + q.length); frag.appendChild(m);
+        last = i + q.length; i = t.toLowerCase().indexOf(q, last);
+      }
+      frag.appendChild(document.createTextNode(t.slice(last)));
+      node.replaceWith(frag);
+    });
+  }
+  function filter() {
+    var q = input.value.trim().toLowerCase(), shown = 0;
+    entries.forEach(function (e) {
+      clearMarks(e);
+      var ok = !q || e.dataset.text.indexOf(q) >= 0;
+      e.hidden = !ok;
+      if (links[e.id]) links[e.id].parentNode.hidden = !ok;
+      if (ok) { shown++; if (q) mark(e, q); }
+    });
+    none.hidden = shown > 0;
+    count.textContent = q ? T.shown.replace("{n}", shown).replace("{total}", total) : T.count.replace("{n}", total);
+  }
+  var timer;
+  input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(filter, 120); });
+  // The version in view is highlighted in the list.
+  if ("IntersectionObserver" in window) {
+    var current;
+    var io = new IntersectionObserver(function (seen) {
+      seen.forEach(function (s) {
+        if (!s.isIntersecting) return;
+        if (current) current.removeAttribute("aria-current");
+        current = links[s.target.id];
+        if (current) current.setAttribute("aria-current", "true");
+      });
+    }, { rootMargin: "-90px 0px -70% 0px" });
+    entries.forEach(function (e) { io.observe(e); });
+  }
+  filter();
+})();
+</script>
+
+</body>
+</html>
