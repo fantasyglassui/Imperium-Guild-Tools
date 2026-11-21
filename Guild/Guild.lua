@@ -452,7 +452,7 @@ end)
 function ns.CheckVersions()
   ns.versions[ns.fullName(UnitName("player"))] = ns.version
   ns.Send("VQ")
-  ns.Say("Asking everyone online which version they have. Results appear in the Addon tab.")
+  ns.Say("Asking everyone online which version they have. Results appear in Guild > Who has Warcrest.")
 end
 
 function ns.NewestVersion()

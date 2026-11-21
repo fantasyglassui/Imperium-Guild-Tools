@@ -11,6 +11,10 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "4.1.0", date = "Nov 21, 2026", items = {
+    "Profiles and Crafters are now views in the Guild section, next to Roster and Who has Warcrest, instead of separate windows. /warcrest profiles, craft and orders open them there.",
+    "Help, tooltips and messages name the new sections and views (for example Loot > Standings or PvP > Kills) instead of the old tabs.",
+  } },
   { version = "4.0.1", date = "Nov 21, 2026", items = {
     "A new logo, chosen by the guild: the crowned seal, with a W of two swords at its heart. It's on the minimap button, the side menu, the add-on list and the website.",
   } },

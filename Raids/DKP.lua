@@ -108,7 +108,7 @@ function ns.RequestAltLink(main)
   if ns.RankOf(main) == nil then ns.Say(main .. " isn't in the guild.") return end
   if ns.IsMe(main) then return end
   ns.LedgerAdd("AL", { alt = UnitName("player"), main = main, state = "req" })
-  ns.Say(ns.TF("Asked to link this character as an alt of %s. Log in on %s and confirm it on the DKP tab (Alts).", main, main))
+  ns.Say(ns.TF("Asked to link this character as an alt of %s. Log in on %s and confirm it with Alts in Loot > Standings.", main, main))
 end
 
 function ns.ConfirmAlt(alt)
@@ -137,7 +137,7 @@ ns.OnLedgerChanged(function()
   for _, alt in ipairs(ns.PendingAltRequests()) do
     if not toldAbout[alt] then
       toldAbout[alt] = true
-      ns.Say(ns.TF("%s wants to be linked as your alt. Confirm it on the DKP tab (Alts).", alt))
+      ns.Say(ns.TF("%s wants to be linked as your alt. Confirm it with Alts in Loot > Standings.", alt))
     end
   end
 end)

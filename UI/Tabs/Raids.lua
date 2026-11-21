@@ -593,7 +593,7 @@ local function Build(page)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view
   UI.Tooltip(P.view, "Switch view", "Raid: the selected raid's sign-ups. Plan: its groups and bench. Group: everyone in your raid group right now. "
-    .. "Progress: the bosses the guild has killed in each raid. (The calendar has its own tab.)")
+    .. "Progress: the bosses the guild has killed in each raid. (The calendar is in Events > Calendar.)")
 
   -- Upcoming raids.
   local raids = CreateFrame("Frame", nil, page)

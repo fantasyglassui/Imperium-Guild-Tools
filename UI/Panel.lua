@@ -19,6 +19,7 @@ local MIN_SCALE, MAX_SCALE = 0.7, 1.5
 local TAB_INFO = {
   home = "What's happening in the guild",
   roster = "Members, notes and ranks",
+  profiles = "Specs, roles, item levels and when people play",
   raids = "Sign-ups, raid nights and invites",
   events = "PvP nights, world bosses, meetings and more",
   calendar = "The month's raids, raid nights and events",
@@ -65,7 +66,8 @@ local SECTIONS = {
   { id = "home", title = "Home", icon = "home", items = { { tab = "home" } } },
   { group = "Guild" },
   { id = "guild", title = "Guild", icon = "roster", badge = onlineBadge, items = {
-    { tab = "roster", label = "Roster" }, { tab = "addon", label = "Who has Warcrest" } } },
+    { tab = "roster", label = "Roster" }, { tab = "profiles", label = "Profiles" },
+    { tab = "crafters", label = "Crafters" }, { tab = "addon", label = "Who has Warcrest" } } },
   { id = "events", title = "Events", icon = "events", badge = pollBadge, items = {
     { tab = "events", view = "events", label = "Events" }, { tab = "events", view = "polls", label = "Polls" },
     { tab = "calendar", label = "Calendar" } } },
@@ -488,7 +490,6 @@ end
 
 function ns.RefreshPanel()
   if ns.RefreshPlayerCard then ns.RefreshPlayerCard() end
-  if ns.RefreshProfiles then ns.RefreshProfiles() end
   if not (panel and panel:IsShown()) then return end
   UpdateTabVisibility()
   local t, it = currentTab()

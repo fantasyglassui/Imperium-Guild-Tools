@@ -33,4 +33,4 @@ def test_crafters_work_without_the_old_globals():
     assert cara.ns.RecipeName("e20025") == "Enchant Chest - Greater Stats"
     assert "Runecloth Robe" in cara.ns.RecipeLink("13858")
     cara.ns.ShowCrafters("robe")
-    assert cara.lua.eval("WarcrestCrafters:IsShown()")
+    assert tuple(cara.ns.PanelSection()) == ("guild", "crafters")

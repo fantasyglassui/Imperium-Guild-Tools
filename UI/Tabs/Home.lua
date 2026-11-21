@@ -273,7 +273,7 @@ local function RefreshRaid()
   else
     c.kicker:SetText(ns.Upper(ns.T("Next raid")))
     c.title:SetText(ns.T("No raids scheduled"))
-    c.info:SetText(ns.IsAddonOfficer() and ns.T("Officers: schedule one with New raid on the Raids tab.")
+    c.info:SetText(ns.IsAddonOfficer() and ns.T("Officers: schedule one with New raid in Raids.")
       or ns.T("Your officers haven't scheduled one yet."))
     c.open:SetText(ns.T("Raids"))
     return

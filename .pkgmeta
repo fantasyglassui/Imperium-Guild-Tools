@@ -1,8 +1,9 @@
 package-as: Warcrest
 
-# Release notes on GitHub and CurseForge come from the changelog, not commit messages.
+# Release notes on GitHub and CurseForge: this version's part of the changelog
+# (the release workflow writes RELEASE_NOTES.md from CHANGELOG.md), not commit messages.
 manual-changelog:
-  filename: CHANGELOG.md
+  filename: RELEASE_NOTES.md
   markup-type: markdown
 
 ignore:
@@ -14,3 +15,4 @@ ignore:
   - docs
   - tools
   - wiki
+  - RELEASE_NOTES.md

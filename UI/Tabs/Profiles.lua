@@ -3,7 +3,8 @@
   Your profile: what you tell the guild about yourself. Main spec and role,
   the days and times you usually play, your birthday and a short note. Your
   item level is added from the gear you're wearing. Opened from your player
-  card (Edit profile), the Roster tab, or /warcrest profile.
+  card (Edit profile), Guild > Profiles, or /warcrest profile. Everyone's
+  profiles are the Guild > Profiles view (/warcrest profiles).
 ]]
 
 local _, ns = ...
@@ -136,8 +137,8 @@ end
 -- Everyone's profiles: a list to see the guild's specs, item levels and
 -- who plays when (a gear check for officers planning raids).
 ------------------------------------------------------------------------
-local LW, LH = 700, 460
-local list
+local LW = UI.PAGE_W
+local list -- the page
 local sortBy = "name"
 local ROLE_TEXT = { tank = "Tank", healer = "Healer", dps = "DPS" }
 
@@ -157,41 +158,44 @@ local function rows()
   return out
 end
 
-local function BuildList()
-  list = UI.Window("WarcrestProfiles", LW, LH, ns.T("Guild profiles"))
-  list.info = UI.Label(list, "", "MutedSmall")
-  list.info:SetPoint("TOPLEFT", 16, -44)
-  list.info:SetWidth(LW - 32)
-  list.info:SetWordWrap(false)
-  list.sort = UI.Segmented(list, { { "name", "Name" }, { "role", "Role" }, { "ilvl", "Item level" } }, function(v)
+local function BuildList(page)
+  list = page
+  local mine = UI.Button(page.headerBar, "Edit my profile", 130, "primary")
+  mine:SetHeight(26)
+  mine:SetPoint("RIGHT")
+  mine:SetScript("OnClick", ns.ShowProfileEditor)
+  list.sort = UI.Segmented(page.headerBar, { { "name", "Name" }, { "role", "Role" }, { "ilvl", "Item level" } }, function(v)
     sortBy = v
-    ns.RefreshProfiles()
+    ns.RefreshPanel()
   end)
-  list.sort:SetPoint("BOTTOMRIGHT", -16, 14)
+  list.sort:SetPoint("RIGHT", mine, "LEFT", -8, 0)
+  UI.Tooltip(list.sort, "Sort by", "Sort the guild's profiles by name, role or item level.")
 
-  local box = CreateFrame("Frame", nil, list)
-  box:SetPoint("TOPLEFT", 16, -70)
-  box:SetPoint("BOTTOMRIGHT", -16, 52)
-  UI.Card(box, 1)
-  local heads = { { "NAME", 12 }, { "SPEC", 150 }, { "ROLE", 290 }, { "ITEM LVL", 360 }, { "PLAYS", 440 } }
+  list.info = UI.Label(page, "", "MutedSmall")
+  list.info:SetPoint("TOPLEFT", 4, -4)
+  list.info:SetWidth(LW - 8)
+  list.info:SetWordWrap(false)
+
+  local box = UI.Box(page, 0, -24, LW, 386)
+  local heads = { { "NAME", 12 }, { "SPEC", 170 }, { "ROLE", 330 }, { "ITEM LVL", 410 }, { "PLAYS", 500 } }
   local y = UI.TableHeads(box, heads)
-  list.rows = UI.List(box, LW - 32 - 4, LH - 70 - 52 + y - 2, 24,
+  list.rows = UI.List(box, LW - 4, 386 + y - 2, 24,
     function(row)
       row.name = UI.Label(row, "", "Subheading")
       row.name:SetPoint("LEFT", 12, 0)
-      row.name:SetWidth(130)
+      row.name:SetWidth(150)
       row.name:SetWordWrap(false)
       row.spec = UI.Label(row, "", "Small")
-      row.spec:SetPoint("LEFT", 150, 0)
-      row.spec:SetWidth(130)
+      row.spec:SetPoint("LEFT", 170, 0)
+      row.spec:SetWidth(150)
       row.spec:SetWordWrap(false)
       row.role = UI.Label(row, "", "Small")
-      row.role:SetPoint("LEFT", 290, 0)
+      row.role:SetPoint("LEFT", 330, 0)
       row.ilvl = UI.Label(row, "", "Number")
-      row.ilvl:SetPoint("LEFT", 360, 0)
+      row.ilvl:SetPoint("LEFT", 410, 0)
       row.plays = UI.Label(row, "", "MutedSmall")
-      row.plays:SetPoint("LEFT", 440, 0)
-      row.plays:SetWidth(LW - 32 - 440 - 30)
+      row.plays:SetPoint("LEFT", 500, 0)
+      row.plays:SetWidth(LW - 500 - 30)
       row.plays:SetWordWrap(false)
       UI.RowLine(row)
       row:SetScript("OnClick", function(self) ns.ShowPlayerCard(self.item.name) end)
@@ -218,15 +222,12 @@ local function BuildList()
     end, true)
   list.rows.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 0, y - 1)
   list.rows:SetEmptyText(ns.T("Nobody has shared a profile yet. Ask your guild to fill theirs in: /warcrest profile."))
-
-  local mine = UI.Button(list, "Edit my profile", 130, "primary")
-  mine:SetHeight(26)
-  mine:SetPoint("BOTTOMLEFT", 16, 14)
-  mine:SetScript("OnClick", ns.ShowProfileEditor)
+  UI.Grow(page, box, 1, 1)
+  UI.Grow(page, list.rows, 1, 1)
 end
 
-function ns.RefreshProfiles()
-  if not (list and list:IsShown()) then return end
+local function Refresh()
+  list.sort:SetValue(sortBy)
   local r = rows()
   list.rows:SetItems(r)
   local roster = #ns.GetRoster()
@@ -239,8 +240,14 @@ function ns.RefreshProfiles()
     #r, roster, tanks, healers, geared > 0 and tostring(math.floor(sum / geared + 0.5)) or "-"))
 end
 
-function ns.ShowProfiles()
-  if not list then BuildList() end
-  list:Show()
-  ns.RefreshProfiles()
+-- Only while the page is showing.
+function ns.RefreshProfiles()
+  if list and list:IsShown() then Refresh() end
 end
+
+-- Opens Guild > Profiles.
+function ns.ShowProfiles()
+  ns.OpenPanel("profiles")
+end
+
+UI.AddTab({ id = "profiles", title = "Profiles", build = BuildList, refresh = Refresh })

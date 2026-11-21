@@ -186,7 +186,7 @@ ns.OnEvent("CHAT_MSG_WHISPER", function(text, sender)
   table.insert(ns.recruitWhispers, 1, { name = name, text = text, t = time() })
   while #ns.recruitWhispers > WHISPERS_KEPT do table.remove(ns.recruitWhispers) end
   if not ns.Recruit(name) then
-    ns.Say(ns.TF("%s whispered about joining. Add them on the Recruit tab, or /warcrest recruit.", Ambiguate(name, "short")))
+    ns.Say(ns.TF("%s whispered about joining. Add them in Officers > Recruit, or /warcrest recruit.", Ambiguate(name, "short")))
   end
   if ns.RefreshPanel then ns.RefreshPanel() end
 end)
@@ -201,7 +201,7 @@ local function checkRecruits()
     local key = r.name .. ":" .. (r.trialStart or 0)
     if p and p.over and not ns.db.trialsNoted[key] then
       ns.db.trialsNoted[key] = true
-      ns.Say(("|cffffad33%s's trial is over (%d days):|r %d raid night%s and %d event%s attended. Set them to Joined or Declined on the Recruit tab.")
+      ns.Say(("|cffffad33%s's trial is over (%d days):|r %d raid night%s and %d event%s attended. Set them to Joined or Declined in Officers > Recruit.")
         :format(Ambiguate(r.name, "short"), p.days, p.nights, p.nights == 1 and "" or "s", p.events, p.events == 1 and "" or "s"))
     end
   end

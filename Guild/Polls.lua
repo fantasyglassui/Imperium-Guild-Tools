@@ -158,7 +158,7 @@ ns.OnMessage("PN", function(p, sender)
   C_Timer.After(2, function() -- the poll itself arrives with it
     local poll = ns.Poll(p[2])
     if not poll or not poll.open or not ns.db.eventNews then return end
-    ns.Notify(ns.TF("%s asks the guild: %s Vote on the Events tab.", Ambiguate(sender, "short"),
+    ns.Notify(ns.TF("%s asks the guild: %s Vote in Events > Polls.", Ambiguate(sender, "short"),
       "|cffffffff" .. poll.q .. "|r"), nil, nil, nil, "event", "Guild poll")
   end)
 end)

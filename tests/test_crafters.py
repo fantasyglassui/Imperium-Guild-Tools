@@ -93,3 +93,21 @@ def test_the_window_and_whispers():
     cara.ns.AskCrafter("Bob", "13858")
     opened = list(cara.lua.eval("openedChat").values())
     assert opened and opened[0].split(" ", 2)[1].split("-")[0] == "Bob" and "Hi! Could you craft" in opened[0] and "Runecloth Robe" in opened[0]
+
+
+def test_crafters_and_profiles_are_guild_views():
+    guild = Guild(M)
+    bob = guild["Bob"]
+    open_window(bob, "tradeSkill = " + TAILOR, "TRADE_SKILL_SHOW")
+    guild.run(35)
+    cara = guild["Cara"]
+    cara.ns.ShowCrafters("moon")
+    assert tuple(cara.ns.PanelSection()) == ("guild", "crafters")
+    cara.ns.ShowCrafters(None, "orders")
+    assert tuple(cara.ns.PanelSection()) == ("guild", "crafters")
+    cara.ns.ShowProfiles()
+    assert tuple(cara.ns.PanelSection()) == ("guild", "profiles")
+    cara.ns.OpenPanel("roster")
+    cara.ns.RefreshCrafters()      # not showing: does nothing
+    cara.ns.RefreshProfiles()
+    assert cara.errors() == []

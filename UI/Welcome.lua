@@ -116,7 +116,7 @@ local function BuildSetup()
   UI.FieldLabel(officerBox, "Loot", 24, -86)
   local dkp = UI.Segmented(officerBox, { { "yes", "Use DKP" }, { "no", "No DKP" } }, function(v) dkpValue = v end)
   dkp:SetPoint("TOPLEFT", 24, -102)
-  local dkpHint = UI.Label(officerBox, "No DKP hides the DKP tab and loot auctions. Raids, sign-ups, attendance, "
+  local dkpHint = UI.Label(officerBox, "No DKP hides DKP standings and loot auctions. Raids, sign-ups, attendance, "
     .. "wishlists and everything else still work. You can change this later in Settings.", "MutedSmall")
   dkpHint:SetPoint("TOPLEFT", 24, -134)
   dkpHint:SetWidth(INNER)

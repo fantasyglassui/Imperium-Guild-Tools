@@ -198,7 +198,7 @@ local function BuildGuildCard(parent)
   end)
   UI.Tooltip(P.enabled, "Guild alerts on", "Turns every alert off or on for the whole guild at once. Click Save for whole guild to send it.")
   P.dkp = UI.Check(g, "Use DKP for loot", 10, -74)
-  UI.Tooltip(P.dkp, "Use DKP for loot", "Off: the DKP tab, loot auctions and raid night DKP are hidden for everyone. "
+  UI.Tooltip(P.dkp, "Use DKP for loot", "Off: DKP standings, loot auctions and raid night DKP are hidden for everyone. "
     .. "Raids, sign-ups, attendance, wishlists and everything else still work. Click Save for whole guild to send it.")
 
   P.bounties = UI.Check(g, "Bounties", 10, -98)
@@ -206,7 +206,7 @@ local function BuildGuildCard(parent)
     .. "claims it (paid in DKP if the guild uses DKP). Off until an officer turns it on. Click Save for whole guild to send it.")
 
   P.memberPolls = UI.Check(g, "Members can start polls", 10, -122)
-  UI.Tooltip(P.memberPolls, "Members can start polls", "Off: only officers can start guild polls (Events tab, Polls). "
+  UI.Tooltip(P.memberPolls, "Members can start polls", "Off: only officers can start guild polls (Events > Polls). "
     .. "On: any member can, one open poll each. Click Save for whole guild to send it.")
 
   UI.FieldLabel(g, "Who can change these", 14, -146)
@@ -232,7 +232,7 @@ local function BuildGuildCard(parent)
   UI.Tooltip(P.rankUp, "More ranks", "Only the Guild Master can change who may edit the guild settings.")
   P.chatOfficers = UI.Check(g, "And every rank with officer chat", 10, -188)
   UI.Tooltip(P.chatOfficers, "And every rank with officer chat", "On: every rank that can read officer chat (set in the game's guild "
-    .. "control) counts as an officer in Warcrest too: the Recruit and Officers tabs, scheduling raids, guild settings. "
+    .. "control) counts as an officer in Warcrest too: the Officers section, scheduling raids, guild settings. "
     .. "Off: only the ranks picked above. Only the Guild Master can change this.")
 
   P.save = UI.Button(g, "Save for whole guild", INNER, "primary")
@@ -286,7 +286,7 @@ local function BuildAppearCard(parent)
     end
   end
   UI.Tooltip(P.warn, "On screen", "Banner: a card at the top of the screen with an icon and colour for each kind of alert. "
-    .. "Click it to open the matching tab, right-click to dismiss, Shift-drag to move. Raid warning text: the game's "
+    .. "Click it to open what it's about, right-click to dismiss, Shift-drag to move. Raid warning text: the game's "
     .. "big text in the middle of the screen. Chat only: nothing on screen.")
   local chat = UI.Label(a, "Alerts always go to chat too.", "MutedSmall")
   chat:SetPoint("TOPLEFT", 14, -98)
@@ -412,8 +412,8 @@ local function BuildGeneral(page)
   local tips = UI.Label(h, "/warcrest card Name opens a guild member's player card, and /warcrest profile "
     .. "your own profile. /warcrest check explains an achievement that hasn't shown up, and /warcrest updates "
     .. "shows what's new. /warcrest help lists every command in chat.", "Small")
-  local titles = UI.Label(h, "Your title is chosen on the Achievements tab, at the top right. Everyone's profiles "
-    .. "are on the Roster tab (Profiles).", "Small")
+  local titles = UI.Label(h, "Your title is chosen in Achievements, at the top right. Everyone's profiles "
+    .. "are in Guild > Profiles.", "Small")
   titles:SetPoint("TOPLEFT", tips, "BOTTOMLEFT", 0, -12)
   titles:SetWidth(inner)
   titles:SetSpacing(3)
@@ -478,7 +478,7 @@ local function BuildAccess(page)
   P.bannerHold:SetHeight(24)
   P.bannerHold:SetPoint("TOPRIGHT", -14, -38)
   UI.Tooltip(P.bannerHold, "Time on screen", "How long alert banners stay. Until dismissed: each stays until you click it "
-    .. "(left-click opens its tab, right-click closes it). Up to three show at once; a new one replaces the oldest.")
+    .. "(left-click opens what it's about, right-click closes it). Up to three show at once; a new one replaces the oldest.")
   P.still = UI.Check(b, "No sliding or fading", 10, -72)
   P.still:SetScript("OnClick", function(self) ns.SetAccess("reduceMotion", self:GetChecked() and true or false) end)
   UI.Tooltip(P.still, "No sliding or fading", "Banners appear and disappear at once, without moving.")

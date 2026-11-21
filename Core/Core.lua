@@ -809,7 +809,7 @@ SlashCmdList.WARCREST = function(input)
   else
     ns.Say("Commands:")
     print("  /warcrest - open Warcrest (or /wc)")
-    print("  /warcrest raids | dkp | kills | wanted | wishlist | achievements - open that tab")
+    print("  /warcrest raids | dkp | kills | wanted | wishlist | achievements - open that page")
     print("  /warcrest card [name] - a guild member's player card")
     print("  /warcrest help - the help window, with every command")
   end

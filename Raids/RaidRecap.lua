@@ -119,7 +119,7 @@ end
 -- /warcrest raidrecap: the last raid night's recap.
 function ns.ShowLastRaidNight()
   local last = endedNights()[1]
-  if not last then ns.Say("No raid nights yet. Officers start one with Start raid on the Raids tab.") return end
+  if not last then ns.Say("No raid nights yet. Officers start one with Start raid in Raids.") return end
   ns.PrintRaidNightRecap(ns.RaidNightRecap(last.session, last.ended.t))
 end
 

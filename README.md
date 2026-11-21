@@ -10,7 +10,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 
 ## Features
 
-- **Raid sign-ups.** Officers schedule raids; members sign up by role and get a reminder before the raid. The Raids tab shows who's coming by class and warns when a raid is short of tanks, healers or a class.
+- **Raid sign-ups.** Officers schedule raids; members sign up by role and get a reminder before the raid. Raids shows who's coming by class and warns when a raid is short of tanks, healers or a class.
 - **Weekly recap.** After the Tuesday reset, a summary of the guild's week: kills and top head hunters, raids, bosses and loot.
 - **DKP.** Earned on time and every hour of a raid, or awarded by officers. Spent by bidding on loot in live auctions.
 - **Death alerts.** When a guild member dies, everyone in the guild running the addon gets an alert in chat and as a banner at the top of the screen, with a sound. Two kinds of death are covered: world PvP, and falling, drowning or fatigue. Deaths to monsters, and deaths in battlegrounds and arenas, are not announced.
@@ -19,9 +19,9 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Deaths on the map.** Recent guild deaths (24 hours by default, adjustable from 1 hour to 7 days) are marked on the world map with an X (a skull for PvP), including inside OpenMap. Click a mark to set a TomTom waypoint.
 - **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
 - **Loot wishlists.** Mark the items you Need or Want; officers and bidders see who wants an item when it's auctioned.
-- **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid, wipes, best kill times and guild-first announcements. The Calendar tab shows the month's raids, raid nights, boss kills and guild events.
+- **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid, wipes, best kill times and guild-first announcements. Events > Calendar shows the month's raids, raid nights, boss kills and guild events.
 - **Alert sounds.** A sound for every kind of alert, from 87 sounds made for Warcrest, the game's, SharedMedia's or your own files.
-- **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open the matching tab.
+- **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open what it's about.
 - **Loot council.** Vote on who gets an item, with each candidate's wishlist, attendance and recent loot in front of the officers. Works with or without DKP.
 - **Raid night recap.** When the raid night ends, the guild gets a summary of the bosses, loot, attendance and the DKP each person earned.
 - **Raid groups planner.** Put sign-ups into groups and on the bench before the raid; Arrange raid moves everyone into place.
@@ -30,7 +30,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Raid assignments.** Officers write who does what on each boss and post it to raid chat; everyone sees their own job, and is reminded of it when the boss is pulled.
 - **Wipe tracking.** Every boss pull is recorded, kill or wipe, with the best kill time for each boss.
 - **Guild polls.** Ask the guild a question; everyone with Warcrest votes.
-- **Crafting orders.** Order from a guild crafter in the crafters directory; they accept, decline or mark it done.
+- **Crafting orders.** Order from a guild crafter in Guild > Crafters; they accept, decline or mark it done.
 - **German, French and Spanish.** Follows your game's language, or pick one in Settings.
 - **Achievements and titles.** 161 achievements for kills, streaks, revenge, bounties, raids, bosses, loot and guild life, with 67 titles to show after your name, in chat and in alerts.
 - **Kill streaks and revenge.** The guild hears when someone is on a kill streak (from Killing Spree at 3 to Godlike at 20 and Beyond Godlike at 30), when a big streak is ended, and when a guildmate's killer gets paid back.
@@ -114,17 +114,17 @@ When a guild member dies, their addon sends where it happened along with the ale
 
 When it's time, officers click **Invite sign-ups** to invite everyone online who accepted or is tentative; a party is turned into a raid automatically. Members who signed up but aren't there when the raid starts get a reminder.
 
-Officers click **New raid** on the Raids tab, then fill in the raid's name, day, start time (24-hour, in your own time; everyone sees it in theirs) and optional notes. Members pick a raid on the left, choose their role, and click Accept, Tentative or Decline. Anyone who accepted or is tentative gets a reminder 15 minutes before the start. **Show current raid group** lists everyone in your raid with their sign-up and DKP.
+Officers click **New raid** in Raids, then fill in the raid's name, day, start time (24-hour, in your own time; everyone sees it in theirs) and optional notes. Members pick a raid on the left, choose their role, and click Accept, Tentative or Decline. Anyone who accepted or is tentative gets a reminder 15 minutes before the start. **Show current raid group** lists everyone in your raid with their sign-up and DKP.
 
 ## DKP
 
-**Earning.** On raid night, an officer in the raid clicks **Start raid** on the Raids tab, with the on-time and hourly amounts (10 and 10 by default). Every guild member in the raid who is online gets the on-time DKP straight away, then the hourly DKP every hour until the officer clicks **End raid**. The hourly awards come from the officer who started the raid, so they should stay in the raid. Officers can also give or take DKP by hand on the DKP tab: tick members (or click **Select current raid**), enter an amount and reason, and click Add DKP or Remove DKP.
+**Earning.** On raid night, an officer in the raid clicks **Start raid** in Raids, with the on-time and hourly amounts (10 and 10 by default). Every guild member in the raid who is online gets the on-time DKP straight away, then the hourly DKP every hour until the officer clicks **End raid**. The hourly awards come from the officer who started the raid, so they should stay in the raid. Officers can also give or take DKP by hand in Loot > Standings: tick members (or click **Select current raid**), enter an amount and reason, and click Add DKP or Remove DKP.
 
-**Spending.** An officer Shift-clicks an item into the item box on the DKP tab, sets the minimum bid and time, and clicks **Start auction**. Everyone in the raid with the addon gets a bid window. Each bid must beat the highest bid and can't be more than your DKP; a bid in the last 5 seconds adds 5 more seconds. When time runs out, the highest bidder wins and their DKP is deducted automatically.
+**Spending.** An officer Shift-clicks an item into the item box in Loot > Standings, sets the minimum bid and time, and clicks **Start auction**. Everyone in the raid with the addon gets a bid window. Each bid must beat the highest bid and can't be more than your DKP; a bid in the last 5 seconds adds 5 more seconds. When time runs out, the highest bidder wins and their DKP is deducted automatically.
 
-**Standby.** During a raid night, officers open **Show current raid group** on the Raids tab and add members to standby. They get the same on-time and hourly DKP as the raid and count as attending.
+**Standby.** During a raid night, officers open **Show current raid group** in Raids and add members to standby. They get the same on-time and hourly DKP as the raid and count as attending.
 
-**Attendance and no-shows.** The DKP tab shows each member's attendance over the last 30 days. Anyone who accepted a raid but didn't come (and wasn't on standby) is marked as a no-show on that raid and in their attendance details.
+**Attendance and no-shows.** Loot > Standings shows each member's attendance over the last 30 days. Anyone who accepted a raid but didn't come (and wasn't on standby) is marked as a no-show on that raid and in their attendance details.
 
 **Decay.** Officers can take a percentage off everyone's DKP with **Decay now**, or tick **Every week** to have it done automatically after each Tuesday reset. This stops DKP piling up and keeps newer members competitive. Each week can only be decayed once.
 
@@ -136,15 +136,15 @@ Officers click **New raid** on the Raids tab, then fill in the raid's name, day,
 
 **Class check.** The bid window warns you before you bid on armor or weapons your class can't use, and asks you to confirm.
 
-**Alts.** Open **Alts** on the DKP tab. On your alt, type your main's name and click **Ask to link**, then log in on your main and click **Confirm**. Linking needs both characters, so nobody can claim someone else's character. Alts share their main's DKP and attendance. Officers can also link or unlink alts directly.
+**Alts.** Open **Alts** in Loot > Standings. On your alt, type your main's name and click **Ask to link**, then log in on your main and click **Confirm**. Linking needs both characters, so nobody can claim someone else's character. Alts share their main's DKP and attendance. Officers can also link or unlink alts directly.
 
-**Corrections.** Switch the DKP tab to **All changes** to see every DKP change. Officers can right-click one to undo it. Right-clicking an item in **Loot history** lets officers refund it or give it to someone else. Undone changes stay visible, marked as undone, so the history is always complete.
+**Corrections.** Switch Loot to **All changes** to see every DKP change. Officers can right-click one to undo it. Right-clicking an item in **Loot history** lets officers refund it or give it to someone else. Undone changes stay visible, marked as undone, so the history is always complete.
 
 **Starting balances.** Officers can click **Import balances** and paste lines like "Alice, 120" to set everyone's DKP at once. This is handy when moving from another DKP addon or a spreadsheet.
 
-**Seasons.** Every DKP change is kept, so after many months there's a lot of history to add up. Officers can click **New season** on the DKP tab: everyone keeps their current DKP, but DKP changes and loot history from before the season, and raids and attendance older than 30 days, are archived for good. Export first if you want a copy. A good rhythm is a new season each raid tier or every few months.
+**Seasons.** Every DKP change is kept, so after many months there's a lot of history to add up. Officers can click **New season** in Loot > Standings: everyone keeps their current DKP, but DKP changes and loot history from before the season, and raids and attendance older than 30 days, are archived for good. Export first if you want a copy. A good rhythm is a new season each raid tier or every few months.
 
-**Loot history.** On the DKP tab, switch from Standings to **Loot history** to see every item won in an auction: who won it, for how much, and on which raid night. Hover an item for its tooltip, or search by item or winner.
+**Loot history.** In Loot, switch from Standings to **Loot history** to see every item won in an auction: who won it, for how much, and on which raid night. Hover an item for its tooltip, or search by item or winner.
 
 **Backups.** Officers can click **Export DKP** to get a plain-text copy of standings, loot and every DKP change, ready to paste into a text file or spreadsheet.
 
@@ -156,9 +156,9 @@ Each person's addon records events while they're online. When you log in, your a
 
 ## The Wanted list
 
-An enemy player becomes wanted after killing guild members in world PvP a set number of times in the last 30 days (3 by default; change it on the Wanted tab). When a guildmate's addon sees a wanted player on their target, focus, mouseover or nameplates, the guild gets an alert and the spot is marked on the map with a purple diamond for 30 minutes. The same player is reported at most once every 10 minutes. Right-click someone on the Wanted tab to hide them from your own list.
+An enemy player becomes wanted after killing guild members in world PvP a set number of times in the last 30 days (3 by default; change it in PvP > Wanted). When a guildmate's addon sees a wanted player on their target, focus, mouseover or nameplates, the guild gets an alert and the spot is marked on the map with a purple diamond for 30 minutes. The same player is reported at most once every 10 minutes. Right-click someone in PvP > Wanted to hide them from your own list.
 
-When a guild member kills a wanted player, the bounty is claimed: the kill alert says so, and they drop off the list. Only guild deaths after that kill count toward them, so they come back if they keep ganking. Untick "Remove from the list when a guild member kills them" at the bottom of the Wanted tab to keep them listed instead.
+When a guild member kills a wanted player, the bounty is claimed: the kill alert says so, and they drop off the list. Only guild deaths after that kill count toward them, so they come back if they keep ganking. Untick "Remove from the list when a guild member kills them" at the bottom of PvP > Wanted to keep them listed instead.
 
 ## Clearing logs
 
@@ -176,7 +176,7 @@ The addon can't see killing blows, so a kill counts for you only if you actually
 
 **No grey kills.** Kills of players at a grey level (far below the killer's) are never announced or logged, so farming low-level players doesn't climb the leaderboard.
 
-**Removing bad kills.** Officers can right-click a kill on the Kills tab to remove it for the whole guild. It stays removed for everyone, including guildmates who were offline at the time.
+**Removing bad kills.** Officers can right-click a kill in PvP > Kills to remove it for the whole guild. It stays removed for everyone, including guildmates who were offline at the time.
 
 Healers who only healed don't get credit, since healing isn't an attack.
 
@@ -185,14 +185,14 @@ Healers who only healed don't get credit, since healing isn't an attack.
 - Raid deaths and battleground kills are turned off by default for each person, since they can send a lot of alerts. Turn them on in **Alert Settings** if you want them.
 - The officer log records what happens while you're online. Each person has their own copy.
 - The guild tools window closes when you enter combat and reopens when combat ends. The game doesn't allow its guild action buttons to be used in combat.
-- The Officer Log tab only appears for officers. The text of edited notes is never shared, only that a note was changed.
+- The Officers section only appears for officers. The text of edited notes is never shared, only that a note was changed.
 
 ## For officers
 
-- Buttons in the Roster tab only work for actions your guild rank already allows. The game server checks every action, so the addon can't give anyone extra powers.
-- Who counts as an officer in Warcrest (the Recruit and Officers tabs, scheduling raids, guild settings): the Guild Master, the rank directly below, and every rank that can read officer chat in the game's guild control. The Guild Master can change this in Settings > Alerts.
+- Buttons in Guild > Roster only work for actions your guild rank already allows. The game server checks every action, so the addon can't give anyone extra powers.
+- Who counts as an officer in Warcrest (the Officers section, scheduling raids, guild settings): the Guild Master, the rank directly below, and every rank that can read officer chat in the game's guild control. The Guild Master can change this in Settings > Alerts.
 - Settings reach everyone who is online when you save. Members who log in later get the current settings from any online officer.
-- The **Addon** tab shows who has the addon and who needs to update. Click **Check now** to ask everyone online.
+- **Guild > Who has Warcrest** shows who has the addon and who needs to update. Click **Check now** to ask everyone online.
 
 ## More help
 

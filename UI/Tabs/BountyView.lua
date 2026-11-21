@@ -161,7 +161,7 @@ function M.Refresh()
     M.infoTitle:SetText("How bounties work")
     M.infoText:SetText("Officers put a reward on an enemy player's head. The first guild member to land the killing blow "
       .. "on them in the next 30 days claims it" .. (dkp and ", and the DKP is paid automatically." or ".")
-      .. " Kills count the same way as on the Kills tab.\n\nThe guild hears when a bounty is placed and when it's claimed.")
+      .. " Kills count the same way as in PvP > Kills.\n\nThe guild hears when a bounty is placed and when it's claimed.")
     M.withdraw:Hide()
   end
 end

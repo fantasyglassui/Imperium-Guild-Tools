@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.0
+- **Profiles and Crafters are views in the Guild section** now, next to Roster and Who has Warcrest, instead of windows of their own. They fill the Warcrest window and grow with it. `/warcrest profiles`, `/warcrest craft` and `/warcrest orders` open them there, and Getting started's "Share your recipes" step goes straight to Crafters. Crafters' Recipes and Orders switch, and Profiles' sort and **Edit my profile**, sit at the top right. Editing your own profile is still a small window.
+- **Help, tooltips and messages use the new names.** Everything that still said "the DKP tab", "the Kills tab" and so on now names the section and view, for example Loot > Standings, PvP > Kills, Events > Polls or Officers > Recruit, in all four languages.
+- **Release notes on GitHub and CurseForge** now show just that version's changes instead of the whole changelog.
+
 ## 4.0.1
 - **A new logo**, chosen by the guild: the crowned seal. A crown sits on a round seal with "Warcrest · Guild tools · Forever" around the ring and a W made of two swords at its heart. Smaller versions (the minimap button, chat and the add-on list) keep just the crown, the ring and the W so it stays clear. The website, its link preview and the screenshots use it too. The Imperium keeps its own emblem.
 

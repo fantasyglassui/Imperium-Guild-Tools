@@ -1,16 +1,16 @@
 --[[
   Warcrest
-  The crafters window: search what the guild can make, see who makes it
+  Guild > Crafters: search what the guild can make, see who makes it
   (online first), and pick a recipe to order it from a crafter or whisper
   them. The Orders view lists the orders for you to make and the ones you've
-  asked for. Opened from the Roster tab, /warcrest craft or /warcrest orders.
+  asked for. Also /warcrest craft or /warcrest orders.
 ]]
 
 local _, ns = ...
 local UI = ns.UI
 
-local W, H = 700, 480
-local win
+local W = UI.PAGE_W
+local win -- the page
 local query, prof = "", nil
 local view = "recipes" -- "recipes" or "orders"
 local picked           -- the recipe row picked: { id, name, crafters }
@@ -34,53 +34,48 @@ local function craftersText(r)
   return table.concat(names, ", ")
 end
 
-local function Build()
-  win = UI.Window("WarcrestCrafters", W, H, ns.T("Guild crafters"))
-  win.search = UI.EditBox(win, 260, 40)
-  win.search:SetHeight(26)
-  win.search:SetPoint("TOPLEFT", 16, -40)
-  win.search.hint = UI.Label(win.search, "Search recipes", "MutedSmall")
-  win.search.hint:SetPoint("LEFT", 8, 0)
-  win.search:HookScript("OnTextChanged", function(self)
-    self.hint:SetShown((self:GetText() or "") == "")
-    query = self:GetText() or ""
+local TAB = { id = "crafters", title = "Crafters" }
+
+local function Build(page)
+  win = page
+  win.search = UI.SearchBox(page, 260, "Search recipes", function(text)
+    query = text
     ns.RefreshCrafters()
   end)
-  win.prof = UI.Cycle(win, 180, profOptions(), function(v)
+  win.search:SetPoint("TOPLEFT", 1, 0)
+  win.prof = UI.Cycle(page, 180, profOptions(), function(v)
     prof = v ~= "" and v or nil
     ns.RefreshCrafters()
   end)
   win.prof:SetHeight(26)
   win.prof:SetPoint("LEFT", win.search, "RIGHT", 8, 0)
   UI.Tooltip(win.prof, "Profession", "Click to show one profession's recipes.")
-  win.info = UI.Label(win, "", "MutedSmall")
-  win.info:SetPoint("BOTTOMRIGHT", -16, 18)
-  win.info:SetJustifyH("RIGHT")
-  win.view = UI.Segmented(win, { { "recipes", "Recipes" }, { "orders", "Orders" } }, function(v)
+  win.view = UI.Segmented(page.headerBar, { { "recipes", "Recipes" }, { "orders", "Orders" } }, function(v)
     view = v
-    ns.RefreshCrafters()
+    ns.RefreshPanel()
   end)
-  win.view:SetPoint("TOPRIGHT", -16, -40)
+  win.view:SetPoint("RIGHT")
+  TAB.view = win.view -- so OpenPanel("crafters", "orders") picks the view
 
   local box = CreateFrame("Frame", nil, win)
   win.recipeBox = box
-  box:SetPoint("TOPLEFT", 16, -76)
-  box:SetPoint("BOTTOMRIGHT", -16, 92)
+  box:SetPoint("TOPLEFT", 1, -37)
+  box:SetSize(W - 2, 326)
   UI.Card(box, 1)
-  local y = UI.TableHeads(box, { { "RECIPE", 12 }, { "PROFESSION", 300 }, { "CRAFTERS", 430 } })
-  win.rows = UI.List(box, W - 32 - 4, H - 76 - 92 + y - 2, 24,
+  local y = UI.TableHeads(box, { { "RECIPE", 12 }, { "PROFESSION", 320 }, { "CRAFTERS", 460 } })
+  win.rows = UI.List(box, W - 4, 326 + y - 2, 24,
     function(row)
       row.name = UI.Label(row, "", "Subheading")
       row.name:SetPoint("LEFT", 12, 0)
-      row.name:SetWidth(278)
+      row.name:SetWidth(298)
       row.name:SetWordWrap(false)
       row.prof = UI.Label(row, "", "Small")
-      row.prof:SetPoint("LEFT", 300, 0)
+      row.prof:SetPoint("LEFT", 320, 0)
       row.prof:SetWidth(120)
       row.prof:SetWordWrap(false)
       row.who = UI.Label(row, "", "Small")
-      row.who:SetPoint("LEFT", 430, 0)
-      row.who:SetWidth(W - 32 - 430 - 30)
+      row.who:SetPoint("LEFT", 460, 0)
+      row.who:SetWidth(W - 460 - 30)
       row.who:SetWordWrap(false)
       UI.RowSelection(row)
       UI.RowLine(row)
@@ -108,19 +103,19 @@ local function Build()
     end, true)
   win.rows.frame:SetPoint("TOPLEFT", box, "TOPLEFT", 0, y - 1)
 
-  win.hint = UI.Label(win, "Open your profession windows to share your recipes with the guild.", "MutedSmall")
-  win.hint:SetPoint("BOTTOMLEFT", 16, 18)
-  win.hint:SetWidth(W - 32 - 170)
+  win.hint = UI.Label(page, "Open your profession windows to share your recipes with the guild.", "MutedSmall")
+  win.hint:SetPoint("TOPLEFT", 4, -376)
+  win.hint:SetWidth(W - 8)
   win.hint:SetWordWrap(false)
 
   -- Ordering the recipe picked.
-  local o = CreateFrame("Frame", nil, win)
+  local o = CreateFrame("Frame", nil, page)
   win.order = o
-  o:SetPoint("BOTTOMLEFT", 16, 40)
-  o:SetSize(W - 32, 44)
+  o:SetPoint("TOPLEFT", 1, -374)
+  o:SetSize(W - 2, 44)
   o.what = UI.Label(o, "", "Subheading")
   o.what:SetPoint("TOPLEFT", 0, -2)
-  o.what:SetWidth(W - 32 - 240)
+  o.what:SetWidth(W - 240)
   o.what:SetWordWrap(false)
   o.to = UI.Cycle(o, 220, { { "", "" } }, function(v) orderTo = v; ns.RefreshCrafters() end)
   o.to:SetHeight(24)
@@ -148,24 +143,24 @@ local function Build()
   o.whisper:SetScript("OnClick", function() if picked and orderTo then ns.AskCrafter(orderTo, picked.id) end end)
 
   -- Orders: for you to make, and the ones you asked for.
-  local ob = CreateFrame("Frame", nil, win)
+  local ob = CreateFrame("Frame", nil, page)
   win.ordersBox = ob
-  ob:SetPoint("TOPLEFT", 16, -76)
-  ob:SetPoint("BOTTOMRIGHT", -16, 46)
+  ob:SetPoint("TOPLEFT", 1, 0)
+  ob:SetSize(W - 2, 364)
   UI.Card(ob, 1)
-  local oy = UI.TableHeads(ob, { { "RECIPE", 12 }, { "ORDER", 240 }, { "STATUS", 420 } })
-  win.orders = UI.List(ob, W - 32 - 4, H - 76 - 46 + oy - 2, 30,
+  local oy = UI.TableHeads(ob, { { "RECIPE", 12 }, { "ORDER", 260 }, { "STATUS", 460 } })
+  win.orders = UI.List(ob, W - 4, 364 + oy - 2, 30,
     function(row)
       row.name = UI.Label(row, "", "Subheading")
       row.name:SetPoint("LEFT", 12, 0)
-      row.name:SetWidth(220)
+      row.name:SetWidth(240)
       row.name:SetWordWrap(false)
       row.who = UI.Label(row, "", "Small")
-      row.who:SetPoint("LEFT", 240, 0)
-      row.who:SetWidth(170)
+      row.who:SetPoint("LEFT", 260, 0)
+      row.who:SetWidth(190)
       row.who:SetWordWrap(false)
       row.status = UI.Label(row, "", "Small")
-      row.status:SetPoint("LEFT", 420, 0)
+      row.status:SetPoint("LEFT", 460, 0)
       row.b2 = UI.Button(row, "", 76)
       row.b2:SetHeight(22)
       row.b2:SetPoint("RIGHT", -14, 0)
@@ -207,6 +202,14 @@ local function Build()
       end
     end, true)
   win.orders.frame:SetPoint("TOPLEFT", ob, "TOPLEFT", 0, oy - 1)
+
+  -- A bigger window: the lists get the room, the order line stays under them.
+  UI.Grow(page, box, 1, 1)
+  UI.Grow(page, win.rows, 1, 1)
+  UI.Grow(page, ob, 1, 1)
+  UI.Grow(page, win.orders, 1, 1)
+  UI.Follow(page, o, 0, 1)
+  UI.Follow(page, win.hint, 0, 1)
 end
 
 local function refreshOrders()
@@ -224,8 +227,7 @@ local function refreshOrders()
   win.orders:SetItems(rows)
 end
 
-function ns.RefreshCrafters()
-  if not (win and win:IsShown()) then return end
+local function Refresh()
   win.view:SetValue(view)
   local waiting = ns.OrdersWaiting()
   win.recipeBox:SetShown(view == "recipes")
@@ -237,8 +239,6 @@ function ns.RefreshCrafters()
   if view == "orders" then
     win.order:Hide()
     refreshOrders()
-    local people, recipes = ns.CraftStats()
-    win.info:SetText(ns.TF("%d crafters · %d recipes", people, recipes))
     return
   end
   -- The profession list grows as lists arrive.
@@ -279,16 +279,27 @@ function ns.RefreshCrafters()
   win.rows:SetEmptyText(ns.T(query ~= "" and "Nobody in the guild makes that yet."
     or "No recipes shared yet. They show up once guildmates open their profession windows."))
   win.rows:SetItems(list)
-  local people, recipes = ns.CraftStats()
-  win.info:SetText(ns.TF("%d crafters · %d recipes", people, recipes))
 end
 
-function ns.ShowCrafters(search, which)
-  if not win then Build() end
-  if which then view = which end
-  win:Show()
-  if search and search ~= "" then win.search:SetText(search) end
-  ns.RefreshCrafters()
+-- Only while the page is showing.
+function ns.RefreshCrafters()
+  if win and win:IsShown() then Refresh() end
 end
+
+-- The header's subtitle: how many crafters and recipes.
+local function Subtitle()
+  local people, recipes = ns.CraftStats()
+  return ns.TF("%d crafters · %d recipes", people, recipes)
+end
+
+-- Opens Guild > Crafters; which: "recipes" or "orders".
+function ns.ShowCrafters(search, which)
+  if which then view = which end
+  ns.OpenPanel("crafters", which)
+  if win and search and search ~= "" then win.search:SetText(search) end
+end
+
+TAB.build, TAB.refresh, TAB.subtitle = Build, Refresh, Subtitle
+UI.AddTab(TAB)
 
 ns.OnLoad(function() ns.OnLedgerChanged(function() if view == "orders" then ns.RefreshCrafters() end end) end)

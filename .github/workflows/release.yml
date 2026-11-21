@@ -21,5 +21,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      # The release notes are this version's part of CHANGELOG.md only
+      # (from its "## x.y.z" heading to the next one), not the whole history.
+      - name: This version's release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '
+            /^## / { if (found) exit; if ($2 == v) { found = 1 } }
+            found { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "No '## $version' section in CHANGELOG.md; using the whole changelog."
+            cp CHANGELOG.md RELEASE_NOTES.md
+          fi
+          cat RELEASE_NOTES.md
+
       - name: Package and upload
         uses: BigWigsMods/packager@v2
