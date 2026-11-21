@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.1
+- **A new logo**, chosen by the guild: the crowned seal. A crown sits on a round seal with "Warcrest · Guild tools · Forever" around the ring and a W made of two swords at its heart. Smaller versions (the minimap button, chat and the add-on list) keep just the crown, the ring and the W so it stays clear. The website, its link preview and the screenshots use it too. The Imperium keeps its own emblem.
+
 ## 4.0.0
 ### A new look
 The guild voted for layout F of the UI concepts, and here it is: both of its steps (the new menu and Home, then the joined-up sections) in one release.
