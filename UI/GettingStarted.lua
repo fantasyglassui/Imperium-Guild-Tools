@@ -27,10 +27,10 @@ end
 local STEPS = {
   { id = "open", title = "Open Warcrest", hint = "/warcrest, /wc or the crest by your minimap",
     button = "Open", done = function() return ns.db.started.open end,
-    go = function() win:Hide(); ns.OpenPanel() end },
+    go = function() if win then win:Hide() end; ns.OpenPanel("home") end },
   { id = "signup", title = "Sign up for a raid", hint = "Pick your role and Accept on the Raids tab",
     button = "Raids", done = signedUp,
-    go = function() win:Hide(); ns.OpenPanel("raids") end },
+    go = function() if win then win:Hide() end; ns.OpenPanel("raids") end },
   { id = "profile", title = "Fill in your profile", hint = "Spec, role and when you play: it shows on your player card",
     button = "Edit profile", done = function() return ns.MemberProfile(me()) ~= nil end,
     go = function() ns.ShowProfileEditor() end },
@@ -52,6 +52,14 @@ function ns.StartedSteps()
     out[s.id] = ok and true or false
   end
   return out, n, #STEPS
+end
+
+-- The first step not done yet ({ id, title, hint, button, go }), or nil when all are.
+function ns.NextStartedStep()
+  local done = ns.StartedSteps()
+  for _, s in ipairs(STEPS) do
+    if not done[s.id] then return s end
+  end
 end
 
 -- Something a step watches for happened (Warcrest was opened, say).
@@ -129,7 +137,12 @@ local function Build()
   win.hide = UI.Button(win, "Hide this", 96)
   win.hide:SetHeight(28)
   win.hide:SetPoint("BOTTOMRIGHT", -24, 14)
-  win.hide:SetScript("OnClick", function() win:Hide() end)
+  -- Hiding it takes it off Home and the side menu too (/warcrest start brings it back).
+  win.hide:SetScript("OnClick", function()
+    ns.db.started.dismissed = true
+    win:Hide()
+    if ns.RefreshPanel then ns.RefreshPanel() end
+  end)
   win.setup = UI.Button(win, "Guild setup", 120)
   win.setup:SetHeight(28)
   win.setup:SetPoint("RIGHT", win.hide, "LEFT", -8, 0)
@@ -186,6 +199,7 @@ end
 
 function ns.ShowGettingStarted()
   if not win then Build() end
+  ns.db.started.dismissed = nil
   ns.db.welcomed = true
   ns.RefreshGettingStarted()
   win:Show()

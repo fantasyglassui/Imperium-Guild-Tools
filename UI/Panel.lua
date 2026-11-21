@@ -7,82 +7,222 @@ local _, ns = ...
 local UI = ns.UI
 local C = UI.C
 local panel
-local current = 1
 
-local WIDTH, HEIGHT = 910, 520           -- the smallest the window can be
+local WIDTH, HEIGHT = 910, 554           -- the smallest the window can be
 local MAX_WIDTH, MAX_HEIGHT = 1600, 1000
 local SIDEBAR = 150   -- width of the side menu
 local HEADER = 52     -- height of the header above each tab
+local SWITCH_H = 34   -- the row of views under it, in sections that have them
 local MIN_SCALE, MAX_SCALE = 0.7, 1.5
 
--- Icon and one-line description for each tab, by its id.
+-- What a tab is about, by its id (the header's second line when the tab has none of its own).
 local TAB_INFO = {
-  roster = { icon = "roster", text = "Members, notes and ranks" },
-  raids = { icon = "raids", text = "Sign-ups, raid nights and invites" },
-  events = { icon = "events", text = "PvP nights, world bosses, meetings and more" },
-  calendar = { icon = "calendar", text = "The month's raids, raid nights and events" },
-  recruit = { icon = "recruit", text = "Recruits, trials and the recruiting message" },
-  dkp = { icon = "dkp", text = "Standings, loot and auctions" },
-  wishlist = { icon = "wishlist", text = "The loot the guild wants" },
-  kills = { icon = "kills", text = "PvP kills by guild members" },
-  achievements = { icon = "trophy", text = "Achievements and titles" },
-  wanted = { icon = "wanted", text = "Enemy players who keep killing guild members" },
-  settings = { icon = "settings", text = "Alerts for the whole guild, and just for you" },
-  officers = { icon = "officers", text = "Guild changes seen while you're online" },
-  addon = { icon = "addon", text = "Who has Warcrest installed" },
+  home = "What's happening in the guild",
+  roster = "Members, notes and ranks",
+  raids = "Sign-ups, raid nights and invites",
+  events = "PvP nights, world bosses, meetings and more",
+  calendar = "The month's raids, raid nights and events",
+  recruit = "Recruits, trials and the recruiting message",
+  dkp = "Standings, loot and auctions",
+  wishlist = "The loot the guild wants",
+  kills = "PvP kills by guild members",
+  achievements = "Achievements and titles",
+  wanted = "Enemy players who keep killing guild members",
+  settings = "Alerts for the whole guild, and just for you",
+  officers = "Guild changes seen while you're online",
+  addon = "Who has Warcrest installed",
 }
 
-local function tabVisible(i)
-  local t = UI.tabs[i]
-  return not t.visible or t.visible()
+------------------------------------------------------------------------
+-- Sections: the side menu. Each shows one tab, or several as views along
+-- the top. An item: { tab = id, view = one of that tab's own views (its own
+-- switch is then hidden), label = its name in the switch, visible = fn }.
+------------------------------------------------------------------------
+local function onlineBadge()
+  local n = 0
+  for _, m in ipairs(ns.GetRoster()) do if m.online then n = n + 1 end end
+  if n > 0 then return ns.TF("%d on", n) end
 end
 
--- Highlight the current tab's menu item.
+local function pollBadge()
+  local n = 0
+  for _, p in ipairs(ns.Polls and ns.Polls() or {}) do
+    if p.open and not ns.MyVote(p) then n = n + 1 end
+  end
+  if n == 1 then return ns.T("1 poll"), "accent" end
+  if n > 1 then return ns.TF("%d polls", n), "accent" end
+end
+
+local function raidBadge()
+  if ns.ActiveSession and ns.ActiveSession() then return ns.T("live"), "good" end
+  local today = date("%Y-%m-%d")
+  for _, e in ipairs(ns.RaidEvents and ns.RaidEvents() or {}) do
+    if e.start >= time() - 3 * 3600 and date("%Y-%m-%d", e.start) == today then return ns.T("tonight"), "good" end
+  end
+end
+
+local SECTIONS = {
+  { id = "home", title = "Home", icon = "home", items = { { tab = "home" } } },
+  { group = "Guild" },
+  { id = "guild", title = "Guild", icon = "roster", badge = onlineBadge, items = {
+    { tab = "roster", label = "Roster" }, { tab = "addon", label = "Who has Warcrest" } } },
+  { id = "events", title = "Events", icon = "events", badge = pollBadge, items = {
+    { tab = "events", view = "events", label = "Events" }, { tab = "events", view = "polls", label = "Polls" },
+    { tab = "calendar", label = "Calendar" } } },
+  { group = "Raids & loot" },
+  { id = "raids", title = "Raids", icon = "raids", badge = raidBadge, items = { { tab = "raids" } } },
+  { id = "loot", title = "Loot", icon = "dkp", items = {
+    { tab = "dkp", view = "standings", label = "Standings" }, { tab = "dkp", view = "loot", label = "Loot history" },
+    { tab = "dkp", view = "changes", label = "All changes" }, { tab = "wishlist", label = "Wishlist" } } },
+  { group = "PvP & glory" },
+  { id = "pvp", title = "PvP", icon = "kills", items = {
+    { tab = "kills", label = "Kills" }, { tab = "wanted", view = "wanted", label = "Wanted" },
+    { tab = "wanted", view = "guilds", label = "Guild wars" },
+    { tab = "wanted", view = "bounties", label = "Bounties", visible = function() return ns.BountiesOn() end } } },
+  { id = "achievements", title = "Achievements", icon = "trophy", items = { { tab = "achievements" } } },
+  { group = "Officers" },
+  { id = "officers", title = "Officers", icon = "officers", items = {
+    { tab = "officers", label = "Officer log" }, { tab = "recruit", label = "Recruit" } } },
+}
+local SETTINGS = { id = "settings", title = "Settings", items = { { tab = "settings" } } }
+UI.SECTIONS = SECTIONS
+
+local section, item = SECTIONS[1], 1 -- what's showing
+
+local function tabIndex(id)
+  for i, t in ipairs(UI.tabs) do if t.id == id then return i end end
+end
+
+local function tabVisible(id)
+  local t = UI.tabs[tabIndex(id) or 0]
+  return t ~= nil and (not t.visible or t.visible())
+end
+
+local function itemVisible(it)
+  return tabVisible(it.tab) and (not it.visible or it.visible())
+end
+
+local function sectionVisible(s)
+  for _, it in ipairs(s.items) do if itemVisible(it) then return true end end
+  return false
+end
+
+-- The section an item's tab (and view) is in.
+local function find(tab, view)
+  for _, s in ipairs({ SETTINGS, unpack(SECTIONS) }) do
+    for i, it in ipairs(s.items or {}) do
+      if it.tab == tab and (not view or not it.view or it.view == view) then return s, i end
+    end
+  end
+end
+
+-- Highlight the current section in the menu.
 local function paintNav()
-  for i, b in ipairs(panel.navButtons) do
-    local active = i == current
+  for _, b in ipairs(panel.navButtons) do
+    local active = b.section == section
     b.active:SetShown(active)
     b.bar:SetShown(active)
     b.text:SetFontObject(active and UI.Fonts.NavActive or UI.Fonts.Nav)
     local c = active and C.accent or C.navText
     b.icon:SetVertexColor(c[1], c[2], c[3])
   end
+  local on = section == SETTINGS
+  local sb = panel.settingsButton
+  sb.active:SetShown(on)
+  sb.text:SetFontObject(on and UI.Fonts.NavActive or UI.Fonts.Nav)
+  local c = on and C.accent or C.navText
+  sb.icon:SetVertexColor(c[1], c[2], c[3])
+end
+
+local function currentTab()
+  local it = section.items[item]
+  return UI.tabs[tabIndex(it.tab)], it
 end
 
 local function setHeader()
-  local t = UI.tabs[current]
-  local info = TAB_INFO[t.id] or {}
-  panel.heading:SetText(t.title)
-  panel.subheading:SetText((t.subtitle and t.subtitle()) or info.text or "")
+  local t = currentTab()
+  panel.heading:SetText(t.heading and t.heading() or ns.T(section.title))
+  panel.subheading:SetText((t.subtitle and t.subtitle()) or ns.T(TAB_INFO[t.id] or ""))
 end
 
-local function ShowTab(id)
-  if not tabVisible(id) then id = 1 end
-  current = id
-  ns.db.lastTab = UI.tabs[id].id -- reopen here next time
-  for i, t in ipairs(UI.tabs) do t.page:SetShown(i == id) end
-  paintNav()
-  ns.RefreshPanel()
-end
-
--- Officer-only tabs come and go with your rank: lay out the menu again.
-local function UpdateTabVisibility()
-  local y = -64
-  for i, b in ipairs(panel.navButtons) do
-    local shown = tabVisible(i)
-    b:SetShown(shown)
-    if shown then
-      b:ClearAllPoints()
-      b:SetPoint("TOPLEFT", 10, y)
-      y = y - 30
+-- The switch between a section's views, next to its name.
+local function layoutSwitch()
+  for _, s in ipairs(SECTIONS) do
+    if s.switch then
+      local shown = 0
+      for i, it in ipairs(s.items) do
+        local on = itemVisible(it)
+        s.switch:SetOptionShown(i, on)
+        if on then shown = shown + 1 end
+      end
+      s.switch:SetShown(s == section and shown > 1)
+      if s == section then
+        s.switch:SetValue(item)
+      end
     end
   end
-  if not tabVisible(current) then ShowTab(1) end
 end
 
-local function MakeNavButton(parent, id, tab)
+-- Show item i of section s (the first one shown, if that one isn't).
+local function ShowSection(s, i)
+  if not sectionVisible(s) then s, i = SECTIONS[1], 1 end
+  i = i or 1
+  if not s.items[i] or not itemVisible(s.items[i]) then
+    for n, it in ipairs(s.items) do if itemVisible(it) then i = n break end end
+  end
+  section, item = s, i
+  local t, it = currentTab()
+  ns.db.lastTab, ns.db.lastSection, ns.db.lastItem = t.id, s.id, i -- reopen here next time
+  for _, x in ipairs(UI.tabs) do x.page:SetShown(x == t) end
+  if it.view and t.view then t.view:Pick(it.view) end
+  paintNav()
+  layoutSwitch()
+  ns.RefreshPanel()
+end
+UI.ShowSection = ShowSection
+
+-- Officer-only sections come and go with your rank: lay out the menu again.
+local function UpdateTabVisibility()
+  local y = -62
+  local pendingGroup
+  for _, b in ipairs(panel.navItems) do
+    if b.group then
+      b:Hide()
+      pendingGroup = b
+    else
+      local shown = sectionVisible(b.section)
+      b:SetShown(shown)
+      if shown then
+        if pendingGroup then
+          pendingGroup:Show()
+          pendingGroup:ClearAllPoints()
+          pendingGroup:SetPoint("TOPLEFT", 21, y - 8)
+          y = y - 22
+          pendingGroup = nil
+        end
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", 10, y)
+        y = y - 26
+        local text, color = nil, nil
+        if b.section.badge then text, color = b.section.badge() end
+        b.badge:SetText(text or "")
+        local c = C[color or "faint"]
+        b.badge:SetTextColor(c[1], c[2], c[3])
+        -- No room for the note next to a long name (in some languages): a dot instead.
+        local fits = b.text:GetStringWidth() + b.badge:GetStringWidth() + 34 + 14 <= SIDEBAR - 20
+        b.badge:SetShown(fits)
+        b.dot:SetShown(text ~= nil and not fits)
+        b.dot:SetColorTexture(c[1], c[2], c[3], 1)
+      end
+    end
+  end
+  if not sectionVisible(section) or not itemVisible(section.items[item]) then ShowSection(section, item) end
+end
+
+local function MakeNavButton(parent, s)
   local b = CreateFrame("Button", nil, parent)
-  b:SetSize(SIDEBAR - 20, 28)
+  b.section = s
+  b:SetSize(SIDEBAR - 20, 26)
   b.active = UI.Fill(b, C.accent, 0.12)
   b.bar = b:CreateTexture(nil, "BORDER")
   b.bar:SetPoint("TOPLEFT")
@@ -92,15 +232,80 @@ local function MakeNavButton(parent, id, tab)
   local hover = b:CreateTexture(nil, "HIGHLIGHT")
   hover:SetAllPoints()
   hover:SetColorTexture(1, 1, 1, 0.04)
-  local info = TAB_INFO[tab.id] or {}
-  b.icon = UI.Icon(b, info.icon or "addon", 14, C.navText)
+  b.icon = UI.Icon(b, s.icon or "addon", 14, C.navText)
   b.icon:SetPoint("LEFT", 11, 0)
-  b.text = UI.Label(b, tab.title, "Nav")
+  b.text = UI.Label(b, s.title, "Nav")
   b.text:SetPoint("LEFT", b.icon, "RIGHT", 9, 0)
+  b.badge = UI.Label(b, "", "MutedSmall")
+  b.badge:SetPoint("RIGHT", -8, 0)
+  b.dot = b:CreateTexture(nil, "OVERLAY")
+  b.dot:SetSize(6, 6)
+  b.dot:SetPoint("RIGHT", -10, 0)
+  b.dot:Hide()
   b:SetScript("OnClick", function()
     PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-    ShowTab(id)
+    ShowSection(s, s == section and item or 1)
   end)
+  return b
+end
+
+-- Getting started, above Settings and Help, until it's done or hidden.
+local function MakeStartCard(side)
+  local card = CreateFrame("Button", nil, side)
+  card:SetSize(SIDEBAR - 20, 44)
+  card:SetPoint("BOTTOMLEFT", 10, 90)
+  UI.Fill(card, C.accent, 0.08)
+  UI.Border(card, C.accent[1], C.accent[2], C.accent[3], 0.45)
+  local hover = card:CreateTexture(nil, "HIGHLIGHT")
+  hover:SetAllPoints()
+  hover:SetColorTexture(1, 1, 1, 0.04)
+  card.title = UI.Label(card, "Getting started", "Subheading")
+  card.title:SetPoint("TOPLEFT", 9, -8)
+  card.title:SetTextColor(C.accent[1], C.accent[2], C.accent[3])
+  card.count = UI.Label(card, "", "MutedSmall")
+  card.count:SetPoint("BOTTOMRIGHT", -8, 6)
+  card.track = card:CreateTexture(nil, "ARTWORK")
+  card.track:SetPoint("BOTTOMLEFT", 9, 10)
+  card.track:SetSize(SIDEBAR - 80, 4)
+  card.track:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 0.18)
+  card.fill = card:CreateTexture(nil, "OVERLAY")
+  card.fill:SetPoint("LEFT", card.track, "LEFT")
+  card.fill:SetHeight(4)
+  card.fill:SetColorTexture(C.accent[1], C.accent[2], C.accent[3], 1)
+  card:SetScript("OnClick", function() if ns.ShowGettingStarted then ns.ShowGettingStarted() end end)
+  UI.Tooltip(card, "Getting started", "Five quick things so the guild sees you, and you see the guild. Each ticks itself off.")
+  function card:Update()
+    local _, n, total = ns.StartedSteps()
+    local show = n < total and not ns.db.started.dismissed
+    self:SetShown(show)
+    if not show then return end
+    self.count:SetText(ns.TF("%d of %d", n, total))
+    self.fill:SetShown(n > 0)
+    self.fill:SetWidth(math.max(1, (SIDEBAR - 80) * n / total))
+  end
+  return card
+end
+
+-- Settings and Help: rows like the menu's, at the bottom.
+local function SideButton(side, text, icon, onClick)
+  local b = CreateFrame("Button", nil, side)
+  b:SetSize(SIDEBAR - 20, 26)
+  b.active = UI.Fill(b, C.accent, 0.12)
+  b.active:Hide()
+  local hover = b:CreateTexture(nil, "HIGHLIGHT")
+  hover:SetAllPoints()
+  hover:SetColorTexture(1, 1, 1, 0.04)
+  if icon then
+    b.icon = UI.Icon(b, icon, 14, C.navText)
+    b.icon:SetPoint("LEFT", 11, 0)
+  else
+    b.icon = UI.Label(b, "?", "Subheading")
+    b.icon:SetPoint("LEFT", 14, 0)
+    b.icon:SetTextColor(C.navText[1], C.navText[2], C.navText[3])
+  end
+  b.text = UI.Label(b, text, "Nav")
+  b.text:SetPoint("LEFT", 34, 0)
+  b:SetScript("OnClick", onClick)
   return b
 end
 
@@ -158,26 +363,31 @@ local function CreatePanel()
     sub:SetText(ns.look == "imperium" and "Guild Tools" or (ns.GuildName() or "Guild tools"))
   end)
 
-  panel.navButtons = {}
-  for i, t in ipairs(UI.tabs) do
-    panel.navButtons[i] = MakeNavButton(side, i, t)
+  -- The sections, in their groups.
+  panel.navButtons, panel.navItems = {}, {}
+  for _, s in ipairs(SECTIONS) do
+    if s.group then
+      local g = CreateFrame("Frame", nil, side)
+      g:SetSize(SIDEBAR - 26, 14)
+      g.group = true
+      local label = UI.Label(g, ns.Upper(ns.T(s.group)), "Label")
+      label:SetPoint("LEFT")
+      panel.navItems[#panel.navItems + 1] = g
+    else
+      local b = MakeNavButton(side, s)
+      panel.navButtons[#panel.navButtons + 1] = b
+      panel.navItems[#panel.navItems + 1] = b
+    end
   end
 
-  local version = UI.Label(side, "v" .. (ns.version or "?"), "MutedSmall")
-  version:SetPoint("BOTTOMLEFT", 16, 12)
-  -- Help, at the bottom of the side menu.
-  local help = CreateFrame("Button", nil, side)
-  help:SetSize(SIDEBAR - 20, 30)
+  -- At the bottom: Getting started, then Settings and Help, and the version.
+  panel.startCard = MakeStartCard(side)
+  panel.settingsButton = SideButton(side, "Settings", "settings", function() ShowSection(SETTINGS, 1) end)
+  panel.settingsButton:SetPoint("BOTTOMLEFT", 10, 56)
+  local help = SideButton(side, "Help", nil, function() if ns.ShowHelp then ns.ShowHelp() end end)
   help:SetPoint("BOTTOMLEFT", 10, 30)
-  local hover = help:CreateTexture(nil, "HIGHLIGHT")
-  hover:SetAllPoints()
-  hover:SetColorTexture(1, 1, 1, 0.04)
-  local q = UI.Label(help, "?", "Subheading")
-  q:SetPoint("LEFT", 9, 0)
-  q:SetTextColor(C.navText[1], C.navText[2], C.navText[3])
-  local hl = UI.Label(help, "Help", "Nav")
-  hl:SetPoint("LEFT", 32, 0)
-  help:SetScript("OnClick", function() if ns.ShowHelp then ns.ShowHelp() end end)
+  local version = UI.Label(side, "v" .. (ns.version or "?"), "MutedSmall")
+  version:SetPoint("BOTTOMLEFT", 14, 11)
 
   -- Header
   panel.heading = UI.Label(panel, "", "Title")
@@ -208,10 +418,12 @@ local function CreatePanel()
     ns.db.panelWidth, ns.db.panelHeight = math.floor(panel:GetWidth() + 0.5), math.floor(panel:GetHeight() + 0.5)
   end)
 
-  -- One page per tab, all the same size.
+  -- One page per tab. In sections with views, pages start under the row of views.
   for _, t in ipairs(UI.tabs) do
+    local sec = find(t.id)
+    local below = (sec and #sec.items > 1) and SWITCH_H or 0
     local page = CreateFrame("Frame", nil, panel)
-    page:SetPoint("TOPLEFT", SIDEBAR + 10, -HEADER - 8)
+    page:SetPoint("TOPLEFT", SIDEBAR + 10, -HEADER - 8 - below)
     page:SetPoint("BOTTOMRIGHT", -10, 10)
     page:Hide()
     -- Room in the header, left of the close button, for the tab's own controls
@@ -223,7 +435,18 @@ local function CreatePanel()
     t.build(page)
     -- A bigger window: the tab's lists stretch and what's below them moves down.
     page:SetScript("OnSizeChanged", function(self, w, h) UI.ApplyGrowth(self, w, h) end)
-    UI.ApplyGrowth(page, panel:GetWidth() - SIDEBAR - 20, panel:GetHeight() - HEADER - 18)
+    UI.ApplyGrowth(page, panel:GetWidth() - SIDEBAR - 20, panel:GetHeight() - HEADER - 18 - below)
+  end
+
+  -- The switch for each section with more than one view.
+  for _, s in ipairs(SECTIONS) do
+    if s.items and #s.items > 1 then
+      local options = {}
+      for i, it in ipairs(s.items) do options[i] = { i, it.label } end
+      s.switch = UI.Segmented(panel, options, function(i) ShowSection(s, i) end)
+      s.switch:SetPoint("TOPLEFT", SIDEBAR + 11, -HEADER - 9)
+      s.switch:Hide()
+    end
   end
 
   panel:SetScript("OnShow", function()
@@ -234,13 +457,14 @@ local function CreatePanel()
   end)
   panel:SetScript("OnHide", function() PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE) end)
 
-  -- Open on the tab used last time.
-  local start = 1
-  for i, t in ipairs(UI.tabs) do
-    if t.id == ns.db.lastTab then start = i end
+  -- Open where you were last time (or Home).
+  local s, i
+  for _, x in ipairs({ SETTINGS, unpack(SECTIONS) }) do
+    if x.id and x.id == ns.db.lastSection then s, i = x, ns.db.lastItem end
   end
+  if not s and ns.db.lastTab then s, i = find(ns.db.lastTab) end
   UpdateTabVisibility()
-  ShowTab(start)
+  ShowSection(s or SECTIONS[1], i or 1)
 end
 
 -- Window size setting: scales the guild window and its pop-ups (text and all).
@@ -267,9 +491,13 @@ function ns.RefreshPanel()
   if ns.RefreshProfiles then ns.RefreshProfiles() end
   if not (panel and panel:IsShown()) then return end
   UpdateTabVisibility()
-  setHeader()
-  local t = UI.tabs[current]
+  local t, it = currentTab()
   if t and t.refresh then t.refresh(t.page) end
+  -- A view picked from the section's switch: the tab's own switch isn't needed.
+  if it.view and t.view then t.view:Hide() end
+  setHeader()
+  layoutSwitch()
+  panel.startCard:Update()
 end
 
 -- The window holds secure buttons, so it can't be opened, moved or closed
@@ -290,26 +518,26 @@ function ns.TogglePanel()
   if panel:IsShown() and ns.NoteStarted then ns.NoteStarted("open") end
 end
 
--- tab: a tab's position, or its id ("kills", "settings", ...).
--- tab: a tab's id or number. view: for tabs with views switched at the top
--- (a UI.Segmented saved as tab.view once built), which one to show.
+-- tab: a tab's id ("kills", "settings", ...), or its position. view: one
+-- of the tab's views (Raids' "progress", say), if it has them.
 function ns.OpenPanel(tab, view)
   if blockedByCombat() then return end
   if not panel then CreatePanel() end
-  local index = tonumber(tab) or 1
-  if type(tab) == "string" then
-    for i, t in ipairs(UI.tabs) do
-      if t.id == tab then index = i break end
-    end
-  end
+  if tonumber(tab) then tab = (UI.tabs[tonumber(tab)] or UI.tabs[1]).id end
   panel:Show()
   if ns.NoteStarted then ns.NoteStarted("open") end
-  ShowTab(index)
-  local t = UI.tabs[index]
-  if view and t and t.view then
-    t.view:SetValue(view)
-    ns.RefreshPanel()
+  local s, i = find(tab or "home", view)
+  ShowSection(s or SECTIONS[1], i)
+  local t, it = currentTab()
+  if view and not it.view and t.view and t.id == tab then
+    t.view:Pick(view)
   end
+end
+
+-- Which section and view are showing (for tests): section id, tab id.
+function ns.PanelSection()
+  local t = currentTab()
+  return section.id, t and t.id
 end
 
 ns.OnEvent("PLAYER_REGEN_DISABLED", function()

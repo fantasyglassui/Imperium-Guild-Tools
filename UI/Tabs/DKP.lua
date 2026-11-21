@@ -703,5 +703,7 @@ local function Subtitle()
   return text
 end
 
-UI.AddTab({ id = "dkp", title = "DKP", build = Build, refresh = Refresh, subtitle = Subtitle,
-  visible = function() return ns.UsesDKP() end })
+local TAB = { id = "dkp", title = "DKP", build = function(page) Build(page); P.tab.view = P.view end,
+  refresh = Refresh, subtitle = Subtitle, visible = function() return ns.UsesDKP() end }
+P.tab = TAB
+UI.AddTab(TAB)

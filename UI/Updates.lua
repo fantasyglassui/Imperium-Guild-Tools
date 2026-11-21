@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "4.0.0", date = "Nov 21, 2026", items = {
+    "A new look, voted for by the guild: a side menu grouped into Guild, Raids & loot, PvP & glory and Officers, with related tabs joined into one section each (Loot: DKP and the wishlist; PvP: kills, the Wanted list, guild wars and bounties; Events: events, polls and the calendar).",
+    "Home: what's happening in the guild on one page, with the next raid and your jobs in it, your DKP, the open poll (vote right there), PvP this week and guild news.",
+    "Getting started sits above Settings and Help until you've done it, and Home shows your next step.",
+  } },
   { version = "3.12.0", date = "Nov 20, 2026", items = {
     "Accessibility settings (Settings > Accessibility, or /warcrest access): bigger text, colour-blind friendly colours, high contrast, and alert banners that stay longer or until you dismiss them, with no sliding or fading.",
   } },

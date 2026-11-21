@@ -167,6 +167,11 @@ function UI.Segmented(parent, options, onChange, height)
     end
     self:SetWidth(px + 3)
   end
+  -- Pick an option as if it were clicked (onChange runs).
+  function seg:Pick(v)
+    self:SetValue(v)
+    if onChange then onChange(v) end
+  end
   seg:SetValue(options[1][1])
   return seg
 end

@@ -87,11 +87,18 @@ def test_guild_without_dkp():
     assert not bob.ns.UsesDKP()
     # The DKP tab is hidden; auctions are refused; raid nights give no DKP.
     bob.ns.OpenPanel("roster")
-    tabs = list(bob.lua.eval("""function(UI)
-      local out, panel = {}, WarcrestPanel
-      for i, t in ipairs(UI.tabs) do if panel.navButtons[i]:IsShown() then out[#out + 1] = t.id end end
+    bob.ns.OpenPanel("wishlist")
+    views = list(bob.lua.eval("""function(UI)
+      local out = {}
+      for _, s in ipairs(UI.SECTIONS) do
+        if s.id == "loot" then
+          for i, b in ipairs(s.switch.buttons) do if b:IsShown() then out[#out + 1] = s.items[i].tab end end
+        end
+      end
       return out end""")(bob.ns.UI).values())
-    assert "dkp" not in tabs and "raids" in tabs
+    assert views == ["wishlist"]                 # Loot shows only the wishlist
+    bob.ns.OpenPanel("dkp")
+    assert bob.ns.PanelSection() != ("loot", "dkp")
     alice.ns.StartAuction("|cffa335ee|Hitem:1:|h[Thing]|h|r", 5, 20)
     assert alice.said("DKP is turned off")
     alice.ns.StartRaidSession("", "Hyjal Summit", 10, 10, 15)

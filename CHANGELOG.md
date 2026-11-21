@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.0.0
+### A new look
+The guild voted for layout F of the UI concepts, and here it is: both of its steps (the new menu and Home, then the joined-up sections) in one release.
+- **The side menu is grouped:** Home, then **Guild** (Guild, Events), **Raids & loot** (Raids, Loot), **PvP & glory** (PvP, Achievements) and **Officers**. Officers only see the Officers section. Small notes next to some items show what's going on: how many guildmates are online, open polls you haven't voted in, and a raid tonight (or one in progress).
+- **Related tabs are one section each, with their views along the top** next to the section's name:
+  - **Guild:** Roster, and Who has Warcrest (the old Addon tab).
+  - **Events:** Events, Polls and Calendar.
+  - **Loot:** Standings, Loot history and All changes (the old DKP tab), and Wishlist. Guilds without DKP see just the wishlist.
+  - **PvP:** Kills, Wanted, Guild wars and Bounties (the old Kills and Wanted tabs).
+  - **Officers:** Officer log and Recruit.
+  - Raids and Achievements keep their own views.
+- **Home**, the new first page: a greeting and who's online; your next Getting started step; the next raid (or tonight's raid night) with the sign-ups by role and your jobs in the raid assignments, or who's coming; your DKP, place and attendance, and the top of your wishlist (your achievements and title, in guilds without DKP); the open poll, which you can vote in right there; PvP this week (the top three and the latest wanted ganker); and guild news (bosses killed and achievements earned this week). Click a card to open its section.
+- **Getting started** has a card above Settings and Help showing how far you've got, until it's all done. **Hide this** in the checklist takes it off the menu and Home; `/warcrest start` brings it back.
+- **Settings and Help** are at the bottom of the side menu.
+- Warcrest reopens on the section and view you left it on. Commands that open a tab (`/warcrest dkp`, `/warcrest kills` and the rest) open its new section.
+
 ## 3.12.0
 ### Accessibility
 A new **Accessibility** view in Settings (or `/warcrest access`). Everything is off until you turn it on, and each setting is just for you.

@@ -105,7 +105,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tabs button:hover { color: var(--text); }
 .tabs button[aria-selected="true"] { color: var(--gold); background: var(--gold-dim); border-color: rgba(224, 185, 76, .3); }
 .shot { background: var(--panel); border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02); }
-.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 830; object-fit: cover; }
+.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 880; object-fit: cover; }
 .tour figcaption { margin-top: 12px; font-size: .9rem; color: var(--muted); min-height: 3em; }
 @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .hero { padding-block: 44px 24px; } }
 
@@ -302,7 +302,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 
       <figure class="tour" id="tour" style="margin:0">
         <div class="tabs" role="tablist" aria-label="Warcrest tabs"></div>
-        <div class="shot"><img id="tour-img" src="img/kills.webp" width="1400" height="830" alt="The Kills tab: guild PvP kills this month and the Top Head Hunters board."></div>
+        <div class="shot"><img id="tour-img" src="img/home.webp" width="1400" height="880" alt="The Home page: the raid night in progress, your DKP, an open poll, PvP this week and guild news."></div>
         <figcaption id="tour-cap">PvP kills by guild members, with killing blows and assists, and the monthly Top Head Hunters board.</figcaption>
       </figure>
     </div>
@@ -341,7 +341,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="img/war.webp" width="1400" height="830" loading="lazy" alt="The war board: enemy guilds with kills each way and the score, and a rival guild selected."></div>
+        <div class="shot"><img src="img/war.webp" width="1400" height="880" loading="lazy" alt="The war board: enemy guilds with kills each way and the score, and a rival guild selected."></div>
         <div class="copy">
           <span class="label">World PvP</span>
           <h3>Kills, gankers and guild wars</h3>
@@ -355,7 +355,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="img/dkp.webp" width="1400" height="830" loading="lazy" alt="The DKP tab: standings with attendance, awarding DKP, a loot auction and the DKP rules."></div>
+        <div class="shot"><img src="img/dkp.webp" width="1400" height="880" loading="lazy" alt="The DKP tab: standings with attendance, awarding DKP, a loot auction and the DKP rules."></div>
         <div class="copy">
           <span class="label">Raids and loot</span>
           <h3>Sign-ups to the last bid</h3>
@@ -370,7 +370,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="img/events.webp" width="1400" height="830" loading="lazy" alt="The Events tab: a PvP night and a world boss hunt, with answers from guildmates."></div>
+        <div class="shot"><img src="img/events.webp" width="1400" height="880" loading="lazy" alt="The Events tab: a PvP night and a world boss hunt, with answers from guildmates."></div>
         <div class="copy">
           <span class="label">Guild life</span>
           <h3>Events, polls and crafters</h3>
@@ -385,7 +385,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="img/goals.webp" width="1400" height="830" loading="lazy" alt="The Achievements tab, Guild view: recent achievements, guild goals with progress bars, and the leaders."></div>
+        <div class="shot"><img src="img/goals.webp" width="1400" height="880" loading="lazy" alt="The Achievements tab, Guild view: recent achievements, guild goals with progress bars, and the leaders."></div>
         <div class="copy">
           <span class="label">Achievements and goals</span>
           <h3>Something to chase every week</h3>
@@ -407,9 +407,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
         <h2 id="news-h">Updated often.</h2>
         <p>The latest versions, as Warcrest shows them in game. Type <code>/warcrest updates</code> to see them there.</p>
       </div>
-      <div class="news-grid"><!--news--><article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Accessibility settings (Settings &gt; Accessibility, or <code>/warcrest access</code>): bigger text, colour-blind friendly colours, high contrast, and alert banners that stay longer or until you dismiss them, with no sliding or fading.</li></ul></article>
-        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. <code>/warcrest start</code>, or Help.</li><li>Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.</li><li>Loot auctions and loot council votes pause while a boss fight blocks messages, and can't be started during one, so nobody misses the chance to bid.</li></ul></article>
-        <article class="release"><header><h3>3.10.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Settings moved to the bottom of the side menu, next to Help.</li><li>The small The Imperium and Bannerhold folders aren't needed any more: you can delete them from your AddOns folder.</li><li>Clean-up: Warcrest now uses only WoW: Forever's own game functions, and leftovers from removed features are gone.</li></ul></article><!--/news--></div>
+      <div class="news-grid"><!--news--><article class="release"><header><h3>4.0.0</h3><time datetime="2026-11-21">Nov 21, 2026</time></header><ul><li>A new look, voted for by the guild: a side menu grouped into Guild, Raids &amp; loot, PvP &amp; glory and Officers, with related tabs joined into one section each (Loot: DKP and the wishlist; PvP: kills, the Wanted list, guild wars and bounties; Events: events, polls and the calendar).</li><li>Home: what's happening in the guild on one page, with the next raid and your jobs in it, your DKP, the open poll (vote right there), PvP this week and guild news.</li><li>Getting started sits above Settings and Help until you've done it, and Home shows your next step.</li></ul></article>
+        <article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Accessibility settings (Settings &gt; Accessibility, or <code>/warcrest access</code>): bigger text, colour-blind friendly colours, high contrast, and alert banners that stay longer or until you dismiss them, with no sliding or fading.</li></ul></article>
+        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. <code>/warcrest start</code>, or Help.</li><li>Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.</li><li>Loot auctions and loot council votes pause while a boss fight blocks messages, and can't be started during one, so nobody misses the chance to bid.</li></ul></article><!--/news--></div>
       <p class="news-more">Every change since the first version, with a search: <a href="/changelog/">the full changelog</a>.</p>
     </div>
   </section>
@@ -529,6 +529,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 <script>
 (function () {
   var TABS = [
+    ["home", "Home", "What's happening in the guild on one page: the next raid and your job in it, your DKP, the open poll, PvP this week and guild news.", "The Home page: the raid night in progress, your DKP, an open poll, PvP this week and guild news."],
     ["kills", "Kills", "PvP kills by guild members, with killing blows and assists, and the monthly Top Head Hunters board.", "The Kills tab: guild PvP kills and the Top Head Hunters board."],
     ["wanted", "Wanted", "Enemy players who keep killing guild members. When anyone spots one, the whole guild is alerted.", "The Wanted tab: the most wanted ganker and how many guildmates they've killed."],
     ["war", "Guild wars", "The score against every enemy guild you've met. Rival guilds are listed first.", "The war board: enemy guilds with kills each way."],

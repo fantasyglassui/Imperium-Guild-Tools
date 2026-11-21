@@ -105,7 +105,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tabs button:hover { color: var(--text); }
 .tabs button[aria-selected="true"] { color: var(--gold); background: var(--gold-dim); border-color: rgba(224, 185, 76, .3); }
 .shot { background: var(--panel); border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02); }
-.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 830; object-fit: cover; }
+.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 880; object-fit: cover; }
 .tour figcaption { margin-top: 12px; font-size: .9rem; color: var(--muted); min-height: 3em; }
 @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .hero { padding-block: 44px 24px; } }
 
@@ -302,7 +302,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 
       <figure class="tour" id="tour" style="margin:0">
         <div class="tabs" role="tablist" aria-label="Warcrest-Reiter"></div>
-        <div class="shot"><img id="tour-img" src="../img/kills.webp" width="1400" height="830" alt="Der Reiter Kills: PvP-Kills der Gilde in diesem Monat und die Top-Kopfjäger-Tafel."></div>
+        <div class="shot"><img id="tour-img" src="../img/home.webp" width="1400" height="880" alt="Die Startseite: der laufende Raidabend, deine DKP, eine offene Umfrage, PvP diese Woche und Gildennews."></div>
         <figcaption id="tour-cap">PvP-Kills der Gildenmitglieder mit Todesstößen und Assists, und die monatliche Top-Kopfjäger-Tafel.</figcaption>
       </figure>
     </div>
@@ -341,7 +341,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="../img/war.webp" width="1400" height="830" loading="lazy" alt="Die Kriegstafel: feindliche Gilden mit Kills auf beiden Seiten und dem Punktestand, eine rivalisierende Gilde ausgewählt."></div>
+        <div class="shot"><img src="../img/war.webp" width="1400" height="880" loading="lazy" alt="Die Kriegstafel: feindliche Gilden mit Kills auf beiden Seiten und dem Punktestand, eine rivalisierende Gilde ausgewählt."></div>
         <div class="copy">
           <span class="label">Welt-PvP</span>
           <h3>Kills, Ganker und Gildenkriege</h3>
@@ -355,7 +355,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="../img/dkp.webp" width="1400" height="830" loading="lazy" alt="Der Reiter DKP: Rangliste mit Anwesenheit, DKP vergeben, eine Beuteauktion und die DKP-Regeln."></div>
+        <div class="shot"><img src="../img/dkp.webp" width="1400" height="880" loading="lazy" alt="Der Reiter DKP: Rangliste mit Anwesenheit, DKP vergeben, eine Beuteauktion und die DKP-Regeln."></div>
         <div class="copy">
           <span class="label">Schlachtzüge und Beute</span>
           <h3>Von der Anmeldung bis zum letzten Gebot</h3>
@@ -370,7 +370,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="../img/events.webp" width="1400" height="830" loading="lazy" alt="Der Reiter Veranstaltungen: ein PvP-Abend und eine Weltboss-Jagd, mit Antworten der Gildenmitglieder."></div>
+        <div class="shot"><img src="../img/events.webp" width="1400" height="880" loading="lazy" alt="Der Reiter Veranstaltungen: ein PvP-Abend und eine Weltboss-Jagd, mit Antworten der Gildenmitglieder."></div>
         <div class="copy">
           <span class="label">Gildenleben</span>
           <h3>Veranstaltungen, Umfragen und Handwerker</h3>
@@ -385,7 +385,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="../img/goals.webp" width="1400" height="830" loading="lazy" alt="Der Reiter Erfolge, Ansicht Gilde: neue Erfolge, Gildenziele mit Fortschrittsbalken und die Spitzenreiter."></div>
+        <div class="shot"><img src="../img/goals.webp" width="1400" height="880" loading="lazy" alt="Der Reiter Erfolge, Ansicht Gilde: neue Erfolge, Gildenziele mit Fortschrittsbalken und die Spitzenreiter."></div>
         <div class="copy">
           <span class="label">Erfolge und Ziele</span>
           <h3>Jede Woche etwas zu jagen</h3>
@@ -407,9 +407,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
         <h2 id="news-h">Oft aktualisiert.</h2>
         <p>Die neuesten Versionen, so wie Warcrest sie im Spiel zeigt. Gib <code>/warcrest updates</code> ein, um sie dort zu sehen.</p>
       </div>
-      <div class="news-grid"><!--news--><article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">20. Nov. 2026</time></header><ul><li>Barrierefreiheit (Einstellungen &gt; Barrierefreiheit oder <code>/warcrest access</code>): größerer Text, Farben für Farbenblinde, hoher Kontrast und Meldungsbanner, die länger oder bis zum Wegklicken bleiben, ohne Gleiten oder Ausblenden.</li></ul></article>
-        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">20. Nov. 2026</time></header><ul><li>Erste Schritte: eine kurze Checkliste für neue Mitglieder, die sich selbst abhakt (für einen Schlachtzug anmelden, Profil ausfüllen, Rezepte teilen, Titel wählen). Offiziere richten dort auch die Gilde ein. <code>/warcrest start</code> oder Hilfe.</li><li>Bosskämpfe und PvP-Matches: Das Spiel blockiert Addon-Nachrichten, bis sie vorbei sind. Warcrest hält jetzt zurück, was es senden muss (DKP, Kills, Pulls, Gebote, Chatposts), und sendet es nach dem Kampf, statt es zu verlieren.</li><li>Beuteauktionen und Beuterat-Abstimmungen pausieren, solange ein Bosskampf Nachrichten blockiert, und können währenddessen nicht gestartet werden, damit niemand das Bieten verpasst.</li></ul></article>
-        <article class="release"><header><h3>3.10.0</h3><time datetime="2026-11-20">20. Nov. 2026</time></header><ul><li>Die Einstellungen stehen jetzt unten im Seitenmenü, neben Hilfe.</li><li>Die kleinen Ordner The Imperium und Bannerhold werden nicht mehr gebraucht: Du kannst sie aus deinem AddOns-Ordner löschen.</li><li>Aufräumen: Warcrest nutzt jetzt nur noch die eigenen Spielfunktionen von WoW: Forever, und Reste entfernter Funktionen sind weg.</li></ul></article><!--/news--></div>
+      <div class="news-grid"><!--news--><article class="release"><header><h3>4.0.0</h3><time datetime="2026-11-21">21. Nov. 2026</time></header><ul><li>Ein neuer Look, von der Gilde gewählt: ein Seitenmenü in Gilde, Schlachtzüge &amp; Beute, PvP &amp; Ruhm und Offiziere, und zusammengehörige Reiter sind je ein Bereich (Beute: DKP und Wunschliste; PvP: Kills, Gesucht, Gildenkriege und Kopfgelder; Veranstaltungen: Veranstaltungen, Umfragen und Kalender).</li><li>Start: was in der Gilde los ist, auf einer Seite: der nächste Schlachtzug und deine Aufgaben darin, deine DKP, die offene Umfrage (dort abstimmen), PvP diese Woche und Gildennews.</li><li>Erste Schritte steht über Einstellungen und Hilfe, bis du fertig bist, und Start zeigt deinen nächsten Schritt.</li></ul></article>
+        <article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">20. Nov. 2026</time></header><ul><li>Barrierefreiheit (Einstellungen &gt; Barrierefreiheit oder <code>/warcrest access</code>): größerer Text, Farben für Farbenblinde, hoher Kontrast und Meldungsbanner, die länger oder bis zum Wegklicken bleiben, ohne Gleiten oder Ausblenden.</li></ul></article>
+        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">20. Nov. 2026</time></header><ul><li>Erste Schritte: eine kurze Checkliste für neue Mitglieder, die sich selbst abhakt (für einen Schlachtzug anmelden, Profil ausfüllen, Rezepte teilen, Titel wählen). Offiziere richten dort auch die Gilde ein. <code>/warcrest start</code> oder Hilfe.</li><li>Bosskämpfe und PvP-Matches: Das Spiel blockiert Addon-Nachrichten, bis sie vorbei sind. Warcrest hält jetzt zurück, was es senden muss (DKP, Kills, Pulls, Gebote, Chatposts), und sendet es nach dem Kampf, statt es zu verlieren.</li><li>Beuteauktionen und Beuterat-Abstimmungen pausieren, solange ein Bosskampf Nachrichten blockiert, und können währenddessen nicht gestartet werden, damit niemand das Bieten verpasst.</li></ul></article><!--/news--></div>
       <p class="news-more">Jede Änderung seit der ersten Version, mit Suche: <a href="/de/changelog/">alle Änderungen</a>.</p>
     </div>
   </section>
@@ -529,6 +529,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 <script>
 (function () {
   var TABS = [
+    ["home", "Start", "Was in der Gilde los ist, auf einer Seite: der nächste Schlachtzug und deine Aufgabe darin, deine DKP, die offene Umfrage, PvP diese Woche und Gildennews.", "Die Startseite: der laufende Raidabend, deine DKP, eine offene Umfrage, PvP diese Woche und Gildennews."],
     ["kills", "Kills", "PvP-Kills der Gildenmitglieder mit Todesstößen und Assists, und die monatliche Top-Kopfjäger-Tafel.", "Der Reiter Kills: PvP-Kills der Gilde und die Top-Kopfjäger-Tafel."],
     ["wanted", "Gesucht", "Feindliche Spieler, die immer wieder Gildenmitglieder töten. Sieht jemand einen, wird die ganze Gilde gewarnt.", "Der Reiter Gesucht: der meistgesuchte Ganker und wie viele Gildenmitglieder er getötet hat."],
     ["war", "Gildenkriege", "Der Punktestand gegen jede feindliche Gilde, der ihr begegnet seid. Rivalen stehen oben.", "Die Kriegstafel: feindliche Gilden mit Kills auf beiden Seiten."],

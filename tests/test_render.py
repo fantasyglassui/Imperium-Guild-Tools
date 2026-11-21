@@ -95,8 +95,9 @@ def test_lists_grow_with_the_window():
     me.ns.OpenPanel("officers")
     rd = Renderer(me)
     lists = [k for k in rd.kids(me.lua.eval("WarcrestPanel")) if k["kind"] == "Frame"]
-    # The officer log's list fills the extra room: 390 wider and 240 taller than normal
-    # (its table card is 500 x 412; the scroll area inside is 446 x 383 without the scroll bar).
+    # The officer log's list fills the extra room: 390 wider and 206 taller than normal
+    # (the window is at least 554 high, 34 of it the row of views over the page; its
+    # table card is 500 x 412; the scroll area inside is 446 x 383 without the scroll bar).
     page_lists = []
     def walk(node):
         for k in rd.kids(node):
@@ -106,7 +107,7 @@ def test_lists_grow_with_the_window():
     for f in lists:
         walk(f)
     sizes = {(round(rd.rect(f)[2] - rd.rect(f)[0]), round(rd.rect(f)[3] - rd.rect(f)[1])) for f in page_lists}
-    assert (446 + 390, 383 + 240) in sizes, sizes
+    assert (446 + 390, 383 + 206) in sizes, sizes
 
 
 def test_window_size_setting_scales_panel_and_windows():

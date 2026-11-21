@@ -194,5 +194,8 @@
  "Every change since the first version, with a search: <a href=\"/changelog/\">the full changelog</a>.": "Tous les changements depuis la première version, avec une recherche : <a href=\"/changelog/\">le journal complet</a>.",
  "Changelog": "Journal",
  "The Getting started checklist": "La liste Premiers pas",
- "Accessibility: text size, colours, alert banners": "Accessibilité : taille du texte, couleurs, bannières"
+ "Accessibility: text size, colours, alert banners": "Accessibilité : taille du texte, couleurs, bannières",
+ "What's happening in the guild on one page: the next raid and your job in it, your DKP, the open poll, PvP this week and guild news.": "Ce qui se passe dans la guilde sur une page : le prochain raid et votre tâche, vos DKP, le sondage ouvert, le JcJ de la semaine et les nouvelles.",
+ "The Home page: the raid night in progress, your DKP, an open poll, PvP this week and guild news.": "La page d'accueil : la soirée de raid en cours, vos DKP, un sondage ouvert, le JcJ de la semaine et les nouvelles.",
+ "Home": "Accueil"
 }

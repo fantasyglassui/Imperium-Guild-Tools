@@ -105,7 +105,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tabs button:hover { color: var(--text); }
 .tabs button[aria-selected="true"] { color: var(--gold); background: var(--gold-dim); border-color: rgba(224, 185, 76, .3); }
 .shot { background: var(--panel); border: 1px solid var(--edge); border-radius: 3px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .02); }
-.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 830; object-fit: cover; }
+.shot img { width: 100%; height: auto; aspect-ratio: 1400 / 880; object-fit: cover; }
 .tour figcaption { margin-top: 12px; font-size: .9rem; color: var(--muted); min-height: 3em; }
 @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .hero { padding-block: 44px 24px; } }
 
@@ -302,7 +302,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 
       <figure class="tour" id="tour" style="margin:0">
         <div class="tabs" role="tablist" aria-label="Pestañas de Warcrest"></div>
-        <div class="shot"><img id="tour-img" src="../img/kills.webp" width="1400" height="830" alt="La pestaña Muertes: muertes JcJ de la hermandad este mes y el tablero de cazadores de cabezas."></div>
+        <div class="shot"><img id="tour-img" src="../img/home.webp" width="1400" height="880" alt="La página de inicio: la noche de banda en curso, tus DKP, una encuesta abierta, el JcJ de la semana y las noticias."></div>
         <figcaption id="tour-cap">Las muertes JcJ de los miembros, con golpes de gracia y asistencias, y el tablero mensual de mejores cazadores de cabezas.</figcaption>
       </figure>
     </div>
@@ -341,7 +341,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="../img/war.webp" width="1400" height="830" loading="lazy" alt="El tablero de guerra: hermandades enemigas con las muertes de cada lado y el marcador, con una rival seleccionada."></div>
+        <div class="shot"><img src="../img/war.webp" width="1400" height="880" loading="lazy" alt="El tablero de guerra: hermandades enemigas con las muertes de cada lado y el marcador, con una rival seleccionada."></div>
         <div class="copy">
           <span class="label">JcJ en el mundo</span>
           <h3>Muertes, gankers y guerras de hermandades</h3>
@@ -355,7 +355,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="../img/dkp.webp" width="1400" height="830" loading="lazy" alt="La pestaña DKP: clasificación con asistencia, reparto de DKP, una subasta y las reglas DKP."></div>
+        <div class="shot"><img src="../img/dkp.webp" width="1400" height="880" loading="lazy" alt="La pestaña DKP: clasificación con asistencia, reparto de DKP, una subasta y las reglas DKP."></div>
         <div class="copy">
           <span class="label">Bandas y botín</span>
           <h3>De la inscripción a la última puja</h3>
@@ -370,7 +370,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="../img/events.webp" width="1400" height="830" loading="lazy" alt="La pestaña Eventos: una noche JcJ y una caza de jefe del mundo, con respuestas de los miembros."></div>
+        <div class="shot"><img src="../img/events.webp" width="1400" height="880" loading="lazy" alt="La pestaña Eventos: una noche JcJ y una caza de jefe del mundo, con respuestas de los miembros."></div>
         <div class="copy">
           <span class="label">Vida de hermandad</span>
           <h3>Eventos, encuestas y artesanos</h3>
@@ -385,7 +385,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="../img/goals.webp" width="1400" height="830" loading="lazy" alt="La pestaña Logros, vista Hermandad: logros recientes, objetivos con barras de progreso y los líderes."></div>
+        <div class="shot"><img src="../img/goals.webp" width="1400" height="880" loading="lazy" alt="La pestaña Logros, vista Hermandad: logros recientes, objetivos con barras de progreso y los líderes."></div>
         <div class="copy">
           <span class="label">Logros y objetivos</span>
           <h3>Algo que perseguir cada semana</h3>
@@ -407,9 +407,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
         <h2 id="news-h">Se actualiza a menudo.</h2>
         <p>Las últimas versiones, tal como las muestra Warcrest en el juego. Escribe <code>/warcrest updates</code> para verlas allí.</p>
       </div>
-      <div class="news-grid"><!--news--><article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Accesibilidad (Ajustes &gt; Accesibilidad, o <code>/warcrest access</code>): texto más grande, colores para daltónicos, alto contraste y avisos que duran más o hasta que los cierras, sin deslizar ni desvanecer.</li></ul></article>
-        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Primeros pasos: una lista corta para miembros nuevos que se marca sola (apuntarte a una banda, rellenar tu perfil, compartir recetas, elegir un título). Los oficiales también configuran la hermandad desde ahí. <code>/warcrest start</code>, o la Ayuda.</li><li>Combates contra jefes y partidas JcJ: el juego bloquea los mensajes de addons hasta que terminan. Warcrest ahora guarda lo que tiene que enviar (DKP, muertes, intentos, pujas, mensajes) y lo envía al acabar el combate, en vez de perderlo.</li><li>Las subastas y las votaciones del consejo de botín se pausan mientras un combate bloquea los mensajes, y no se pueden iniciar durante uno, para que nadie se pierda la puja.</li></ul></article>
-        <article class="release"><header><h3>3.10.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Los ajustes están ahora al final del menú lateral, junto a Ayuda.</li><li>Las pequeñas carpetas The Imperium y Bannerhold ya no hacen falta: puedes borrarlas de tu carpeta AddOns.</li><li>Limpieza: Warcrest usa ahora solo las funciones de juego propias de WoW: Forever, y los restos de funciones quitadas han desaparecido.</li></ul></article><!--/news--></div>
+      <div class="news-grid"><!--news--><article class="release"><header><h3>4.0.0</h3><time datetime="2026-11-21">21 nov. 2026</time></header><ul><li>Un aspecto nuevo, votado por la hermandad: un menú lateral agrupado en Hermandad, Bandas y botín, JcJ y gloria y Oficiales, con las pestañas relacionadas unidas en una sección (Botín: DKP y lista de deseos; JcJ: muertes, Buscados, guerras de hermandad y recompensas; Eventos: eventos, encuestas y calendario).</li><li>Inicio: lo que pasa en la hermandad en una página, con la próxima banda y tus tareas, tus DKP, la encuesta abierta (vota ahí mismo), el JcJ de la semana y las noticias.</li><li>Primeros pasos queda sobre Ajustes y Ayuda hasta que lo completes, e Inicio muestra tu siguiente paso.</li></ul></article>
+        <article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Accesibilidad (Ajustes &gt; Accesibilidad, o <code>/warcrest access</code>): texto más grande, colores para daltónicos, alto contraste y avisos que duran más o hasta que los cierras, sin deslizar ni desvanecer.</li></ul></article>
+        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">20 nov. 2026</time></header><ul><li>Primeros pasos: una lista corta para miembros nuevos que se marca sola (apuntarte a una banda, rellenar tu perfil, compartir recetas, elegir un título). Los oficiales también configuran la hermandad desde ahí. <code>/warcrest start</code>, o la Ayuda.</li><li>Combates contra jefes y partidas JcJ: el juego bloquea los mensajes de addons hasta que terminan. Warcrest ahora guarda lo que tiene que enviar (DKP, muertes, intentos, pujas, mensajes) y lo envía al acabar el combate, en vez de perderlo.</li><li>Las subastas y las votaciones del consejo de botín se pausan mientras un combate bloquea los mensajes, y no se pueden iniciar durante uno, para que nadie se pierda la puja.</li></ul></article><!--/news--></div>
       <p class="news-more">Todos los cambios desde la primera versión, con un buscador: <a href="/es/changelog/">el registro completo</a>.</p>
     </div>
   </section>
@@ -529,6 +529,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 <script>
 (function () {
   var TABS = [
+    ["home", "Inicio", "Lo que pasa en la hermandad en una página: la próxima banda y tu tarea, tus DKP, la encuesta abierta, el JcJ de la semana y las noticias.", "La página de inicio: la noche de banda en curso, tus DKP, una encuesta abierta, el JcJ de la semana y las noticias."],
     ["kills", "Muertes", "Las muertes JcJ de los miembros, con golpes de gracia y asistencias, y el tablero mensual de mejores cazadores de cabezas.", "La pestaña Muertes: muertes JcJ de la hermandad y el tablero de cazadores de cabezas."],
     ["wanted", "Buscados", "Jugadores enemigos que no paran de matar a miembros. Cuando alguien ve a uno, toda la hermandad recibe un aviso.", "La pestaña Buscados: el ganker más buscado y a cuántos miembros ha matado."],
     ["war", "Guerras de hermandades", "El marcador contra cada hermandad enemiga que os habéis cruzado. Las rivales primero.", "El tablero de guerra: hermandades enemigas con las muertes de cada lado."],
