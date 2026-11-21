@@ -11,4 +11,6 @@ ignore:
   - .gitignore
   - .luacheckrc
   - tests
+  - docs
+  - tools
   - wiki
