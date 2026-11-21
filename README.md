@@ -19,7 +19,7 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Deaths on the map.** Recent guild deaths (24 hours by default, adjustable from 1 hour to 7 days) are marked on the world map with an X (a skull for PvP), including inside OpenMap. Click a mark to set a TomTom waypoint.
 - **Player cards.** Click any guild member's name to see their kills, deaths, nemesis, best kill streak, DKP, attendance and loot in one place.
 - **Loot wishlists.** Mark the items you Need or Want; officers and bidders see who wants an item when it's auctioned.
-- **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid and guild-first announcements, and a month calendar of raids and raid nights.
+- **Raid progress and calendar.** Boss kills are recorded for the guild, with progress per raid, wipes, best kill times and guild-first announcements. The Calendar tab shows the month's raids, raid nights, boss kills and guild events.
 - **Alert sounds.** A sound for every kind of alert, from 87 sounds made for Warcrest, the game's, SharedMedia's or your own files.
 - **Alert banners.** Guild alerts drop in at the top of the screen with a colour, icon and sound for each kind. Click one to open the matching tab.
 - **Loot council.** Vote on who gets an item, with each candidate's wishlist, attendance and recent loot in front of the officers. Works with or without DKP.
@@ -32,8 +32,8 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Guild polls.** Ask the guild a question; everyone with Warcrest votes.
 - **Crafting orders.** Order from a guild crafter in the crafters directory; they accept, decline or mark it done.
 - **German, French and Spanish.** Follows your game's language, or pick one in Settings.
-- **Achievements and titles.** 44 achievements for kills, streaks, revenge, bounties, raids, bosses and loot, with titles to show after your name.
-- **Kill streaks and revenge.** The guild hears when someone is on a kill streak, when a big streak is ended, and when a guildmate's killer gets paid back.
+- **Achievements and titles.** 161 achievements for kills, streaks, revenge, bounties, raids, bosses, loot and guild life, with 67 titles to show after your name, in chat and in alerts.
+- **Kill streaks and revenge.** The guild hears when someone is on a kill streak (from Killing Spree at 3 to Godlike at 20 and Beyond Godlike at 30), when a big streak is ended, and when a guildmate's killer gets paid back.
 - **Kill log and Top Head Hunters.** Every PvP kill by guild members, with killing blows and assists, and a monthly board of the guild's top PvP killers.
 - **Wanted list.** Enemy players who keep killing guild members. When a guildmate sees one, the whole guild is alerted and the sighting goes on the map.
 - **Celebrations.** The guild cheers when a member reaches every 10th level and max level, or every level if you prefer.
@@ -45,18 +45,14 @@ Warcrest started life as **The Imperium**, the guild addon of <The Imperium>, an
 - **Inactive members.** Officers see who hasn't logged in for 14, 30, 60 or 90 days, with their rank and last raid.
 - **Officer Log.** A record of promotions, demotions, removals, joins, leaves, note edits, Message of the Day changes and settings changes.
 
-## Coming from The Imperium
-
-Version 3.0.0 renamed the addon to Warcrest. Update as usual (it's the same CurseForge project): your settings, DKP, logs and history move over by themselves the first time you log in. The zip includes a small `TheImperium` folder that does the hand-over; leave it installed. Guildmates still on The Imperium 2.x keep working with you while everyone updates.
-
 ## Installation
 
 1. Download the latest `Warcrest-x.y.z.zip`.
-2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/Warcrest/Warcrest.toc` (and a small `Interface/AddOns/TheImperium` folder next to it).
+2. Extract it into your WoW Forever `Interface/AddOns` folder, so you end up with `Interface/AddOns/Warcrest/Warcrest.toc`.
 3. Restart the game, or type `/reload` if you're already logged in.
 4. Make sure **Warcrest** is enabled in the AddOns list on the character select screen.
 
-When updating by hand, delete the old `Warcrest` and `TheImperium` folders first so no old files are left behind.
+When updating by hand, delete the old `Warcrest` folder first so no old files are left behind. The small `TheImperium` and `Bannerhold` folders that older versions came with aren't needed any more: delete them.
 
 ## Opening the addon
 
@@ -72,6 +68,7 @@ When updating by hand, delete the old `Warcrest` and `TheImperium` folders first
 | `/warcrest` | Open or close the guild tools window |
 | `/warcrest raids` | Open raid sign-ups |
 | `/warcrest dkp` | Open DKP |
+| `/warcrest calendar` | Open the calendar |
 | `/warcrest auction [item] [min bid]` | Auction an item to your raid (officers; Shift-click the item into the command) |
 | `/warcrest council` | The loot council vote, or start one (officers) |
 | `/warcrest raidrecap` | The last raid night's recap |

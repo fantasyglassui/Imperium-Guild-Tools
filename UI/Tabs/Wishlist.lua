@@ -20,8 +20,7 @@ local ADD_H = 156
 
 -- An item's name in its quality color when the game knows it, else in gold.
 local function itemText(id, name)
-  local getInfo = (C_Item and C_Item.GetItemInfo) or _G.GetItemInfo
-  local ok, _, link = pcall(getInfo or error, tonumber(id) or 0)
+  local ok, _, link = pcall(C_Item.GetItemInfo, tonumber(id) or 0)
   if not ok then return UI.Code("accent") .. name .. "|r" end
   if type(link) == "string" then
     local color = link:match("^(|c%x%x%x%x%x%x%x%x)")
@@ -240,8 +239,7 @@ local function Build(page)
   local function insert(link)
     if P.item and P.item:HasFocus() and link then P.item:SetText(link) end
   end
-  if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", insert) end
-  if ChatFrameUtil and ChatFrameUtil.InsertLink then hooksecurefunc(ChatFrameUtil, "InsertLink", insert) end
+  hooksecurefunc(ChatFrameUtil, "InsertLink", insert)
 end
 
 local function Subtitle()

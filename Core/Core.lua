@@ -155,36 +155,26 @@ function ns.Usable(v)
   return v
 end
 
--- Item and spell lookups. Newer game clients only have C_Item.GetItemInfo and
--- C_Spell.GetSpellInfo (which returns a table); older ones only the globals.
--- Both return nothing rather than erroring when neither is there.
+-- Item and spell lookups (nothing, rather than an error, for an unknown one).
 function ns.GetItemInfo(item)
-  local f = (C_Item and C_Item.GetItemInfo) or _G.GetItemInfo
-  if not f or item == nil then return end
-  return f(item)
+  if item == nil then return end
+  return C_Item.GetItemInfo(item)
 end
 
 function ns.SpellName(id)
-  if C_Spell and C_Spell.GetSpellInfo then
-    local info = C_Spell.GetSpellInfo(id)
-    if type(info) == "table" then return info.name end
-    if type(info) == "string" then return info end
-  end
-  if _G.GetSpellInfo then return (_G.GetSpellInfo(id)) end
+  local info = C_Spell.GetSpellInfo(id)
+  return info and info.name
 end
 
--- Say something in chat: C_ChatInfo.SendChatMessage on newer clients (WoW:
--- Forever), the old global elsewhere.
+-- Say something in chat.
 function ns.SendChat(text, chatType, language, target)
-  local f = (C_ChatInfo and C_ChatInfo.SendChatMessage) or _G.SendChatMessage
-  if not f then return false end
-  return pcall(f, text, chatType, language, target)
+  return pcall(C_ChatInfo.SendChatMessage, text, chatType, language, target)
 end
 
 -- Open the chat box with this text in it.
 function ns.OpenChat(text)
-  local f = (ChatFrameUtil and ChatFrameUtil.OpenChat) or _G.ChatFrame_OpenChat
-  if f then f(text) return true end
+  ChatFrameUtil.OpenChat(text)
+  return true
 end
 
 function ns.First(...)
@@ -431,16 +421,6 @@ function ns.FormatToPattern(fmt)
   return "^" .. table.concat(out) .. "$", order
 end
 
--- Match text against a FormatToPattern result. Returns the arguments by
--- position (args[1] is the format's first argument), or nil.
-function ns.MatchFormat(text, pattern, order)
-  local caps = { text:match(pattern) }
-  if not caps[1] then return nil end
-  local args = {}
-  for i, v in ipairs(caps) do args[order[i] or i] = v end
-  return args
-end
-
 local function parseVersion(v)
   local a, b, c = tostring(v or ""):match("^(%d+)%.?(%d*)%.?(%d*)")
   return tonumber(a) or 0, tonumber(b) or 0, tonumber(c) or 0
@@ -482,23 +462,10 @@ frame:SetScript("OnEvent", function(_, event, ...)
       if list then for _, fn in ipairs(list) do safely("ADDON_LOADED", fn, ...) end end
       return
     end
-    -- Coming from The Imperium (2.x): its saved data is handed over once, by the
-    -- small TheImperium folder that comes with Warcrest (see Compat/).
-    if WarcrestDB == nil and type(TheImperiumDB) == "table" and next(TheImperiumDB) ~= nil
-        and not TheImperiumDB.movedToWarcrest and not TheImperiumDB.movedToBannerhold then
-      WarcrestDB = TheImperiumDB
-      ns.movedFromImperium = true
-      local getMetaOld = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
-      -- Only empty the old file when it's the hand-over folder, not an old copy of the full addon.
-      if getMetaOld and getMetaOld("TheImperium", "X-Warcrest-Handover") == "1" then
-        TheImperiumDB = { movedToWarcrest = time() }
-      end
-    end
     ns.isNewInstall = WarcrestDB == nil
     WarcrestDB = WarcrestDB or {}
     ns.db = WarcrestDB
-    local getMeta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
-    ns.version = (getMeta and getMeta(ADDON_NAME, "Version")) or "0"
+    ns.version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or "0"
     C_ChatInfo.RegisterAddonMessagePrefix(ns.PREFIX)
     for _, fn in ipairs(inits) do safely("startup", fn) end
     return
@@ -571,13 +538,8 @@ function ns.Notify(chat, warning, sound, force, kind, title)
     local inner = text:match("^|c%x%x%x%x%x%x%x%x(.*)|r$")
     if inner and not inner:find("|c", 1, true) then text = inner end
     ns.ShowBanner(kind, text, title)
-  elseif style ~= "off" and RaidWarningUtil and RaidWarningUtil.AddMessage then -- newer clients (WoW: Forever)
+  elseif style ~= "off" then
     pcall(RaidWarningUtil.AddMessage, warning or chat, ChatTypeInfo["RAID_WARNING"])
-  elseif style ~= "off" and RaidWarningFrame and RaidNotice_AddMessage then
-    pcall(RaidNotice_AddMessage, RaidWarningFrame, warning or chat, ChatTypeInfo["RAID_WARNING"])
-  elseif style ~= "off" and ns.ShowBanner then
-    -- No raid warning text on this client: use the banner.
-    ns.ShowBanner(kind, ((warning or chat):gsub("|T.-|t", "")), title)
   end
   if sound then
     if ns.db.sound then pcall(PlaySound, sound, ns.db.soundChannel or "Master") end

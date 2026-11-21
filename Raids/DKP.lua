@@ -511,7 +511,7 @@ local WEAPON = {     -- weapon subclass -> classes that can use it
 -- true, false, or nil when it can't tell (cloth, jewelry, trinkets, unknown items).
 function ns.CanUseItem(link, classFile)
   if not (link and classFile) then return nil end
-  local getInfo = (C_Item and C_Item.GetItemInfoInstant) or GetItemInfoInstant
+  local getInfo = C_Item.GetItemInfoInstant
   if not getInfo then return nil end
   local ok, _, _, _, _, _, classID, subclassID = pcall(getInfo, link)
   if not ok or not classID then return nil end
@@ -810,7 +810,7 @@ ns.OnMessage("B8", function(p)
 end)
 
 function ns.RollForItem()
-  local f = (C_RandomRoll and C_RandomRoll.RandomRoll) or RandomRoll
+  local f = RandomRoll
   if f then pcall(f, 1, 100) end
 end
 

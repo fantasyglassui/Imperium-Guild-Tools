@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.10.0
+A clean-up release.
+- **The Imperium and Bannerhold folders are gone.** They only handed saved data over from the addon's old names, and that was done long ago. Warcrest no longer comes with them; if they're still in your `Interface/AddOns` folder you can delete them.
+- **Settings is at the bottom of the side menu**, next to Help, so the everyday tabs come first.
+- The help window's topics fit again (the last one ran into the website and Discord boxes), and the tips in Settings > General no longer have a gap between them.
+- **WoW: Forever only:** Warcrest now calls only the game functions WoW: Forever has (checked against its own list), with no older fallbacks left over.
+- Leftovers from removed features are gone: the map of guild fights (the kill positions it saved are cleared from your history) and the hand-over from the old names.
+- The tests always run against a stand-in for the WoW: Forever client.
+
 ## 3.9.3
 Checked every game function Warcrest uses against the WoW: Forever game client's own list (from [Ketho/BlizzardInterfaceResources](https://github.com/Ketho/BlizzardInterfaceResources/tree/forever)). Several had moved; these are fixed:
 - **Recipes weren't shared.** Forever has one profession window for every profession (enchanting too), read through `C_TradeSkillUI`, and none of the old trade skill functions or events. Warcrest now reads it the new way, so opening your profession window shares your recipes again. The old events also stopped part of the crafters code loading at all.

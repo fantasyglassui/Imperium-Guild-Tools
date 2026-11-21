@@ -23,7 +23,7 @@ The **Kills** tab lists every kill as a table (killer, victim, where and when) w
 
 A **streak** is a guild member's killing blows in a row without dying to an enemy player, with no more than an hour between kills.
 
-- The guild hears when someone reaches **3, 5, 10, 15, 20, 25 and 30** kills in a row.
+- The guild hears when someone reaches **3, 5, 10, 15, 20, 25 and 30** kills in a row, and each has a name: Killing Spree (3), Rampage (5), Dominating (10), Unstoppable (15), Godlike (20), Legendary (25) and Beyond Godlike (30).
 - When a streak of **5 or more** is ended, the guild hears who ended it.
 - The Kills tab shows the **best streak** of the period you picked, under Top Head Hunters.
 

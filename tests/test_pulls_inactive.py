@@ -59,18 +59,3 @@ def test_inactive_members():
     alice.ns.OpenPanel("officers", "inactive")
     guild.run(1)
     assert not alice.errors()
-
-
-def test_kills_carry_where_they_happened():
-    guild = Guild(MEMBERS)
-    cara = guild["Cara"]
-    msg = "K^kill_world^Grim^Duskwood^%d^1.0^60^1^Bloodfang^1431^0.412^0.633" % int(guild.clock)
-    cara.ns.HandleAddonMessage("TheImperium", msg, "GUILD", "Bob-Realm")
-    guild.run(10)
-    k = cara.ns.db.killLog[1]
-    assert k.victim == "Grim" and k.mapID == 1431 and abs(k.x - 0.412) < 1e-6
-    # Off the map: no position kept.
-    msg = "K^kill_world^Thrak^Duskwood^%d^1.0^60^1^^1431^7^0.5" % int(guild.clock)
-    cara.ns.HandleAddonMessage("TheImperium", msg, "GUILD", "Bob-Realm")
-    guild.run(10)
-    assert cara.ns.db.killLog[1].mapID is None

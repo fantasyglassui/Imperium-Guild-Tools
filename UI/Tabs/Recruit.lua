@@ -276,8 +276,7 @@ local function Build(page)
   d.whisper:SetPoint("LEFT", d.invite, "RIGHT", 6, 0)
   d.whisper:SetScript("OnClick", function()
     if not selected then return end
-    if ChatFrameUtil and ChatFrameUtil.SendTell then ChatFrameUtil.SendTell(selected)
-    elseif ChatFrame_SendTell then ChatFrame_SendTell(selected) end
+    ChatFrameUtil.SendTell(selected)
   end)
   d.remove = UI.Button(d, "Remove", third)
   d.remove:SetHeight(26)

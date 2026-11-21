@@ -9,10 +9,7 @@ local UI = ns.UI
 local win
 
 local function itemIcon(link)
-  local ok, icon = pcall(function()
-    if C_Item and C_Item.GetItemIconByID then return C_Item.GetItemIconByID(link) end
-    if GetItemIcon then return GetItemIcon(link) end
-  end)
+  local ok, icon = pcall(C_Item.GetItemIconByID, link)
   return ok and icon or "Interface\\Icons\\INV_Misc_QuestionMark"
 end
 

@@ -134,8 +134,7 @@ local function Refresh()
   UI.SetEnabled(P.motdBox, p.motd)
   UI.SetEnabled(P.motdBtn, p.motd)
   if not P.motdBox:HasFocus() then
-    local motd = (C_GuildInfo and C_GuildInfo.GetMOTD) or GetGuildRosterMOTD
-    P.motdBox:SetText((motd and motd()) or "")
+    P.motdBox:SetText(C_GuildInfo.GetMOTD() or "")
   end
 end
 

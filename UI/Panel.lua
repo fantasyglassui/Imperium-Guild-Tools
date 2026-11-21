@@ -118,12 +118,7 @@ local function CreatePanel()
   panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
   -- Resizable from the corner, back to the size it was left at.
   panel:SetResizable(true)
-  if panel.SetResizeBounds then
-    panel:SetResizeBounds(WIDTH, HEIGHT, MAX_WIDTH, MAX_HEIGHT)
-  elseif panel.SetMinResize then
-    panel:SetMinResize(WIDTH, HEIGHT)
-    panel:SetMaxResize(MAX_WIDTH, MAX_HEIGHT)
-  end
+  panel:SetResizeBounds(WIDTH, HEIGHT, MAX_WIDTH, MAX_HEIGHT)
   panel:SetSize(math.max(WIDTH, math.min(MAX_WIDTH, ns.db.panelWidth or WIDTH)),
     math.max(HEIGHT, math.min(MAX_HEIGHT, ns.db.panelHeight or HEIGHT)))
   panel:SetScale(ns.db.panelScale or 1)

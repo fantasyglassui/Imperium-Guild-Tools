@@ -24,10 +24,7 @@ local function yes(v) return v and "on" or "off" end
 
 -- The other addons that are loaded (conflicts are a common cause of trouble).
 local function otherAddons()
-  local num = (C_AddOns and C_AddOns.GetNumAddOns) or GetNumAddOns
-  local info = (C_AddOns and C_AddOns.GetAddOnInfo) or GetAddOnInfo
-  local loaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
-  if not (num and info and loaded) then return "unknown" end
+  local num, info, loaded = C_AddOns.GetNumAddOns, C_AddOns.GetAddOnInfo, C_AddOns.IsAddOnLoaded
   local list = {}
   for i = 1, num() do
     local name = info(i)

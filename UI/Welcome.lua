@@ -288,7 +288,7 @@ table.insert(ns.OnGuildReady, function()
   C_Timer.After(90, remind)
   if ns.db.welcomed then return end
   local needsSetup = ns.IsAddonOfficer() and ns.cfg.stamp == 0
-  if (not isNew or ns.movedFromImperium) and not needsSetup then ns.db.welcomed = true return end
+  if not isNew and not needsSetup then ns.db.welcomed = true return end
   C_Timer.After(4, function()
     if ns.db.welcomed or InCombatLockdown() or not ns.GuildName() then return end
     ns.ShowWelcome()

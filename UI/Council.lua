@@ -59,8 +59,7 @@ local function Build()
   local function insert(link)
     if win.item:HasFocus() and link then win.item:SetText(link) end
   end
-  if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", insert) end
-  if ChatFrameUtil and ChatFrameUtil.InsertLink then hooksecurefunc(ChatFrameUtil, "InsertLink", insert) end
+  hooksecurefunc(ChatFrameUtil, "InsertLink", insert)
 
   -- The vote.
   local vote = CreateFrame("Frame", nil, win)

@@ -11,6 +11,11 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.10.0", date = "Nov 20, 2026", items = {
+    "Settings moved to the bottom of the side menu, next to Help.",
+    "The small The Imperium and Bannerhold folders aren't needed any more: you can delete them from your AddOns folder.",
+    "Clean-up: Warcrest now uses only WoW: Forever's own game functions, and leftovers from removed features are gone.",
+  } },
   { version = "3.9.3", date = "Nov 20, 2026", items = {
     "Fix: on WoW: Forever, guildmates' recipes weren't shared (the profession window is read the new way now), achievements weren't posted in guild chat, raid assignments couldn't be posted, the recruiting message couldn't be posted, and the raid warning alert style showed nothing.",
   } },

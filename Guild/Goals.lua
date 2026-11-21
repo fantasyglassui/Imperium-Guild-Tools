@@ -25,9 +25,9 @@ ns.GOAL_KINDS = {
   { key = "achievements", label = "Achievements earned",    one = "Earn %d achievement",         many = "Earn %d achievements" },
   { key = "loot",         label = "Loot handed out",        one = "Hand out %d item of loot",    many = "Hand out %d items of loot" },
 }
+
 local KIND_BY_KEY = {}
 for _, k in ipairs(ns.GOAL_KINDS) do KIND_BY_KEY[k.key] = k end
-function ns.GoalKind(key) return KIND_BY_KEY[key] end
 
 ns.GOAL_PERIODS = { { "week", "Week" }, { "month", "Month" } }
 

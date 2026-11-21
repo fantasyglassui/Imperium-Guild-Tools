@@ -26,7 +26,7 @@ end
 
 function ns.RequestRoster()
   showEveryone()
-  local f = ns.First(CG.GuildRoster, GuildRoster)
+  local f = CG.GuildRoster
   if f then pcall(f) end
 end
 
@@ -66,7 +66,7 @@ local function loadRoster()
     -- Offline members hidden (someone unticked "Show offline members" in the
     -- guild window): list everyone again, then read.
     if showEveryone() then
-      local f = ns.First(CG.GuildRoster, GuildRoster)
+      local f = CG.GuildRoster
       if f then pcall(f) end
     end
     local before = rosterByKey
@@ -169,8 +169,8 @@ function ns.Perms()
     remove = perm(CanGuildRemove),
     motd = perm(CanEditMOTD),
     publicNote = perm(CanEditPublicNote),
-    officerNote = perm(CG.CanEditOfficerNote, CanEditOfficerNote),
-    viewOfficerNote = perm(CG.CanViewOfficerNote, CanViewOfficerNote),
+    officerNote = perm(CG.CanEditOfficerNote),
+    viewOfficerNote = perm(CG.CanViewOfficerNote),
   }
 end
 
@@ -198,13 +198,7 @@ end
 
 function ns.SetNote(m, note, isPublic)
   local ok
-  if CG.SetNote and m.guid then
-    ok = act("Edit note", CG.SetNote, m.guid, note, isPublic)
-  elseif isPublic then
-    ok = act("Edit note", GuildRosterSetPublicNote, m.index, note)
-  else
-    ok = act("Edit note", GuildRosterSetOfficerNote, m.index, note)
-  end
+  ok = act("Edit note", m.guid and CG.SetNote, m.guid, note, isPublic)
   -- The note's text is never broadcast, only that it changed.
   if ok and ns.LogAction then ns.LogAction(isPublic and "note" or "onote", Ambiguate(m.name, "short")) end
   return ok

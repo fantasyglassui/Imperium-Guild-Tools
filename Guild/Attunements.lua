@@ -33,15 +33,8 @@ for _, a in ipairs(ns.ATTUNEMENTS) do BY_KEY[a.key] = a end
 -- Your own: from the quests you've finished
 ------------------------------------------------------------------------
 local function questDone(id)
-  if C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted then
-    local ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, id)
-    if ok then return done and true or false end
-  end
-  if IsQuestFlaggedCompleted then
-    local ok, done = pcall(IsQuestFlaggedCompleted, id)
-    if ok then return done and true or false end
-  end
-  return false
+  local ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, id)
+  return ok and done and true or false
 end
 
 -- The attunements you have, as a sorted "mc,ony" list.

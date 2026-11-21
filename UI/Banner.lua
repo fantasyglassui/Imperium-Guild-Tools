@@ -59,11 +59,6 @@ local function placeAnchor()
   if p then anchor:SetPoint("TOP", UIParent, "TOP", p[1], p[2]) else anchor:SetPoint("TOP", UIParent, "TOP", 0, -110) end
 end
 
-function ns.ResetBannerPosition()
-  if ns.db then ns.db.bannerPos = nil end
-  if anchor then placeAnchor() end
-end
-
 local function makeBanner()
   local b = CreateFrame("Button", nil, anchor)
   b:SetSize(W, H)

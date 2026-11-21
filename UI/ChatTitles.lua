@@ -40,9 +40,4 @@ local function filter(_, _, msg, author, ...)
   return false, msg, author, ...
 end
 
--- Newer game clients (WoW: Forever) have ChatFrameUtil.AddMessageEventFilter
--- in place of the old global.
-local addFilter = (ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter) or ChatFrame_AddMessageEventFilter
-if addFilter then
-  for _, e in ipairs(EVENTS) do addFilter(e, filter) end
-end
+for _, e in ipairs(EVENTS) do ChatFrameUtil.AddMessageEventFilter(e, filter) end

@@ -1,11 +1,5 @@
 package-as: Warcrest
 
-# The small TheImperium and Bannerhold folders hand over saved data from the
-# addon's old names. They ship next to Warcrest in the same zip.
-move-folders:
-  Warcrest/Compat/TheImperium: TheImperium
-  Warcrest/Compat/Bannerhold: Bannerhold
-
 # Release notes on GitHub and CurseForge come from the changelog, not commit messages.
 manual-changelog:
   filename: CHANGELOG.md

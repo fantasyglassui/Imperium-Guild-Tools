@@ -117,10 +117,12 @@ class Guild:
         self.echo = echo  # True: the game sends your own guild/raid messages back to you (retail does)
         # True: like WoW: Forever, senders come as "Name Realm", and a whisper to a
         # name with a space in it doesn't arrive ("No player named ...").
-        # forever: the WoW: Forever game client (its API, and names as "Name Realm").
-        self.forever = os.environ.get("WARCREST_FOREVER") == "1"
+        # The game client is WoW: Forever's (tests/forever.lua). Names come as
+        # "Name-Realm", or "Name Realm" as the real client writes them when
+        # realm_space is on (WARCREST_REALM_SPACE=1 runs every test that way).
+        self.forever = True
         if realm_space is None:
-            realm_space = self.forever or os.environ.get("WARCREST_REALM_SPACE") == "1"
+            realm_space = os.environ.get("WARCREST_REALM_SPACE") == "1"
         self.realm_space = realm_space
         self.bad_whispers = 0
         self.clock = float(start)

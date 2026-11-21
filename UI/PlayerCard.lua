@@ -98,11 +98,7 @@ local function Build()
       if ns.ShowProfileEditor then ns.ShowProfileEditor() end
       return
     end
-    if ChatFrameUtil and ChatFrameUtil.SendTell then
-      ChatFrameUtil.SendTell(shownName)
-    elseif ChatFrame_SendTell then
-      ChatFrame_SendTell(shownName)
-    end
+    ChatFrameUtil.SendTell(shownName)
   end)
   UI.Tooltip(f.whisper, function() return shownName and ns.IsMe(shownName) and "Edit profile" or "Whisper" end,
     function() return shownName and ns.IsMe(shownName)

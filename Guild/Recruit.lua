@@ -102,7 +102,7 @@ end
 -- Invite a recruit to the guild (and mark them Contacted if they were New).
 function ns.InviteRecruit(name)
   if not ns.IsAddonOfficer() then return end
-  local f = (C_GuildInfo and C_GuildInfo.Invite) or GuildInvite
+  local f = C_GuildInfo.Invite
   if f then pcall(f, name) end
   local r = ns.Recruit(name)
   if r and r.status == "new" then ns.SetRecruit(r.name, { status = "contacted" }) end

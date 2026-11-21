@@ -149,8 +149,8 @@ local function Build()
   win.topics = {}
   for i, t in ipairs(TOPICS) do
     local b = CreateFrame("Button", nil, win)
-    b:SetPoint("TOPLEFT", 0, -40 - (i - 1) * 32)
-    b:SetSize(LIST_W, 32)
+    b:SetPoint("TOPLEFT", 0, -40 - (i - 1) * 28)
+    b:SetSize(LIST_W, 28)
     UI.RowSelection(b)
     local hover = b:CreateTexture(nil, "HIGHLIGHT")
     hover:SetAllPoints()

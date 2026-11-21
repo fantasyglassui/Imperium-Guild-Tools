@@ -656,8 +656,7 @@ local function Build(page)
   local function insert(link)
     if P.item and P.item:HasFocus() and link then P.item:SetText(link) end
   end
-  if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", insert) end
-  if ChatFrameUtil and ChatFrameUtil.InsertLink then hooksecurefunc(ChatFrameUtil, "InsertLink", insert) end
+  hooksecurefunc(ChatFrameUtil, "InsertLink", insert)
 end
 
 ------------------------------------------------------------------------

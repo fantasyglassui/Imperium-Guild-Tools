@@ -812,16 +812,6 @@ function ns.TitledName(name)
   return title and (short .. " " .. title) or short
 end
 
--- The titles you've earned: { { id, title }, ... }.
-function ns.MyTitles()
-  local me = UnitName("player")
-  local out = {}
-  for _, a in ipairs(LIST) do
-    if a.title and ns.HasAchievement(me, a.id) then out[#out + 1] = { id = a.id, title = a.title } end
-  end
-  return out
-end
-
 -- Pick your title (an achievement id), or "" for none.
 function ns.SetTitle(id)
   id = id or ""

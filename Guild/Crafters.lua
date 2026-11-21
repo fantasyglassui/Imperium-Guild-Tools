@@ -198,17 +198,15 @@ function ns.NoteMyRecipes(prof, rank, max, found)
   end)
 end
 
--- Newer game clients (WoW: Forever): one profession window for everything, read
--- through C_TradeSkillUI. Recipes that make an item are kept by the item's id;
--- the rest (enchants) by "e" and the recipe's spell id, as the old windows had them.
-local function scanModern()
+-- The profession window (one for every profession, enchanting too). Recipes
+-- that make an item are kept by the item's id; the rest (enchants) by "e" and
+-- the recipe's spell id.
+local function scanTradeSkills()
   local T = C_TradeSkillUI
-  if not (T and T.GetBaseProfessionInfo and T.GetAllRecipeIDs and T.GetRecipeInfo) then return end
   -- Someone else's recipes (a linked or guild list) aren't yours.
-  if (T.IsTradeSkillLinked and T.IsTradeSkillLinked()) or (T.IsTradeSkillGuild and T.IsTradeSkillGuild())
-    or (T.IsNPCCrafting and T.IsNPCCrafting()) then return end
+  if T.IsTradeSkillLinked() or T.IsTradeSkillGuild() or T.IsNPCCrafting() then return end
   local base = T.GetBaseProfessionInfo()
-  local child = T.GetChildProfessionInfo and T.GetChildProfessionInfo()
+  local child = T.GetChildProfessionInfo()
   local prof = base and base.professionName
   if type(prof) ~= "string" or prof == "" then prof = child and child.parentProfessionName end
   if type(prof) ~= "string" or prof == "" then return end
@@ -218,43 +216,14 @@ local function scanModern()
     local r = T.GetRecipeInfo(recipeID)
     if r and r.learned and not r.isRecraft then
       local id
-      local schematic = T.GetRecipeSchematic and T.GetRecipeSchematic(recipeID, false)
+      local schematic = T.GetRecipeSchematic(recipeID, false)
       if schematic and schematic.outputItemID then id = tostring(schematic.outputItemID) end
-      if not id and T.GetRecipeItemLink then id = idOf(T.GetRecipeItemLink(recipeID)) end
+      if not id then id = idOf(T.GetRecipeItemLink(recipeID)) end
       id = id or ("e" .. recipeID)
       found[id] = r.name
     end
   end
   ns.NoteMyRecipes(prof, info.skillLevel or 0, info.maxSkillLevel or 0, found)
-end
-
-local function scanTradeSkills()
-  if not GetTradeSkillLine then return scanModern() end
-  local prof, rank, max = GetTradeSkillLine()
-  local found = {}
-  for i = 1, (GetNumTradeSkills and GetNumTradeSkills() or 0) do
-    local name, kind = GetTradeSkillInfo(i)
-    if kind ~= "header" and kind ~= "subheader" then
-      local id = idOf(GetTradeSkillItemLink and GetTradeSkillItemLink(i))
-      if id then found[id] = name end
-    end
-  end
-  ns.NoteMyRecipes(prof, rank, max, found)
-end
-
-local function scanCrafts()
-  if not GetCraftDisplaySkillLine then return end
-  local prof, rank, max = GetCraftDisplaySkillLine()
-  if not prof then return end
-  local found = {}
-  for i = 1, (GetNumCrafts and GetNumCrafts() or 0) do
-    local name, _, kind = GetCraftInfo(i)
-    if kind ~= "header" then
-      local id = idOf(GetCraftItemLink and GetCraftItemLink(i))
-      if id then found[id] = name end
-    end
-  end
-  ns.NoteMyRecipes(prof, rank, max, found)
 end
 
 local function later(fn)
@@ -265,13 +234,10 @@ local function later(fn)
     C_Timer.After(1, function() waiting = false; pcall(fn) end)
   end
 end
-local tradeLater, craftLater = later(scanTradeSkills), later(scanCrafts)
+local tradeLater = later(scanTradeSkills)
 ns.OnEvent("TRADE_SKILL_SHOW", tradeLater)
-ns.OnEvent("TRADE_SKILL_UPDATE", tradeLater)           -- older clients
-ns.OnEvent("TRADE_SKILL_LIST_UPDATE", tradeLater)      -- newer clients
+ns.OnEvent("TRADE_SKILL_LIST_UPDATE", tradeLater)
 ns.OnEvent("TRADE_SKILL_DATA_SOURCE_CHANGED", tradeLater)
-ns.OnEvent("CRAFT_SHOW", craftLater)
-ns.OnEvent("CRAFT_UPDATE", craftLater)
 
 ------------------------------------------------------------------------
 -- Looking things up
@@ -310,17 +276,6 @@ function ns.CraftProfessions()
   end
   for prof in pairs(set) do out[#out + 1] = prof end
   table.sort(out)
-  return out
-end
-
--- Every member's professions: { { name, prof, rank, max, count } }, for profiles.
-function ns.MemberProfessions(name)
-  local c = ns.db.crafters[ns.Key(name)]
-  local out = {}
-  for prof, p in pairs(c and c.profs or {}) do
-    out[#out + 1] = { prof = prof, rank = p.rank, max = p.max, count = #p.ids }
-  end
-  table.sort(out, function(a, b) return a.prof < b.prof end)
   return out
 end
 

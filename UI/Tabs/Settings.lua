@@ -398,7 +398,7 @@ local function BuildGeneral(page)
     .. "shows what's new. /warcrest help lists every command in chat.", "Small")
   local titles = UI.Label(h, "Your title is chosen on the Achievements tab, at the top right. Everyone's profiles "
     .. "are on the Roster tab (Profiles).", "Small")
-  titles:SetPoint("TOPLEFT", 14, -150)
+  titles:SetPoint("TOPLEFT", tips, "BOTTOMLEFT", 0, -12)
   titles:SetWidth(inner)
   titles:SetSpacing(3)
   tips:SetPoint("TOPLEFT", 14, -38)

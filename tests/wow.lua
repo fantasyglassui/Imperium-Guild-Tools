@@ -257,10 +257,12 @@ C_ChatInfo = {
   RegisterAddonMessagePrefix = function() return true end,
   SendAddonMessage = function(prefix, text, channel, target) return send_py(prefix, text, channel, target) end,
 }
-C_AddOns = { GetAddOnMetadata = function(addon, field)
-  if addon == "TheImperium" or addon == "Bannerhold" then return OLD_ADDON_META and OLD_ADDON_META[field] end
-  if field == "Version" then return ADDON_VERSION end
-end }
+C_AddOns = {
+  GetAddOnMetadata = function(addon, field) if field == "Version" then return ADDON_VERSION end end,
+  GetNumAddOns = function() return 2 end,
+  GetAddOnInfo = function(i) return ({ "Warcrest", "TomTom" })[i] end,
+  IsAddOnLoaded = function() return true end,
+}
 
 ------------------------------------------------------------------------
 -- The player, the guild and the group (the harness fills these in)

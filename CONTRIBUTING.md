@@ -7,7 +7,6 @@ This repository ([fantasyglassui/Imperium-Guild-Tools](https://github.com/fantas
 | Folder | What's in it |
 | --- | --- |
 | `Warcrest.toc` | The addon's info and the list of files, in the order the game loads them |
-| `Compat/TheImperium/` | A tiny addon, packaged as its own `TheImperium` folder, that hands saved data from the old name over to Warcrest |
 | `Core/` | The shared namespace, events and addon messages (`Core.lua`), the release reset, syncing logs between guildmates, clearing logs, and the shared ledger that raids and DKP are kept in |
 | `Guild/` | Roster, permissions and guild-wide settings (`Guild.lua`), level-up celebrations, the officer log, the weekly recap |
 | `PvP/` | Kill alerts and the kill log, deaths (used by the Wanted list), the Wanted list |
@@ -79,4 +78,4 @@ The website (warcrest-addon.com) is `docs/`. Edit `docs/index.html`, the English
 
 ## Testing against WoW: Forever
 
-`WARCREST_FOREVER=1 pytest tests --ignore=tests/test_render.py` runs the tests as the WoW: Forever game client: the old global functions it doesn't have are removed (`tests/forever.lua`), registering an event it doesn't have is an error (`tests/forever_events.txt`), and senders' names come as "Name Realm". The lists come from the `forever` branch of [Ketho/BlizzardInterfaceResources](https://github.com/Ketho/BlizzardInterfaceResources/tree/forever); check new game functions against it.
+The tests run against a stand-in for the WoW: Forever game client: `tests/wow.lua`, then `tests/forever.lua`, which takes away the old functions Forever doesn't have and gives the newer ones; registering an event Forever doesn't have is an error (`tests/forever_events.txt`). `WARCREST_REALM_SPACE=1 pytest tests --ignore=tests/test_render.py` runs them again with senders' names as the real client writes them ("Name Realm"). The lists come from the `forever` branch of [Ketho/BlizzardInterfaceResources](https://github.com/Ketho/BlizzardInterfaceResources/tree/forever): check any new game function against it.

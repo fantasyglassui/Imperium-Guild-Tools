@@ -499,7 +499,7 @@ end
 local inviteQueue = {}
 
 local function invite(name)
-  local f = (C_PartyInfo and C_PartyInfo.InviteUnit) or InviteUnit
+  local f = C_PartyInfo.InviteUnit
   if f then pcall(f, name) end
 end
 
@@ -515,7 +515,7 @@ end
 ns.OnEvent("GROUP_ROSTER_UPDATE", function()
   if #inviteQueue == 0 then return end
   if IsInGroup() and not IsInRaid() and UnitIsGroupLeader("player") then
-    local f = (C_PartyInfo and C_PartyInfo.ConvertToRaid) or ConvertToRaid
+    local f = C_PartyInfo.ConvertToRaid
     if f then pcall(f) end
   end
   if IsInRaid() then inviteMore() end
