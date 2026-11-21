@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.9.3", date = "Nov 20, 2026", items = {
+    "Fix: on WoW: Forever, guildmates' recipes weren't shared (the profession window is read the new way now), achievements weren't posted in guild chat, raid assignments couldn't be posted, the recruiting message couldn't be posted, and the raid warning alert style showed nothing.",
+  } },
   { version = "3.9.2", date = "Nov 20, 2026", items = {
     "Fix: titles didn't show in chat on newer game clients.",
   } },

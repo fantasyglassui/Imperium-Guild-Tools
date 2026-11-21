@@ -173,6 +173,20 @@ function ns.SpellName(id)
   if _G.GetSpellInfo then return (_G.GetSpellInfo(id)) end
 end
 
+-- Say something in chat: C_ChatInfo.SendChatMessage on newer clients (WoW:
+-- Forever), the old global elsewhere.
+function ns.SendChat(text, chatType, language, target)
+  local f = (C_ChatInfo and C_ChatInfo.SendChatMessage) or _G.SendChatMessage
+  if not f then return false end
+  return pcall(f, text, chatType, language, target)
+end
+
+-- Open the chat box with this text in it.
+function ns.OpenChat(text)
+  local f = (ChatFrameUtil and ChatFrameUtil.OpenChat) or _G.ChatFrame_OpenChat
+  if f then f(text) return true end
+end
+
 function ns.First(...)
   for i = 1, select("#", ...) do
     local f = select(i, ...)
@@ -450,7 +464,9 @@ function ns.OnLoad(fn) inits[#inits + 1] = fn end
 function ns.OnEvent(event, fn)
   if not events[event] then
     events[event] = {}
-    frame:RegisterEvent(event)
+    -- A game client without this event (each version has its own set) says so
+    -- with an error: skip it rather than stop loading.
+    pcall(frame.RegisterEvent, frame, event)
   end
   table.insert(events[event], fn)
 end
@@ -555,8 +571,13 @@ function ns.Notify(chat, warning, sound, force, kind, title)
     local inner = text:match("^|c%x%x%x%x%x%x%x%x(.*)|r$")
     if inner and not inner:find("|c", 1, true) then text = inner end
     ns.ShowBanner(kind, text, title)
-  elseif style ~= "off" and RaidWarningFrame then
-    RaidNotice_AddMessage(RaidWarningFrame, warning or chat, ChatTypeInfo["RAID_WARNING"])
+  elseif style ~= "off" and RaidWarningUtil and RaidWarningUtil.AddMessage then -- newer clients (WoW: Forever)
+    pcall(RaidWarningUtil.AddMessage, warning or chat, ChatTypeInfo["RAID_WARNING"])
+  elseif style ~= "off" and RaidWarningFrame and RaidNotice_AddMessage then
+    pcall(RaidNotice_AddMessage, RaidWarningFrame, warning or chat, ChatTypeInfo["RAID_WARNING"])
+  elseif style ~= "off" and ns.ShowBanner then
+    -- No raid warning text on this client: use the banner.
+    ns.ShowBanner(kind, ((warning or chat):gsub("|T.-|t", "")), title)
   end
   if sound then
     if ns.db.sound then pcall(PlaySound, sound, ns.db.soundChannel or "Master") end

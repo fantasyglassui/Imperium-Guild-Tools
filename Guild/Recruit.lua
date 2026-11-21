@@ -157,7 +157,7 @@ end
 function ns.PostRecruitMessage(channelId)
   channelId = tonumber(channelId)
   if not channelId then ns.Say("Pick a chat channel to post in first.") return end
-  SendChatMessage(ns.RecruitMessage(), "CHANNEL", nil, channelId)
+  ns.SendChat(ns.RecruitMessage(), "CHANNEL", nil, channelId)
   ns.db.recruitPostedAt = time()
   return true
 end

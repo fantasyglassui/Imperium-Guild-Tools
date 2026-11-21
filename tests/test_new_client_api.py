@@ -7,7 +7,7 @@ M = [("Alice", 1), ("Bob", 3, "PRIEST"), ("Cara", 3)]
 
 
 def newer_client(c):
-    c.run('C_Item.GetItemInfo = GetItemInfo; GetItemInfo = nil '
+    c.run('C_Item.GetItemInfo = C_Item.GetItemInfo or GetItemInfo; GetItemInfo = nil '
           'local names = spellNames '
           'C_Spell.GetSpellInfo = function(id) if names[id] then return { name = names[id], spellID = id } end end '
           'GetSpellInfo = nil')

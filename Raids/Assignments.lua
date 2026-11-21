@@ -186,7 +186,7 @@ function ns.PostAssignment(raid, boss)
     if strtrim(line) ~= "" and #lines <= POST_MAX then lines[#lines + 1] = strtrim(line):sub(1, 250) end
   end
   for i, line in ipairs(lines) do
-    C_Timer.After((i - 1) * 0.4, function() SendChatMessage(line, channel) end)
+    C_Timer.After((i - 1) * 0.4, function() ns.SendChat(line, channel) end)
   end
   return true
 end

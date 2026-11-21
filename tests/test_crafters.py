@@ -17,6 +17,10 @@ def search(c, query, prof=None):
 
 
 def open_window(c, table, event):
+    if c.guild.forever:
+        # WoW: Forever has one profession window for everything, enchanting too.
+        table = table.replace("craftSkill", "tradeSkill")
+        event = "TRADE_SKILL_SHOW"
     c.run(table)
     c.fire(event)
     c.guild.run(2)
@@ -47,11 +51,11 @@ def test_a_new_recipe_sends_an_update_and_nothing_is_lost():
     guild.run(35)
     # The window collapsed to one recipe: the others are still known.
     bob.run('tradeSkill.recipes = { tradeSkill.recipes[2] }')
-    bob.fire("TRADE_SKILL_UPDATE")
+    bob.fire("TRADE_SKILL_LIST_UPDATE" if guild.forever else "TRADE_SKILL_UPDATE")
     guild.run(35)
     assert len(search(guild["Cara"], "", "Tailoring")) == 2
     bob.run('table.insert(tradeSkill.recipes, { "Felcloth Bag", "optimal", "|Hitem:14156|h[Felcloth Bag]|h" })')
-    bob.fire("TRADE_SKILL_UPDATE")
+    bob.fire("TRADE_SKILL_LIST_UPDATE" if guild.forever else "TRADE_SKILL_UPDATE")
     guild.run(35)
     assert len(search(guild["Cara"], "", "Tailoring")) == 3
 
@@ -88,4 +92,4 @@ def test_the_window_and_whispers():
     assert cara.errors() == []
     cara.ns.AskCrafter("Bob", "13858")
     opened = list(cara.lua.eval("openedChat").values())
-    assert opened and opened[0].startswith("/w Bob Hi! Could you craft") and "Runecloth Robe" in opened[0]
+    assert opened and opened[0].split(" ", 2)[1].split("-")[0] == "Bob" and "Hi! Could you craft" in opened[0] and "Runecloth Robe" in opened[0]

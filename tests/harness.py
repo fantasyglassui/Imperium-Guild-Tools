@@ -15,6 +15,9 @@ from lupa.lua51 import LuaRuntime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STUB = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "wow.lua")).read()
+FOREVER = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "forever.lua")).read()
+FOREVER_EVENTS = [line.strip() for line in open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "forever_events.txt"))
+                  if line.strip() and not line.startswith("#")]
 
 # 2027-01-15 08:00 UTC: comfortably after the addon's release cutoff.
 START = 1800000000
@@ -50,6 +53,12 @@ class Client:
         g.PLAYER = name
         g.ADDON_VERSION = VERSION
         L.execute(STUB)
+        if guild.forever:
+            L.execute(FOREVER)
+            known = L.eval("{}")
+            for e in FOREVER_EVENTS:
+                known[e] = True
+            g.FOREVER_EVENTS = known
         self.set_roster()
         if setup:
             setup(self)          # e.g. saved data from before, as the game would load it
@@ -108,8 +117,10 @@ class Guild:
         self.echo = echo  # True: the game sends your own guild/raid messages back to you (retail does)
         # True: like WoW: Forever, senders come as "Name Realm", and a whisper to a
         # name with a space in it doesn't arrive ("No player named ...").
+        # forever: the WoW: Forever game client (its API, and names as "Name Realm").
+        self.forever = os.environ.get("WARCREST_FOREVER") == "1"
         if realm_space is None:
-            realm_space = os.environ.get("WARCREST_REALM_SPACE") == "1"
+            realm_space = self.forever or os.environ.get("WARCREST_REALM_SPACE") == "1"
         self.realm_space = realm_space
         self.bad_whispers = 0
         self.clock = float(start)

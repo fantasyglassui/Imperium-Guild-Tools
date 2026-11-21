@@ -879,7 +879,7 @@ local function postNow()
     or ns.TF("%s and %s", table.concat(names, ", ", 1, #names - 1), names[#names])
   local text = ns.TF("[%s] %s earned %s!", ns.BRAND or "Warcrest", me, what)
   if #titles > 0 then text = text .. " " .. ns.TF("New title: %s %s.", me, titles[#titles]) end
-  pcall(SendChatMessage, text, "GUILD")
+  ns.SendChat(text, "GUILD")
 end
 postLater = function(a)
   toPost[#toPost + 1] = a

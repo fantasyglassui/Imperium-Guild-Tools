@@ -189,7 +189,10 @@ widgetMeta = { __index = function(self, key)
     rawset(w, "script_" .. name, old and function(...) old(...); fn(...) end or fn)
   end end
   if key == "GetScript" then return function(w, name) return rawget(w, "script_" .. name) end end
-  if key == "RegisterEvent" then return function(w, ev) w.events[ev] = true end end
+  if key == "RegisterEvent" then return function(w, ev)
+    if FOREVER_EVENTS and not FOREVER_EVENTS[ev] and not ev:find("^WARCREST_TEST") then error("Attempt to register unknown event \"" .. ev .. "\"", 2) end
+    w.events[ev] = true
+  end end
   return function() return NewWidget() end
 end }
 local widgetCount = 0

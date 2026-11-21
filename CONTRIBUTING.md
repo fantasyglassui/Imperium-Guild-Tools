@@ -76,3 +76,7 @@ The packager leaves out `CONTRIBUTING.md`, `.gitignore`, `.luacheckrc`, and the 
 ## The website
 
 The website (warcrest-addon.com) is `docs/`. Edit `docs/index.html`, the English page, then run `python3 tools/site/build.py`: it fills the What's new section from `UI/Updates.lua` and writes the German, French and Spanish pages (`docs/de`, `docs/fr`, `docs/es`) using `tools/site/i18n/*.json` and the addon's own translations. `python3 tools/site/build.py --missing` lists text that still needs translating.
+
+## Testing against WoW: Forever
+
+`WARCREST_FOREVER=1 pytest tests --ignore=tests/test_render.py` runs the tests as the WoW: Forever game client: the old global functions it doesn't have are removed (`tests/forever.lua`), registering an event it doesn't have is an error (`tests/forever_events.txt`), and senders' names come as "Name Realm". The lists come from the `forever` branch of [Ketho/BlizzardInterfaceResources](https://github.com/Ketho/BlizzardInterfaceResources/tree/forever); check new game functions against it.

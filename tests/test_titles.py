@@ -196,7 +196,7 @@ def test_streak_and_revenge_alerts_show_the_title():
 def newer_chat_api(c):
     """WoW: Forever: ChatFrameUtil.AddMessageEventFilter, and no ChatFrame_AddMessageEventFilter."""
     c.lua.execute("ChatFrameUtil = ChatFrameUtil or {} "
-                  "ChatFrameUtil.AddMessageEventFilter = ChatFrame_AddMessageEventFilter "
+                  "ChatFrameUtil.AddMessageEventFilter = ChatFrameUtil.AddMessageEventFilter or ChatFrame_AddMessageEventFilter "
                   "ChatFrame_AddMessageEventFilter = nil")
 
 

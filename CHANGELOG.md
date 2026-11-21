@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.9.3
+Checked every game function Warcrest uses against the WoW: Forever game client's own list (from [Ketho/BlizzardInterfaceResources](https://github.com/Ketho/BlizzardInterfaceResources/tree/forever)). Several had moved; these are fixed:
+- **Recipes weren't shared.** Forever has one profession window for every profession (enchanting too), read through `C_TradeSkillUI`, and none of the old trade skill functions or events. Warcrest now reads it the new way, so opening your profession window shares your recipes again. The old events also stopped part of the crafters code loading at all.
+- **Achievements weren't posted in guild chat**, and **Post to raid chat** (raid assignments) and **posting the recruiting message** did nothing: `SendChatMessage` is now `C_ChatInfo.SendChatMessage`.
+- **The raid warning alert style** showed nothing: it now uses `RaidWarningUtil.AddMessage`.
+- **Whisper buttons** (crafters) and the **guild message of the day** on the Roster tab use the new chat and guild functions.
+- An event a game client doesn't have no longer stops the rest of a file loading.
+- The tests now also run as the WoW: Forever client: its functions, its events, and its "Name Realm" names.
+
 ## 3.9.2
 - **Fix: titles didn't show in chat.** WoW: Forever's game client moved the function chat add-ons use to change how messages look (`ChatFrame_AddMessageEventFilter` is now `ChatFrameUtil.AddMessageEventFilter`), so Warcrest never added guildmates' titles in front of their messages. It now uses the new one, and the old one on clients that still have it.
 

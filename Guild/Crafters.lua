@@ -198,8 +198,38 @@ function ns.NoteMyRecipes(prof, rank, max, found)
   end)
 end
 
+-- Newer game clients (WoW: Forever): one profession window for everything, read
+-- through C_TradeSkillUI. Recipes that make an item are kept by the item's id;
+-- the rest (enchants) by "e" and the recipe's spell id, as the old windows had them.
+local function scanModern()
+  local T = C_TradeSkillUI
+  if not (T and T.GetBaseProfessionInfo and T.GetAllRecipeIDs and T.GetRecipeInfo) then return end
+  -- Someone else's recipes (a linked or guild list) aren't yours.
+  if (T.IsTradeSkillLinked and T.IsTradeSkillLinked()) or (T.IsTradeSkillGuild and T.IsTradeSkillGuild())
+    or (T.IsNPCCrafting and T.IsNPCCrafting()) then return end
+  local base = T.GetBaseProfessionInfo()
+  local child = T.GetChildProfessionInfo and T.GetChildProfessionInfo()
+  local prof = base and base.professionName
+  if type(prof) ~= "string" or prof == "" then prof = child and child.parentProfessionName end
+  if type(prof) ~= "string" or prof == "" then return end
+  local info = (child and (child.maxSkillLevel or 0) > 0) and child or base
+  local found = {}
+  for _, recipeID in ipairs(T.GetAllRecipeIDs() or {}) do
+    local r = T.GetRecipeInfo(recipeID)
+    if r and r.learned and not r.isRecraft then
+      local id
+      local schematic = T.GetRecipeSchematic and T.GetRecipeSchematic(recipeID, false)
+      if schematic and schematic.outputItemID then id = tostring(schematic.outputItemID) end
+      if not id and T.GetRecipeItemLink then id = idOf(T.GetRecipeItemLink(recipeID)) end
+      id = id or ("e" .. recipeID)
+      found[id] = r.name
+    end
+  end
+  ns.NoteMyRecipes(prof, info.skillLevel or 0, info.maxSkillLevel or 0, found)
+end
+
 local function scanTradeSkills()
-  if not GetTradeSkillLine then return end
+  if not GetTradeSkillLine then return scanModern() end
   local prof, rank, max = GetTradeSkillLine()
   local found = {}
   for i = 1, (GetNumTradeSkills and GetNumTradeSkills() or 0) do
@@ -237,7 +267,9 @@ local function later(fn)
 end
 local tradeLater, craftLater = later(scanTradeSkills), later(scanCrafts)
 ns.OnEvent("TRADE_SKILL_SHOW", tradeLater)
-ns.OnEvent("TRADE_SKILL_UPDATE", tradeLater)
+ns.OnEvent("TRADE_SKILL_UPDATE", tradeLater)           -- older clients
+ns.OnEvent("TRADE_SKILL_LIST_UPDATE", tradeLater)      -- newer clients
+ns.OnEvent("TRADE_SKILL_DATA_SOURCE_CHANGED", tradeLater)
 ns.OnEvent("CRAFT_SHOW", craftLater)
 ns.OnEvent("CRAFT_UPDATE", craftLater)
 
@@ -351,10 +383,8 @@ end
 function ns.AskCrafter(name, id)
   local what = ns.RecipeLink(id) or ""
   local text = ns.TF("Hi! Could you craft %s for me?", what)
-  if ChatFrame_OpenChat then
-    ChatFrame_OpenChat("/w " .. Ambiguate(name, "none") .. " " .. text)
-  else
-    SendChatMessage(text, "WHISPER", nil, ns.WhisperName(name) or name)
+  if not ns.OpenChat("/w " .. (ns.WhisperName(name) or Ambiguate(name, "short")) .. " " .. text) then
+    ns.SendChat(text, "WHISPER", nil, ns.WhisperName(name) or name)
   end
 end
 

@@ -30,7 +30,7 @@ read_globals = {
   "GetChannelList", "GetInventoryItemLink", "GetItemInfo", "GuildInvite", "SendChatMessage", "UnitIsConnected",
   "LOCALIZED_CLASS_NAMES_MALE", "ChatFrame_AddMessageEventFilter",
   -- C_ namespaces and Enum
-  "C_AddOns", "C_ChatInfo", "C_ClassColor", "C_DateAndTime", "C_GuildInfo", "C_Item", "C_Map",
+  "C_AddOns", "C_ChatInfo", "C_TradeSkillUI", "RaidWarningUtil", "C_ClassColor", "C_DateAndTime", "C_GuildInfo", "C_Item", "C_Map",
   "C_NamePlate", "C_PartyInfo", "C_RandomRoll", "C_Spell", "C_Timer", "Enum",
   -- Units, groups and the guild
   "Ambiguate", "GetGuildInfo", "GetGuildRosterInfo", "GetGuildRosterMOTD", "GetNormalizedRealmName",

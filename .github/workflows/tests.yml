@@ -26,7 +26,7 @@ jobs:
           pip install lupa pytest pillow
           pytest tests -v
 
-      - name: Run the tests again with names as WoW Forever writes them ("Name Realm")
+      - name: Run the tests again as the WoW Forever game client (its API, and names as "Name Realm")
         env:
-          WARCREST_REALM_SPACE: "1"
+          WARCREST_FOREVER: "1"
         run: pytest tests -q --ignore=tests/test_render.py
