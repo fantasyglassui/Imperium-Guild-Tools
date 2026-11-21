@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://warcrest-addon.com/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Warcrest: one window for the whole guild, with the Kills tab.">
+<meta property="og:image:alt" content="Warcrest: one window for the whole guild, with PvP &gt; Kills.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#e0b94c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -324,7 +324,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
           <h2 id="alerts-h">The whole guild hears it as it happens.</h2>
         </div>
         <div class="points">
-          <div><h3>A banner for each kind of news</h3><p>Kills, deaths, gankers, rivals, bosses, raids, loot and achievements each get their own colour, icon and sound. Click a banner to open its tab.</p></div>
+          <div><h3>A banner for each kind of news</h3><p>Kills, deaths, gankers, rivals, bosses, raids, loot and achievements each get their own colour, icon and sound. Click a banner to open what it's about.</p></div>
           <div><h3>87 alert sounds, or your own</h3><p>Pick a sound for each kind of alert from Warcrest's own, the game's or SharedMedia's, or drop your own .ogg and .mp3 files in a folder.</p></div>
           <div><h3>Quiet when it matters</h3><p>Hold alerts in dungeons, raids or combat, and read them in chat once you're out. Officers choose what the guild hears; everyone can turn off what they don't want.</p></div>
         </div>
@@ -341,7 +341,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="img/war.webp" width="1400" height="880" loading="lazy" alt="The war board: enemy guilds with kills each way and the score, and a rival guild selected."></div>
+        <div class="shot"><img src="img/war.webp" width="1400" height="880" loading="lazy" alt="PvP &gt; Guild wars: enemy guilds with kills each way and the score, and a rival guild selected."></div>
         <div class="copy">
           <span class="label">World PvP</span>
           <h3>Kills, gankers and guild wars</h3>
@@ -355,7 +355,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="img/dkp.webp" width="1400" height="880" loading="lazy" alt="The DKP tab: standings with attendance, awarding DKP, a loot auction and the DKP rules."></div>
+        <div class="shot"><img src="img/dkp.webp" width="1400" height="880" loading="lazy" alt="Loot &gt; Standings: standings with attendance, awarding DKP, a loot auction and the DKP rules."></div>
         <div class="copy">
           <span class="label">Raids and loot</span>
           <h3>Sign-ups to the last bid</h3>
@@ -370,7 +370,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature">
-        <div class="shot"><img src="img/events.webp" width="1400" height="880" loading="lazy" alt="The Events tab: a PvP night and a world boss hunt, with answers from guildmates."></div>
+        <div class="shot"><img src="img/events.webp" width="1400" height="880" loading="lazy" alt="Events: a PvP night and a world boss hunt, with answers from guildmates."></div>
         <div class="copy">
           <span class="label">Guild life</span>
           <h3>Events, polls and crafters</h3>
@@ -385,7 +385,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       </div>
 
       <div class="feature flip">
-        <div class="shot"><img src="img/goals.webp" width="1400" height="880" loading="lazy" alt="The Achievements tab, Guild view: recent achievements, guild goals with progress bars, and the leaders."></div>
+        <div class="shot"><img src="img/goals.webp" width="1400" height="880" loading="lazy" alt="Achievements, Guild view: recent achievements, guild goals with progress bars, and the leaders."></div>
         <div class="copy">
           <span class="label">Achievements and goals</span>
           <h3>Something to chase every week</h3>
@@ -419,7 +419,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
       <div class="sec-head">
         <span class="label">All 161</span>
         <h2 id="ach-h">Every achievement and title.</h2>
-        <p>The same list your guild sees on the Achievements tab. Titles show after your name, like <span style="color:var(--text)">Lyra</span> <span style="color:var(--gold)">the Avenger</span>.</p>
+        <p>The same list your guild sees in Achievements. Titles show after your name, like <span style="color:var(--text)">Lyra</span> <span style="color:var(--gold)">the Avenger</span>.</p>
       </div>
       <div class="ach-bar">
         <div class="seg" id="cats" role="group" aria-label="Achievement groups"></div>
@@ -530,16 +530,16 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
 (function () {
   var TABS = [
     ["home", "Home", "What's happening in the guild on one page: the next raid and your job in it, your DKP, the open poll, PvP this week and guild news.", "The Home page: the raid night in progress, your DKP, an open poll, PvP this week and guild news."],
-    ["kills", "Kills", "PvP kills by guild members, with killing blows and assists, and the monthly Top Head Hunters board.", "The Kills tab: guild PvP kills and the Top Head Hunters board."],
-    ["wanted", "Wanted", "Enemy players who keep killing guild members. When anyone spots one, the whole guild is alerted.", "The Wanted tab: the most wanted ganker and how many guildmates they've killed."],
-    ["war", "Guild wars", "The score against every enemy guild you've met. Rival guilds are listed first.", "The war board: enemy guilds with kills each way."],
-    ["raids", "Raids", "Sign-ups by role, a check that tanks and healers are covered, and the raid night in progress.", "The Raids tab: an upcoming raid with sign-ups."],
-    ["dkp", "DKP", "Standings and attendance, awarding DKP, and a live loot auction ready to start.", "The DKP tab: standings, awards and a loot auction."],
-    ["events", "Events", "PvP nights, world bosses and anything else that isn't a raid. Anyone can plan one.", "The Events tab: upcoming guild events and answers."],
-    ["achievements", "Achievements", "Your achievements as tiles, with progress on the ones you're still working on.", "The Achievements tab: PvP achievements and progress."],
+    ["kills", "Kills", "PvP kills by guild members, with killing blows and assists, and the monthly Top Head Hunters board.", "PvP > Kills: guild PvP kills and the Top Head Hunters board."],
+    ["wanted", "Wanted", "Enemy players who keep killing guild members. When anyone spots one, the whole guild is alerted.", "PvP > Wanted: the most wanted ganker and how many guildmates they've killed."],
+    ["war", "Guild wars", "The score against every enemy guild you've met. Rival guilds are listed first.", "PvP > Guild wars: enemy guilds with kills each way."],
+    ["raids", "Raids", "Sign-ups by role, a check that tanks and healers are covered, and the raid night in progress.", "Raids: an upcoming raid with sign-ups."],
+    ["dkp", "DKP", "Standings and attendance, awarding DKP, and a live loot auction ready to start.", "Loot > Standings: standings, awards and a loot auction."],
+    ["events", "Events", "PvP nights, world bosses and anything else that isn't a raid. Anyone can plan one.", "Events: upcoming guild events and answers."],
+    ["achievements", "Achievements", "Your achievements as tiles, with progress on the ones you're still working on.", "Achievements: PvP achievements and progress."],
     ["progress", "Progress", "Bosses killed in each raid, with first kills, wipes and the best kill time.", "The Progress view: the guild's bosses in Hyjal Summit with first kills and wipes."],
     ["polls", "Polls", "Ask the guild a question; everyone with Warcrest votes, and sees the results as they come in.", "The Polls view: which night for Blackwing Lair, with the votes so far."],
-    ["crafters", "Crafters", "Search what the guild can make. Online crafters come first; click a recipe to order it.", "The crafters directory: recipes and who makes them."]
+    ["crafters", "Crafters", "Search what the guild can make. Online crafters come first; click a recipe to order it.", "Guild > Crafters: recipes and who makes them."]
   ];
   var tabs = document.querySelector("#tour .tabs"), img = document.getElementById("tour-img"), cap = document.getElementById("tour-cap");
   function pick(i) {
@@ -621,11 +621,11 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
     ["/warcrest", "Open or close Warcrest (also /wc)"],
     ["/warcrest start", "The Getting started checklist"],
     ["/warcrest access", "Accessibility: text size, colours, alert banners"],
-    ["/warcrest raids", "The Raids tab (also dkp, kills, wanted, wishlist, events, achievements)"],
+    ["/warcrest raids", "Open Raids (also dkp, kills, wanted, wishlist, events, achievements)"],
     ["/warcrest card Name", "A guild member's player card"],
     ["/warcrest profile", "Edit your profile: spec, when you play, birthday"],
-    ["/warcrest profiles", "Everyone's profiles, with item levels"],
-    ["/warcrest craft", "Who in the guild can craft what (add a word to search)"],
+    ["/warcrest profiles", "Everyone's profiles, with item levels (Guild > Profiles)"],
+    ["/warcrest craft", "Who in the guild can craft what (Guild > Crafters; add a word to search)"],
     ["/warcrest check", "Why an achievement or kill has or hasn't counted"],
     ["/warcrest auction", "Auction an item to your raid (officers)"],
     ["/warcrest council", "The loot council vote (officers start one)"],
