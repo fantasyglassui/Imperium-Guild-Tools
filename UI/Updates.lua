@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.12.0", date = "Nov 20, 2026", items = {
+    "Accessibility settings (Settings > Accessibility, or /warcrest access): bigger text, colour-blind friendly colours, high contrast, and alert banners that stay longer or until you dismiss them, with no sliding or fading.",
+  } },
   { version = "3.11.0", date = "Nov 20, 2026", items = {
     "Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. /warcrest start, or Help.",
     "Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.",

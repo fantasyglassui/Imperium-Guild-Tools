@@ -328,7 +328,9 @@ def demo_guild(guild_name=None, locale=None):
     from harness import Guild
     members = [("Thorne", 1, "WARRIOR"), ("Lyra", 3, "MAGE"), ("Mira", 3, "PRIEST"), ("Brakk", 3, "ROGUE"),
                ("Aldric", 3, "PALADIN"), ("Seren", 3, "DRUID", 58)]
-    code = ('GUILD_NAME = "%s"; ' % guild_name if guild_name else "") + ('gameLocale = "%s"' % locale if locale else "")
+    code = ('GUILD_NAME = "%s"; ' % guild_name if guild_name else "") + ('gameLocale = "%s"; ' % locale if locale else "")
+    if os.environ.get("WARCREST_ACCESS"):   # e.g. "textSize = 130, contrast = true, colorblind = true"
+        code += "WarcrestDB = { access = { %s } }" % os.environ["WARCREST_ACCESS"]
     setup = (lambda c: c.run(code)) if code else None
     guild = Guild(members, raid=["Thorne", "Lyra", "Mira", "Brakk"], setup=setup)
     me = guild["Thorne"]
@@ -509,7 +511,7 @@ if __name__ == "__main__":
         me.ns.RefreshPanel()
         panel = me.lua.eval("WarcrestPanel")
         print(rd.render(panel, os.path.join(out, "panel-%s.png" % tab)))
-    for tab, view in (("settings", "sounds"), ("settings", "general"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "social"), ("achievements", "guild"),
+    for tab, view in (("settings", "sounds"), ("settings", "general"), ("settings", "access"), ("achievements", "hunt"), ("achievements", "raid"), ("achievements", "loot"), ("achievements", "social"), ("achievements", "guild"),
                       ("raids", "plan"), ("raids", "progress"), ("wanted", "guilds"),
                       ("events", "polls"), ("officers", "inactive")):
         me.ns.OpenPanel(tab, view)

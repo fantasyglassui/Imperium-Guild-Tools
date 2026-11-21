@@ -780,6 +780,8 @@ SlashCmdList.WARCREST = function(input)
     if ns.ShowHelp then ns.ShowHelp(nil, "discord") end
   elseif msg == "report" or msg == "bugreport" or msg == "bug" or msg == "bug report" then
     if ns.ShowBugReport then ns.ShowBugReport() end
+  elseif msg == "access" or msg == "accessibility" then
+    if ns.OpenPanel then ns.OpenPanel("settings", "access") end
   elseif msg == "start" or msg == "welcome" or msg == "started" then
     if ns.ShowGettingStarted then ns.ShowGettingStarted() end
   elseif msg == "setup" then

@@ -127,13 +127,16 @@ local function tick()
     local ends = b.paused and (b.ends + (now - b.paused)) or b.ends
     local age = now - b.started
     local alpha
-    if now >= ends + FADE_OUT then
+    local fadeOut = b.still and 0 or FADE_OUT
+    if now >= ends + fadeOut then
       b:Hide()
       table.remove(shown, i)
       pool[#pool + 1] = b
       layout()
     else
-      if age < FADE_IN then
+      if b.still then
+        alpha = 1
+      elseif age < FADE_IN then
         alpha = age / FADE_IN
         b:SetPoint("TOP", anchor, "TOP", 0, -(b.y or 0) + 10 * (1 - alpha))
       elseif now > ends then
@@ -142,8 +145,10 @@ local function tick()
         alpha = 1
       end
       b:SetAlpha(math.max(0, math.min(1, alpha)))
-      local left = math.max(0, math.min(1, (ends - now) / b.hold))
-      b.timer:SetWidth(math.max(1, (W - 3) * left))
+      if not b.sticky then
+        local left = math.max(0, math.min(1, (ends - now) / b.hold))
+        b.timer:SetWidth(math.max(1, (W - 3) * left))
+      end
     end
   end
   if #shown == 0 and ticker then ticker:Cancel(); ticker = nil end
@@ -161,7 +166,7 @@ function ns.ShowBanner(kind, text, title)
   local k = ns.BANNER_KINDS[kind] or DEFAULT_KIND
   local b = table.remove(pool) or makeBanner()
   b.kind = k
-  local c = k.color
+  local c = ns.AccessKindColor(kind) or k.color
   b.bar:SetColorTexture(c[1], c[2], c[3], 1)
   b.iconBg:SetColorTexture(c[1], c[2], c[3], 0.14)
   b.icon:SetTexture(UI.IconPath(k.icon))
@@ -176,11 +181,16 @@ function ns.ShowBanner(kind, text, title)
   b.text:SetText(text)
   b.text:SetTextColor(C.text[1], C.text[2], C.text[3])
   b:SetHeight(math.max(H, math.floor(b.text:GetStringHeight() + 0.5) + 44))
-  b.hold = k.hold or 5
+  -- Settings > Accessibility: longer, or until dismissed (no end, no timer line).
+  local hold = ns.BannerHold(k.hold or 5)
+  b.sticky = hold == nil
+  b.hold = hold or 1
   b.started = GetTime()
-  b.ends = b.started + b.hold
+  b.ends = b.sticky and math.huge or (b.started + b.hold)
+  b.timer:SetShown(not b.sticky)
   b.paused = nil
-  b:SetAlpha(0)
+  b.still = ns.ReduceMotion()
+  b:SetAlpha(b.still and 1 or 0)
   b:Show()
   table.insert(shown, 1, b)
   while #shown > MAX_SHOWN do

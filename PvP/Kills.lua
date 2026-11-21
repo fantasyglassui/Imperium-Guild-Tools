@@ -314,7 +314,7 @@ function ns.ShowKill(k, force)
     if not (c.enabled and c.types[k.kind] and show[k.kind]) then return end
     if ns.KillHidden(k) then return end
   end
-  local text = KILL_COLOR .. ns.DescribeKill(k, true) .. "|r"
+  local text = (ns.AccessChatColor("kill") or KILL_COLOR) .. ns.DescribeKill(k, true) .. "|r"
   ns.Notify(KILL_ICON .. " " .. text, KILL_ICON .. " " .. text .. " " .. KILL_ICON, nil, force, "kill")
 end
 

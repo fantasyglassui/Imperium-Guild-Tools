@@ -119,6 +119,7 @@ local TOPICS = {
     CMD("/warcrest sync", "fetch recent history from guildmates"),
     CMD("/warcrest minimap", "show or hide the minimap button"),
     CMD("/warcrest start", "the Getting started checklist"),
+    CMD("/warcrest access", "accessibility: text size, colours and alert banners"),
     CMD("/warcrest updates", "what's new"),
     CMD("/warcrest bosses", "the last raid bosses that died, and whether each counted"),
     CMD("/warcrest check [name]", "why achievements have or haven't counted (kills, honor, the guild record)"),

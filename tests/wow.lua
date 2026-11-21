@@ -134,6 +134,8 @@ local METHODS = {
   SetWordWrap = function(w, on) layout(w).nowrap = not on end,
   SetFontObject = function(w, f) layout(w).font = f end,
   SetFont = function(w, path, size) layout(w).path, layout(w).size = path, size; return true end,
+  GetFont = function(w) return layout(w).path, layout(w).size end,
+  GetAlpha = function(w) local a = layout(w).alpha; if a == nil then return 1 end return a end,
   SetTextColor = function(w, r, g, b) layout(w).textColor = { r, g, b } end,
   SetFontString = function(w, fs) rawset(w, "_fs", fs) end,
   GetFontString = function(w) return rawget(w, "_fs") or NewWidget() end,

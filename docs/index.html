@@ -407,9 +407,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
         <h2 id="news-h">Updated often.</h2>
         <p>The latest versions, as Warcrest shows them in game. Type <code>/warcrest updates</code> to see them there.</p>
       </div>
-      <div class="news-grid"><!--news--><article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. <code>/warcrest start</code>, or Help.</li><li>Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.</li><li>Loot auctions and loot council votes pause while a boss fight blocks messages, and can't be started during one, so nobody misses the chance to bid.</li></ul></article>
-        <article class="release"><header><h3>3.10.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Settings moved to the bottom of the side menu, next to Help.</li><li>The small The Imperium and Bannerhold folders aren't needed any more: you can delete them from your AddOns folder.</li><li>Clean-up: Warcrest now uses only WoW: Forever's own game functions, and leftovers from removed features are gone.</li></ul></article>
-        <article class="release"><header><h3>3.9.3</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Fix: on WoW: Forever, guildmates' recipes weren't shared (the profession window is read the new way now), achievements weren't posted in guild chat, raid assignments couldn't be posted, the recruiting message couldn't be posted, and the raid warning alert style showed nothing.</li></ul></article><!--/news--></div>
+      <div class="news-grid"><!--news--><article class="release"><header><h3>3.12.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Accessibility settings (Settings &gt; Accessibility, or <code>/warcrest access</code>): bigger text, colour-blind friendly colours, high contrast, and alert banners that stay longer or until you dismiss them, with no sliding or fading.</li></ul></article>
+        <article class="release"><header><h3>3.11.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Getting started: a short checklist for new members that ticks itself off as you go (sign up for a raid, fill in your profile, share your recipes, pick a title). Officers set the guild up from it too. <code>/warcrest start</code>, or Help.</li><li>Boss fights and PvP matches: the game blocks addon messages until they end. Warcrest now holds what it has to send (DKP, kills, pulls, bids, chat posts) and sends it when the fight is over, instead of losing it.</li><li>Loot auctions and loot council votes pause while a boss fight blocks messages, and can't be started during one, so nobody misses the chance to bid.</li></ul></article>
+        <article class="release"><header><h3>3.10.0</h3><time datetime="2026-11-20">Nov 20, 2026</time></header><ul><li>Settings moved to the bottom of the side menu, next to Help.</li><li>The small The Imperium and Bannerhold folders aren't needed any more: you can delete them from your AddOns folder.</li><li>Clean-up: Warcrest now uses only WoW: Forever's own game functions, and leftovers from removed features are gone.</li></ul></article><!--/news--></div>
       <p class="news-more">Every change since the first version, with a search: <a href="/changelog/">the full changelog</a>.</p>
     </div>
   </section>
@@ -618,6 +618,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 18px 40px; justify-content: 
   // Commands
   var CMDS = [
     ["/warcrest", "Open or close Warcrest (also /wc)"],
+    ["/warcrest start", "The Getting started checklist"],
+    ["/warcrest access", "Accessibility: text size, colours, alert banners"],
     ["/warcrest raids", "The Raids tab (also dkp, kills, wanted, wishlist, events, achievements)"],
     ["/warcrest card Name", "A guild member's player card"],
     ["/warcrest profile", "Edit your profile: spec, when you play, birthday"],

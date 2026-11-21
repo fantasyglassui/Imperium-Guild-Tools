@@ -274,7 +274,10 @@ function ns.DescribeDeath(e)
   return line
 end
 
-function ns.DeathColor(e) return KIND_COLOR[e.kind] or "|cffffffff" end
+function ns.DeathColor(e)
+  if e.kind == "pvp" and ns.AccessChatColor("death") then return ns.AccessChatColor("death") end
+  return KIND_COLOR[e.kind] or "|cffffffff"
+end
 
 ns.SKULL = "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:0|t"
 

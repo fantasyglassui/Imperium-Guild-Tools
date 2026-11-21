@@ -192,5 +192,7 @@
  "Your email": "Tu correo",
  "Your name or character": "Tu nombre o personaje",
  "Every change since the first version, with a search: <a href=\"/changelog/\">the full changelog</a>.": "Todos los cambios desde la primera versión, con un buscador: <a href=\"/changelog/\">el registro completo</a>.",
- "Changelog": "Cambios"
+ "Changelog": "Cambios",
+ "The Getting started checklist": "La lista de Primeros pasos",
+ "Accessibility: text size, colours, alert banners": "Accesibilidad: tamaño del texto, colores, avisos"
 }

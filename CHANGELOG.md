@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.12.0
+### Accessibility
+A new **Accessibility** view in Settings (or `/warcrest access`). Everything is off until you turn it on, and each setting is just for you.
+- **Text size:** 100%, 110% or 120%. Makes Warcrest's text bigger in every window and on alert banners without making the windows bigger. For both, combine it with the window Size on the General view.
+- **Colour-blind friendly colours:** alert banners, and the colours for good and bad news, use a palette that stays distinct with red-green or blue-yellow colour blindness (based on the Okabe-Ito colours). Good news turns blue and bad news orange instead of green and red, including kills and deaths in chat. Every alert also names its kind in words, so colour is never the only cue.
+- **High contrast:** brighter grey text and stronger borders and row lines, for low vision or a bright room.
+- **Alert banners:** choose how long they stay (normal, twice as long, or until you dismiss them), and turn off their sliding and fading.
+- Colour changes apply everywhere after `/reload`; text size and banner settings change straight away.
+
 ## 3.11.0
 - **Getting started.** New members get a short checklist instead of the old welcome window: open Warcrest, sign up for a raid, fill in your profile, share your recipes and pick a title. Each step ticks itself off when you've done it. Officers set the guild up from the same window (**Guild setup**). Open it any time with `/warcrest start` or from Help > Getting started.
 - **Boss fights and PvP matches no longer lose messages.** WoW: Forever, like the current retail game, blocks addon messages during boss encounters, keystone runs and PvP matches. Warcrest used to treat a blocked message as sent, so DKP awards, recorded pulls, battleground kills and bids made mid-fight could be lost. It now holds them (and any chat posts, like achievements or raid assignments) and sends everything as soon as the fight ends. It tells you once per fight when it's holding messages.

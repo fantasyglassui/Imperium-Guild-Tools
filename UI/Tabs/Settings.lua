@@ -103,11 +103,27 @@ local function RefreshGeneral()
   P.pinValue:SetAlpha(db.mapPins and 1 or 0.5)
 end
 
+local function SyncCycle(cycle, value)
+  for i, o in ipairs(cycle.options) do
+    if o[1] == value then cycle.index, cycle.value = i, o[1]; cycle:SetText(o[2]) end
+  end
+end
+
+local function RefreshAccess()
+  local a = ns.Access()
+  SyncCycle(P.textSize, a.textSize)
+  SyncCycle(P.bannerHold, a.bannerHold)
+  P.colorblind:SetChecked(a.colorblind)
+  P.contrast:SetChecked(a.contrast)
+  P.still:SetChecked(a.reduceMotion)
+end
+
 local function Refresh()
   local view = P.view.value
   for id, f in pairs(P.views) do f:SetShown(id == view) end
   if view == "alerts" then RefreshAlerts()
   elseif view == "sounds" then UI.SoundsView.Refresh()
+  elseif view == "access" then RefreshAccess()
   else RefreshGeneral() end
 end
 
@@ -408,19 +424,106 @@ local function BuildGeneral(page)
 end
 
 
+------------------------------------------------------------------------
+-- Accessibility view
+------------------------------------------------------------------------
+local function BuildAccess(page)
+  local f = CreateFrame("Frame", nil, page)
+  f:SetPoint("TOPLEFT")
+  f:SetSize(740, 450)
+  P.views.access = f
+  local x2 = COL_W + 14
+  local inner = COL_W - 30
+
+  -- Text
+  local t = UI.Box(f, 0, 0, COL_W, 150, "Text")
+  local sizeLabel = UI.Label(t, "Text size", "Body")
+  sizeLabel:SetPoint("TOPLEFT", 14, -44)
+  local sizes = {}
+  for _, s in ipairs(ns.TEXT_SIZES) do sizes[#sizes + 1] = { s, s .. "%" } end
+  P.textSize = UI.Cycle(t, 110, sizes, function(v) ns.SetAccess("textSize", v) end)
+  P.textSize:SetHeight(24)
+  P.textSize:SetPoint("TOPRIGHT", -14, -38)
+  UI.Tooltip(P.textSize, "Text size", "Makes Warcrest's text bigger, in every window and on alert banners. Click to step through the sizes.")
+  local thint = UI.Label(t, "Bigger text without bigger windows. To make whole windows bigger, use Size on the General view. Some windows fit best after /reload.", "MutedSmall")
+  thint:SetPoint("TOPLEFT", 14, -76)
+  thint:SetWidth(inner)
+  thint:SetSpacing(2)
+
+  -- Colours
+  local c = UI.Box(f, 0, -164, COL_W, 200, "Colours")
+  P.colorblind = UI.Check(c, "Colour-blind friendly colours", 10, -36)
+  P.colorblind:SetScript("OnClick", function(self) ns.SetAccess("colorblind", self:GetChecked() and true or false) end)
+  UI.Tooltip(P.colorblind, "Colour-blind friendly colours", "Alert colours, and the colours for good and bad news (like kills and deaths in chat), "
+    .. "that stay apart with red-green or blue-yellow colour blindness. Every alert also says what kind it is in words.")
+  local cbhint = UI.Label(c, "Blue for good news, orange for bad, instead of green and red.", "MutedSmall")
+  cbhint:SetPoint("TOPLEFT", 40, -60)
+  cbhint:SetWidth(inner - 26)
+  P.contrast = UI.Check(c, "High contrast", 10, -90)
+  P.contrast:SetScript("OnClick", function(self) ns.SetAccess("contrast", self:GetChecked() and true or false) end)
+  UI.Tooltip(P.contrast, "High contrast", "Brighter grey text and stronger borders and lines, for low vision or a bright room.")
+  local hchint = UI.Label(c, "Brighter grey text, stronger borders and lines.", "MutedSmall")
+  hchint:SetPoint("TOPLEFT", 40, -114)
+  hchint:SetWidth(inner - 26)
+  local reload = UI.Label(c, "Colours change everywhere after /reload.", "Small")
+  reload:SetPoint("BOTTOMLEFT", 14, 16)
+  reload:SetWidth(inner)
+
+  -- Alert banners
+  local b = UI.Box(f, x2, 0, COL_W, 200, "Alert banners")
+  local holdLabel = UI.Label(b, "Time on screen", "Body")
+  holdLabel:SetPoint("TOPLEFT", 14, -44)
+  P.bannerHold = UI.Cycle(b, 150, { { "normal", "Normal" }, { "long", "Twice as long" }, { "sticky", "Until dismissed" } },
+    function(v) ns.SetAccess("bannerHold", v) end)
+  P.bannerHold:SetHeight(24)
+  P.bannerHold:SetPoint("TOPRIGHT", -14, -38)
+  UI.Tooltip(P.bannerHold, "Time on screen", "How long alert banners stay. Until dismissed: each stays until you click it "
+    .. "(left-click opens its tab, right-click closes it). Up to three show at once; a new one replaces the oldest.")
+  P.still = UI.Check(b, "No sliding or fading", 10, -72)
+  P.still:SetScript("OnClick", function(self) ns.SetAccess("reduceMotion", self:GetChecked() and true or false) end)
+  UI.Tooltip(P.still, "No sliding or fading", "Banners appear and disappear at once, without moving.")
+  local bhint = UI.Label(b, "Hovering over a banner always keeps it on screen.", "MutedSmall")
+  bhint:SetPoint("TOPLEFT", 14, -106)
+  bhint:SetWidth(inner)
+  local test = UI.Button(b, "Show test alert", inner)
+  test:SetHeight(26)
+  test:SetPoint("BOTTOMLEFT", 14, 14)
+  test:SetScript("OnClick", ns.TestAlert)
+
+  -- More that helps
+  local m = UI.Box(f, x2, -214, COL_W, 236, "Also helps")
+  local tips = UI.Label(m, "Chat only: Alerts > How alerts appear > On screen. Alerts then only go to chat, "
+    .. "where they stay to read at your own pace.", "Small")
+  tips:SetPoint("TOPLEFT", 14, -38)
+  tips:SetWidth(inner)
+  tips:SetSpacing(3)
+  local tips2 = UI.Label(m, "Sounds: each kind of alert has its own sound, so you can tell them apart without looking. "
+    .. "Change or turn them off on the Sounds view.", "Small")
+  tips2:SetPoint("TOPLEFT", tips, "BOTTOMLEFT", 0, -10)
+  tips2:SetWidth(inner)
+  tips2:SetSpacing(3)
+  local tips3 = UI.Label(m, "Quiet mode (General) holds alerts until you're out of combat or the dungeon.", "Small")
+  tips3:SetPoint("TOPLEFT", tips2, "BOTTOMLEFT", 0, -10)
+  tips3:SetWidth(inner)
+  tips3:SetSpacing(3)
+  return f
+end
+
 local function Build(page)
-  P.view = UI.Segmented(page.headerBar, { { "alerts", "Alerts" }, { "sounds", "Sounds" }, { "general", "General" } },
+  P.view = UI.Segmented(page.headerBar, { { "alerts", "Alerts" }, { "sounds", "Sounds" }, { "general", "General" }, { "access", "Accessibility" } },
     ns.RefreshPanel)
   P.view:SetPoint("RIGHT")
   TAB.view = P.view
   local alerts = BuildAlerts(page)
   local general = BuildGeneral(page)
+  local access = BuildAccess(page)
   local sounds = UI.SoundsView.Build(page)
   P.views.sounds = sounds
 
   -- A bigger window: the alert table gets the room; the side cards move right.
   UI.Grow(page, alerts, 1, 1)
   UI.Grow(page, general, 1, 1)
+  UI.Grow(page, access, 1, 1)
   UI.Grow(page, sounds, 1, 1)
   UI.Grow(page, P.table, 1, 0)
   UI.FollowAll(page, { P.guildCard, P.appear }, 1, 0)
@@ -430,6 +533,7 @@ TAB = { id = "settings", title = "Settings", build = Build, refresh = Refresh,
   subtitle = function()
     if P.view and P.view.value == "general" then return "Quiet mode, the map, the weekly recap and the window" end
     if P.view and P.view.value == "sounds" then return "A sound for each kind of alert, and your own sounds" end
+    if P.view and P.view.value == "access" then return "Text size, colours and how long alerts stay" end
     return "Alerts for the whole guild, and just for you"
   end }
 UI.AddTab(TAB)

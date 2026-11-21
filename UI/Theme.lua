@@ -56,8 +56,12 @@ local FONT = {
   bold = MEDIA .. "Fonts\\Inter-Bold.ttf",
 }
 
+function UI.FontFile(weight) return FONT[weight] end
+
 UI.Fonts = {}
+UI.FontBase = {} -- key -> { weight, size, color }: for text size and high contrast (UI/Access.lua)
 local function makeFont(key, weight, size, color)
+  UI.FontBase[key] = { weight = weight, size = size, color = color }
   local f = CreateFont("WarcrestFont_" .. key)
   -- If the font file can't be loaded, fall back to the game's font. (Newer
   -- clients return false on failure; older ones return nothing either way.)
