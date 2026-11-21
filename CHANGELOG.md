@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.9.2
+- **Fix: titles didn't show in chat.** WoW: Forever's game client moved the function chat add-ons use to change how messages look (`ChatFrame_AddMessageEventFilter` is now `ChatFrameUtil.AddMessageEventFilter`), so Warcrest never added guildmates' titles in front of their messages. It now uses the new one, and the old one on clients that still have it.
+
 ## 3.9.1
 - **Fix: shared changes didn't reach everyone.** WoW: Forever gives the names of addon messages' senders as "Name Realm", and Warcrest didn't recognise those as guildmates in private (whispered) messages. Catching up when you log in uses those messages, so anything shared while a guildmate was offline (profiles, recipes, achievements, and the rest of the guild's shared record) never reached them. Officers' guild settings could be ignored for the same reason. Everyone gets caught up within a few minutes of logging in with 3.9.1 (or type `/warcrest sync`).
 - The tests now also run with names written the way WoW: Forever writes them.

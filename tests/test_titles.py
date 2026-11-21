@@ -191,3 +191,25 @@ def test_streak_and_revenge_alerts_show_the_title():
     assert cara.said("Bob the Bounty Hunter's 5-kill streak was ended by Avenger.")
     live_kill(guild, "Bob", "Avenger")
     assert cara.said("Revenge! Bob the Bounty Hunter paid Avenger back")
+
+
+def newer_chat_api(c):
+    """WoW: Forever: ChatFrameUtil.AddMessageEventFilter, and no ChatFrame_AddMessageEventFilter."""
+    c.lua.execute("ChatFrameUtil = ChatFrameUtil or {} "
+                  "ChatFrameUtil.AddMessageEventFilter = ChatFrame_AddMessageEventFilter "
+                  "ChatFrame_AddMessageEventFilter = nil")
+
+
+def test_titles_show_in_chat_on_newer_clients():
+    from test_achievements import live_death
+    from test_streaks import live_kill
+    guild = Guild(M, setup=newer_chat_api, realm_space=True)
+    for _ in range(3):
+        live_death(guild, "Alice", "Ganker-Stormrage")
+        guild.jump(600)
+    live_kill(guild, "Bob", "Ganker")
+    guild.run(3)
+    assert guild["Bob"].ns.SetTitle("bounty")
+    guild.run(3)
+    show = guild["Cara"].lua.eval("ShowChat")
+    assert show("CHAT_MSG_GUILD", "anyone for STV?", "Bob Realm") == "|cffd4af37(the Bounty Hunter)|r anyone for STV?"

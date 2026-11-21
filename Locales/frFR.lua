@@ -2078,4 +2078,5 @@ ns.LOCALES.frFR = {
   ["Killed %s in %s (%s)"] = "%s vaincu dans %s (%s)",
   ["Raid night: %s"] = "Soirée de raid : %s",
   ["Fix: changes made while a guildmate was offline (profiles, recipes, guild settings and more) didn't reach them when they logged in, because the game writes names as \"Name Realm\"."] = "Correction : les changements faits pendant qu'un membre était hors ligne (profils, recettes, réglages de guilde et plus) ne lui parvenaient pas à sa connexion, car le jeu écrit les noms « Nom Royaume ».",
+  ["Fix: titles didn't show in chat on newer game clients."] = "Correction : les titres ne s'affichaient pas dans le chat sur les clients de jeu récents.",
 }

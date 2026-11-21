@@ -11,6 +11,9 @@ local UI = ns.UI
 
 -- Newest first. Players see every entry newer than the version they last used.
 local CHANGES = {
+  { version = "3.9.2", date = "Nov 20, 2026", items = {
+    "Fix: titles didn't show in chat on newer game clients.",
+  } },
   { version = "3.9.1", date = "Nov 20, 2026", items = {
     "Fix: changes made while a guildmate was offline (profiles, recipes, guild settings and more) didn't reach them when they logged in, because the game writes names as \"Name Realm\".",
   } },
